@@ -1,12 +1,12 @@
 import { Title } from "@solidjs/meta";
-import { cache, createAsync, useParams } from "@solidjs/router";
+import { createAsync, useParams } from "@solidjs/router";
 import { createEffect, createSignal, Match, Switch, useContext } from "solid-js";
-import { listRecords } from "~/server/db";
 import { schema } from "~/schema";
 import { BulkTableView } from "~/components/BulkTableView";
 import { ListTableView } from "~/components/ListTableView";
 import { Form } from "~/components/Form";
 import { SessionContext } from "~/SessionContext";
+import { getRecords } from "~/server/api";
 
 export default function Table() {
   const session = useContext(SessionContext)
@@ -17,7 +17,6 @@ export default function Table() {
 
   createEffect(() => setTableName(params.name))
 
-  const getRecords = cache(listRecords, 'getRecords' + tableName())
   const records = createAsync(() => getRecords(tableName()))
 
   const tableSchema = () => schema.tables[tableName()]

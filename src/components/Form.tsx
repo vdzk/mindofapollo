@@ -1,7 +1,8 @@
-import { createAsync, revalidate, useNavigate, useParams } from "@solidjs/router";
+import { action, createAsync, redirect, useAction, useParams } from "@solidjs/router";
 import { Component, For, Match, Switch } from "solid-js";
 import { insertRecord, multiListRecords } from "~/server/db";
 import { ForeignKey, schema } from "~/schema";
+import { getRecords } from "~/server/api";
 
 const inputTypes = {
   varchar: 'text',
@@ -11,10 +12,21 @@ const inputTypes = {
   fk: 'hidden'
 }
 
+const save = action(async (
+  tableName: string,
+  record: Record<string, string | boolean>
+) => {
+  await insertRecord(tableName, record)
+  throw redirect(
+    `/table/list/${tableName}`,
+    { revalidate: getRecords.keyFor(tableName) }
+  );
+})
+
 export const Form: Component<{ tableName: string }> = (props) => {
 
   const params = useParams();
-  const navigate = useNavigate();
+  const saveAction = useAction(save);
 
   const columns = () => schema.tables[props.tableName].columns
   const colNames = () => Object.keys(columns())
@@ -50,10 +62,7 @@ export const Form: Component<{ tableName: string }> = (props) => {
         record[colName] = formData.get(colName) + ''
       }
     }
-    await insertRecord(params.name, record)
-    console.log('revalidate', 'getRecords'+ props.tableName)
-    revalidate(['getRecords'+ props.tableName])
-    navigate(`/table/list/${props.tableName}`);
+    saveAction(params.name, record)
   }
 
   return (
