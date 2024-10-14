@@ -1,5 +1,6 @@
 export interface ForeignKey {
   type: 'fk',
+  label?: string,
   fk: {
     table: string,
     labelColumn: string
@@ -10,7 +11,8 @@ export interface TableSchema {
   title?: string,
   defaultView?: 'list'
   columns: Record<string, {
-    type: 'integer' | 'varchar' | 'text' | 'boolean'
+    type: 'integer' | 'varchar' | 'text' | 'boolean',
+    label?: string
   } | ForeignKey>
 }
 
@@ -37,7 +39,8 @@ export const schema: AppDataSchema = {
       title: 'Questions',
       columns: {
         text: {
-          type: 'varchar'
+          type: 'varchar',
+          label: 'Question'
         }
       }
     },
