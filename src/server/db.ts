@@ -15,7 +15,7 @@ export const insertRecord = (
   record: Record<string, string | boolean>
 ) => sql`INSERT INTO ${sql(tableName)} ${sql(record)}`
 
-export const listRecords = (tableName: string) => sql`SELECT * FROM ${sql(tableName)}`
+export const listRecords = (tableName: string) => sql`SELECT * FROM ${sql(tableName)} ORDER BY id`
 
 export const getRecordById = async (tableName: string, id: string) => {
   const results = await sql`SELECT * FROM ${sql(tableName)} WHERE id = ${id}`
