@@ -24,7 +24,6 @@ export default function Table() {
 
   return (
     <main>
-      
       <Title>{tableName()}</Title>
       <h1 class="text-2xl px-2 py-4">{tableSchema().title ?? params.name}</h1>
       <Switch>

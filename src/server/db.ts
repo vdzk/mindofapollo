@@ -15,6 +15,16 @@ export const insertRecord = (
   record: Record<string, string | boolean>
 ) => sql`INSERT INTO ${sql(tableName)} ${sql(record)}`
 
+export const updateRecord = (
+  tableName: string,
+  id: string,
+  record: Record<string, string | boolean>
+) => sql`
+  UPDATE ${sql(tableName)}
+  SET ${sql(record, Object.keys(record))}
+  WHERE id = ${id}
+`
+
 export const listRecords = (tableName: string) => sql`SELECT * FROM ${sql(tableName)} ORDER BY id`
 
 export const getRecordById = async (tableName: string, id: string) => {

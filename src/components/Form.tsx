@@ -1,8 +1,9 @@
 import { action, createAsync, redirect, useAction, useParams } from "@solidjs/router";
 import { Component, For, Match, Switch } from "solid-js";
-import { insertRecord, multiListRecords } from "~/server/db";
+import { insertRecord, multiListRecords, updateRecord } from "~/server/db";
 import { ForeignKey, schema } from "~/schema";
 import { getRecords } from "~/server/api";
+import postgres from "postgres";
 
 const inputTypes = {
   varchar: 'text',
@@ -12,18 +13,27 @@ const inputTypes = {
   fk: 'hidden'
 }
 
-const save = action(async (
+export const Form: Component<{
   tableName: string,
-  record: Record<string, string | boolean>
-) => {
-  await insertRecord(tableName, record)
-  throw redirect(
-    `/table/list/${tableName}`,
-    { revalidate: getRecords.keyFor(tableName) }
-  );
-})
+  id?: string,
+  record?: postgres.Row;
+}> = (props) => {
 
-export const Form: Component<{ tableName: string }> = (props) => {
+  const save = action(async (
+    tableName: string,
+    record: Record<string, string | boolean>
+  ) => {
+    if (props.id) {
+      await updateRecord(tableName, props.id, record)
+    } else {
+      await insertRecord(tableName, record)
+    }
+    throw redirect(
+      `/table/list/${tableName}`,
+      // TODO: this doesn't seem to be doing anything
+      { revalidate: getRecords.keyFor(tableName) }
+    );
+  })
 
   const params = useParams();
   const saveAction = useAction(save);
@@ -72,11 +82,12 @@ export const Form: Component<{ tableName: string }> = (props) => {
           {colName}:&nbsp;
           <Switch>
             <Match when={columns()[colName].type === 'text'}>
-              <textarea name={colName} />
+              <textarea name={colName}>{props.record?.[colName]}</textarea>
             </Match>
             <Match when={columns()[colName].type !== 'fk'}>
               <input
                 name={colName}
+                value={props.record?.[colName]}
                 type={inputTypes[columns()[colName].type]}
                 class="pl-1"
                 autocomplete="off"
@@ -85,9 +96,14 @@ export const Form: Component<{ tableName: string }> = (props) => {
             <Match when={columns()[colName].type === 'fk'}>
               <select name={colName}>
                 <For each={foreignRecords(colName)}>
-                  {record => <option value={record.id}>
-                    {record[(columns()[colName] as ForeignKey).fk.labelColumn]}
-                  </option>}
+                  {record => (
+                    <option
+                      value={record.id}
+                      selected={record.id === props.record?.[colName]}
+                    >
+                      {record[(columns()[colName] as ForeignKey).fk.labelColumn]}
+                    </option>
+                  )}
                 </For>
               </select>
             </Match>
@@ -95,7 +111,7 @@ export const Form: Component<{ tableName: string }> = (props) => {
           &nbsp;<br />
         </label>}
       </For>
-      <button type="submit" class="text-sky-800">[ + Add ]</button>
+      <button type="submit" class="text-sky-800">[ + {props.id ? 'Save' : 'Add'} ]</button>
     </form>
   )
 }

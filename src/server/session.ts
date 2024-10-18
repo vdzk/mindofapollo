@@ -25,6 +25,9 @@ export const logout = async () => {
 }
 
 export const getUser = async () => {
+  // Temporary workaround for this issue
+  // https://github.com/nksaraf/vinxi/issues/208
+  // await new Promise(r => setTimeout(r, 200))
   const session = await getSession()
   const { userId } = session.data as UserSession
   if (userId) {
