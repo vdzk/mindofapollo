@@ -1,8 +1,9 @@
 import { Title } from "@solidjs/meta";
 import postgres from "postgres";
 import { Component } from "solid-js";
-import { schema } from "~/schema";
 import { Form } from "./Form";
+import { humanCase, titleColumnName } from "~/util";
+import { PageTitle } from "./PageTitle";
 
 
 export const EditRecordView: Component<{
@@ -10,14 +11,12 @@ export const EditRecordView: Component<{
   tableName: string;
   record?: postgres.Row;
 }> = (props) => {
-  const columns = () => schema.tables[props.tableName].columns
-  const columnEntries = () => Object.entries(columns())
-  const titleColumnName = () => columnEntries()[0][0]
-
-
   return (
     <main>
-      <Title>{props.record?.[titleColumnName()]}</Title>
+      <Title>{props.record?.[titleColumnName(props.tableName)]}</Title>
+      <PageTitle>
+        Edit {humanCase(props.tableName)}
+      </PageTitle>
       <Form id={props.id} tableName={props.tableName} record={props.record} />
     </main>
   );

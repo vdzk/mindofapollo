@@ -10,10 +10,16 @@ export const sql = postgres({
   password: 'jZrZg7aLWkQu'
 });
 
+
+const onError = (error: Error) => {
+  console.error(error)
+  return undefined
+} 
+
 export const insertRecord = (
   tableName: string,
   record: Record<string, string | boolean>
-) => sql`INSERT INTO ${sql(tableName)} ${sql(record)}`
+) => sql`INSERT INTO ${sql(tableName)} ${sql(record)}`.catch(onError)
 
 export const updateRecord = (
   tableName: string,
@@ -23,15 +29,12 @@ export const updateRecord = (
   UPDATE ${sql(tableName)}
   SET ${sql(record, Object.keys(record))}
   WHERE id = ${id}
-`
+`.catch(onError)
 
-export const listRecords = (tableName: string) => sql`SELECT * FROM ${sql(tableName)} ORDER BY id`
+export const listRecords = (tableName: string) => sql`SELECT * FROM ${sql(tableName)} ORDER BY id`.catch(onError)
 
-export const getRecordById = async (tableName: string, id: string) => {
-  const results = await sql`SELECT * FROM ${sql(tableName)} WHERE id = ${id}`
-  return results[0]
-}
+export const getRecordById = async (tableName: string, id: string | number) => sql`SELECT * FROM ${sql(tableName)} WHERE id = ${id}`.then(rows => rows[0]).catch(onError)
 
-export const deleteById = async (tableName: string, id: string) => sql`DELETE FROM ${sql(tableName)} WHERE id = ${id}`
+export const deleteById = async (tableName: string, id: string) => sql`DELETE FROM ${sql(tableName)} WHERE id = ${id}`.catch(onError)
 
-export const multiListRecords = (tableNames: string[]) => Promise.all(tableNames.map(listRecords))
+export const multiListRecords = (tableNames: string[]) => Promise.all(tableNames.map(listRecords)).catch(onError)

@@ -1,19 +1,37 @@
+export interface SimpleColumn {
+  type: 'integer' | 'varchar' | 'text', //subset of pg data types
+  label?: string,
+  preview?: boolean //Use this column to represent the whole record
+}
+
+export interface BooleanColumn {
+  type: 'boolean',
+  label?: string
+  optionLabels?: [string, string]
+}
+
 export interface ForeignKey {
   type: 'fk',
   label?: string,
   fk: {
     table: string,
     labelColumn: string
+    parent?: boolean
   }
 }
 
+export type ColumnSchema = SimpleColumn | BooleanColumn | ForeignKey
+
+export interface AggregateSchema {
+  table: string;
+  column: string;
+}
+
 export interface TableSchema {
-  title?: string,
+  plural: string,
   defaultView?: 'list'
-  columns: Record<string, {
-    type: 'integer' | 'varchar' | 'text' | 'boolean',
-    label?: string
-  } | ForeignKey>
+  columns: Record<string, ColumnSchema>,
+  aggreagates?: Record<string, AggregateSchema>,
 }
 
 interface AppDataSchema {
@@ -23,6 +41,7 @@ interface AppDataSchema {
 export const schema: AppDataSchema = {
   tables: {
     person: {
+      plural: 'persons',
       columns: {
         name: {
           type: 'varchar'
@@ -36,16 +55,21 @@ export const schema: AppDataSchema = {
       }
     },
     question: {
-      title: 'Questions',
+      plural: 'questions',
       columns: {
         text: {
-          type: 'varchar',
-          label: 'Question'
+          type: 'varchar'
+        }
+      },
+      aggreagates: {
+        arguments: {
+          table: 'argument',
+          column: 'question_id'
         }
       }
     },
     argument_type: {
-      title: 'Argument Types',
+      plural: 'argument types',
       columns: {
         label: {
           type: 'varchar'
@@ -53,19 +77,24 @@ export const schema: AppDataSchema = {
       }
     },
     argument: {
+      plural: 'arguments',
       columns: {
-        text: {
-          type: 'text'
-        },
-        pro: {
-          type: 'boolean'
-        },
         question_id: {
           type: 'fk',
           fk: {
             table: 'question',
-            labelColumn: 'text'
+            labelColumn: 'text',
+            parent: true
           }
+        },
+        pro: {
+          type: 'boolean',
+          label: 'side',
+          optionLabels: ['Con', 'Pro']
+        },
+        text: {
+          type: 'text',
+          preview: true
         },
         argument_type_id: {
           type: 'fk',

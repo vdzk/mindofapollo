@@ -1,6 +1,9 @@
 import { Component, For, Show } from "solid-js";
 import { TableSchema } from "~/schema";
 import postgres from "postgres";
+import { Title } from "@solidjs/meta";
+import { nbsp, titleColumnName } from "~/util";
+import { PageTitle } from "./PageTitle";
 
 export const ListTableView: Component<{
   loggedIn: boolean,
@@ -8,17 +11,17 @@ export const ListTableView: Component<{
   tableSchema: TableSchema,
   records?: postgres.RowList<postgres.Row[]>
 }> = (props) => {
-  const titleColumnName = () => Object.keys(props.tableSchema.columns)[0]
-
   return (
-    <>
+    <main>
+      <Title>{props.tableName}</Title>
+      <PageTitle>{props.tableSchema.plural}</PageTitle>
       <For each={props.records}>{(record) => (
         <div class="px-2">
           <a
             href={`/record/detail/${props.tableName}/${record.id}`}
             class="hover:underline"
           >
-            {record[titleColumnName()]}
+            {record[titleColumnName(props.tableName)] || nbsp}
           </a>
         </div>
       )}</For>
@@ -27,6 +30,6 @@ export const ListTableView: Component<{
           [ + Add ]
         </a>
       </Show>
-    </>
+    </main>
   );
 }
