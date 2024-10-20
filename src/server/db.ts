@@ -1,5 +1,6 @@
 "use server"
 
+import chalk from "chalk";
 import postgres from "postgres"
 
 export const sql = postgres({
@@ -10,9 +11,17 @@ export const sql = postgres({
   password: 'jZrZg7aLWkQu'
 });
 
-
-const onError = (error: Error) => {
-  console.error(error)
+const onError = (error: Error & {query?: any, parameters?: any}) => {
+  if (error.name === 'PostgresError') {
+    console.log()
+    console.log(error.query.trim().replaceAll(/\n\s+/g, '\n'))
+    if (error.parameters && error.parameters.length > 0) {
+      console.log(error.parameters)
+    }
+    console.log(chalk.red('ERROR'), error.message)
+  } else {
+    console.error(error)
+  }
   return undefined
 } 
 
@@ -32,6 +41,17 @@ export const updateRecord = (
 `.catch(onError)
 
 export const listRecords = (tableName: string) => sql`SELECT * FROM ${sql(tableName)} ORDER BY id`.catch(onError)
+
+export const listForeignRecords = (
+  tableName: string,
+  fkName: string,
+  fkId: string
+) => sql`
+  SELECT *
+  FROM ${sql(tableName)}
+  WHERE ${sql(fkName)} = ${fkId}
+  ORDER BY id
+`.catch(onError)
 
 export const getRecordById = async (tableName: string, id: string | number) => sql`SELECT * FROM ${sql(tableName)} WHERE id = ${id}`.then(rows => rows[0]).catch(onError)
 

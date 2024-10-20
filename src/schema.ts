@@ -31,7 +31,7 @@ export interface TableSchema {
   plural: string,
   defaultView?: 'list'
   columns: Record<string, ColumnSchema>,
-  aggreagates?: Record<string, AggregateSchema>,
+  aggregates?: Record<string, AggregateSchema>,
 }
 
 interface AppDataSchema {
@@ -61,7 +61,7 @@ export const schema: AppDataSchema = {
           type: 'varchar'
         }
       },
-      aggreagates: {
+      aggregates: {
         arguments: {
           table: 'argument',
           column: 'question_id'

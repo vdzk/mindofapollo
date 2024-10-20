@@ -9,6 +9,7 @@ import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "./ColumnLabel";
 import { nbsp, titleColumnName } from "~/util";
 import { PageTitle } from "./PageTitle";
+import { Aggregate } from "./Aggregate";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -40,24 +41,13 @@ export const DetailRecordView: Component<{
 }> = (props) => {
   const session = useContext(SessionContext)
   const columns = () => schema.tables[props.tableName].columns
+  const aggregatesNames = () => Object.keys(schema.tables[props.tableName].aggregates ?? {})
   const columnEntries = () => Object.entries(columns())
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(props.tableName, props.id)
 
-  const childrenTables = []
-  for (const tn in schema.tables) {
-    for (const cl in schema.tables[tn].columns) {
-      const column = schema.tables[tn].columns[cl]
-      if (
-        column.type === 'fk' &&
-        column.fk.table === props.tableName &&
-        column.fk.parent
-      ) {
-        childrenTables.push({tableName: tn, colName: cl})
-      }
-    }
-  }
+
 
   return (
     <main>
@@ -78,21 +68,21 @@ export const DetailRecordView: Component<{
                 <div>{(column as BooleanColumn).optionLabels?.[props.record?.[colName] ? 1 : 0]}</div> 
               </Match>
               <Match when>
-                <div>{props.record?.[colName]}</div> 
+                <div>{props.record?.[colName] || nbsp}</div> 
               </Match>
             </Switch>
           </div>
         )}
       </For>
+      <For each={aggregatesNames()} >
+        {aggregateName => <Aggregate
+          tableName={props.tableName}
+          id={props.id}
+          aggregateName={aggregateName}
+        />}
+      </For>
       <Show when={session!.loggedIn()}>
         <div>
-          <For each={childrenTables}>
-            {childTable => (
-              <a  class="mx-2 text-sky-800" href={
-                `/table/create/${childTable.tableName}?${childTable.colName}=${props.id}`
-              }>[ + Add {childTable.tableName} ]</a>
-            )}
-          </For>
           <a href={`/record/edit/${props.tableName}/${props.id}?`} class="mx-2 text-sky-800">
             [ Edit ]
           </a>
