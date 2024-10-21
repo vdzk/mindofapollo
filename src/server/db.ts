@@ -3,6 +3,7 @@
 import chalk from "chalk";
 import postgres from "postgres"
 
+// TODO: move config into .env file
 export const sql = postgres({
   host: "localhost",
   port: 5432,
@@ -11,7 +12,7 @@ export const sql = postgres({
   password: 'jZrZg7aLWkQu'
 });
 
-const onError = (error: Error & {query?: any, parameters?: any}) => {
+export const onError = (error: Error & {query?: any, parameters?: any}) => {
   if (error.name === 'PostgresError') {
     console.log()
     console.log(error.query.trim().replaceAll(/\n\s+/g, '\n'))
@@ -28,7 +29,9 @@ const onError = (error: Error & {query?: any, parameters?: any}) => {
 export const insertRecord = (
   tableName: string,
   record: Record<string, string | boolean>
-) => sql`INSERT INTO ${sql(tableName)} ${sql(record)}`.catch(onError)
+) => sql`
+  INSERT INTO ${sql(tableName)} ${sql(record)}
+`.catch(onError)
 
 export const updateRecord = (
   tableName: string,
@@ -40,7 +43,11 @@ export const updateRecord = (
   WHERE id = ${id}
 `.catch(onError)
 
-export const listRecords = (tableName: string) => sql`SELECT * FROM ${sql(tableName)} ORDER BY id`.catch(onError)
+export const listRecords = (tableName: string) => sql`
+  SELECT *
+  FROM ${sql(tableName)}
+  ORDER BY id
+`.catch(onError)
 
 export const listForeignRecords = (
   tableName: string,
@@ -53,8 +60,18 @@ export const listForeignRecords = (
   ORDER BY id
 `.catch(onError)
 
-export const getRecordById = async (tableName: string, id: string | number) => sql`SELECT * FROM ${sql(tableName)} WHERE id = ${id}`.then(rows => rows[0]).catch(onError)
+export const getRecordById = async (tableName: string, id: string | number) => sql`
+  SELECT *
+  FROM ${sql(tableName)}
+  WHERE id = ${id}
+`.then(rows => rows[0]).catch(onError)
 
-export const deleteById = async (tableName: string, id: string) => sql`DELETE FROM ${sql(tableName)} WHERE id = ${id}`.catch(onError)
+export const deleteById = async (tableName: string, id: string) => sql`
+  DELETE FROM ${sql(tableName)}
+  WHERE id = ${id}
+`.catch(onError)
 
 export const multiListRecords = (tableNames: string[]) => Promise.all(tableNames.map(listRecords)).catch(onError)
+
+
+

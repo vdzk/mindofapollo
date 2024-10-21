@@ -1,6 +1,6 @@
 import { Component, For, Show } from "solid-js";
 import { Form } from "~/components/Form";
-import { TableSchema } from "~/schema";
+import { TableSchema } from "~/schema.type";
 import postgres from "postgres";
 
 export const BulkTableView: Component<{

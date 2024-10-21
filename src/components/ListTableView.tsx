@@ -1,5 +1,5 @@
 import { Component, For, Show } from "solid-js";
-import { TableSchema } from "~/schema";
+import { TableSchema } from "~/schema.type";
 import postgres from "postgres";
 import { Title } from "@solidjs/meta";
 import { nbsp, titleColumnName } from "~/util";

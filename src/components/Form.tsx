@@ -38,9 +38,9 @@ export const Form: Component<{
 
 
   const onSubmit = async (event: SubmitEvent & { target: Element, currentTarget: HTMLFormElement; }) => {
-    event.preventDefault();
+    event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const record: Record<string, string | boolean> = {};
+    const record: Record<string, string | boolean> = {}
     for (const [colName, column] of Object.entries(columns())) {
       if (column.type === 'boolean') {
         if (column.optionLabels) {

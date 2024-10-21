@@ -1,10 +1,8 @@
-import { Title } from "@solidjs/meta";
 import { createAsync, useParams } from "@solidjs/router";
 import { createEffect, createSignal, Match, Switch, useContext } from "solid-js";
 import { schema } from "~/schema";
 import { BulkTableView } from "~/components/BulkTableView";
 import { ListTableView } from "~/components/ListTableView";
-import { Form } from "~/components/Form";
 import { SessionContext } from "~/SessionContext";
 import { getRecords } from "~/server/api";
 import { CreateRecordView } from "~/components/CreateRecordView";

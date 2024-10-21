@@ -1,5 +1,6 @@
 import { Component, Match, Show, Switch } from "solid-js";
-import { BooleanColumn, ForeignKey, schema } from "~/schema";
+import { schema } from "~/schema";
+import { BooleanColumn, ForeignKey } from "~/schema.type";
 import { FkInput } from "./FkInput";
 import { humanCase } from "~/util";
 import { ColumnLabel } from "./ColumnLabel";

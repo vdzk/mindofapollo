@@ -2,7 +2,8 @@ import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction } from "@solidjs/router";
 import postgres from "postgres";
 import { Component, For, Match, Show, Switch, useContext } from "solid-js";
-import { BooleanColumn, ForeignKey, schema } from "~/schema";
+import { schema } from "~/schema";
+import { BooleanColumn, ForeignKey } from "~/schema.type";
 import { getRecords } from "~/server/api";
 import { deleteById, getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
@@ -83,7 +84,7 @@ export const DetailRecordView: Component<{
       </For>
       <Show when={session!.loggedIn()}>
         <div>
-          <a href={`/record/edit/${props.tableName}/${props.id}?`} class="mx-2 text-sky-800">
+          <a href={`/record/edit/${props.tableName}/${props.id}`} class="mx-2 text-sky-800">
             [ Edit ]
           </a>
           <button class="mx-2 text-sky-800" onClick={onDelete}>

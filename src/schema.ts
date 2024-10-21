@@ -1,42 +1,4 @@
-export interface SimpleColumn {
-  type: 'integer' | 'varchar' | 'text', //subset of pg data types
-  label?: string,
-  preview?: boolean //Use this column to represent the whole record
-}
-
-export interface BooleanColumn {
-  type: 'boolean',
-  label?: string
-  optionLabels?: [string, string]
-}
-
-export interface ForeignKey {
-  type: 'fk',
-  label?: string,
-  fk: {
-    table: string,
-    labelColumn: string
-    parent?: boolean
-  }
-}
-
-export type ColumnSchema = SimpleColumn | BooleanColumn | ForeignKey
-
-export interface AggregateSchema {
-  table: string;
-  column: string;
-}
-
-export interface TableSchema {
-  plural: string,
-  defaultView?: 'list'
-  columns: Record<string, ColumnSchema>,
-  aggregates?: Record<string, AggregateSchema>,
-}
-
-interface AppDataSchema {
-  tables: Record<string, TableSchema>
-}
+import { AppDataSchema } from "./schema.type"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -54,6 +16,20 @@ export const schema: AppDataSchema = {
         },
       }
     },
+    tag: {
+      plural: 'tags',
+      columns: {
+        name: {
+          type: 'varchar'
+        }
+      },
+      aggregates: {
+        questions: {
+          type: 'n-n',
+          table: 'question'
+        }
+      }
+    },
     question: {
       plural: 'questions',
       columns: {
@@ -63,8 +39,14 @@ export const schema: AppDataSchema = {
       },
       aggregates: {
         arguments: {
+          type: '1-n',
           table: 'argument',
           column: 'question_id'
+        },
+        tags: {
+          type: 'n-n',
+          table: 'tag',
+          first: true
         }
       }
     },

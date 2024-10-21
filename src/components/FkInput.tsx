@@ -1,6 +1,6 @@
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { Component, For, Show } from "solid-js";
-import { ForeignKey } from "~/schema";
+import { ForeignKey } from "~/schema.type";
 import { getRecords } from "~/server/api";
 
 
