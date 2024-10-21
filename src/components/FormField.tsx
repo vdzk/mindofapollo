@@ -4,6 +4,7 @@ import { BooleanColumn, ForeignKey } from "~/schema.type";
 import { FkInput } from "./FkInput";
 import { humanCase } from "~/util";
 import { ColumnLabel } from "./ColumnLabel";
+import { useSearchParams } from "@solidjs/router";
 
 const inputTypes = {
   varchar: 'text',
@@ -19,6 +20,7 @@ export const FormField: Component<{
   value?: any
 }> = (props) => {
   const column = schema.tables[props.tableName].columns[props.colName]
+  const [searchParams] = useSearchParams()
 
   return (
     <label>
@@ -32,10 +34,16 @@ export const FormField: Component<{
             <Show when={props.value === undefined}>
               <option></option>
             </Show>
-            <option value='true' selected={props.value === true}>
+            <option
+              value='true'
+              selected={props.value === true || searchParams[props.colName] === 'true'}
+            >
               {(column as BooleanColumn).optionLabels?.[1]}
             </option>
-            <option value='false' selected={props.value === false}>
+            <option
+              value='false'
+              selected={props.value === false || searchParams[props.colName] === 'false'}
+            >
               {(column as BooleanColumn).optionLabels?.[0]}
             </option>
           </select>

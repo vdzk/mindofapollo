@@ -1,4 +1,4 @@
-import { action, redirect, useAction, useParams } from "@solidjs/router";
+import { action, redirect, useAction, useParams, useSearchParams } from "@solidjs/router";
 import { Component, For} from "solid-js";
 import { insertRecord, updateRecord } from "~/server/db";
 import { schema } from "~/schema";
@@ -11,6 +11,7 @@ export const Form: Component<{
   id?: string,
   record?: postgres.Row;
 }> = (props) => {
+  const [searchParams] = useSearchParams()
 
   const save = action(async (
     tableName: string,
@@ -27,7 +28,11 @@ export const Form: Component<{
       )
     } else {
       await insertRecord(tableName, record)
-      throw redirect(`/list-records?tableName=${tableName}`)
+      if (searchParams.sourceTable && searchParams.sourceId) {
+        throw redirect(`/show-record?tableName=${searchParams.sourceTable}&id=${searchParams.sourceId}`)
+      } else {
+        throw redirect(`/list-records?tableName=${ tableName}`)
+      }
     }
   })
 

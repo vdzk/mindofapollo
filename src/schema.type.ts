@@ -26,6 +26,7 @@ export interface OneToNSchema {
   type: '1-n'
   table: string
   column: string
+  splitByColumn?: string
 }
 
 export interface NToNSchema {

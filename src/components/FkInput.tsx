@@ -9,7 +9,7 @@ export const FkInput: Component<{
   column: ForeignKey,
   value?: any
 }> = (props) => {
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams()
   
   const records = createAsync(() => getRecords(props.column.fk.table))
 

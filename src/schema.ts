@@ -41,7 +41,8 @@ export const schema: AppDataSchema = {
         arguments: {
           type: '1-n',
           table: 'argument',
-          column: 'question_id'
+          column: 'question_id',
+          splitByColumn: 'pro'
         },
         tags: {
           type: 'n-n',
