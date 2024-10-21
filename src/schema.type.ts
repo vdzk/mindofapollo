@@ -16,7 +16,6 @@ export interface ForeignKey {
   fk: {
     table: string
     labelColumn: string
-    parent?: boolean
   }
 }
 
@@ -27,6 +26,7 @@ export interface OneToNSchema {
   table: string
   column: string
   splitByColumn?: string
+  filterSplitBy?: string // both parent and split tables should have this column and only overlapping entries will be shown
 }
 
 export interface NToNSchema {

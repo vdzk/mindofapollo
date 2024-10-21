@@ -49,6 +49,20 @@ export const listRecords = (tableName: string) => sql`
   ORDER BY id
 `.catch(onError)
 
+export const listOverlapRecords = (
+  tableName: string,
+  sharedColumn: string,
+  filterTable: string,
+  filterId: string
+) => sql`
+  SELECT ${sql(tableName)}.*
+  FROM ${sql(tableName)}
+  JOIN ${sql(filterTable)}
+    ON ${sql(tableName)}.${sql(sharedColumn)} = ${sql(filterTable)}.${sql(sharedColumn)}
+  WHERE ${sql(filterTable)}.id = ${filterId}
+  ORDER BY ${sql(tableName)}.id
+`.catch(onError)
+
 export const listForeignRecords = (
   tableName: string,
   fkName: string,

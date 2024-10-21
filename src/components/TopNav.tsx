@@ -12,6 +12,7 @@ export const TopNav: Component = () => {
   const location = useLocation();
   const showTopNav = () => location.pathname !== '/login'
   const tableNames = Object.entries(schema.tables)
+    .sort(([a], [b]) => a.localeCompare(b))
 
   const onLogout = async () => {
     await logout()

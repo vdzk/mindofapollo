@@ -57,6 +57,34 @@ export const schema: AppDataSchema = {
         label: {
           type: 'varchar'
         }
+      },
+      aggregates: {
+        critical_questions: {
+          type: '1-n',
+          table: 'critical_question',
+          column: 'argument_type_id'
+        },
+        argumens: {
+          type: '1-n',
+          table: 'argument',
+          column: 'argument_type_id'
+        }
+      }
+    },
+    critical_question: {
+      plural: 'critical questions',
+      columns: {
+        argument_type_id: {
+          type: 'fk',
+          fk: {
+            table: 'argument_type',
+            labelColumn: 'label'
+          }
+        },
+        text: {
+          type: 'varchar',
+          preview: true
+        }
       }
     },
     argument: {
@@ -66,8 +94,7 @@ export const schema: AppDataSchema = {
           type: 'fk',
           fk: {
             table: 'question',
-            labelColumn: 'text',
-            parent: true
+            labelColumn: 'text'
           }
         },
         pro: {
@@ -85,6 +112,40 @@ export const schema: AppDataSchema = {
             table: 'argument_type',
             labelColumn: 'label'
           }
+        }
+      },
+      aggregates: {
+        critical_statements: {
+          type: '1-n',
+          table: 'critical_statement',
+          column: 'argument_id',
+          splitByColumn: 'critical_question_id',
+          filterSplitBy: 'argument_type_id'
+        }
+      }
+    },
+    critical_statement: {
+      plural: 'critical statements',
+      columns: {
+        // TODO: Question should also be probably displayed
+        argument_id: {
+          type: 'fk',
+          fk: {
+            table: 'argument',
+            labelColumn: 'text'
+          }
+        },
+        critical_question_id: {
+          type: 'fk',
+          fk: {
+            table: 'critical_question',
+            labelColumn: 'text'
+            // TODO: argument_type of the argument should match argument_type of the question
+          }
+        },
+        text: {
+          type: 'text',
+          preview: true
         }
       }
     }

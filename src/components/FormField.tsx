@@ -23,7 +23,7 @@ export const FormField: Component<{
   const [searchParams] = useSearchParams()
 
   return (
-    <label>
+    <label class="block pb-2">
       <ColumnLabel colName={props.colName} column={column} />
       <Switch>
         <Match when={column.type === 'text'}>

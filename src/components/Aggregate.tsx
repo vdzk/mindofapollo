@@ -1,11 +1,18 @@
-import { AccessorWithLatest, createAsync } from "@solidjs/router";
-import postgres from "postgres";
-import { Component, For, Match, Switch } from "solid-js";
+import { createAsync } from "@solidjs/router";
+import { Component, For, JSX } from "solid-js";
 import { schema } from "~/schema";
-import { AggregateSchema, BooleanColumn, NToNSchema, OneToNSchema } from "~/schema.type";
-import { listForeignRecords } from "~/server/db";
+import { AggregateSchema } from "~/schema.type";
+import { listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
 import { listCrossRecords } from "~/server/cross.db";
-import { firstCap, humanCase, nbsp, titleColumnName } from "~/util";
+import { nbsp, titleColumnName } from "~/util";
+import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
+import postgres from "postgres";
+
+export interface AggregateSection {
+  title: string;
+  records: () => postgres.Row[] | undefined;
+  button: JSX.Element;
+}
 
 export const Aggregate: Component<{
   tableName: string;
@@ -21,61 +28,42 @@ export const Aggregate: Component<{
 
   const aggregateTable = schema.tables[aggregate.table]
 
-  const sections = () => {
-    if (aggregate.type === '1-n') {
-      if (aggregate.splitByColumn) {
-        const splitColumn = aggregateTable.columns[aggregate.splitByColumn] as BooleanColumn
-        // Assumes boolean column with optionLabels
-        const result = []
-        for (const value of [true, false]) {
-          const label = splitColumn.optionLabels?.[value ? 1 : 0]
-          result.push({
-            title: label + ' ' + aggregateTable.plural,
-            records: () => records()
-              ?.filter(r => r[aggregate.splitByColumn as string] === value),
-            button: <a
-              class="mx-2 text-sky-800"
-              href={`/create-record`
-                + `?tableName=${aggregate.table}`
-                + `&sourceTable=${props.tableName}`
-                + `&sourceId=${props.id}`
-                + `&${(aggregate as OneToNSchema).column}=${props.id}`
-                + `&${aggregate.splitByColumn}=${value + ''}`
-              }
-            >[ + Add {label?.toLocaleLowerCase()} {humanCase(aggregate.table)} ]</a>
-          })
-        }
-        return result
-      } else {
-        return [{
-          title: firstCap(aggregateTable.plural),
-          records,
-          button: <a
-            class="mx-2 text-sky-800"
-            href={`/create-record`
-              + `?tableName=${aggregate.table}`
-              + `&sourceTable=${props.tableName}`
-              + `&sourceId=${props.id}`
-              + `&${(aggregate as OneToNSchema).column}=${props.id}`
-            }
-          >[ + Add {humanCase(aggregate.table)} ]</a>
-        }]
+  const aggregatorProps = {
+    tableName: props.tableName,
+    id: props.id,
+    aggregateTable,
+    aggregate,
+    records
+  }
+
+  let sections: () => AggregateSection[] = () => []
+  if (aggregate.type === '1-n') {
+    if (aggregate.splitByColumn) {
+      const splitColumn = aggregateTable.columns[aggregate.splitByColumn]
+      if (splitColumn.type === 'boolean') {
+        sections = () => splitBoolean(aggregatorProps)
+      } else if (splitColumn.type === 'fk') {
+        const splitRecords = createAsync(() => {
+          if (aggregate.filterSplitBy) {
+            return listOverlapRecords(
+              splitColumn.fk.table,
+              aggregate.filterSplitBy,
+              props.tableName,
+              props.id
+            )
+          } else {
+            return listRecords(splitColumn.fk.table)
+          }
+        })
+        sections = () => splitFk({...aggregatorProps, splitRecords})
       }
     } else {
-      return [{
-        title: firstCap(aggregateTable.plural),
-        records,
-        button: <a
-          class="mx-2 text-sky-800"
-          href={`/edit-cross-ref`
-            + `?a=${props.tableName}`
-            + `&b=${aggregate.table}`
-            + `&id=${props.id}`
-            + `&first=${(aggregate as NToNSchema).first || ''}`
-          }>[ Edit {humanCase(aggregateTable.plural)} ]</a>
-      }]
+      sections = () => simpleList(aggregatorProps)
     }
+  } else {
+    sections = () => crossList(aggregatorProps)
   }
+
   return (
     <For each={sections()}>
       {section => (

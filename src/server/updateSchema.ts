@@ -38,9 +38,10 @@ const createNewTable = async (newTableName: string) => {
 }
 
 // Create table
-for (const tableName in schema.tables) {
-  await createNewTable(tableName)
-}
+// for (const tableName in schema.tables) {
+//   await createNewTable(tableName)
+// }
+await createNewTable('critical_statement')
 
 // Create cross tables
 for (const [a, b] of Object.values(crossTables)) {
@@ -56,3 +57,5 @@ for (const [a, b] of Object.values(crossTables)) {
     CREATE INDEX ${a}_x_${b}_${b}_id_idx ON ${a}_x_${b} (${b}_id);
   `.simple()
 }
+
+console.log('Done.')
