@@ -21,7 +21,7 @@ export const TopNav: Component = () => {
 
   const onSelectTable = (selectEl: HTMLSelectElement) => {
     if (selectEl.value) {
-      navigate(`/table/list/${selectEl.value}`)
+      navigate(`/list-records?tableName=${selectEl.value}`)
       selectEl.value = ''
     }
   }

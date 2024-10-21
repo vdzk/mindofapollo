@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta";
-import { action, createAsync, redirect, useAction } from "@solidjs/router";
+import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
 import postgres from "postgres";
 import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema";
@@ -7,19 +7,27 @@ import { BooleanColumn, ForeignKey } from "~/schema.type";
 import { getRecords } from "~/server/api";
 import { deleteById, getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
-import { ColumnLabel } from "./ColumnLabel";
-import { nbsp, titleColumnName } from "~/util";
-import { PageTitle } from "./PageTitle";
-import { Aggregate } from "./Aggregate";
+import { ColumnLabel } from "../components/ColumnLabel";
+import { humanCase, nbsp, titleColumnName } from "~/util";
+import { PageTitle } from "../components/PageTitle";
+import { Aggregate } from "../components/Aggregate";
 
 const FkValue: Component<{
   column: ForeignKey,
   id: number
 }> = (props) => {
-  const record = createAsync(() => getRecordById(props.column.fk.table, props.id))
+  const tableName = props.column.fk.table
+  const record = createAsync(() => getRecordById(tableName, props.id))
 
   return (
-    <div>{record?.()?.[props.column.fk.labelColumn] ?? nbsp}</div>
+    <div>
+      <a
+        class="hover:underline"
+        href={`/show-record?tableName=${tableName}&id=${props.id}`}
+      >
+        {record?.()?.[props.column.fk.labelColumn] ?? nbsp}
+      </a>
+    </div>
   )
 }
 
@@ -29,31 +37,32 @@ const _delete = action(async (
 ) => {
   await deleteById(tableName, id)
   throw redirect(
-    `/table/list/${tableName}`,
+    `/list-records?tableName=${tableName}`,
     // TODO: this doesn't seem to do anything
     { revalidate: getRecords.keyFor(tableName) }
   );
 })
 
-export const DetailRecordView: Component<{
-  id: string;
-  tableName: string;
-  record?: postgres.Row;
-}> = (props) => {
+interface ShowRecord {
+  tableName: string
+  id: string
+}
+
+export default function ShowRecord() {
+  const [sp] = useSearchParams() as unknown as [ShowRecord]
   const session = useContext(SessionContext)
-  const columns = () => schema.tables[props.tableName].columns
-  const aggregatesNames = () => Object.keys(schema.tables[props.tableName].aggregates ?? {})
+  const columns = () => schema.tables[sp.tableName].columns
+  const aggregatesNames = () => Object.keys(schema.tables[sp.tableName].aggregates ?? {})
   const columnEntries = () => Object.entries(columns())
 
   const deleteAction = useAction(_delete);
-  const onDelete = () => deleteAction(props.tableName, props.id)
-
-
+  const onDelete = () => deleteAction(sp.tableName, sp.id)
+  const record = createAsync(() => getRecordById(sp.tableName, sp.id))
 
   return (
     <main>
-      <Title>{props.record?.[titleColumnName(props.tableName)]}</Title>
-      <PageTitle>{props.tableName}</PageTitle>
+      <Title>{record()?.[titleColumnName(sp.tableName)]}</Title>
+      <PageTitle>{humanCase(sp.tableName)}</PageTitle>
       <For each={columnEntries()}>
         {([colName, column]) => (
           <div class="px-2 pb-2">
@@ -62,14 +71,14 @@ export const DetailRecordView: Component<{
               <Match when={column.type === 'fk'}>
                 <FkValue
                   column={column as ForeignKey}
-                  id={props.record?.[colName]}
+                  id={record()?.[colName]}
                 />
               </Match>
               <Match when={column.type === 'boolean' && column.optionLabels}>
-                <div>{(column as BooleanColumn).optionLabels?.[props.record?.[colName] ? 1 : 0]}</div> 
+                <div>{(column as BooleanColumn).optionLabels?.[record()?.[colName] ? 1 : 0]}</div> 
               </Match>
               <Match when>
-                <div>{props.record?.[colName] || nbsp}</div> 
+                <div>{record()?.[colName] || nbsp}</div> 
               </Match>
             </Switch>
           </div>
@@ -77,14 +86,14 @@ export const DetailRecordView: Component<{
       </For>
       <For each={aggregatesNames()} >
         {aggregateName => <Aggregate
-          tableName={props.tableName}
-          id={props.id}
+          tableName={sp.tableName}
+          id={sp.id}
           aggregateName={aggregateName}
         />}
       </For>
       <Show when={session!.loggedIn()}>
         <div>
-          <a href={`/record/edit/${props.tableName}/${props.id}`} class="mx-2 text-sky-800">
+          <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
             [ Edit ]
           </a>
           <button class="mx-2 text-sky-800" onClick={onDelete}>

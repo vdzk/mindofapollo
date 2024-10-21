@@ -28,7 +28,7 @@ export const Aggregate: Component<{
       <For each={records()}>{(record) => (
         <div class="px-2">
           <a
-            href={`/record/detail/${aggregate.table}/${record.id}`}
+            href={`/show-record?tableName=${aggregate.table}&id=${record.id}`}
             class="hover:underline"
           >
             {record[titleColumnName(aggregate.table)] || nbsp}
@@ -38,12 +38,12 @@ export const Aggregate: Component<{
       <Switch>
         <Match when={aggregate.type === '1-n'}>
             <a class="mx-2 text-sky-800" href={
-            `/table/create/${aggregate.table}?${(aggregate as OneToNSchema).column}=${props.id}`
+            `/create-record?tableName=${aggregate.table}?${(aggregate as OneToNSchema).column}=${props.id}`
           }>[ + Add {humanCase(aggregate.table)} ]</a>
         </Match>
         <Match when={aggregate.type === 'n-n'}>
             <a class="mx-2 text-sky-800" href={
-            `/cross?a=${props.tableName}&b=${aggregate.table}&id=${props.id}&first=${(aggregate as NToNSchema).first || ''}`
+            `/edit-cross-ref?a=${props.tableName}&b=${aggregate.table}&id=${props.id}&first=${(aggregate as NToNSchema).first || ''}`
           }>[ Edit {humanCase(aggregateTable.plural)} ]</a>
         </Match>
       </Switch>

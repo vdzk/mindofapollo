@@ -1,40 +1,50 @@
 import { Title } from "@solidjs/meta";
-import { createAsync, useSearchParams } from "@solidjs/router";
+import { createAsync, useAction, useSearchParams } from "@solidjs/router";
 import { For } from "solid-js";
 import { PageTitle } from "~/components/PageTitle";
 import { schema } from "~/schema";
-import { getRecords } from "~/server/api";
+import { deleteCrossRecordAction, getRecords, insertCrossRecordAction, listCrossRecordsCache } from "~/server/api";
 import { getRecordById } from "~/server/db";
 import { deleteCrossRecord, insertCrossRecord, listCrossRecords } from "~/server/cross.db";
 import { firstCap, titleColumnName } from "~/util";
 
-interface CrossParams {
+interface EditCrossRefParams {
   a: string
   b: string
   id: string
-  first: 'true' | false
+  first?: 'true'
 }
 
-export default function Cross() {
-  const [sp] = useSearchParams() as unknown as [CrossParams, any]
+export default function EditCrossRef() {
+  const [sp] = useSearchParams() as unknown as [EditCrossRefParams]
   const first = sp.first === 'true'
 
   const aRecord = createAsync(() => getRecordById(sp.a, sp.id))
-  const linkedRecords = createAsync(() => listCrossRecords( sp.b, sp.a, sp.id, first ))
+  const linkedRecords = createAsync(() => listCrossRecordsCache( sp.b, sp.a, sp.id, first ))
   const allRrcords = createAsync(() => getRecords(sp.b))
 
 
   const linkedRecordIds = () => linkedRecords()?.map(lr => lr.id)
   const unlinkedRecords = () => allRrcords()?.filter(r => !linkedRecordIds()?.includes(r.id))
 
+  const insertCrossRecordRun = useAction(insertCrossRecordAction)
+
   const onAdd = (event: SubmitEvent & { currentTarget: HTMLFormElement }) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    insertCrossRecord(sp.a, sp.b, first, sp.id, formData.get('id') as string)
+    insertCrossRecordRun({
+      a: sp.a,
+      b: sp.b,
+      first,
+      a_id: sp.id,
+      b_id: formData.get('id') as string
+    })
   }
 
+  const deleteCrossRecordRun = useAction(deleteCrossRecordAction)
+
   const onDelete = (id: string) => {
-    deleteCrossRecord(sp.a, sp.b, first, sp.id, id)
+    deleteCrossRecordRun({a: sp.a, b: sp.b, first, a_id: sp.id, b_id: id})
   }
 
   const bColName = titleColumnName(sp.b)
@@ -53,7 +63,12 @@ export default function Cross() {
         <For each={linkedRecords()}>
           {lr => (
             <div>
-              {lr[bColName]}
+              <a 
+                href={`/show-record?tableName=${sp.b}&id=${lr.id}`}
+                class="hover:underline"
+              >
+                {lr[bColName]}
+              </a>
               &nbsp;
               <button
                 class="text-sky-800"

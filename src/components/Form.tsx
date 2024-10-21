@@ -18,19 +18,19 @@ export const Form: Component<{
   ) => {
     if (props.id) {
       await updateRecord(tableName, props.id, record)
+      throw redirect(
+        `/show-record?tableName=${tableName}&id=${props.id}`,
+        { revalidate: [
+          getRecords.keyFor(tableName), // TODO: this doesn't seem to be doing anything
+          'getRecords' + tableName + props.id
+        ] }
+      )
     } else {
       await insertRecord(tableName, record)
+      throw redirect(`/list-records?tableName=${tableName}`)
     }
-    throw redirect(
-      `/record/detail/${tableName}/${props.id}`,
-      { revalidate: [
-        getRecords.keyFor(tableName), // TODO: this doesn't seem to be doing anything
-        'getRecords' + tableName + props.id
-      ] }
-    );
   })
 
-  const params = useParams()
   const saveAction = useAction(save);
 
   const columns = () => schema.tables[props.tableName].columns
@@ -52,7 +52,7 @@ export const Form: Component<{
         record[colName] = formData.get(colName) + ''
       }
     }
-    saveAction(params.name, record)
+    saveAction(props.tableName, record)
   }
 
   return (
