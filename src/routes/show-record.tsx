@@ -7,7 +7,7 @@ import { getRecords } from "~/server/api";
 import { deleteById, getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "../components/ColumnLabel";
-import { nbsp, titleColumnName } from "~/util";
+import { dbColumnName, nbsp, titleColumnName } from "~/util";
 import { RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
 
@@ -52,13 +52,34 @@ export default function ShowRecord() {
   const session = useContext(SessionContext)
   const columns = () => schema.tables[sp.tableName].columns
   const aggregatesNames = () => Object.keys(schema.tables[sp.tableName].aggregates ?? {})
+  const titleColName = () => titleColumnName(sp.tableName)
+  const titleDbColName = () => dbColumnName(sp.tableName, titleColName())
+  const titleColumn = () => columns()[titleColName()]
   const columnEntries = () => Object.entries(columns())
-    .filter(([colName]) => colName !== titleColumnName(sp.tableName))
+    .filter(([colName]) => colName !== titleColName())
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
   const record = createAsync(() => getRecordById(sp.tableName, sp.id))
-  const titleText = () => record()?.[titleColumnName(sp.tableName)]
+
+  const fKrecord = createAsync(() => {
+    if (titleColumn().type === 'fk') {
+      return getRecordById(
+        (titleColumn() as ForeignKey).fk.table,
+        record()?.[titleDbColName()]
+      )
+    } else {
+      return Promise.resolve(undefined)
+    }
+  })
+
+  const titleText = () => {
+    if (titleColumn().type === 'fk') {
+      return fKrecord()?.[(titleColumn() as ForeignKey).fk.labelColumn]
+    } else {
+      return record()?.[titleColName()]
+    }
+  }
 
   return (
     <main>

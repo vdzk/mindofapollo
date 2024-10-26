@@ -2,6 +2,9 @@
 
 import chalk from "chalk";
 import postgres from "postgres"
+import { schema } from "~/schema";
+import { ForeignKey } from "~/schema.type";
+import { dbColumnName } from "~/util";
 
 // TODO: move config into .env file
 export const sql = postgres({
@@ -9,7 +12,8 @@ export const sql = postgres({
   port: 5432,
   database: "apollo",
   username: "postgres",
-  password: 'jZrZg7aLWkQu'
+  password: 'jZrZg7aLWkQu',
+  debug: true
 });
 
 export const onError = (error: Error & {query?: any, parameters?: any}) => {
@@ -73,6 +77,25 @@ export const listForeignRecords = (
   WHERE ${sql(fkName)} = ${fkId}
   ORDER BY id
 `.catch(onError)
+
+export const listForeignExtRecords = (
+  tableName: string,
+  fkName: string,
+  fkId: string,
+  extColName: string
+) => {
+  const extColumn = schema.tables[tableName].columns[extColName] as ForeignKey
+  const extDbColName = dbColumnName(tableName, extColName)
+
+  return sql`
+    SELECT tMain.*, tExt.${sql(extColumn.fk.labelColumn)}
+    FROM ${sql(tableName)} tMain
+    JOIN ${sql(extColumn.fk.table)} tExt
+      ON tMain.${sql(extDbColName)} = tExt.id
+    WHERE tMain.${sql(fkName)} = ${fkId}
+    ORDER BY id
+  `.catch(onError)
+}
 
 export const getRecordById = async (tableName: string, id: string | number) => sql`
   SELECT *

@@ -2,7 +2,6 @@ import { Component, Match, Show, Switch } from "solid-js";
 import { schema } from "~/schema";
 import { BooleanColumn, ForeignKey } from "~/schema.type";
 import { FkInput } from "./FkInput";
-import { humanCase } from "~/util";
 import { ColumnLabel } from "./ColumnLabel";
 import { useSearchParams } from "@solidjs/router";
 
@@ -11,6 +10,7 @@ const inputTypes = {
   text: 'hidden',
   boolean: 'checkbox',
   integer: 'text',
+  proportion: 'text',
   fk: 'hidden'
 }
 
@@ -60,7 +60,7 @@ export const FormField: Component<{
             name={props.colName}
             value={props.value ?? ''}
             type={inputTypes[column.type]}
-            class="border rounded pl-1"
+            class="border rounded pl-1 w-full"
             autocomplete="off"
           />
         </Match>

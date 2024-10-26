@@ -45,6 +45,12 @@ export const schema: AppDataSchema = {
       columns: {
         text: {
           type: 'varchar'
+        },
+        answer: {
+          type: 'varchar'
+        },
+        confidence: {
+          type: 'proportion'
         }
       },
       aggregates: {
@@ -141,7 +147,14 @@ export const schema: AppDataSchema = {
       plural: 'critical statements',
       icon: BsExclamationDiamondFill,
       columns: {
-        // TODO: Question should also be probably displayed
+        question_id: {
+          type: 'fk',
+          readOnly: true,
+          fk: {
+            table: 'question',
+            labelColumn: 'text'
+          }
+        },
         argument_id: {
           type: 'fk',
           fk: {
@@ -157,10 +170,16 @@ export const schema: AppDataSchema = {
             // TODO: argument_type of the argument should match argument_type of the question
           }
         },
-        text: {
-          type: 'text',
-          preview: true
-        }
+        question_answer_id: {
+          name: 'question_id',
+          type: 'fk',
+          label: 'statement',
+          preview: true,
+          fk: {
+            table: 'question',
+            labelColumn: 'answer'
+          }
+        },
       }
     }
   }

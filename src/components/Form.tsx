@@ -47,7 +47,9 @@ export const Form: Component<{
   const saveAction = useAction(save);
 
   const columns = () => schema.tables[props.tableName].columns
-  const colNames = () => Object.keys(columns())
+  const colNames = () => Object.entries(columns())
+    .filter(([, column]) => !(column.type === 'fk') || !column.readOnly)
+    .map(([key]) => key)
 
 
   const onSubmit = async (event: SubmitEvent & { target: Element, currentTarget: HTMLFormElement; }) => {
@@ -61,6 +63,8 @@ export const Form: Component<{
         } else {
           record[colName] = formData.has(colName)
         }
+      } else if (column.type === 'fk' && column.name) {
+        record[column.name] = formData.get(colName) + ''
       } else {
         record[colName] = formData.get(colName) + ''
       }
@@ -79,7 +83,7 @@ export const Form: Component<{
       </For>
       <div class="pt-2">
         <button type="submit" class="text-sky-800">
-          [ {props.id ? 'Save' : '+ Add'} ]
+          [ Save ]
         </button>
         <a
           class="text-sky-800 mx-2"

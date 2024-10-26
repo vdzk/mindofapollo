@@ -3,6 +3,10 @@ import { schema } from "~/schema"
 
 const crossTables: Record<string, [string, string]> = {}
 
+const customDataTypes: Record<string, string> = {
+  proportion: 'numeric(5, 5)'
+}
+
 const createNewTable = async (newTableName: string) => {
   const colDefs = ['id SERIAL PRIMARY KEY']
 
@@ -15,7 +19,10 @@ const createNewTable = async (newTableName: string) => {
       colDefs.push(colName + ' integer REFERENCES ' + column.fk.table + ' NOT NULL')
       indexCols.push(colName) 
     } else {
-      colDefs.push(colName + ' ' + column.type + ' NOT NULL')
+      const pgType = (column.type in customDataTypes)
+        ? customDataTypes[column.type]
+        : column.type
+      colDefs.push(colName + ' ' + pgType + ' NOT NULL')
     } 
   }
   

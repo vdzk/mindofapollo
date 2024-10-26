@@ -1,7 +1,10 @@
 import { IconTypes } from "solid-icons"
 
+type PgDataType = 'integer' | 'varchar' | 'text'
+type CustomDataType = 'proportion'
+
 export interface SimpleColumn {
-  type: 'integer' | 'varchar' | 'text' //subset of pg data types
+  type: PgDataType | CustomDataType
   label?: string
   preview?: boolean //Use this column to represent the whole record
 }
@@ -13,10 +16,13 @@ export interface BooleanColumn {
 }
 
 export interface ForeignKey {
+  name?: string // The real name of the column in DB. Useful for displaying multiple fields of the same foreign record.
+  readOnly?: boolean // Do not show this field on edit forms. Another field should cover this foreign key.
   type: 'fk'
   label?: string
+  preview?: boolean //Use this column to represent the whole record
   fk: {
-    table: string
+    table: string 
     labelColumn: string
   }
 }
