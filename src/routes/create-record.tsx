@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { Form } from "../components/Form";
-import { PageTitle } from "../components/PageTitle";
+import { PageTitle, PageTitleIcon } from "../components/PageTitle";
 import { humanCase } from "~/util";
 import { useSearchParams } from "@solidjs/router";
 import { Dynamic } from "solid-js/web";
@@ -16,11 +16,7 @@ export default function CreateRecord() {
     <main>
       <Title>New {humanCase(sp.tableName)}</Title>
       <PageTitle>
-        <Dynamic
-          component={schema.tables[sp.tableName].icon}
-          size={22}
-          class="inline mr-1 mb-1"
-        />
+        <PageTitleIcon tableName={sp.tableName} />
         New {humanCase(sp.tableName)}
       </PageTitle>
       <Form tableName={sp.tableName} />

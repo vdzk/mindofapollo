@@ -1,7 +1,7 @@
 import { For, Show, useContext } from "solid-js";
 import { Title } from "@solidjs/meta";
 import { firstCap, humanCase, nbsp, titleColumnName } from "~/util";
-import { PageTitle } from "../components/PageTitle";
+import { PageTitle, PageTitleIcon } from "../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { getRecords } from "~/server/api";
@@ -23,15 +23,11 @@ export default function ListRecords() {
     <main>
       <Title>{title()}</Title>
       <PageTitle>
-        <Dynamic
-          component={schema.tables[sp.tableName].icon}
-          size={22}
-          class="inline mr-1 mb-1"
-        />
-        <ImList size={20} class="inline mr-1.5 mb-1"/>
+        <PageTitleIcon tableName={sp.tableName} />
+        <PageTitleIcon component={ImList} />
         {title()}
       </PageTitle>
-      <section>
+      <section class="pb-2">
         <For each={records()}>{(record) => (
           <div class="px-2">
             <a

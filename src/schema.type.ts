@@ -41,7 +41,7 @@ export type AggregateSchema = OneToNSchema | NToNSchema
 
 export interface TableSchema {
   plural: string,
-  icon?: IconTypes,
+  icon: IconTypes,
   defaultView?: 'list'
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>
