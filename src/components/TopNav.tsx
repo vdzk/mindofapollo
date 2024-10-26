@@ -3,7 +3,7 @@ import { Component, For, Show, useContext } from "solid-js";
 import { schema } from "~/schema";
 import { logout } from "~/server/session";
 import { SessionContext } from "~/SessionContext";
-import { firstCap, humanCase } from "~/util";
+import { firstCap, humanCase, titleColumnName } from "~/util";
 import { IoPersonSharp } from 'solid-icons/io'
 
 export const TopNav: Component = () => {
@@ -13,6 +13,7 @@ export const TopNav: Component = () => {
   const location = useLocation();
   const showTopNav = () => location.pathname !== '/login'
   const tableNames = Object.entries(schema.tables)
+    .filter(([tableName, tableSchema]) => tableSchema.columns[titleColumnName(tableName)].type !== 'fk')
     .sort(([a], [b]) => a.localeCompare(b))
 
   const onLogout = async () => {

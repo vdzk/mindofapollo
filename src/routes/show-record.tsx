@@ -16,7 +16,14 @@ const FkValue: Component<{
   id: number
 }> = (props) => {
   const tableName = props.column.fk.table
-  const record = createAsync(() => getRecordById(tableName, props.id))
+  const record = createAsync(() => {
+    if (props.id === undefined) {
+      // TODO: figure out why this happens
+      return Promise.resolve(undefined)
+    } else {
+      return getRecordById(tableName, props.id)
+    }
+  })
 
   return (
     <div>
@@ -63,7 +70,8 @@ export default function ShowRecord() {
   const record = createAsync(() => getRecordById(sp.tableName, sp.id))
 
   const fKrecord = createAsync(() => {
-    if (titleColumn().type === 'fk') {
+    const fkId = record()?.[titleDbColName()]
+    if (titleColumn().type === 'fk' && fkId) {
       return getRecordById(
         (titleColumn() as ForeignKey).fk.table,
         record()?.[titleDbColName()]
@@ -97,10 +105,10 @@ export default function ShowRecord() {
                 />
               </Match>
               <Match when={column.type === 'boolean' && column.optionLabels}>
-                <div>{(column as BooleanColumn).optionLabels?.[record()?.[colName] ? 1 : 0]}</div> 
+                <div>{(column as BooleanColumn).optionLabels?.[record()?.[colName] ? 1 : 0]}</div>
               </Match>
               <Match when>
-                <div>{record()?.[colName] || nbsp}</div> 
+                <div>{record()?.[colName] || nbsp}</div>
               </Match>
             </Switch>
           </div>

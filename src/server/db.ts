@@ -97,11 +97,18 @@ export const listForeignExtRecords = (
   `.catch(onError)
 }
 
-export const getRecordById = async (tableName: string, id: string | number) => sql`
-  SELECT *
-  FROM ${sql(tableName)}
-  WHERE id = ${id}
-`.then(rows => rows[0]).catch(onError)
+export const getRecordById = async (tableName: string, id: string | number) => { 
+  if (id === undefined) {
+    console.error(chalk.red('ERROR'), 'getRecordById() was called with', {tableName, id})
+    return undefined
+  } else {
+    return  sql`
+      SELECT *
+      FROM ${sql(tableName)}
+      WHERE id = ${id}
+    `.then(rows => rows[0]).catch(onError)
+  }
+}
 
 export const deleteById = async (tableName: string, id: string) => sql`
   DELETE FROM ${sql(tableName)}

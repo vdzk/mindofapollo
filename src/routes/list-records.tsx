@@ -6,7 +6,6 @@ import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { getRecords } from "~/server/api";
 import { schema } from "~/schema";
-import { Dynamic } from "solid-js/web";
 import { ImList } from 'solid-icons/im'
 
 interface ListRecordProps {
