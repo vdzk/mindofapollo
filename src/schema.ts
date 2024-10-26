@@ -1,9 +1,17 @@
 import { AppDataSchema } from "./schema.type"
+import { ImPriceTag } from 'solid-icons/im'
+import { IoPersonSharp } from 'solid-icons/io'
+import { TbSword } from 'solid-icons/tb'
+import { TbChess } from 'solid-icons/tb'
+import { RiCommunicationQuestionnaireFill } from 'solid-icons/ri'
+import { ImQuestion } from 'solid-icons/im'
+import { BsExclamationDiamondFill } from 'solid-icons/bs'
 
 export const schema: AppDataSchema = {
   tables: {
     person: {
       plural: 'persons',
+      icon: IoPersonSharp,
       columns: {
         name: {
           type: 'varchar'
@@ -18,6 +26,7 @@ export const schema: AppDataSchema = {
     },
     tag: {
       plural: 'tags',
+      icon: ImPriceTag,
       columns: {
         name: {
           type: 'varchar'
@@ -32,6 +41,7 @@ export const schema: AppDataSchema = {
     },
     question: {
       plural: 'questions',
+      icon: RiCommunicationQuestionnaireFill,
       columns: {
         text: {
           type: 'varchar'
@@ -53,6 +63,7 @@ export const schema: AppDataSchema = {
     },
     argument_type: {
       plural: 'argument types',
+      icon: TbChess,
       columns: {
         label: {
           type: 'varchar'
@@ -73,6 +84,7 @@ export const schema: AppDataSchema = {
     },
     critical_question: {
       plural: 'critical questions',
+      icon: ImQuestion,
       columns: {
         argument_type_id: {
           type: 'fk',
@@ -89,6 +101,7 @@ export const schema: AppDataSchema = {
     },
     argument: {
       plural: 'arguments',
+      icon: TbSword,
       columns: {
         question_id: {
           type: 'fk',
@@ -126,6 +139,7 @@ export const schema: AppDataSchema = {
     },
     critical_statement: {
       plural: 'critical statements',
+      icon: BsExclamationDiamondFill,
       columns: {
         // TODO: Question should also be probably displayed
         argument_id: {

@@ -1,6 +1,5 @@
 import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
-import postgres from "postgres";
 import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema";
 import { BooleanColumn, ForeignKey } from "~/schema.type";
@@ -8,8 +7,8 @@ import { getRecords } from "~/server/api";
 import { deleteById, getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "../components/ColumnLabel";
-import { humanCase, nbsp, titleColumnName } from "~/util";
-import { PageTitle } from "../components/PageTitle";
+import { nbsp, titleColumnName } from "~/util";
+import { RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
 
 const FkValue: Component<{
@@ -54,15 +53,17 @@ export default function ShowRecord() {
   const columns = () => schema.tables[sp.tableName].columns
   const aggregatesNames = () => Object.keys(schema.tables[sp.tableName].aggregates ?? {})
   const columnEntries = () => Object.entries(columns())
+    .filter(([colName]) => colName !== titleColumnName(sp.tableName))
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
   const record = createAsync(() => getRecordById(sp.tableName, sp.id))
+  const titleText = () => record()?.[titleColumnName(sp.tableName)]
 
   return (
     <main>
-      <Title>{record()?.[titleColumnName(sp.tableName)]}</Title>
-      <PageTitle>{humanCase(sp.tableName)}</PageTitle>
+      <Title>{titleText()}</Title>
+      <RecordPageTitle tableName={sp.tableName} text={titleText()} />
       <For each={columnEntries()}>
         {([colName, column]) => (
           <div class="px-2 pb-2">

@@ -1,9 +1,10 @@
 import { revalidate, useLocation, useNavigate } from "@solidjs/router";
-import { Component, createSignal, For, Show, useContext } from "solid-js";
+import { Component, For, Show, useContext } from "solid-js";
 import { schema } from "~/schema";
 import { logout } from "~/server/session";
 import { SessionContext } from "~/SessionContext";
 import { firstCap, humanCase } from "~/util";
+import { IoPersonSharp } from 'solid-icons/io'
 
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
@@ -46,8 +47,9 @@ export const TopNav: Component = () => {
           <Show when={session!.loggedIn()} fallback={
             <a href="/login" class="text-sky-800">[ Login ]</a>
           }>
-            {'👤' + session!.user()!.name + ' '}
-            <button onClick={onLogout} class="text-sky-800">[ Logout ]</button>
+            <IoPersonSharp size={15} class="inline mr-1" />
+            {session!.user()!.name}
+            <button onClick={onLogout} class="ml-1 text-sky-800">[ Logout ]</button>
           </Show>
         </div>
       </nav>

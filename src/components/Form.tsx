@@ -13,6 +13,18 @@ export const Form: Component<{
 }> = (props) => {
   const [searchParams] = useSearchParams()
 
+  const exitPath = (tableName: string) => {
+    if (props.id) {
+      return `/show-record?tableName=${tableName}&id=${props.id}`
+    } else {
+      if (searchParams.sourceTable && searchParams.sourceId) {
+        return `/show-record?tableName=${searchParams.sourceTable}&id=${searchParams.sourceId}`
+      } else {
+        return `/list-records?tableName=${ tableName}`
+      }
+    }
+  }
+
   const save = action(async (
     tableName: string,
     record: Record<string, string | boolean>
@@ -20,7 +32,7 @@ export const Form: Component<{
     if (props.id) {
       await updateRecord(tableName, props.id, record)
       throw redirect(
-        `/show-record?tableName=${tableName}&id=${props.id}`,
+        exitPath(tableName),
         { revalidate: [
           getRecords.keyFor(tableName), // TODO: this doesn't seem to be doing anything
           'getRecords' + tableName + props.id
@@ -28,11 +40,7 @@ export const Form: Component<{
       )
     } else {
       await insertRecord(tableName, record)
-      if (searchParams.sourceTable && searchParams.sourceId) {
-        throw redirect(`/show-record?tableName=${searchParams.sourceTable}&id=${searchParams.sourceId}`)
-      } else {
-        throw redirect(`/list-records?tableName=${ tableName}`)
-      }
+      throw redirect(exitPath(tableName))
     }
   })
 
@@ -73,6 +81,12 @@ export const Form: Component<{
         <button type="submit" class="text-sky-800">
           [ {props.id ? 'Save' : '+ Add'} ]
         </button>
+        <a
+          class="text-sky-800 mx-2"
+          href={exitPath(props.tableName)}
+        >
+          [ Cancel ]
+        </a>
       </div>
     </form>
   )

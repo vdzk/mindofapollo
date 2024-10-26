@@ -1,11 +1,10 @@
 import { Title } from "@solidjs/meta";
 import { createAsync, useAction, useSearchParams } from "@solidjs/router";
 import { For } from "solid-js";
-import { PageTitle } from "~/components/PageTitle";
+import { RecordPageTitle } from "~/components/PageTitle";
 import { schema } from "~/schema";
 import { deleteCrossRecordAction, getRecords, insertCrossRecordAction, listCrossRecordsCache } from "~/server/api";
 import { getRecordById } from "~/server/db";
-import { deleteCrossRecord, insertCrossRecord, listCrossRecords } from "~/server/cross.db";
 import { firstCap, titleColumnName } from "~/util";
 
 interface EditCrossRefParams {
@@ -50,14 +49,12 @@ export default function EditCrossRef() {
   const bColName = titleColumnName(sp.b)
   const bPlural = schema.tables[sp.b].plural
 
+  const titleText = () => aRecord()?.[titleColumnName(sp.a)]
+
   return (
     <main>
-      <Title>Edit {bPlural}</Title>
-      <PageTitle>Edit {bPlural}</PageTitle>
-      <div class="px-2 pb-2">
-        <div class="font-bold">{firstCap(sp.a)}</div>
-        <div>{aRecord()?.[titleColumnName(sp.a)]}</div>
-      </div>
+      <Title>{titleText()}</Title>
+      <RecordPageTitle tableName={sp.a} text={titleText()} />
       <div class="px-2 pb-2">
       <div class="font-bold">{firstCap(bPlural)}</div>
         <For each={linkedRecords()}>
@@ -91,6 +88,7 @@ export default function EditCrossRef() {
         &nbsp;
         <button type="submit" class="text-sky-800" >[+ Add ]</button>
       </form>
+      <a class="text-sky-800 px-2" href={`/show-record?tableName=${sp.a}&id=${sp.id}`}>[ Back ]</a>
     </main>
   )
 }

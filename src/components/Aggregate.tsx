@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router";
-import { Component, For, JSX } from "solid-js";
+import { Component, For, JSX, Show, useContext } from "solid-js";
 import { schema } from "~/schema";
 import { AggregateSchema } from "~/schema.type";
 import { listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
@@ -7,6 +7,7 @@ import { listCrossRecords } from "~/server/cross.db";
 import { nbsp, titleColumnName } from "~/util";
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
 import postgres from "postgres";
+import { SessionContext } from "~/SessionContext";
 
 export interface AggregateSection {
   title: string;
@@ -19,6 +20,7 @@ export const Aggregate: Component<{
   id: string;
   aggregateName: string;
 }> = (props) => {
+  const session = useContext(SessionContext)
   const aggregate = schema.tables[props.tableName].aggregates?.[props.aggregateName] as AggregateSchema
 
   const records = createAsync(() => aggregate.type === '1-n'
@@ -79,7 +81,9 @@ export const Aggregate: Component<{
               </a>
             </div>
           )}</For>
-          {section.button}
+          <Show when={session?.loggedIn()}>
+            {section.button}
+          </Show>
         </section>
       )}
     </For>

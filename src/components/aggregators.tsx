@@ -1,4 +1,3 @@
-import { createAsync } from "@solidjs/router";
 import postgres from "postgres";
 import { AggregateSchema, BooleanColumn, ForeignKey, NToNSchema, OneToNSchema, TableSchema } from "~/schema.type";
 import { firstCap, humanCase, titleColumnName } from "~/util";

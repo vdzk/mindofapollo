@@ -18,6 +18,7 @@ export const SessionContextProvider: ParentComponent = (props) => {
   const [mounted, setMounted] = createSignal(false)
   // TODO: find a way to remove this hack that avoids hydration mismatch
   onMount(() => setMounted(true))
+  // onMount(() => setTimeout(() => setMounted(true), 300))
   
   return (
     <SessionContext.Provider value={session}>

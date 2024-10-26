@@ -1,3 +1,5 @@
+import { IconTypes } from "solid-icons"
+
 export interface SimpleColumn {
   type: 'integer' | 'varchar' | 'text' //subset of pg data types
   label?: string
@@ -38,7 +40,8 @@ export interface NToNSchema {
 export type AggregateSchema = OneToNSchema | NToNSchema
 
 export interface TableSchema {
-  plural: string
+  plural: string,
+  icon?: IconTypes,
   defaultView?: 'list'
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>
