@@ -3,7 +3,7 @@
 import chalk from "chalk";
 import postgres from "postgres"
 import { schema } from "~/schema/schema";
-import { ForeignKey } from "~/schema/type";
+import { DataLiteral, ForeignKey } from "~/schema/type";
 import { dbColumnName } from "~/util";
 
 // TODO: move config into .env file
@@ -32,15 +32,16 @@ export const onError = (error: Error & {query?: any, parameters?: any}) => {
 
 export const insertRecord = (
   tableName: string,
-  record: Record<string, string | boolean>
+  record: Record<string, DataLiteral>
 ) => sql`
   INSERT INTO ${sql(tableName)} ${sql(record)}
+  RETURNING id
 `.catch(onError)
 
 export const updateRecord = (
   tableName: string,
   id: string,
-  record: Record<string, string | boolean>
+  record: Record<string, DataLiteral>
 ) => sql`
   UPDATE ${sql(tableName)}
   SET ${sql(record, Object.keys(record))}

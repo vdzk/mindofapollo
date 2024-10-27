@@ -1,22 +1,40 @@
 import { sql } from "~/server/db"
 import { schema } from "~/schema/schema"
+import { arrayToObjects } from "~/util"
 
-const crossTables: Record<string, [string, string]> = {}
+const crossTables: {
+  a: string,
+  b: string,
+  initialData?: [number, number][]
+}[] = []
 
 const customDataTypes: Record<string, string> = {
-  proportion: 'numeric(5, 5)'
+  proportion: 'numeric(6, 5)',
+  link_url: 'varchar',
+  link_title: 'varchar'
 }
 
-const createNewTable = async (newTableName: string) => {
-  const colDefs = ['id SERIAL PRIMARY KEY']
+const createNewTable = async (tableName: string) => {
+  const {
+    columns, aggregates, extendsTable, initialData
+  } = schema.tables[tableName]
 
-  const { columns, aggregates } = schema.tables[newTableName]
+  let idDataType = 'serial'
+  if (extendsTable) {
+    idDataType = 'integer'
+  } else if (columns.id) {
+    idDataType = columns.id.type
+  }
+  const colDefs = [`id ${idDataType} PRIMARY KEY`]
+
   const indexCols: string[] = []
 
   for (const colName in columns) {
+    if (colName === 'id') continue
     const column = columns[colName]
     if (column.type === 'fk') {
-      colDefs.push(colName + ' integer REFERENCES ' + column.fk.table + ' NOT NULL')
+      let fkType = schema.tables[column.fk.table].columns.id?.type ?? 'integer'
+      colDefs.push(colName + ' ' + fkType + ' REFERENCES ' + column.fk.table + ' NOT NULL')
       indexCols.push(colName)
     } else {
       const pgType = (column.type in customDataTypes)
@@ -26,10 +44,21 @@ const createNewTable = async (newTableName: string) => {
     }
   }
 
-  await sql.unsafe(`CREATE TABLE ${newTableName} (${colDefs.join()})`)
+  await sql.unsafe(`CREATE TABLE ${tableName} (${colDefs.join()})`)
 
+  // Initialise data
+  if (initialData) {
+    const keys = Object.keys(columns)
+    if (extendsTable) {
+      keys.unshift('id')
+    }
+    const data = arrayToObjects(initialData, keys)
+    await sql`INSERT INTO ${sql(tableName)} ${sql(data)}`
+  }
+
+  // Set up indexes
   for (const indexCol of indexCols) {
-    await sql.unsafe(`CREATE INDEX ${newTableName}_${indexCol}_idx ON ${newTableName} (${indexCol})`)
+    await sql.unsafe(`CREATE INDEX ${tableName}_${indexCol}_idx ON ${tableName} (${indexCol})`)
   }
 
   // Insert into crossTables to be created later
@@ -37,32 +66,43 @@ const createNewTable = async (newTableName: string) => {
     for (const aggName in aggregates) {
       const aggregate = aggregates[aggName]
       if (aggregate.type === 'n-n' && aggregate.first) {
-        const tablePair: [string, string] = [newTableName, aggregate.table]
-        crossTables[tablePair.join()] = tablePair
+        const a = tableName
+        const b = aggregate.table
+        crossTables.push({a, b, initialData: aggregate.initialData})
       }
     }
   }
 }
 
 // Create table
-// for (const tableName in schema.tables) {
-//   await createNewTable(tableName)
-// }
-await createNewTable('critical_statement')
+for (const tableName in schema.tables) {
+  await createNewTable(tableName)
+}
+// await createNewTable('research_note')
 
 // Create cross tables
-for (const [a, b] of Object.values(crossTables)) {
-  await sql`
+for (const {a, b, initialData} of crossTables) {
+  await sql.unsafe(`
     CREATE TABLE ${a}_x_${b} (
       ${a}_id integer NOT NULL,
       ${b}_id integer NOT NULL
-    );
+    )
+  `)
+
+  if (initialData) {
+    await sql.unsafe(`
+      INSERT INTO ${a}_x_${b} (${a}_id, ${b}_id)
+      VALUES (${initialData.map(row => row.join()).join('),(')})
+    `)
+  }
+
+  await sql.unsafe(`
     ALTER TABLE ${a}_x_${b}
     ADD CONSTRAINT ${a}_x_${b}_un
     UNIQUE (${a}_id,${b}_id);
     CREATE INDEX ${a}_x_${b}_${a}_id_idx ON ${a}_x_${b} (${a}_id);
     CREATE INDEX ${a}_x_${b}_${b}_id_idx ON ${a}_x_${b} (${b}_id);
-  `.simple()
+  `)
 }
 
 console.log('Done.')

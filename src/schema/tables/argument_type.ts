@@ -4,9 +4,14 @@ import { TableSchema } from "../type";
 export const argument_type: TableSchema = {
   plural: 'argument types',
   icon: TbChess,
+  deny: ['insert', 'delete'],
   columns: {
-    label: {
+    id: {
+      // TODO: prevent editing this field
       type: 'varchar'
+    },
+    description: {
+      type: 'text'
     }
   },
   aggregates: {
@@ -15,10 +20,15 @@ export const argument_type: TableSchema = {
       table: 'critical_question',
       column: 'argument_type_id'
     },
-    argumens: {
+    arguments: {
       type: '1-n',
       table: 'argument',
       column: 'argument_type_id'
     }
-  }
+  },
+  initialData: [
+    ['authority', ''],
+    ['analogy', ''],
+    ['other', '']
+  ]
 }

@@ -17,7 +17,7 @@ export const critical_statement: TableSchema = {
       type: 'fk',
       fk: {
         table: 'argument',
-        labelColumn: 'text'
+        labelColumn: 'title'
       }
     },
     critical_question_id: {

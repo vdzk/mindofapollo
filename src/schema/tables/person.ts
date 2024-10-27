@@ -14,5 +14,9 @@ export const person: TableSchema = {
     password: {
       type: 'varchar'
     },
-  }
+  },
+  initialData: [
+    /*1*/['Alice', '', ''],
+    /*2*/['Bob', '', '']
+  ]
 }

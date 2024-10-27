@@ -12,7 +12,7 @@ import { SessionContext } from "~/SessionContext";
 export interface AggregateSection {
   title: string;
   records: () => postgres.Row[] | undefined;
-  button: JSX.Element;
+  addHref: string;
 }
 
 export const Aggregate: Component<{
@@ -78,7 +78,12 @@ export const Aggregate: Component<{
     <For each={sections()}>
       {section => (
         <section class="pb-2">
-          <div class="px-2 font-bold">{section.title}</div>
+          <div>
+            <span class="px-2 font-bold">{section.title}</span>
+            <Show when={session?.loggedIn()}>
+              <a class="text-sky-800" href={section.addHref}>[ + ]</a>
+            </Show>
+          </div>
           <For each={section.records()}>{(record) => (
             <div class="px-2">
               <a
@@ -89,9 +94,6 @@ export const Aggregate: Component<{
               </a>
             </div>
           )}</For>
-          <Show when={session?.loggedIn()}>
-            {section.button}
-          </Show>
         </section>
       )}
     </For>

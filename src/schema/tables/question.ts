@@ -22,10 +22,21 @@ export const question: TableSchema = {
       column: 'question_id',
       splitByColumn: 'pro'
     },
+    research_notes: {
+      type: '1-n',
+      table: 'research_note',
+      column: 'question_id'
+    },
     tags: {
       type: 'n-n',
       table: 'tag',
-      first: true
+      first: true,
+      initialData: [
+        [1, 1]
+      ]
     }
-  }
+  },
+  initialData: [
+    /*1*/['Is the Moon made out of cheese?', 'The Moon is not made out of cheese', 1]
+  ]
 }

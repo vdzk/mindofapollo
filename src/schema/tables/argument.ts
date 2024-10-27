@@ -17,15 +17,16 @@ export const argument: TableSchema = {
       label: 'side',
       optionLabels: ['Con', 'Pro']
     },
-    text: {
-      type: 'text',
+    title: {
+      type: 'varchar',
       preview: true
     },
     argument_type_id: {
       type: 'fk',
       fk: {
         table: 'argument_type',
-        labelColumn: 'label'
+        labelColumn: 'id',
+        extensionTables: true
       }
     }
   },
@@ -37,5 +38,8 @@ export const argument: TableSchema = {
       splitByColumn: 'critical_question_id',
       filterSplitBy: 'argument_type_id'
     }
-  }
+  },
+  initialData: [
+    /*1*/[1, true, 'Both are yellow and round.', 'analogy']
+  ]
 }

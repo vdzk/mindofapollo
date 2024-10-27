@@ -1,12 +1,12 @@
 import { For, Show, useContext } from "solid-js";
 import { Title } from "@solidjs/meta";
-import { firstCap, humanCase, nbsp, titleColumnName } from "~/util";
+import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
 import { PageTitle, PageTitleIcon } from "../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { getRecords } from "~/server/api";
-import { schema } from "~/schema/schema";
 import { ImList } from 'solid-icons/im'
+import { schema } from "~/schema/schema";
 
 interface ListRecordProps {
   tableName: string
@@ -16,7 +16,9 @@ export default function ListRecords() {
   const [sp] = useSearchParams() as unknown as [ListRecordProps]
   const session = useContext(SessionContext)
   const records = createAsync(() => getRecords(sp.tableName))
-  const title = () => firstCap(humanCase(schema.tables[sp.tableName].plural))
+  const title = () => firstCap(pluralTableName(sp.tableName))
+  const canAdd = () => session?.loggedIn()
+    && !schema.tables[sp.tableName].deny?.includes('insert')
 
   return (
     <main>
@@ -39,7 +41,7 @@ export default function ListRecords() {
         )}</For>
       </section>
       <section>
-        <Show when={session?.loggedIn()}>
+        <Show when={canAdd()}>
           <a href={`/create-record/?tableName=${sp.tableName}`} class="mx-2 text-sky-800">
             [ + Add ]
           </a>

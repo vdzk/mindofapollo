@@ -86,7 +86,7 @@ export default function EditCrossRef() {
           </For>
         </select>
         &nbsp;
-        <button type="submit" class="text-sky-800" >[+ Add ]</button>
+        <button type="submit" class="text-sky-800" >[ + Add ]</button>
       </form>
       <a class="text-sky-800 px-2" href={`/show-record?tableName=${sp.a}&id=${sp.id}`}>[ Back ]</a>
     </main>

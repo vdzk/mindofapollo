@@ -9,7 +9,7 @@ export const critical_question: TableSchema = {
       type: 'fk',
       fk: {
         table: 'argument_type',
-        labelColumn: 'label'
+        labelColumn: 'id'
       }
     },
     text: {

@@ -6,6 +6,10 @@ import { argument_type } from "./tables/argument_type"
 import { critical_question } from "./tables/critical_question"
 import { argument } from "./tables/argument"
 import { critical_statement } from "./tables/critical_statement"
+import { research_note } from "./tables/research_note"
+import { argument_analogy } from "./tables/argument_analogy"
+import { argument_authority } from "./tables/argument_authority"
+import { argument_other } from "./tables/argument_other"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -15,6 +19,10 @@ export const schema: AppDataSchema = {
     argument_type,
     critical_question,
     argument,
-    critical_statement
+    argument_analogy,
+    argument_authority,
+    argument_other,
+    critical_statement,
+    research_note
   }
 }

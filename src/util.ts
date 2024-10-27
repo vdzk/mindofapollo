@@ -1,3 +1,4 @@
+import postgres from "postgres"
 import { schema } from "./schema/schema"
 
 export const humanCase = (str: string) => str
@@ -42,5 +43,32 @@ export const titleDbColumnName = (tableName: string) => {
   }
 }
 
+export const getExtTableName = (
+  tableName: string,
+  record: postgres.Row
+) => {
+  const tableSchema = schema.tables[tableName]
+  for (const [colName, column] of Object.entries(tableSchema.columns)) {
+    if (column.type === 'fk' && column.fk.extensionTables) {
+      if (record[colName]) {
+        return tableName + '_' + record[colName]
+      }
+    }
+  }
+}
+
+export const pluralTableName = (tableName: string) => {
+  return schema.tables[tableName].plural ?? humanCase(tableName) + ' items'
+}
+
 
 export const etv = (fn: (val: string) => void) => (event: {target: { value: string }}) => fn(event.target.value)
+
+export const arrayToObjects = (arrayOfArrays: any[][], keys: string[]) => {
+  return arrayOfArrays.map(innerArray => {
+    return keys.reduce((obj: Record<string, any>, key, index) => {
+      obj[key] = innerArray[index];
+      return obj;
+    }, {});
+  });
+}

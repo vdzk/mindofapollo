@@ -3,8 +3,6 @@ import { Form } from "../components/Form";
 import { PageTitle, PageTitleIcon } from "../components/PageTitle";
 import { humanCase } from "~/util";
 import { useSearchParams } from "@solidjs/router";
-import { Dynamic } from "solid-js/web";
-import { schema } from "~/schema/schema";
 
 interface CreateRecordProps {
   tableName: string

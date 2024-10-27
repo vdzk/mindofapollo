@@ -11,6 +11,8 @@ const inputTypes = {
   boolean: 'checkbox',
   integer: 'text',
   proportion: 'text',
+  link_url: 'text',
+  link_title: 'text',
   fk: 'hidden'
 }
 
@@ -30,7 +32,7 @@ export const FormField: Component<{
           <textarea name={props.colName} class="border w-full px-0.5">{props.value}</textarea>
         </Match>
         <Match when={column.type === 'boolean' && column.optionLabels}>
-          <select name={props.colName}>
+          <select name={props.colName} class="max-w-full">
             <Show when={props.value === undefined}>
               <option></option>
             </Show>

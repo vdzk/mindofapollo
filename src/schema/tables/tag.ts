@@ -14,5 +14,8 @@ export const tag: TableSchema = {
       type: 'n-n',
       table: 'question'
     }
-  }
+  },
+  initialData: [
+    /*1*/['silly']
+  ]
 }

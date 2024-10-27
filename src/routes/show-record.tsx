@@ -4,12 +4,14 @@ import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { BooleanColumn, ForeignKey } from "~/schema/type";
 import { getRecords } from "~/server/api";
-import { deleteById, getRecordById } from "~/server/db";
+import { getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "../components/ColumnLabel";
-import { dbColumnName, nbsp, titleColumnName } from "~/util";
+import { dbColumnName, getExtTableName, nbsp, titleColumnName } from "~/util";
 import { RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
+import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
+import postgres from "postgres";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -41,7 +43,7 @@ const _delete = action(async (
   tableName: string,
   id: string
 ) => {
-  await deleteById(tableName, id)
+  await deleteExtById(tableName, id)
   throw redirect(
     `/list-records?tableName=${tableName}`,
     // TODO: this doesn't seem to do anything
@@ -57,17 +59,30 @@ interface ShowRecord {
 export default function ShowRecord() {
   const [sp] = useSearchParams() as unknown as [ShowRecord]
   const session = useContext(SessionContext)
-  const columns = () => schema.tables[sp.tableName].columns
-  const aggregatesNames = () => Object.keys(schema.tables[sp.tableName].aggregates ?? {})
+
+  const record = createAsync(() => getExtRecordById(sp.tableName, sp.id))
+  const extTableName = () => record() ? getExtTableName(sp.tableName, record() as postgres.Row) : undefined
+  const table = () => schema.tables[sp.tableName]
+
+  const columns = () => table().columns
+  const extColumns = () => extTableName()
+    ? schema.tables[extTableName() as string].columns
+    : {}
+
+  const aggregatesNames = () => Object.keys(table().aggregates ?? {})
+  const extAggregatesNames = () => {
+    const etn = extTableName()
+    return etn ? Object.keys(schema.tables[etn].aggregates ?? {}) : []
+  }
+
   const titleColName = () => titleColumnName(sp.tableName)
   const titleDbColName = () => dbColumnName(sp.tableName, titleColName())
   const titleColumn = () => columns()[titleColName()]
-  const columnEntries = () => Object.entries(columns())
+  const columnEntries = () => Object.entries({...columns(), ...extColumns()})
     .filter(([colName]) => colName !== titleColName())
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
-  const record = createAsync(() => getRecordById(sp.tableName, sp.id))
 
   const fKrecord = createAsync(() => {
     const fkId = record()?.[titleDbColName()]
@@ -108,7 +123,9 @@ export default function ShowRecord() {
                 <div>{(column as BooleanColumn).optionLabels?.[record()?.[colName] ? 1 : 0]}</div>
               </Match>
               <Match when>
-                <div>{record()?.[colName] || nbsp}</div>
+                <div class="whitespace-pre-line">
+                  {record()?.[colName] || nbsp}
+                </div>
               </Match>
             </Switch>
           </div>
@@ -121,14 +138,24 @@ export default function ShowRecord() {
           aggregateName={aggregateName}
         />}
       </For>
+      {/* TODO: check that it works */}
+      <For each={extAggregatesNames()} >
+        {aggregateName => <Aggregate
+          tableName={extTableName() as string}
+          id={sp.id}
+          aggregateName={aggregateName}
+        />}
+      </For>
       <Show when={session!.loggedIn()}>
         <div>
           <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
             [ Edit ]
           </a>
-          <button class="mx-2 text-sky-800" onClick={onDelete}>
-            [ Delete ]
-          </button>
+          <Show when={!table().deny?.includes('delete')}>
+            <button class="mx-2 text-sky-800" onClick={onDelete}>
+              [ Delete ]
+            </button>
+          </Show>
         </div>
       </Show>
     </main>
