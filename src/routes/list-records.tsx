@@ -5,7 +5,7 @@ import { PageTitle, PageTitleIcon } from "../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { getRecords } from "~/server/api";
-import { schema } from "~/schema";
+import { schema } from "~/schema/schema";
 import { ImList } from 'solid-icons/im'
 
 interface ListRecordProps {

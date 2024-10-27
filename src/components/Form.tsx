@@ -1,7 +1,7 @@
 import { action, redirect, useAction, useParams, useSearchParams } from "@solidjs/router";
 import { Component, For} from "solid-js";
 import { insertRecord, updateRecord } from "~/server/db";
-import { schema } from "~/schema";
+import { schema } from "~/schema/schema";
 import { getRecords } from "~/server/api";
 import postgres from "postgres";
 import { FormField } from "./FormField";

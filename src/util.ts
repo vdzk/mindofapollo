@@ -1,4 +1,4 @@
-import { schema } from "./schema"
+import { schema } from "./schema/schema"
 
 export const humanCase = (str: string) => str
   .split('_')

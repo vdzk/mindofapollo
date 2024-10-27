@@ -1,6 +1,6 @@
 import { Component, Match, Show, Switch } from "solid-js";
-import { schema } from "~/schema";
-import { BooleanColumn, ForeignKey } from "~/schema.type";
+import { schema } from "~/schema/schema";
+import { BooleanColumn, ForeignKey } from "~/schema/type";
 import { FkInput } from "./FkInput";
 import { ColumnLabel } from "./ColumnLabel";
 import { useSearchParams } from "@solidjs/router";

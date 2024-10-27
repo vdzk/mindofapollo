@@ -1,6 +1,6 @@
 import { revalidate, useLocation, useNavigate } from "@solidjs/router";
 import { Component, For, Show, useContext } from "solid-js";
-import { schema } from "~/schema";
+import { schema } from "~/schema/schema";
 import { logout } from "~/server/session";
 import { SessionContext } from "~/SessionContext";
 import { firstCap, humanCase, titleColumnName } from "~/util";

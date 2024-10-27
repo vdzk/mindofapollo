@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { createAsync, useAction, useSearchParams } from "@solidjs/router";
 import { For } from "solid-js";
 import { RecordPageTitle } from "~/components/PageTitle";
-import { schema } from "~/schema";
+import { schema } from "~/schema/schema";
 import { deleteCrossRecordAction, getRecords, insertCrossRecordAction, listCrossRecordsCache } from "~/server/api";
 import { getRecordById } from "~/server/db";
 import { firstCap, titleColumnName } from "~/util";
@@ -60,7 +60,7 @@ export default function EditCrossRef() {
         <For each={linkedRecords()}>
           {lr => (
             <div>
-              <a 
+              <a
                 href={`/show-record?tableName=${sp.b}&id=${lr.id}`}
                 class="hover:underline"
               >

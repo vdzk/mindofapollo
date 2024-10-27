@@ -1,6 +1,6 @@
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { Component, For, Show } from "solid-js";
-import { ForeignKey } from "~/schema.type";
+import { ForeignKey } from "~/schema/type";
 import { getRecords } from "~/server/api";
 
 
@@ -10,7 +10,7 @@ export const FkInput: Component<{
   value?: any
 }> = (props) => {
   const [searchParams] = useSearchParams()
-  
+
   const records = createAsync(() => getRecords(props.column.fk.table))
 
   return (

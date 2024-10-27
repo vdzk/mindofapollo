@@ -2,7 +2,7 @@ import { For, Show, useContext } from "solid-js";
 import { Form } from "~/components/Form";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
-import { schema } from "~/schema";
+import { schema } from "~/schema/schema";
 import { getRecords } from "~/server/api";
 
 interface ManageRecordProps {

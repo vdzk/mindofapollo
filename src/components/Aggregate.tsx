@@ -1,7 +1,7 @@
 import { createAsync } from "@solidjs/router";
 import { Component, For, JSX, Show, useContext } from "solid-js";
-import { schema } from "~/schema";
-import { AggregateSchema } from "~/schema.type";
+import { schema } from "~/schema/schema";
+import { AggregateSchema } from "~/schema/type";
 import { listForeignExtRecords, listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
 import { listCrossRecords } from "~/server/cross.db";
 import { titleColumnName, titleDbColumnName } from "~/util";

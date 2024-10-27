@@ -2,8 +2,8 @@
 
 import chalk from "chalk";
 import postgres from "postgres"
-import { schema } from "~/schema";
-import { ForeignKey } from "~/schema.type";
+import { schema } from "~/schema/schema";
+import { ForeignKey } from "~/schema/type";
 import { dbColumnName } from "~/util";
 
 // TODO: move config into .env file
@@ -28,7 +28,7 @@ export const onError = (error: Error & {query?: any, parameters?: any}) => {
     console.error(error)
   }
   return undefined
-} 
+}
 
 export const insertRecord = (
   tableName: string,
@@ -97,7 +97,7 @@ export const listForeignExtRecords = (
   `.catch(onError)
 }
 
-export const getRecordById = async (tableName: string, id: string | number) => { 
+export const getRecordById = async (tableName: string, id: string | number) => {
   if (id === undefined) {
     console.error(chalk.red('ERROR'), 'getRecordById() was called with', {tableName, id})
     return undefined

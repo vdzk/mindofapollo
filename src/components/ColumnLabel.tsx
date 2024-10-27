@@ -1,5 +1,5 @@
 import { Component } from "solid-js"
-import { ColumnSchema } from "~/schema.type"
+import { ColumnSchema } from "~/schema/type"
 import { humanCase } from "~/util"
 
 export const ColumnLabel: Component<{

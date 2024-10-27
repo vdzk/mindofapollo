@@ -1,5 +1,5 @@
 import { sql } from "~/server/db"
-import { schema } from "~/schema"
+import { schema } from "~/schema/schema"
 
 const crossTables: Record<string, [string, string]> = {}
 
@@ -12,27 +12,27 @@ const createNewTable = async (newTableName: string) => {
 
   const { columns, aggregates } = schema.tables[newTableName]
   const indexCols: string[] = []
-  
+
   for (const colName in columns) {
     const column = columns[colName]
     if (column.type === 'fk') {
       colDefs.push(colName + ' integer REFERENCES ' + column.fk.table + ' NOT NULL')
-      indexCols.push(colName) 
+      indexCols.push(colName)
     } else {
       const pgType = (column.type in customDataTypes)
         ? customDataTypes[column.type]
         : column.type
       colDefs.push(colName + ' ' + pgType + ' NOT NULL')
-    } 
+    }
   }
-  
+
   await sql.unsafe(`CREATE TABLE ${newTableName} (${colDefs.join()})`)
-  
+
   for (const indexCol of indexCols) {
     await sql.unsafe(`CREATE INDEX ${newTableName}_${indexCol}_idx ON ${newTableName} (${indexCol})`)
   }
 
-  // Insert into crossTables to be created later 
+  // Insert into crossTables to be created later
   if (aggregates) {
     for (const aggName in aggregates) {
       const aggregate = aggregates[aggName]

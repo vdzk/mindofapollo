@@ -1,7 +1,7 @@
 import { IconTypes } from "solid-icons";
 import { Component, ParentComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { schema } from "~/schema";
+import { schema } from "~/schema/schema";
 import { firstCap, humanCase } from "~/util";
 
 export const PageTitle: ParentComponent = (props) => {

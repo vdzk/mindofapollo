@@ -1,8 +1,8 @@
 import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Component, For, Match, Show, Switch, useContext } from "solid-js";
-import { schema } from "~/schema";
-import { BooleanColumn, ForeignKey } from "~/schema.type";
+import { schema } from "~/schema/schema";
+import { BooleanColumn, ForeignKey } from "~/schema/type";
 import { getRecords } from "~/server/api";
 import { deleteById, getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
