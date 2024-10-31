@@ -18,7 +18,6 @@ export interface BooleanColumn {
 }
 
 export interface ForeignKey {
-  name?: string // The real name of the column in DB. Useful for displaying multiple fields of the same foreign record.
   type: 'fk'
   label?: string
   preview?: boolean //Use this column to represent the whole record

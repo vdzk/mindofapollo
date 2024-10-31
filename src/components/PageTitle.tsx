@@ -6,7 +6,7 @@ import { Dynamic } from "solid-js/web";
 import { schema } from "~/schema/schema";
 import { ForeignKey } from "~/schema/type";
 import { getRecordById } from "~/server/db";
-import { dbColumnName, firstCap, humanCase, titleColumnName } from "~/util";
+import { firstCap, humanCase, titleColumnName } from "~/util";
 
 export const PageTitle: ParentComponent = (props) => {
   return (
@@ -50,12 +50,11 @@ export const createAsyncFkTitle = (
   const titleColumn = schema.tables[tableName()].columns[titleColName]
 
   if (titleColumn.type === 'fk') {
-    const titleDbColName = dbColumnName(tableName(), titleColName)
-    const fkId = record()?.[titleDbColName]
+    const fkId = record()?.[titleColName]
     if (fkId) {
       const fkRecord = await getRecordById(
         (titleColumn as ForeignKey).fk.table,
-        record()?.[titleDbColName]
+        record()?.[titleColName]
       )
       return fkRecord?.[titleColumn.fk.labelColumn]
     } else {

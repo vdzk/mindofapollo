@@ -4,7 +4,6 @@ import chalk from "chalk";
 import postgres from "postgres"
 import { schema } from "~/schema/schema";
 import { DataLiteral, ForeignKey } from "~/schema/type";
-import { dbColumnName } from "~/util";
 
 // TODO: move config into .env file
 export const sql = postgres({
@@ -86,13 +85,12 @@ export const listForeignExtRecords = (
   extColName: string
 ) => {
   const extColumn = schema.tables[tableName].columns[extColName] as ForeignKey
-  const extDbColName = dbColumnName(tableName, extColName)
 
   return sql`
     SELECT tMain.*, tExt.${sql(extColumn.fk.labelColumn)}
     FROM ${sql(tableName)} tMain
     JOIN ${sql(extColumn.fk.table)} tExt
-      ON tMain.${sql(extDbColName)} = tExt.id
+      ON tMain.${sql(extColName)} = tExt.id
     WHERE tMain.${sql(fkName)} = ${fkId}
     ORDER BY id
   `.catch(onError)

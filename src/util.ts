@@ -24,25 +24,6 @@ export const titleColumnName = (tableName: string) => {
   return result
 }
 
-export const dbColumnName = (tableName: string, colName: string) => {
-  const columnSchema = schema.tables[tableName].columns[colName]
-  if (columnSchema.type === 'fk' && columnSchema.name) {
-    return columnSchema.name
-  } else {
-    return colName
-  }
-}
-
-export const titleDbColumnName = (tableName: string) => {
-  const titleColName = titleColumnName(tableName)
-  const titleColumn = schema.tables[tableName].columns[titleColName]
-  if (titleColumn.type === 'fk') {
-    return titleColumn.fk.labelColumn
-  } else {
-    return dbColumnName(tableName, titleColName)
-  }
-}
-
 export const getExtTableName = (
   tableName: string,
   record: postgres.Row

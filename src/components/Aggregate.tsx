@@ -1,10 +1,10 @@
 import { createAsync } from "@solidjs/router";
-import { Component, For, JSX, Show, useContext } from "solid-js";
+import { Component, For, Show, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { AggregateSchema } from "~/schema/type";
 import { listForeignExtRecords, listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
 import { listCrossRecords } from "~/server/cross.db";
-import { titleColumnName, titleDbColumnName } from "~/util";
+import { titleColumnName } from "~/util";
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
 import postgres from "postgres";
 import { SessionContext } from "~/SessionContext";
@@ -23,11 +23,13 @@ export const Aggregate: Component<{
   const session = useContext(SessionContext)
   const aggregate = schema.tables[props.tableName].aggregates?.[props.aggregateName] as AggregateSchema
 
+  const titleColName = () => titleColumnName(aggregate.table)
+  const titleColumn = () => schema.tables[aggregate.table].columns[titleColName()]
+
   const records = createAsync(() => {
     if (aggregate.type === '1-n') {
-      const titleColName = titleColumnName(aggregate.table)
-      if (schema.tables[aggregate.table].columns[titleColName].type === 'fk') {
-        return listForeignExtRecords(aggregate.table, aggregate.column, props.id, titleColName)
+      if (titleColumn().type === 'fk') {
+        return listForeignExtRecords(aggregate.table, aggregate.column, props.id, titleColName())
       } else {
         return listForeignRecords(aggregate.table, aggregate.column, props.id)
       }
@@ -74,6 +76,12 @@ export const Aggregate: Component<{
     sections = () => crossList(aggregatorProps)
   }
 
+  const titleFkColumnName = () => {
+    const titleCol = titleColumn()
+    return titleCol.type === 'fk' ? titleCol.fk.labelColumn : titleColName()
+  }
+
+
   return (
     <For each={sections()}>
       {section => (
@@ -94,7 +102,7 @@ export const Aggregate: Component<{
                 href={`/show-record?tableName=${aggregate.table}&id=${record.id}`}
                 class="hover:underline"
               >
-                {record[titleDbColumnName(aggregate.table)]}
+                {record[titleFkColumnName()]}
               </a>
             </div>
           )}</For>

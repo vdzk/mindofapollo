@@ -7,7 +7,7 @@ import { getRecords } from "~/server/api";
 import { getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "../components/ColumnLabel";
-import { dbColumnName, getExtTableName, nbsp, titleColumnName } from "~/util";
+import { getExtTableName, nbsp, titleColumnName } from "~/util";
 import { createAsyncFkTitle, RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
 import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
