@@ -19,7 +19,6 @@ export interface BooleanColumn {
 
 export interface ForeignKey {
   name?: string // The real name of the column in DB. Useful for displaying multiple fields of the same foreign record.
-  readOnly?: boolean // Do not show this field on edit forms. Another field should cover this foreign key.
   type: 'fk'
   label?: string
   preview?: boolean //Use this column to represent the whole record

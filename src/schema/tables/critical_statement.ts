@@ -5,14 +5,6 @@ export const critical_statement: TableSchema = {
   plural: 'critical statements',
   icon: BsExclamationDiamondFill,
   columns: {
-    question_id: {
-      type: 'fk',
-      readOnly: true,
-      fk: {
-        table: 'question',
-        labelColumn: 'text'
-      }
-    },
     argument_id: {
       type: 'fk',
       fk: {
@@ -29,7 +21,6 @@ export const critical_statement: TableSchema = {
       }
     },
     question_answer_id: {
-      name: 'question_id',
       type: 'fk',
       label: 'statement',
       preview: true,
@@ -37,6 +28,6 @@ export const critical_statement: TableSchema = {
         table: 'question',
         labelColumn: 'answer'
       }
-    },
+    }
   }
 }

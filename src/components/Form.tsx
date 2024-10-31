@@ -7,6 +7,7 @@ import postgres from "postgres";
 import { FormField } from "./FormField";
 import { ColumnSchema, DataLiteral } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/server/extRecord.db";
+import { getExtTableName } from "~/util";
 
 const parseForm = (
   formData: FormData,
@@ -29,15 +30,12 @@ const parseForm = (
   return record
 }
 
-export const ExtensionTableContext = createContext<Setter<string | undefined>>()
-
 export const Form: Component<{
   tableName: string,
   id?: string,
   record?: postgres.Row;
 }> = (props) => {
   const [searchParams] = useSearchParams()
-  const [extTableSuffix, setExtTableSuffix] = createSignal<string>()
 
   const exitPath = (tableName: string) => {
     if (props.id) {
@@ -89,10 +87,8 @@ export const Form: Component<{
   }))
 
   const columns = () => schema.tables[props.tableName].columns
-  const colNames = () => Object.entries(columns())
-    .filter(([, column]) => !(column.type === 'fk') || !column.readOnly)
-    .map(([key]) => key)
-  const extTableName = () => extTableSuffix() && props.tableName + extTableSuffix()
+  const colNames = () => Object.keys(columns())
+  const extTableName = () => props.record && getExtTableName(props.tableName, props.record)
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
@@ -108,33 +104,32 @@ export const Form: Component<{
   }
 
   return (
-    <ExtensionTableContext.Provider value={setExtTableSuffix}>
-      <form onSubmit={onSubmit} class="px-2 max-w-screen-sm">
-        <For each={colNames()}>
-          {colName => <FormField
-            tableName={props.tableName}
-            colName={colName}
-            value={props.record?.[colName]}
-          />}
-        </For>
-        <For each={extColNames()}>
-          {extColName => <FormField
-            tableName={extTableName() as string}
-            colName={extColName}
-          />}
-        </For>
-        <div class="pt-2">
-          <button type="submit" class="text-sky-800">
-            [ Save ]
-          </button>
-          <a
-            class="text-sky-800 mx-2"
-            href={exitPath(props.tableName)}
-          >
-            [ Cancel ]
-          </a>
-        </div>
-      </form>
-    </ExtensionTableContext.Provider>
+    <form onSubmit={onSubmit} class="px-2 max-w-screen-sm">
+      <For each={colNames()}>
+        {colName => <FormField
+          tableName={props.tableName}
+          colName={colName}
+          value={props.record?.[colName]}
+        />}
+      </For>
+      <For each={extColNames()}>
+        {colName => <FormField
+          tableName={extTableName() as string}
+          colName={colName}
+          value={props.record?.[colName]}
+        />}
+      </For>
+      <div class="pt-2">
+        <button type="submit" class="text-sky-800">
+          [ Save ]
+        </button>
+        <a
+          class="text-sky-800 mx-2"
+          href={exitPath(props.tableName)}
+        >
+          [ Cancel ]
+        </a>
+      </div>
+    </form>
   )
 }

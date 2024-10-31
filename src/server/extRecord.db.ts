@@ -1,3 +1,5 @@
+"use server";
+
 import { DataLiteral } from "~/schema/type"
 import { deleteById, getRecordById, insertRecord, onError, sql, updateRecord } from "./db"
 import { getExtTableName } from "~/util"

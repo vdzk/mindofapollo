@@ -37,6 +37,7 @@ export const question: TableSchema = {
     }
   },
   initialData: [
-    /*1*/['Is the Moon made out of cheese?', 'The Moon is not made out of cheese', 1]
+    /*1*/['Is the Moon made out of cheese?', 'The Moon is not made out of cheese', 1],
+    /*2*/['Is all cheese round?', 'Not all cheese is round.', 1],
   ]
 }

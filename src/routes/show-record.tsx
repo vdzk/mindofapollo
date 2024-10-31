@@ -8,7 +8,7 @@ import { getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "../components/ColumnLabel";
 import { dbColumnName, getExtTableName, nbsp, titleColumnName } from "~/util";
-import { RecordPageTitle } from "../components/PageTitle";
+import { createAsyncFkTitle, RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
 import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
 import postgres from "postgres";
@@ -76,33 +76,13 @@ export default function ShowRecord() {
   }
 
   const titleColName = () => titleColumnName(sp.tableName)
-  const titleDbColName = () => dbColumnName(sp.tableName, titleColName())
   const titleColumn = () => columns()[titleColName()]
   const columnEntries = () => Object.entries({...columns(), ...extColumns()})
-    .filter(([colName]) => colName !== titleColName())
+    .filter(([colName]) => colName !== titleColName() || titleColumn().type === 'fk')
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
-
-  const fKrecord = createAsync(() => {
-    const fkId = record()?.[titleDbColName()]
-    if (titleColumn().type === 'fk' && fkId) {
-      return getRecordById(
-        (titleColumn() as ForeignKey).fk.table,
-        record()?.[titleDbColName()]
-      )
-    } else {
-      return Promise.resolve(undefined)
-    }
-  })
-
-  const titleText = () => {
-    if (titleColumn().type === 'fk') {
-      return fKrecord()?.[(titleColumn() as ForeignKey).fk.labelColumn]
-    } else {
-      return record()?.[titleColName()]
-    }
-  }
+  const titleText = createAsyncFkTitle(() => sp.tableName, record)
 
   return (
     <main>

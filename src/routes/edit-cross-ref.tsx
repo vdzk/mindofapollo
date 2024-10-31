@@ -5,7 +5,7 @@ import { RecordPageTitle } from "~/components/PageTitle";
 import { schema } from "~/schema/schema";
 import { deleteCrossRecordAction, getRecords, insertCrossRecordAction, listCrossRecordsCache } from "~/server/api";
 import { getRecordById } from "~/server/db";
-import { firstCap, titleColumnName } from "~/util";
+import { firstCap, pluralTableName, titleColumnName } from "~/util";
 
 interface EditCrossRefParams {
   a: string
@@ -47,8 +47,6 @@ export default function EditCrossRef() {
   }
 
   const bColName = titleColumnName(sp.b)
-  const bPlural = schema.tables[sp.b].plural
-
   const titleText = () => aRecord()?.[titleColumnName(sp.a)]
 
   return (
@@ -56,7 +54,7 @@ export default function EditCrossRef() {
       <Title>{titleText()}</Title>
       <RecordPageTitle tableName={sp.a} text={titleText()} />
       <div class="px-2 pb-2">
-      <div class="font-bold">{firstCap(bPlural)}</div>
+      <div class="font-bold">{firstCap(pluralTableName(sp.b))}</div>
         <For each={linkedRecords()}>
           {lr => (
             <div>

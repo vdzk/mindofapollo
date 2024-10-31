@@ -1,7 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { Form } from "../components/Form";
-import { titleColumnName } from "~/util";
-import { RecordPageTitle } from "../components/PageTitle";
+import { createAsyncFkTitle, RecordPageTitle } from "../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { getExtRecordById } from "~/server/extRecord.db";
 
@@ -13,7 +12,7 @@ interface EditRecord {
 export default function EditRecord() {
   const [sp] = useSearchParams() as unknown as [EditRecord]
   const record = createAsync(async () => getExtRecordById(sp.tableName, sp.id))
-  const titleText = () => record()?.[titleColumnName(sp.tableName)]
+  const titleText = createAsyncFkTitle(() => sp.tableName, record)
 
   return (
       <main>

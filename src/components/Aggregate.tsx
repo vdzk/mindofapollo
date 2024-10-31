@@ -81,7 +81,11 @@ export const Aggregate: Component<{
           <div>
             <span class="px-2 font-bold">{section.title}</span>
             <Show when={session?.loggedIn()}>
-              <a class="text-sky-800" href={section.addHref}>[ + ]</a>
+              <a
+                class="text-sky-800"
+                href={section.addHref}
+                title="add / remove"
+              >[ +/− ]</a>
             </Show>
           </div>
           <For each={section.records()}>{(record) => (
