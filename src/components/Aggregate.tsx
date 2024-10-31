@@ -1,18 +1,46 @@
-import { createAsync } from "@solidjs/router";
-import { Component, For, Show, useContext } from "solid-js";
+import { createAsync, useAction } from "@solidjs/router";
+import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
-import { AggregateSchema } from "~/schema/type";
-import { listForeignExtRecords, listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
+import { AggregateSchema, ForeignKey, OneToNSchema } from "~/schema/type";
+import { listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
 import { listCrossRecords } from "~/server/cross.db";
 import { titleColumnName } from "~/util";
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
 import postgres from "postgres";
 import { SessionContext } from "~/SessionContext";
+import { deleteForeignHopRecordAction, listForeignHopRecordsCache } from "~/server/api";
 
 export interface AggregateSection {
   title: string;
   records: () => postgres.Row[] | undefined;
-  addHref: string;
+  link: { href: string, title: string }
+}
+
+const FkRecordListItem: Component<{
+  aggregate: OneToNSchema,
+  titleColumnName: string,
+  titleColumn: ForeignKey,
+  record: postgres.Row,
+  id: string
+}> = props => {
+  const deleteAction = useAction(deleteForeignHopRecordAction);
+  const onDelete = () => deleteAction(
+    props.aggregate.table, props.aggregate.column, props.id,
+    props.titleColumnName, props.record.id
+  )
+
+  return (
+    <>
+      <a class="hover:underline"
+        href={`/show-record`
+          +`?tableName=${props.titleColumn.fk.table}`
+          +`&id=${props.record[props.titleColumnName]}`}
+      >
+        {props.record[props.titleColumn.fk.labelColumn]}
+      </a>
+      <button class="text-sky-800 mx-2" onClick={onDelete}>[ X ]</button>
+    </>
+  )
 }
 
 export const Aggregate: Component<{
@@ -29,7 +57,7 @@ export const Aggregate: Component<{
   const records = createAsync(() => {
     if (aggregate.type === '1-n') {
       if (titleColumn().type === 'fk') {
-        return listForeignExtRecords(aggregate.table, aggregate.column, props.id, titleColName())
+        return listForeignHopRecordsCache(aggregate.table, aggregate.column, props.id, titleColName())
       } else {
         return listForeignRecords(aggregate.table, aggregate.column, props.id)
       }
@@ -76,12 +104,6 @@ export const Aggregate: Component<{
     sections = () => crossList(aggregatorProps)
   }
 
-  const titleFkColumnName = () => {
-    const titleCol = titleColumn()
-    return titleCol.type === 'fk' ? titleCol.fk.labelColumn : titleColName()
-  }
-
-
   return (
     <For each={sections()}>
       {section => (
@@ -91,19 +113,34 @@ export const Aggregate: Component<{
             <Show when={session?.loggedIn()}>
               <a
                 class="text-sky-800"
-                href={section.addHref}
+                href={section.link.href}
                 title="add / remove"
-              >[ +/− ]</a>
+              >{section.link.title}</a>
             </Show>
           </div>
           <For each={section.records()}>{(record) => (
             <div class="px-2">
-              <a
-                href={`/show-record?tableName=${aggregate.table}&id=${record.id}`}
-                class="hover:underline"
-              >
-                {record[titleFkColumnName()]}
-              </a>
+              <Switch>
+                <Match when={titleColumn().type === 'fk'}>
+                  <FkRecordListItem
+                    aggregate={aggregate as OneToNSchema}
+                    titleColumnName={titleColName()}
+                    titleColumn={titleColumn() as ForeignKey}
+                    record={record}
+                    id={props.id}
+                  />
+                </Match>
+                <Match when>
+                  <a /*use title column here*/
+                    href={`/show-record`
+                      +`?tableName=${aggregate.table}`
+                      +`&id=${record.id}`}
+                    class="hover:underline"
+                  >
+                    {record[titleColName()]}
+                  </a>
+                </Match>
+              </Switch>
             </div>
           )}</For>
         </section>

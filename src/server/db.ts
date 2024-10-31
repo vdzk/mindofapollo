@@ -78,19 +78,19 @@ export const listForeignRecords = (
   ORDER BY id
 `.catch(onError)
 
-export const listForeignExtRecords = (
+export const listForeignHopRecords = (
   tableName: string,
   fkName: string,
   fkId: string,
-  extColName: string
+  hopColName: string
 ) => {
-  const extColumn = schema.tables[tableName].columns[extColName] as ForeignKey
+  const extColumn = schema.tables[tableName].columns[hopColName] as ForeignKey
 
   return sql`
-    SELECT tMain.*, tExt.${sql(extColumn.fk.labelColumn)}
+    SELECT tMain.*, tHop.${sql(extColumn.fk.labelColumn)}
     FROM ${sql(tableName)} tMain
-    JOIN ${sql(extColumn.fk.table)} tExt
-      ON tMain.${sql(extColName)} = tExt.id
+    JOIN ${sql(extColumn.fk.table)} tHop
+      ON tMain.${sql(hopColName)} = tHop.id
     WHERE tMain.${sql(fkName)} = ${fkId}
     ORDER BY id
   `.catch(onError)
