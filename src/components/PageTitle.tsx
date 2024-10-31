@@ -41,26 +41,3 @@ export const RecordPageTitle: Component<{
     </PageTitle>
   </div>
 )
-
-export const createAsyncFkTitle = (
-  tableName: () => string,
-  record: () => postgres.Row | undefined
-) => createAsync(async () => {
-  const titleColName = titleColumnName(tableName())
-  const titleColumn = schema.tables[tableName()].columns[titleColName]
-
-  if (titleColumn.type === 'fk') {
-    const fkId = record()?.[titleColName]
-    if (fkId) {
-      const fkRecord = await getRecordById(
-        (titleColumn as ForeignKey).fk.table,
-        record()?.[titleColName]
-      )
-      return fkRecord?.[titleColumn.fk.labelColumn]
-    } else {
-      return undefined
-    }
-  } else {
-    return record()?.[titleColName]
-  }
-})

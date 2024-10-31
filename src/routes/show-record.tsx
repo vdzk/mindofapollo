@@ -8,7 +8,7 @@ import { getRecordById } from "~/server/db";
 import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "../components/ColumnLabel";
 import { getExtTableName, nbsp, titleColumnName } from "~/util";
-import { createAsyncFkTitle, RecordPageTitle } from "../components/PageTitle";
+import { RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
 import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
 import postgres from "postgres";
@@ -82,7 +82,7 @@ export default function ShowRecord() {
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
-  const titleText = createAsyncFkTitle(() => sp.tableName, record)
+  const titleText = () => record()?.[titleColName()]
 
   return (
     <main>
