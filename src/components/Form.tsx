@@ -3,7 +3,7 @@ import { Component, createContext, createSignal, For, Setter } from "solid-js";
 import { insertRecord, updateRecord } from "~/server/db";
 import { schema } from "~/schema/schema";
 import { getRecords } from "~/server/api";
-import postgres from "postgres";
+import postgres, { Row } from "postgres";
 import { FormField } from "./FormField";
 import { ColumnSchema, DataLiteral } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/server/extRecord.db";
@@ -21,10 +21,8 @@ const parseForm = (
       } else {
         record[colName] = formData.has(colName)
       }
-    } else if (column.type === 'fk' && column.name) {
-      record[column.name] = formData.get(colName) + ''
     } else {
-      record[colName] = formData.get(colName) + ''
+      record[colName] = formData.get(colName) as DataLiteral
     }
   }
   return record
@@ -87,7 +85,15 @@ export const Form: Component<{
   }))
 
   const columns = () => schema.tables[props.tableName].columns
-  const colNames = () => Object.keys(columns())
+  const colNames = () => {
+    if (props.record) {
+      return Object.entries(columns())
+        .filter(([colName, column]) => column.getVisibility?.(props.record as Row) ?? true)
+        .map(([key]) => key)
+    } else {
+      return Object.keys(columns())
+    }
+  }
   const extTableName = () => props.record && getExtTableName(props.tableName, props.record)
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())

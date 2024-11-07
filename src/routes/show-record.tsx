@@ -77,8 +77,13 @@ export default function ShowRecord() {
 
   const titleColName = () => titleColumnName(sp.tableName)
   const titleColumn = () => columns()[titleColName()]
-  const columnEntries = () => Object.entries({...columns(), ...extColumns()})
-    .filter(([colName]) => colName !== titleColName() || titleColumn().type === 'fk')
+  const columnEntries = () => {
+    const _record = record()
+    return Object.entries({...columns(), ...extColumns()})
+      .filter(([colName, column]) => (colName !== titleColName() // show non-title
+      || titleColumn().type === 'fk') // and title that is foreign key 
+      && ((_record && column.getVisibility?.(_record)) ?? true))  // visibility is on
+  }
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)

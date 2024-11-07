@@ -1,5 +1,6 @@
 import { RiCommunicationQuestionnaireFill } from "solid-icons/ri";
 import { TableSchema } from "../type";
+import postgres from "postgres";
 
 export const question: TableSchema = {
   plural: 'questions',
@@ -8,11 +9,18 @@ export const question: TableSchema = {
     text: {
       type: 'varchar'
     },
+    decided: {
+      type: 'boolean',
+      label: 'status',
+      optionLabels: ['Undecided', 'Decided']
+    },
     answer: {
-      type: 'varchar'
+      type: 'varchar',
+      getVisibility: (record: postgres.Row) => record.decided
     },
     confidence: {
-      type: 'proportion'
+      type: 'proportion',
+      getVisibility: (record: postgres.Row) => record.decided
     }
   },
   aggregates: {

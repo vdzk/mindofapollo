@@ -1,7 +1,6 @@
 import { action, cache, json } from "@solidjs/router";
 import { deleteById, listForeignHopRecords, listRecords } from "./db";
 import { CrossRecordMutateProps, deleteCrossRecord, insertCrossRecord, listCrossRecords } from "./cross.db";
-import { titleColumnName } from "~/util";
 
 export const getRecords = cache(listRecords, 'getRecords');
 export const listCrossRecordsCache = cache(listCrossRecords, 'listCrossRecords')

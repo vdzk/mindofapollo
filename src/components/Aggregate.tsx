@@ -28,6 +28,8 @@ const FkRecordListItem: Component<{
     props.aggregate.table, props.aggregate.column, props.id,
     props.titleColumnName, props.record.id
   )
+  const { fk } = props.titleColumn
+  const text = fk.getLabel?.(props.record) ?? props.record[fk.labelColumn]
 
   return (
     <>
@@ -36,7 +38,7 @@ const FkRecordListItem: Component<{
           +`?tableName=${props.titleColumn.fk.table}`
           +`&id=${props.record[props.titleColumnName]}`}
       >
-        {props.record[props.titleColumn.fk.labelColumn]}
+        {text}
       </a>
       <button class="text-sky-800 mx-2" onClick={onDelete}>[ X ]</button>
     </>

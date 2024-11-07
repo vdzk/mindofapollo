@@ -40,7 +40,7 @@ const createNewTable = async (tableName: string) => {
       const pgType = (column.type in customDataTypes)
         ? customDataTypes[column.type]
         : column.type
-      colDefs.push(colName + ' ' + pgType + ' NOT NULL')
+      colDefs.push(colName + ' ' + pgType + column.getVisibility ? '' : ' NOT NULL')
     }
   }
 

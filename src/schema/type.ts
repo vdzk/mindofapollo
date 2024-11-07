@@ -1,20 +1,23 @@
+import postgres from "postgres"
 import { IconTypes } from "solid-icons"
 
 type PgDataType = 'integer' | 'varchar' | 'text'
 type CustomDataType = 'proportion' | 'link_url' | 'link_title' 
-export type DataLiteral = string | number | boolean
+export type DataLiteral = string | number | boolean | null
 type DbOperation = 'insert' | 'delete' | 'update'
 
 export interface SimpleColumn {
   type: PgDataType | CustomDataType
   label?: string
   preview?: boolean //Use this column to represent the whole record
+  getVisibility?: (record: postgres.Row) => boolean // determine if the field should be visible
 }
 
 export interface BooleanColumn {
   type: 'boolean'
   label?: string
   optionLabels?: [string, string]
+  getVisibility?: (record: postgres.Row) => boolean
 }
 
 export interface ForeignKey {
@@ -25,7 +28,9 @@ export interface ForeignKey {
     table: string 
     labelColumn: string
     extensionTables?: boolean // Choose extension table by appending labelColumn value to the table name
+    getLabel?: (record: postgres.Row) => string // Generate label from the foreign record
   }
+  getVisibility?: (record: postgres.Row) => boolean
 }
 
 export type ColumnSchema = SimpleColumn | BooleanColumn | ForeignKey
