@@ -1,14 +1,14 @@
 "use server";
 
-import { DataLiteral } from "~/schema/type"
+import { DataRecord } from "~/schema/type"
 import { deleteById, getRecordById, insertRecord, onError, sql, updateRecord } from "./db"
 import { getExtTableName } from "~/util"
 
 export const insertExtRecord = async (
   tableName: string,
-  record: Record<string, DataLiteral>,
+  record: DataRecord,
   extTableName: string,
-  extRecord: Record<string, DataLiteral>
+  extRecord: DataRecord
 ) => {
   const result = await insertRecord(tableName, record)
   if (result && result.length > 0) {
@@ -19,9 +19,9 @@ export const insertExtRecord = async (
 export const updateExtRecord = (
   tableName: string,
   id: string,
-  record: Record<string, DataLiteral>,
+  record: DataRecord,
   extTableName: string,
-  extRecord: Record<string, DataLiteral>
+  extRecord: DataRecord
 ) => Promise.all([
   updateRecord(tableName, id, record),
   updateRecord(extTableName, id, extRecord),

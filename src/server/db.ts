@@ -3,7 +3,7 @@
 import chalk from "chalk";
 import postgres from "postgres"
 import { schema } from "~/schema/schema";
-import { DataLiteral, ForeignKey } from "~/schema/type";
+import { DataRecord, ForeignKey } from "~/schema/type";
 
 // TODO: move config into .env file
 export const sql = postgres({
@@ -12,16 +12,24 @@ export const sql = postgres({
   database: "apollo",
   username: "postgres",
   password: 'jZrZg7aLWkQu',
-  debug: true
+  debug: true,
+  onnotice: notice => console.log(chalk.green('NOTICE'), notice.message),
+  // transform: {
+  //   ...postgres.camel,
+  //   undefined: null
+  // }
 });
 
-export const onError = (error: Error & {query?: any, parameters?: any}) => {
+export const onError = (error: Error & {[key: string]: any}) => {
   if (error.name === 'PostgresError') {
     console.log()
     console.log(error.query.trim().replaceAll(/\n\s+/g, '\n'))
     if (error.parameters && error.parameters.length > 0) {
       console.log(error.parameters)
     }
+    console.log(chalk.red('ERROR'), error.message)
+  } else if (error.code === 'UNDEFINED_VALUE') {
+    console.log(error)
     console.log(chalk.red('ERROR'), error.message)
   } else {
     console.error(error)
@@ -31,7 +39,7 @@ export const onError = (error: Error & {query?: any, parameters?: any}) => {
 
 export const insertRecord = (
   tableName: string,
-  record: Record<string, DataLiteral>
+  record: DataRecord
 ) => sql`
   INSERT INTO ${sql(tableName)} ${sql(record)}
   RETURNING id
@@ -40,7 +48,7 @@ export const insertRecord = (
 export const updateRecord = (
   tableName: string,
   id: string,
-  record: Record<string, DataLiteral>
+  record: DataRecord
 ) => sql`
   UPDATE ${sql(tableName)}
   SET ${sql(record, Object.keys(record))}

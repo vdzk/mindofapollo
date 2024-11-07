@@ -7,8 +7,8 @@ export interface CrossRecordMutateProps {
   a: string
   b: string
   first: boolean
-  a_id: string
-  b_id: string
+  a_id: number
+  b_id: number
 }
 
 export const insertCrossRecord = (props: CrossRecordMutateProps) => sql`
@@ -20,7 +20,7 @@ export const insertCrossRecord = (props: CrossRecordMutateProps) => sql`
 export const listCrossRecords = (
   b: string,
   a: string,
-  id: string,
+  id: number,
   first: boolean
 ) => sql`
   SELECT ${sql(b)}.*

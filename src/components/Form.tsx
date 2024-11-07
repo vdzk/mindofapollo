@@ -12,7 +12,7 @@ const parseForm = (
   formData: FormData,
   columns: Record<string, ColumnSchema>
 ) => {
-  const record: Record<string, DataLiteral> = {}
+  const record: DataRecord = {}
   for (const [colName, column] of Object.entries(columns)) {
     if (column.type === 'boolean') {
       if (column.optionLabels) {
@@ -48,10 +48,10 @@ export const Form: Component<{
 
   const saveAction = useAction(action(async (
     tableName: string,
-    record: Record<string, DataLiteral>,
+    record: DataRecord,
     extension?: {
       tableName: string,
-      record: Record<string, DataLiteral>
+      record: DataRecord
     }
   ) => {
     if (props.id) {
