@@ -1,12 +1,12 @@
-import postgres from "postgres";
 import { createContext, createResource, createSignal, onMount, ParentComponent, Resource, Setter, Show } from "solid-js";
 import { getUser } from "./server/session";
+import { DataRecord } from "./schema/type";
 
 export const SessionContext = createContext<{
-  user: Resource<postgres.Row | undefined>;
+  user: Resource<DataRecord | undefined>;
   loggedIn: () => boolean;
-  refetch: (info?: unknown) => postgres.Row | Promise<postgres.Row | undefined> | null | undefined;
-  mutate: Setter<postgres.Row | undefined>;
+  refetch: (info?: unknown) => DataRecord | Promise<DataRecord | undefined> | null | undefined;
+  mutate: Setter<DataRecord | undefined>;
 }>();
 
 export const SessionContextProvider: ParentComponent = (props) => {

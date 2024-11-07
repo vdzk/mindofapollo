@@ -1,6 +1,5 @@
 import { BsExclamationDiamondFill } from "solid-icons/bs";
-import { TableSchema } from "../type";
-import { Row } from "postgres";
+import { DataRecord, TableSchema } from "../type";
 
 export const critical_statement: TableSchema = {
   plural: 'critical statements',
@@ -28,9 +27,9 @@ export const critical_statement: TableSchema = {
       fk: {
         table: 'question',
         labelColumn: 'answer',
-        getLabel: (record: Row) => record.decided
+        getLabel: (record: DataRecord) => record.decided
           ? `(c: ${record.confidence}) ${record.answer}`
-          : record.text
+          : record.text as string
       }
     }
   }

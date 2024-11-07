@@ -1,18 +1,17 @@
 import { createAsync, useAction } from "@solidjs/router";
 import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
-import { AggregateSchema, ForeignKey, OneToNSchema } from "~/schema/type";
+import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type";
 import { listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
 import { listCrossRecords } from "~/server/cross.db";
 import { titleColumnName } from "~/util";
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
-import postgres from "postgres";
 import { SessionContext } from "~/SessionContext";
 import { deleteForeignHopRecordAction, listForeignHopRecordsCache } from "~/server/api";
 
 export interface AggregateSection {
   title: string;
-  records: () => postgres.Row[] | undefined;
+  records: () => DataRecord[] | undefined;
   link: { href: string, title: string }
 }
 
@@ -20,13 +19,13 @@ const FkRecordListItem: Component<{
   aggregate: OneToNSchema,
   titleColumnName: string,
   titleColumn: ForeignKey,
-  record: postgres.Row,
+  record: DataRecord,
   id: string
 }> = props => {
   const deleteAction = useAction(deleteForeignHopRecordAction);
   const onDelete = () => deleteAction(
     props.aggregate.table, props.aggregate.column, props.id,
-    props.titleColumnName, props.record.id
+    props.titleColumnName, props.record.id as string
   )
   const { fk } = props.titleColumn
   const text = fk.getLabel?.(props.record) ?? props.record[fk.labelColumn]

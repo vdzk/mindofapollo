@@ -1,5 +1,5 @@
-import postgres from "postgres"
 import { schema } from "./schema/schema"
+import { DataRecord } from "./schema/type"
 
 export const humanCase = (str: string) => str
   .split('_')
@@ -26,7 +26,7 @@ export const titleColumnName = (tableName: string) => {
 
 export const getExtTableName = (
   tableName: string,
-  record: postgres.Row
+  record: DataRecord
 ) => {
   const tableSchema = schema.tables[tableName]
   for (const [colName, column] of Object.entries(tableSchema.columns)) {

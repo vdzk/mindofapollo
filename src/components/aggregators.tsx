@@ -1,5 +1,4 @@
-import postgres from "postgres";
-import { AggregateSchema, BooleanColumn, ForeignKey, NToNSchema, OneToNSchema, TableSchema } from "~/schema/type";
+import { AggregateSchema, BooleanColumn, DataRecord, ForeignKey, NToNSchema, OneToNSchema, TableSchema } from "~/schema/type";
 import { firstCap, pluralTableName, titleColumnName } from "~/util";
 import { AggregateSection } from "./Aggregate";
 
@@ -8,8 +7,8 @@ export type Aggregator = (props: {
   id: string
   aggregateTable: TableSchema
   aggregate: AggregateSchema
-  records: () => postgres.RowList<postgres.Row[]> | undefined,
-  splitRecords?: () => postgres.RowList<postgres.Row[]> | undefined,
+  records: () => DataRecord[] | undefined,
+  splitRecords?: () => DataRecord[] | undefined,
 }) => AggregateSection[]
 
 export const simpleList: Aggregator = (props) => [{
@@ -69,7 +68,7 @@ export const splitFk: Aggregator = (props) => {
   const splitTitleColumnName = titleColumnName(splitColumn.fk.table)
 
   return (props.splitRecords?.() ?? []).map(record => ({
-    title: record[splitTitleColumnName],
+    title: record[splitTitleColumnName] as string,
     records: () => props.records()
       ?.filter(r => r[splitColumnName] === record.id),
     link: {

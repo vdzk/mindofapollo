@@ -11,7 +11,6 @@ import { getExtTableName, nbsp, titleColumnName } from "~/util";
 import { RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
 import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
-import postgres from "postgres";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -61,7 +60,7 @@ export default function ShowRecord() {
   const session = useContext(SessionContext)
 
   const record = createAsync(() => getExtRecordById(sp.tableName, sp.id))
-  const extTableName = () => record() ? getExtTableName(sp.tableName, record() as postgres.Row) : undefined
+  const extTableName = () => record() ? getExtTableName(sp.tableName, record()!) : undefined
   const table = () => schema.tables[sp.tableName]
 
   const columns = () => table().columns

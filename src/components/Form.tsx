@@ -1,11 +1,10 @@
 import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Component, createContext, createSignal, For, Setter } from "solid-js";
+import { Component, For } from "solid-js";
 import { insertRecord, updateRecord } from "~/server/db";
 import { schema } from "~/schema/schema";
 import { getRecords } from "~/server/api";
-import postgres, { Row } from "postgres";
 import { FormField } from "./FormField";
-import { ColumnSchema, DataLiteral } from "~/schema/type";
+import { ColumnSchema, DataLiteral, DataRecord } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/server/extRecord.db";
 import { getExtTableName } from "~/util";
 
@@ -31,7 +30,7 @@ const parseForm = (
 export const Form: Component<{
   tableName: string,
   id?: string,
-  record?: postgres.Row;
+  record?: DataRecord;
 }> = (props) => {
   const [searchParams] = useSearchParams()
 
@@ -88,7 +87,7 @@ export const Form: Component<{
   const colNames = () => {
     if (props.record) {
       return Object.entries(columns())
-        .filter(([colName, column]) => column.getVisibility?.(props.record as Row) ?? true)
+        .filter(([colName, column]) => column.getVisibility?.(props.record!) ?? true)
         .map(([key]) => key)
     } else {
       return Object.keys(columns())

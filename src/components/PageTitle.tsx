@@ -1,12 +1,8 @@
-import { createAsync } from "@solidjs/router";
-import postgres from "postgres";
 import { IconTypes } from "solid-icons";
 import { Component, ParentComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { schema } from "~/schema/schema";
-import { ForeignKey } from "~/schema/type";
-import { getRecordById } from "~/server/db";
-import { firstCap, humanCase, titleColumnName } from "~/util";
+import { firstCap, humanCase } from "~/util";
 
 export const PageTitle: ParentComponent = (props) => {
   return (
