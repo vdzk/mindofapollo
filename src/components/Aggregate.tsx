@@ -2,7 +2,8 @@ import { createAsync, useAction } from "@solidjs/router";
 import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type";
-import { listForeignRecords, listOverlapRecords, listRecords } from "~/server/db";
+import { listForeignRecords } from "~/server/select.db";
+import { listOverlapRecords, listRecords } from "~/server/select.db";
 import { listCrossRecords } from "~/server/cross.db";
 import { titleColumnName } from "~/util";
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
@@ -20,12 +21,12 @@ const FkRecordListItem: Component<{
   titleColumnName: string,
   titleColumn: ForeignKey,
   record: DataRecord,
-  id: string
+  id: number
 }> = props => {
   const deleteAction = useAction(deleteForeignHopRecordAction);
   const onDelete = () => deleteAction(
     props.aggregate.table, props.aggregate.column, props.id,
-    props.titleColumnName, props.record.id as string
+    props.titleColumnName, props.record.id as number
   )
   const { fk } = props.titleColumn
   const text = fk.getLabel?.(props.record) ?? props.record[fk.labelColumn]
@@ -46,7 +47,7 @@ const FkRecordListItem: Component<{
 
 export const Aggregate: Component<{
   tableName: string;
-  id: string;
+  id: number;
   aggregateName: string;
 }> = (props) => {
   const session = useContext(SessionContext)

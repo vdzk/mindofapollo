@@ -1,7 +1,10 @@
 "use server";
 
 import { DataRecord } from "~/schema/type"
-import { deleteById, getRecordById, insertRecord, onError, sql, updateRecord } from "./db"
+import { onError } from "./db"
+import { deleteById } from "./mutate.db";
+import { getRecordById } from "~/server/select.db";
+import { insertRecord, updateRecord } from "./mutate.db";
 import { getExtTableName } from "~/util"
 
 export const insertExtRecord = async (
@@ -18,7 +21,7 @@ export const insertExtRecord = async (
 
 export const updateExtRecord = (
   tableName: string,
-  id: string,
+  id: number,
   record: DataRecord,
   extTableName: string,
   extRecord: DataRecord
@@ -27,7 +30,7 @@ export const updateExtRecord = (
   updateRecord(extTableName, id, extRecord),
 ]).catch(onError)
 
-export const getExtRecordById = async (tableName: string, id: string | number) => {
+export const getExtRecordById = async (tableName: string, id: number) => {
   const result = await getRecordById(tableName, id)
   if (!result) return
 
@@ -40,7 +43,7 @@ export const getExtRecordById = async (tableName: string, id: string | number) =
   }
 }
 
-export const deleteExtById = async (tableName: string, id: string) => {
+export const deleteExtById = async (tableName: string, id: number) => {
   const result = await getRecordById(tableName, id)
   if (!result) return
   const extTableName = getExtTableName(tableName, result)

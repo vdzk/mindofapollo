@@ -1,21 +1,7 @@
 "use server";
 import { sql, onError } from "./db";
-
-const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] : [b, a]).join('_x_');
-
-export interface CrossRecordMutateProps {
-  a: string
-  b: string
-  first: boolean
-  a_id: number
-  b_id: number
-}
-
-export const insertCrossRecord = (props: CrossRecordMutateProps) => sql`
-  INSERT INTO ${sql(xName(props.a, props.b, props.first))}
-    (${sql(props.a + '_id')}, ${sql(props.b + '_id')})
-  VALUES (${props.a_id}, ${props.b_id})
-`.catch(onError);
+import { safeWrap } from "./mutate.db";
+import { CrossRecordMutateProps, insertCrossRecordServerOnly, writeHistory, xName } from "./serverOnly";
 
 export const listCrossRecords = (
   b: string,
@@ -30,8 +16,18 @@ export const listCrossRecords = (
   ORDER BY id
 `.catch(onError);
 
-export const deleteCrossRecord = (props: CrossRecordMutateProps) => sql`
-  DELETE FROM ${sql(xName(props.a, props.b, props.first))}
-  WHERE ${sql(props.a + '_id')} = ${props.a_id}
-    AND ${sql(props.b + '_id')} = ${props.b_id}
-`.catch(onError);
+export const insertCrossRecord = safeWrap(insertCrossRecordServerOnly)
+
+export const deleteCrossRecord = safeWrap(async (
+  userId: number,
+  props: CrossRecordMutateProps
+) => {
+  const tableName = xName(props.a, props.b, props.first)
+  const result = await sql`
+    DELETE FROM ${sql(tableName)}
+    WHERE ${sql(props.a + '_id')} = ${props.a_id}
+      AND ${sql(props.b + '_id')} = ${props.b_id}
+    RETURNING *
+  `
+  writeHistory(userId, 'DELETE', tableName, result[0])
+})

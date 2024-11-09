@@ -1,6 +1,9 @@
 import { action, cache, json } from "@solidjs/router";
-import { deleteById, listForeignHopRecords, listRecords } from "./db";
-import { CrossRecordMutateProps, deleteCrossRecord, insertCrossRecord, listCrossRecords } from "./cross.db";
+import { deleteById } from "./mutate.db";
+import { listForeignHopRecords } from "./select.db";
+import { listRecords } from "./select.db";
+import { deleteCrossRecord, insertCrossRecord, listCrossRecords } from "./cross.db";
+import { CrossRecordMutateProps } from "./serverOnly";
 
 export const getRecords = cache(listRecords, 'getRecords');
 export const listCrossRecordsCache = cache(listCrossRecords, 'listCrossRecords')
@@ -37,9 +40,9 @@ export const insertCrossRecordAction = action(
 export const deleteForeignHopRecordAction = action(async (
   tableName: string,
   fkName: string,
-  fkId: string,
+  fkId: number,
   hopColName: string,
-  deleteId: string
+  deleteId: number
 ) => {
   await deleteById(tableName, deleteId)
   return json(

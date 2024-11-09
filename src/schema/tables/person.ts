@@ -16,7 +16,8 @@ export const person: TableSchema = {
     },
   },
   initialData: [
-    /*1*/['Alice', '', ''],
-    /*2*/['Bob', '', '']
+    /*1*/['Initialiser', '', ''],
+    /*2*/['Alice', '', ''],
+    /*3*/['Bob', '', '']
   ]
 }

@@ -7,7 +7,7 @@ import { titleColumnName } from "~/util";
 
 interface EditRecord {
   tableName: string
-  id: string
+  id: number
 }
 
 export default function EditRecord() {

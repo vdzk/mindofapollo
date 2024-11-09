@@ -4,13 +4,15 @@ import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { BooleanColumn, ForeignKey } from "~/schema/type";
 import { getRecords } from "~/server/api";
-import { getRecordById } from "~/server/db";
+import { getRecordById } from "~/server/select.db";
 import { SessionContext } from "~/SessionContext";
 import { ColumnLabel } from "../components/ColumnLabel";
 import { getExtTableName, nbsp, titleColumnName } from "~/util";
 import { RecordPageTitle } from "../components/PageTitle";
 import { Aggregate } from "../components/Aggregate";
 import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
+import { RecordHistory } from "~/components/RecordHistory";
+import { UserHistory } from "~/components/UserHistory";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -40,7 +42,7 @@ const FkValue: Component<{
 
 const _delete = action(async (
   tableName: string,
-  id: string
+  id: number
 ) => {
   await deleteExtById(tableName, id)
   throw redirect(
@@ -52,7 +54,7 @@ const _delete = action(async (
 
 interface ShowRecord {
   tableName: string
-  id: string
+  id: number
 }
 
 export default function ShowRecord() {
@@ -130,12 +132,16 @@ export default function ShowRecord() {
           aggregateName={aggregateName}
         />}
       </For>
+      <RecordHistory tableName={sp.tableName} recordId={sp.id} />
+      <Show when={sp.tableName === 'person'}>
+        <UserHistory userId={sp.id}/>
+      </Show>
       <Show when={session!.loggedIn()}>
         <div>
           <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
             [ Edit ]
           </a>
-          <Show when={!table().deny?.includes('delete')}>
+          <Show when={!table().deny?.includes('DELETE')}>
             <button class="mx-2 text-sky-800" onClick={onDelete}>
               [ Delete ]
             </button>

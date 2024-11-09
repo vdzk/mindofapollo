@@ -4,7 +4,7 @@ import { AggregateSection } from "./Aggregate";
 
 export type Aggregator = (props: {
   tableName: string
-  id: string
+  id: number
   aggregateTable: TableSchema
   aggregate: AggregateSchema
   records: () => DataRecord[] | undefined,

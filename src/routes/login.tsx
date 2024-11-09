@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta";
 import { createAsync, useNavigate } from "@solidjs/router";
 import { createSignal, For, useContext } from "solid-js";
-import { listRecords } from "~/server/db";
+import { listRecords } from "~/server/select.db";
 import { login } from "~/server/session";
 import { SessionContext } from "~/SessionContext";
 
@@ -12,7 +12,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   const submit = async () => {
-    await login(userId())
+    await login(parseInt(userId()))
     session!.refetch()
     navigate("/list-records?tableName=tag");
   }

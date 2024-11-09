@@ -1,6 +1,6 @@
 import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Component, For } from "solid-js";
-import { insertRecord, updateRecord } from "~/server/db";
+import { insertRecord, updateRecord } from "~/server/mutate.db";
 import { schema } from "~/schema/schema";
 import { getRecords } from "~/server/api";
 import { FormField } from "./FormField";
@@ -29,7 +29,7 @@ const parseForm = (
 
 export const Form: Component<{
   tableName: string,
-  id?: string,
+  id?: number,
   record?: DataRecord;
 }> = (props) => {
   const [searchParams] = useSearchParams()

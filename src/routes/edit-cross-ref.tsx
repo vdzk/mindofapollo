@@ -3,22 +3,23 @@ import { createAsync, useAction, useSearchParams } from "@solidjs/router";
 import { For } from "solid-js";
 import { RecordPageTitle } from "~/components/PageTitle";
 import { deleteCrossRecordAction, getRecords, insertCrossRecordAction, listCrossRecordsCache } from "~/server/api";
-import { getRecordById } from "~/server/db";
+import { getRecordById } from "~/server/select.db";
 import { firstCap, pluralTableName, titleColumnName } from "~/util";
 
 interface EditCrossRefParams {
   a: string
   b: string
-  id: string
+  id: number
   first?: 'true'
 }
 
 export default function EditCrossRef() {
   const [sp] = useSearchParams() as unknown as [EditCrossRefParams]
   const first = sp.first === 'true'
+  const id = parseInt(sp.id)
 
   const aRecord = createAsync(() => getRecordById(sp.a, sp.id))
-  const linkedRecords = createAsync(() => listCrossRecordsCache( sp.b, sp.a, sp.id, first ))
+  const linkedRecords = createAsync(() => listCrossRecordsCache( sp.b, sp.a, id, first ))
   const allRrcords = createAsync(() => getRecords(sp.b))
 
 
@@ -34,15 +35,15 @@ export default function EditCrossRef() {
       a: sp.a,
       b: sp.b,
       first,
-      a_id: sp.id,
-      b_id: formData.get('id') as string
+      a_id: id,
+      b_id: parseInt(formData.get('id') as string)
     })
   }
 
   const deleteCrossRecordRun = useAction(deleteCrossRecordAction)
 
-  const onDelete = (id: string) => {
-    deleteCrossRecordRun({a: sp.a, b: sp.b, first, a_id: sp.id, b_id: id})
+  const onDelete = (linkedId: number) => {
+    deleteCrossRecordRun({a: sp.a, b: sp.b, first, a_id: id, b_id: linkedId})
   }
 
   const bColName = titleColumnName(sp.b)

@@ -1,13 +1,16 @@
-import { insertRecord, onError, sql } from "~/server/db"
+import { sql } from "~/server/db"
+import { insertRecordServerOnly } from "./serverOnly"
 import { schema } from "~/schema/schema"
 import { arrayToObjects } from "~/util"
-import { insertCrossRecord } from "./cross.db"
+import { insertCrossRecordServerOnly } from "./serverOnly"
 
 const customDataTypes: Record<string, string> = {
   proportion: 'numeric(6, 5)',
   link_url: 'varchar',
   link_title: 'varchar'
 }
+
+const userId = 1
 
 const historyColDefs = [
   'data_op data_op NOT NULL',
@@ -26,7 +29,7 @@ const wipeSchema = async () => {
 }
 
 const createEnums = async () => {
-  await sql.unsafe("CREATE TYPE data_op AS ENUM ('CREATE', 'UPDATE', 'DELETE')");
+  await sql.unsafe("CREATE TYPE data_op AS ENUM ('INSERT', 'UPDATE', 'DELETE')");
 }
 
 const createTable = async (tableName: string, options?: { history?: boolean}) => {
@@ -76,7 +79,7 @@ const initialiseData = async (tableName: string) => {
     const data = arrayToObjects(initialData, keys)
     for (const record of data) {
       // This should populate history tables as well
-      await insertRecord(tableName, record)
+      await insertRecordServerOnly(userId, tableName, record)
     }
   }
 }
@@ -91,13 +94,13 @@ const createIndexes = async (tableName: string) => {
   }
 
   // History table indexes
-  await sql.unsafe(
-    `CREATE INDEX ${tableName}_h_op_user_id_idx ON ${tableName}_h (op_user_id)`
-  )
+  await sql.unsafe(`
+    CREATE INDEX ${tableName}_h_id_idx ON ${tableName}_h (id);
+    CREATE INDEX ${tableName}_h_op_user_id_idx ON ${tableName}_h (op_user_id);
+  `)
 }
 
-const createCrossTables = async (options?: { history?: boolean}) => {
-  const history = !!options?.history
+const createCrossTables = async () => {
   for (const tableName in schema.tables) {
     const { aggregates } = schema.tables[tableName]
     if (aggregates) {
@@ -107,39 +110,40 @@ const createCrossTables = async (options?: { history?: boolean}) => {
           const a = tableName
           const b = aggregate.table
           const data = aggregate.initialData
-          const xTableName = `${a}_x_${b}${history ? '_h' : ''}`
+          const xTableName = `${a}_x_${b}`
 
-          await sql.unsafe(`
-            CREATE TABLE ${xTableName} (
-              ${a}_id integer NOT NULL,
-              ${b}_id integer NOT NULL
-              ${history ? ',' + historyColDefs.join() : ''}
-            )
-          `)
-        
-          if (history) {
-            await sql.unsafe(
-              `CREATE INDEX ${xTableName}_op_user_id_idx `
-              + `ON ${xTableName} (op_user_id)`
-            )
-          } else {
-            // Initialise data
-            if (data) {
-              for (const [a_id, b_id] of data) {
-                // This should populate history records as well
-                await insertCrossRecord({a, b, first: true, a_id, b_id})
-              }
-            }
-
-            // Create indexes and constraints
+          // Create cross reference and history tables
+          for (const history of [true, false]) {
             await sql.unsafe(`
-              ALTER TABLE ${xTableName}
-              ADD CONSTRAINT ${xTableName}_un
-              UNIQUE (${a}_id,${b}_id);
-              CREATE INDEX ${xTableName}_${a}_id_idx ON ${xTableName} (${a}_id);
-              CREATE INDEX ${xTableName}_${b}_id_idx ON ${xTableName} (${b}_id);
+              CREATE TABLE ${xTableName + (history ? '_h' : '')} (
+                ${a}_id integer NOT NULL,
+                ${b}_id integer NOT NULL
+                ${history ? ',' + historyColDefs.join() : ''}
+              )
             `)
           }
+
+          // Initialise data
+          if (data) {
+            for (const [a_id, b_id] of data) {
+              // This should populate history records as well
+              await insertCrossRecordServerOnly(userId, {a, b, first: true, a_id, b_id})
+            }
+          }
+
+          // Create indexes and constraints
+          await sql.unsafe(`
+            ALTER TABLE ${xTableName}
+            ADD CONSTRAINT ${xTableName}_un
+            UNIQUE (${a}_id,${b}_id);
+            CREATE INDEX ${xTableName}_${a}_id_idx ON ${xTableName} (${a}_id);
+            CREATE INDEX ${xTableName}_${b}_id_idx ON ${xTableName} (${b}_id);
+          `)
+          
+          await sql.unsafe(
+            `CREATE INDEX ${xTableName}_h_op_user_id_idx `
+            + `ON ${xTableName}_h (op_user_id)`
+          )
         }
       }
     }
@@ -147,6 +151,7 @@ const createCrossTables = async (options?: { history?: boolean}) => {
 }
 
 const createDbSchema = async () => {
+  process.env.userId = '1'
   await createEnums()
   for (const tableName in schema.tables) {
     await createTable(tableName)
@@ -155,7 +160,6 @@ const createDbSchema = async () => {
     await createIndexes(tableName)
   }
   await createCrossTables()
-  await createCrossTables({ history: true })
 }
 
 await wipeSchema()

@@ -18,7 +18,7 @@ export default function ListRecords() {
   const records = createAsync(() => getRecords(sp.tableName))
   const title = () => firstCap(pluralTableName(sp.tableName))
   const canAdd = () => session?.loggedIn()
-    && !schema.tables[sp.tableName].deny?.includes('insert')
+    && !schema.tables[sp.tableName].deny?.includes('INSERT')
 
   return (
     <main>

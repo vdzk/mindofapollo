@@ -3,9 +3,14 @@ import { IconTypes } from "solid-icons"
 type PgDataType = 'integer' | 'varchar' | 'text'
 type CustomDataType = 'proportion' | 'link_url' | 'link_title' 
 export type DataLiteral = string | number | boolean | null
-type DbOperation = 'insert' | 'delete' | 'update'
+export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
 
 export interface DataRecord { [column: string]: DataLiteral }
+export type HistoryRecord = DataRecord & {
+  data_op: DataOp
+  op_user_id: number
+  op_timestamp: Date
+}
 
 export interface SimpleColumn {
   type: PgDataType | CustomDataType
@@ -57,7 +62,7 @@ export interface TableSchema {
   plural?: string,
   icon?: IconTypes,
   extendsTable?: string, // This table extends another table with its columns
-  deny?: DbOperation[], // Prevent all users from performing these operations
+  deny?: DataOp[], // Prevent all users from performing these operations
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>,
   initialData?: DataLiteral[][] // The DB table will be initialised with this. Must contain ids.
