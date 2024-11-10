@@ -1,5 +1,5 @@
 import { TbSword } from "solid-icons/tb";
-import { TableSchema } from "../type";
+import { TableSchema } from "../schema/type";
 
 export const argument: TableSchema = {
   plural: 'arguments',

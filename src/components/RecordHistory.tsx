@@ -1,7 +1,6 @@
 import { createAsync } from "@solidjs/router";
 import { Component, For } from "solid-js";
 import { listRecordHistory } from "~/server/history.db";
-import { listRecords } from "~/server/select.db";
 import { timeAgo } from "~/util";
 
 export const RecordHistory: Component<{

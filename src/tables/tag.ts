@@ -1,5 +1,5 @@
 import { ImPriceTag } from "solid-icons/im";
-import { TableSchema } from "../type";
+import { TableSchema } from "../schema/type";
 
 export const tag: TableSchema = {
   plural: 'tags',

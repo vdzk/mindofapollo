@@ -1,4 +1,4 @@
-import { TableSchema } from "../type";
+import { TableSchema } from "../schema/type";
 
 export const argument_authority: TableSchema = {
   extendsTable: 'argument',

@@ -32,7 +32,7 @@ export const getUserId = async () => {
 export const getUser = async () => {
   // Temporary workaround for this issue
   // https://github.com/nksaraf/vinxi/issues/208
-  await new Promise(r => setTimeout(r, 200))
+  // await new Promise(r => setTimeout(r, 200))
   const userId = await getUserId()
   if (userId) {
     return await getRecordById('person', userId)

@@ -1,5 +1,5 @@
 import { RiCommunicationQuestionnaireFill } from "solid-icons/ri";
-import { DataRecord, TableSchema } from "../type";
+import { DataRecord, TableSchema } from "../schema/type";
 
 export const question: TableSchema = {
   plural: 'questions',
