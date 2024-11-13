@@ -1,7 +1,7 @@
 "use server"
 
 import { schema } from "~/schema/schema";
-import { ForeignKey } from "~/schema/type";
+import { DataRecordWithId, ForeignKey } from "~/schema/type";
 import { sql, onError } from "./db";
 import chalk from "chalk";
 
@@ -21,7 +21,7 @@ export const getRecordById = async (tableName: string, id: string | number) => {
       SELECT *
       FROM ${sql(tableName)}
       WHERE id = ${id}
-    `.then(rows => rows[0]).catch(onError)
+    `.then(rows => rows[0] as DataRecordWithId).catch(onError)
   }
 }
 

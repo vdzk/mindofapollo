@@ -1,7 +1,7 @@
 import { AppDataSchema } from "./type"
 import { person } from "~/tables/person"
 import { tag } from "~/tables/tag"
-import { question } from "~/tables/question"
+import { question } from "~/tables/question/question"
 import { argument_type } from "~/tables/argument_type"
 import { critical_question } from "~/tables/critical_question"
 import { argument } from "~/tables/argument"

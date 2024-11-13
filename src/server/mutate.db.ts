@@ -38,12 +38,13 @@ export const updateRecord = safeWrap(async (
   id: number,
   record: DataRecord
 ) => {
-  await sql`
+  const result = await sql`
     UPDATE ${sql(tableName)}
     SET ${sql(record, Object.keys(record))}
     WHERE id = ${id}
+    RETURNING *
   `;
-  await writeHistory(userId, 'UPDATE', tableName, {id, ...record})
+  await writeHistory(userId, 'UPDATE', tableName, result[0])
 });
 
 export const deleteById = safeWrap(async (

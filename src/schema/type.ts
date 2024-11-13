@@ -5,7 +5,8 @@ type CustomDataType = 'proportion' | 'link_url' | 'link_title'
 export type DataLiteral = string | number | boolean | null
 export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
 
-export interface DataRecord { [column: string]: DataLiteral }
+export interface DataRecord {[column: string]: DataLiteral }
+export type DataRecordWithId = DataRecord & {id: number}
 export type HistoryRecord = DataRecord & {
   data_op: DataOp
   op_user_id: number
@@ -58,6 +59,18 @@ export interface NToNSchema {
 
 export type AggregateSchema = OneToNSchema | NToNSchema
 
+export interface ActionParams {
+  userId: number,
+  record: DataRecordWithId
+}
+
+export interface TableAction {
+  label: string,
+  getVisibility: (params: ActionParams) => Promise<boolean> | boolean
+  validate?: (params: ActionParams) => Promise<string | undefined>
+  execute: (params: ActionParams) => Promise<void>
+}
+
 export interface TableSchema {
   plural?: string,
   icon?: IconTypes,
@@ -65,6 +78,7 @@ export interface TableSchema {
   deny?: DataOp[], // Prevent all users from performing these operations
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>,
+  actions?: Record<string, TableAction>,
   initialData?: DataLiteral[][] // The DB table will be initialised with this. Must contain ids.
 }
 

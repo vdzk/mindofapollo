@@ -13,6 +13,7 @@ import { Aggregate } from "../components/Aggregate";
 import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
 import { RecordHistory } from "~/components/RecordHistory";
 import { UserHistory } from "~/components/UserHistory";
+import { Actions } from "~/components/Actions";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -88,7 +89,7 @@ export default function ShowRecord() {
 
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
-  const titleText = () => record()?.[titleColName()]
+  const titleText = () => (record()?.[titleColName()] ?? '') as string
 
   return (
     <main>
@@ -102,7 +103,7 @@ export default function ShowRecord() {
               <Match when={column.type === 'fk'}>
                 <FkValue
                   column={column as ForeignKey}
-                  id={record()?.[colName]}
+                  id={record()?.[colName] as number}
                 />
               </Match>
               <Match when={column.type === 'boolean' && column.optionLabels}>
@@ -137,6 +138,9 @@ export default function ShowRecord() {
         <UserHistory userId={sp.id}/>
       </Show>
       <Show when={session!.loggedIn()}>
+        <Show when={record()}>
+          <Actions tableName={sp.tableName} record={record()!} />
+        </Show>
         <div>
           <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
             [ Edit ]

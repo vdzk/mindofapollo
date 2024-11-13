@@ -1,5 +1,5 @@
 import { IoPersonSharp } from "solid-icons/io";
-import { TableSchema } from "../schema/type";
+import { TableSchema } from "~/schema/type";
 
 export const person: TableSchema = {
   plural: 'persons',

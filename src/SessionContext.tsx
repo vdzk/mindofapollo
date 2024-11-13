@@ -1,12 +1,12 @@
 import { createContext, createResource, createSignal, onMount, ParentComponent, Resource, Setter, Show } from "solid-js";
 import { getUser } from "./server/session";
-import { DataRecord } from "./schema/type";
+import { DataRecordWithId } from "./schema/type";
 
 export const SessionContext = createContext<{
-  user: Resource<DataRecord | undefined>;
+  user: Resource<DataRecordWithId | undefined>;
   loggedIn: () => boolean;
-  refetch: (info?: unknown) => DataRecord | Promise<DataRecord | undefined> | null | undefined;
-  mutate: Setter<DataRecord | undefined>;
+  refetch: (info?: unknown) => DataRecordWithId | Promise<DataRecordWithId | undefined> | null | undefined;
+  mutate: Setter<DataRecordWithId | undefined>;
 }>();
 
 export const SessionContextProvider: ParentComponent = (props) => {

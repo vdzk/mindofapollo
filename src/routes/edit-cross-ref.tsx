@@ -9,7 +9,7 @@ import { firstCap, pluralTableName, titleColumnName } from "~/util";
 interface EditCrossRefParams {
   a: string
   b: string
-  id: number
+  id: string
   first?: 'true'
 }
 
@@ -47,12 +47,12 @@ export default function EditCrossRef() {
   }
 
   const bColName = titleColumnName(sp.b)
-  const titleText = () => aRecord()?.[titleColumnName(sp.a)]
+  const titleText = () => aRecord()?.[titleColumnName(sp.a)] as string | undefined
 
   return (
     <main>
       <Title>{titleText()}</Title>
-      <RecordPageTitle tableName={sp.a} text={titleText()} />
+      <RecordPageTitle tableName={sp.a} text={titleText() ?? ''} />
       <div class="px-2 pb-2">
       <div class="font-bold">{firstCap(pluralTableName(sp.b))}</div>
         <For each={linkedRecords()}>

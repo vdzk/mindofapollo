@@ -84,15 +84,7 @@ export const Form: Component<{
   }))
 
   const columns = () => schema.tables[props.tableName].columns
-  const colNames = () => {
-    if (props.record) {
-      return Object.entries(columns())
-        .filter(([colName, column]) => column.getVisibility?.(props.record!) ?? true)
-        .map(([key]) => key)
-    } else {
-      return Object.keys(columns())
-    }
-  }
+  const colNames = () => Object.keys(columns())
   const extTableName = () => props.record && getExtTableName(props.tableName, props.record)
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
