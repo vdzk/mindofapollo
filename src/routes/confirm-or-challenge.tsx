@@ -1,0 +1,101 @@
+import { Match, Switch, createResource, createSignal } from "solid-js";
+import { FormField } from "~/components/FormField";
+import { addConfirmation, getConfirnmationQuestion } from "~/server/ConfirmOrChallenge";
+import { insertExtRecord } from "~/server/extRecord.db";
+import { updateRecord } from "~/server/mutate.db";
+
+export default function ConfirmOrChallenge() {
+  const [question, { refetch }] = createResource(getConfirnmationQuestion)
+
+  const [challenge, setChallenge] = createSignal(false)
+  let formRef!: HTMLFormElement
+
+  // TODO: refactor using solid-js actions
+  const onConfirm = async (questionId: number) => {
+    const count = await addConfirmation(questionId)
+    // TODO: make this number dynamic, depending on the number of users
+    const requiredConfirmations = 2
+    if (count && (count >= requiredConfirmations)) {
+      await updateRecord('question', questionId, {decided: true})
+    }
+    refetch()
+  }
+
+  const onArgument = async (questionId: number) => {
+    const formData = new FormData(formRef)
+    const title = (formData.get('title') as string).trim()
+    if (title) {
+      await insertExtRecord('argument', {
+        questionId,
+        pro: false,
+        title,
+        // TODO: change to null and handle that case
+        argument_type_id: 'other'
+      }, 'argument_other', { text: ''})
+      setChallenge(false)
+      refetch()
+    }
+  }
+
+  return (
+    <main class="pl-2 max-w-md">
+      <Switch>
+        <Match when={question.state === 'pending' || question.state === 'refreshing'}>
+          Loading task data...
+        </Match>
+        <Match when={question.state === 'ready' && !question()}>
+          All done
+        </Match>
+        <Match when={question.state === 'ready' && question()}>
+          <div>
+            <a
+              class="hover:underline"
+              href={`/show-record?tableName=question&id=${question()!.id}`}
+            >
+              {question()!.answer}
+            </a>
+          </div>
+          <div>
+            <Switch>
+              <Match when={!challenge()}>
+                <button
+                  class="text-sky-800"
+                  onClick={() => onConfirm(question()!.id)}
+                >
+                  [ Confirm ]
+                </button>
+                <button
+                  class="pl-2 text-sky-800"
+                  onClick={() => setChallenge(true)}
+                >
+                  [ Challenge ]
+                </button>
+              </Match>
+              <Match when={challenge()}>
+                <form ref={formRef}>
+                  <FormField
+                    tableName="argument"
+                    colName="title"
+                    label="Argument against"
+                  />
+                </form>
+                <button
+                  class="text-sky-800"
+                  onClick={() => onArgument(question()!.id)}
+                >
+                  [ Submit ]
+                </button>
+                <button
+                  class="pl-2 text-sky-800"
+                  onClick={() => setChallenge(false)}
+                >
+                  [ Cancel ]
+                </button>
+              </Match>
+            </Switch>
+          </div>
+        </Match>
+      </Switch>
+    </main>
+  )
+}

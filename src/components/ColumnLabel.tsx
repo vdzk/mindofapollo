@@ -4,14 +4,14 @@ import { humanCase } from "~/util"
 
 export const ColumnLabel: Component<{
   colName: string,
-  column: ColumnSchema
+  column: ColumnSchema,
+  label?: string
 }> = (props) => {
-  let labelText = props.colName
-  if (props.column.label) {
-    labelText = props.column.label
-  } else if (props.column.type === 'fk') {
-    labelText = props.column.fk.table
-  }
+  const labelText = props.label
+    ?? props.column.label
+    ?? (props.column.type === 'fk' ? props.column.fk.table : undefined)
+    ?? props.colName
+
   return (
     <div class="font-bold first-letter:uppercase" >
       {humanCase(labelText)}

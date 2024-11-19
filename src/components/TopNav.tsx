@@ -47,6 +47,9 @@ export const TopNav: Component = () => {
               )}
             </For>
           </select>
+          <Show when={session!.loggedIn()}>
+            <a href="/tasks"  class="ml-1 text-sky-800">[ Tasks ]</a>
+          </Show>
         </div>
         <div class="px-2 py-0.5">
           <Show when={session!.loggedIn()} fallback={

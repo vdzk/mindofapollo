@@ -25,6 +25,8 @@ export interface BooleanColumn {
   label?: string
   optionLabels?: [string, string]
   getVisibility?: (record: DataRecord) => boolean
+  readOnly?: boolean
+  defaultValue?: boolean
 }
 
 export interface ForeignKey {

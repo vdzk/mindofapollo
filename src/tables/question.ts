@@ -1,6 +1,5 @@
 import { RiCommunicationQuestionnaireFill } from "solid-icons/ri";
-import { TableSchema } from "../../schema/type";
-import { actions } from "./actions";
+import { TableSchema } from "../schema/type";
 
 export const question: TableSchema = {
   plural: 'questions',
@@ -11,6 +10,8 @@ export const question: TableSchema = {
     },
     decided: {
       type: 'boolean',
+      readOnly: true,
+      defaultValue: false,
       label: 'status',
       optionLabels: ['Undecided', 'Decided']
     },
@@ -49,8 +50,6 @@ export const question: TableSchema = {
       ]
     }
   },
-  // NOTICE: following causes "Client-only API called on the server side. Run client-only code in onMount, or conditionally run client-only component with <Show>." error
-  actions,
   initialData: [
     /*1*/['Is the Moon made out of cheese?', false, 'The Moon is not made out of cheese', 1],
     /*2*/['Is all cheese round?', false, 'Not all cheese is round.', 1],

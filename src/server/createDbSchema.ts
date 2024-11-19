@@ -58,7 +58,14 @@ const createTable = async (tableName: string, options?: { history?: boolean}) =>
       const pgType = (column.type in customDataTypes)
         ? customDataTypes[column.type]
         : column.type
-      colDefs.push(colName + ' ' + pgType + (column.getVisibility ? '' : ' NOT NULL'))
+      const defaultValue = (column.type === 'boolean' && column.defaultValue)
+        ? ('' + column.defaultValue)
+        : null
+      colDefs.push(
+        colName + ' ' + pgType
+        + (column.getVisibility ? '' : ' NOT NULL')
+        + (defaultValue ? ' DEFAULT ' + defaultValue : '')
+      )
     }
   }
 

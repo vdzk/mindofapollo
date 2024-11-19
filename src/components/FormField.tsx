@@ -19,14 +19,23 @@ const inputTypes = {
 export const FormField: Component<{
   tableName: string,
   colName: string,
-  value?: any
+  value?: any,
+  label?: string
 }> = (props) => {
   const column = schema.tables[props.tableName].columns[props.colName]
   const [searchParams] = useSearchParams()
 
+  if (column.type === 'boolean' && column.readOnly) {
+    return null
+  }
+
   return (
     <label class="block pb-2">
-      <ColumnLabel colName={props.colName} column={column} />
+      <ColumnLabel
+        colName={props.colName}
+        column={column}
+        label={props.label}
+      />
       <Switch>
         <Match when={column.type === 'text'}>
           <textarea name={props.colName} class="border w-full px-0.5">{props.value}</textarea>

@@ -15,7 +15,9 @@ const parseForm = (
   const record: DataRecord = {}
   for (const [colName, column] of Object.entries(columns)) {
     if (column.type === 'boolean') {
-      if (column.optionLabels) {
+      if (column.readOnly) {
+        continue
+      } else if (column.optionLabels) {
         record[colName] = formData.get(colName) === 'true'
       } else {
         record[colName] = formData.has(colName)
