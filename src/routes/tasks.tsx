@@ -9,6 +9,11 @@ export default function Tasks() {
           [ Confirm or Challenge ]
         </a>
       </div>
+      <div class="pl-2">
+        <a class="text-sky-800" href="/judge">
+          [ Judge ]
+        </a>
+      </div>
     </main>
   )
 }
