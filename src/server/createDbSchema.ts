@@ -40,7 +40,9 @@ const createTable = (tableName: string, options?: { history?: boolean}) => {
       const pgType = (column.type in customDataTypes)
         ? customDataTypes[column.type]
         : column.type
-      const defaultValue = (column.type === 'boolean' && column.defaultValue)
+      const defaultValue = (column.type === 'boolean'
+        && column.defaultValue !== undefined
+        && !history)
         ? ('' + column.defaultValue)
         : null
       colDefs.push(

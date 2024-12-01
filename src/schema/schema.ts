@@ -11,6 +11,8 @@ import { argument_analogy } from "~/tables/argument_analogy"
 import { argument_authority } from "~/tables/argument_authority"
 import { argument_other } from "~/tables/argument_other"
 import { confirmation } from "~/tables/confirmation"
+import { role } from "~/tables/role"
+import { rule } from "~/tables/rule"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -25,6 +27,8 @@ export const schema: AppDataSchema = {
     argument_other,
     critical_statement,
     research_note,
-    confirmation
+    confirmation,
+    role,
+    rule
   }
 }
