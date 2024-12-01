@@ -28,6 +28,13 @@ export const argument: TableSchema = {
         labelColumn: 'id',
         extensionTables: true
       }
+    },
+    judgement_requested: {
+      type: 'boolean',
+      readOnly: true,
+      defaultValue: false,
+      label: 'judgement',
+      optionLabels: ['Not requested', 'requested']
     }
   },
   aggregates: {
@@ -38,8 +45,5 @@ export const argument: TableSchema = {
       splitByColumn: 'critical_question_id',
       filterSplitBy: 'argument_type_id'
     }
-  },
-  initialData: [
-    /*1*/[1, true, 'Both are yellow and round.', 'analogy']
-  ]
+  }
 }

@@ -25,10 +25,5 @@ export const argument_type: TableSchema = {
       table: 'argument',
       column: 'argument_type_id'
     }
-  },
-  initialData: [
-    ['authority', ''],
-    ['analogy', ''],
-    ['other', '']
-  ]
+  }
 }

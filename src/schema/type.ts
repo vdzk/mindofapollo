@@ -56,22 +56,9 @@ export interface NToNSchema {
   type: 'n-n'
   table: string
   first?: boolean // should the parent table appear first in the name of the cross table. Exactly one of the table pair should have this param set to true!
-  initialData?: [number, number][]  // initialise the cross reference table with these values
 }
 
 export type AggregateSchema = OneToNSchema | NToNSchema
-
-export interface ActionParams {
-  userId: number,
-  record: DataRecordWithId
-}
-
-export interface TableAction {
-  label: string,
-  getVisibility: (params: ActionParams) => Promise<boolean> | boolean
-  validate?: (params: ActionParams) => Promise<string | undefined>
-  execute: (params: ActionParams) => Promise<void>
-}
 
 export interface TableSchema {
   plural?: string,
@@ -79,9 +66,7 @@ export interface TableSchema {
   extendsTable?: string, // This table extends another table with its columns
   deny?: DataOp[], // Prevent all users from performing these operations
   columns: Record<string, ColumnSchema>
-  aggregates?: Record<string, AggregateSchema>,
-  actions?: Record<string, TableAction>,
-  initialData?: DataLiteral[][] // The DB table will be initialised with this. Must contain ids.
+  aggregates?: Record<string, AggregateSchema>
 }
 
 export interface AppDataSchema {

@@ -2,10 +2,8 @@ import { action, cache, json } from "@solidjs/router";
 import { deleteById } from "./mutate.db";
 import { listForeignHopRecords } from "./select.db";
 import { listRecords } from "./select.db";
-import { deleteCrossRecord, insertCrossRecord, listCrossRecords } from "./cross.db";
-import { CrossRecordMutateProps } from "./serverOnly";
-import { getVisibleActions } from "~/components/Actions";
-import { ActionParams, TableAction } from "~/schema/type";
+import {CrossRecordMutateProps, deleteCrossRecord, insertCrossRecord, listCrossRecords} from "./cross.db";
+import { executeAction, getVisibleActions } from "./tableActions";
 
 export const getRecords = cache(listRecords, 'getRecords');
 export const listCrossRecordsCache = cache(listCrossRecords, 'listCrossRecords')
@@ -61,21 +59,19 @@ export const deleteForeignHopRecordAction = action(async (
 export const executeTableAction = action(
   async (
     tableName: string,
-    action: TableAction,
-    actionParams: ActionParams
+    actionName: string,
+    recordId: number
   ) => {
-    if (action.validate) {
-      const error = await action.validate(actionParams)
-      if (error) {
-        return error
-      }
+    const error = await executeAction(tableName, actionName, recordId)
+    if (error) {
+      return error
+    } else {
+      return json(
+        undefined,
+        { revalidate: [
+          getVisibleActionsCache.keyFor(tableName, recordId)
+        ]}
+      )
     }
-    await action.execute(actionParams)
-    return json(
-      undefined,
-      { revalidate: [
-        getVisibleActionsCache.keyFor(tableName, actionParams.record)
-      ]}
-    )
   }
 )

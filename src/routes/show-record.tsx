@@ -139,7 +139,7 @@ export default function ShowRecord() {
       </Show>
       <Show when={session!.loggedIn()}>
         <Show when={record()}>
-          <Actions tableName={sp.tableName} record={record()!} />
+          <Actions tableName={sp.tableName} recordId={record()!.id} />
         </Show>
         <div>
           <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">

@@ -44,14 +44,7 @@ export const question: TableSchema = {
     tags: {
       type: 'n-n',
       table: 'tag',
-      first: true,
-      initialData: [
-        [1, 1]
-      ]
+      first: true
     }
-  },
-  initialData: [
-    /*1*/['Is the Moon made out of cheese?', false, 'The Moon is not made out of cheese', 1],
-    /*2*/['Is all cheese round?', false, 'Not all cheese is round.', 1],
-  ]
+  }
 }

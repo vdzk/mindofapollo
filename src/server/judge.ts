@@ -2,33 +2,31 @@
 
 import { sql } from "./db"
 import { safeWrap } from "./mutate.db"
-import { writeHistory } from "./serverOnly"
 
-export const getjudgeargument = safeWrap(async (userId) => {
+export const getJudgeArgument = safeWrap(async (userId) => {
+  // TODO: postpone new entries for a random priod of time to avoid sniping? 
   const result = await sql`
     SELECT argument.id, argument.title
     FROM argument
+    WHERE argument.judgement_requested
     ORDER BY random()
     LIMIT 1
   `
   return result[0]
 })
 
-export const addConfirmation = safeWrap(async (
-  userId: number,
-  questionId: number
-) => {
-  "use server"
+export const addedCriticalStatement = safeWrap(async (userId, argumentId: number) => {
   const result = await sql`
-    INSERT INTO confirmation (id, count)
-    VALUES (${questionId}, 1)
-    ON CONFLICT (id)
-    DO UPDATE SET count = confirmation.count + 1
-    RETURNING *
+    SELECT csh.id
+    FROM critical_statement_h csh
+    LEFT JOIN argument a
+      ON csh.argument_id = a.id
+      AND a.judgement_requested = true
+    WHERE csh.argument_id = ${argumentId}
+      AND csh.op_user_id = ${userId}
+      AND csh.data_op = 'INSERT'
+      AND a.id IS NULL
+    LIMIT 1
   `
-  const record = result[0]
-  const count = record.count as number
-  await writeHistory(
-    userId, count === 1 ? 'INSERT' : 'UPDATE', 'confirmation', record)
-  return count
+  return result.length > 0
 })

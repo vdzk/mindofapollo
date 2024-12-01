@@ -1,10 +1,9 @@
 "use server"
 
-import { DataRecord } from "~/schema/type";
+import { DataOp, DataRecord } from "~/schema/type";
 import { onError, sql } from "./db";
 import { getUserId } from "./session";
 import { listRecords } from "./select.db";
-import { insertRecordServerOnly, writeHistory } from "./serverOnly";
 
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
@@ -30,8 +29,35 @@ export function safeWrap<
   };
 }
 
-export const insertRecord = safeWrap(insertRecordServerOnly);
+export const insertRecord = safeWrap(async (
+  userId: number,
+  tableName: string,
+  record: DataRecord
+) => {
+  const result = await sql`
+    INSERT INTO ${sql(tableName)} ${sql(record)}
+    RETURNING *
+  `;
+  await writeHistory(userId, 'INSERT', tableName, result[0]);
+  return result;
+});
 
+export const writeHistory = async (
+  userId: number,
+  data_op: DataOp,
+  tableName: string,
+  record?: DataRecord
+) => {
+  if (record) {
+    await sql`
+      INSERT INTO ${sql(tableName + '_h')} ${sql({
+        ...record,
+        data_op,
+        op_user_id: userId
+      })}
+    `;
+  }
+};
 export const updateRecord = safeWrap(async (
   userId: number,
   tableName: string,

@@ -14,7 +14,7 @@ export default function Login() {
   const submit = async () => {
     await login(parseInt(userId()))
     session!.refetch()
-    navigate("/list-records?tableName=tag");
+    navigate("/home-page");
   }
 
   return (

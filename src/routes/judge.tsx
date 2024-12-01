@@ -1,11 +1,8 @@
 import { Match, Switch, createResource, createSignal } from "solid-js";
-import { FormField } from "~/components/FormField";
-import { insertExtRecord } from "~/server/extRecord.db";
-import { getjudgeargument } from "~/server/judge";
-import { updateRecord } from "~/server/mutate.db";
+import { getJudgeArgument } from "~/server/judge";
 
 export default function ConfirmOrChallenge() {
-  const [argument, { refetch }] = createResource(getjudgeargument)
+  const [argument, { refetch }] = createResource(getJudgeArgument)
 
 
   return (

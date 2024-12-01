@@ -16,8 +16,5 @@ export const critical_question: TableSchema = {
       type: 'varchar',
       preview: true
     }
-  },
-  initialData: [
-    /*1*/['analogy', 'Are the statements used in the argument true?']
-  ]
+  }
 }

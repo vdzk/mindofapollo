@@ -1,8 +1,4 @@
-import { sql } from "~/server/db"
-import { insertRecordServerOnly } from "./serverOnly"
 import { schema } from "~/schema/schema"
-import { arrayToObjects } from "~/util"
-import { insertCrossRecordServerOnly } from "./serverOnly"
 
 const customDataTypes: Record<string, string> = {
   proportion: 'numeric(6, 5)',
@@ -10,29 +6,15 @@ const customDataTypes: Record<string, string> = {
   link_title: 'varchar'
 }
 
-const userId = 1
-
 const historyColDefs = [
   'data_op data_op NOT NULL',
   'op_user_id integer NOT NULL',
   'op_timestamp timestamp default current_timestamp'
 ]
 
-const wipeSchema = async () => {
-  await sql.unsafe(`
-    DROP SCHEMA public CASCADE;
-    CREATE SCHEMA public;
-    GRANT ALL ON SCHEMA public TO postgres;
-    GRANT ALL ON SCHEMA public TO public;
-    COMMENT ON SCHEMA public IS 'standard public schema';
-  `)
-}
+const createEnums = () => ["CREATE TYPE data_op AS ENUM ('INSERT', 'UPDATE', 'DELETE')"]
 
-const createEnums = async () => {
-  await sql.unsafe("CREATE TYPE data_op AS ENUM ('INSERT', 'UPDATE', 'DELETE')");
-}
-
-const createTable = async (tableName: string, options?: { history?: boolean}) => {
+const createTable = (tableName: string, options?: { history?: boolean}) => {
   const { columns, extendsTable } = schema.tables[tableName]
   const history = !!options?.history
 
@@ -73,41 +55,31 @@ const createTable = async (tableName: string, options?: { history?: boolean}) =>
     colDefs.push(...historyColDefs)
   }
 
-  await sql.unsafe(`CREATE TABLE ${tableName}${history ? '_h' : ''} (${colDefs.join()})`)
+  return [`CREATE TABLE ${tableName}${history ? '_h' : ''} (${colDefs.join()})`]
 }
 
-const initialiseData = async (tableName: string) => { 
-  const { columns, extendsTable, initialData } = schema.tables[tableName]
-  if (initialData) {
-    const keys = Object.keys(columns)
-    if (extendsTable) {
-      keys.unshift('id')
-    }
-    const data = arrayToObjects(initialData, keys)
-    for (const record of data) {
-      // This should populate history tables as well
-      await insertRecordServerOnly(userId, tableName, record)
-    }
-  }
-}
-
-const createIndexes = async (tableName: string) => {
+const createIndexes = (tableName: string) => {
   const { columns } = schema.tables[tableName]
+  const statements = [] as string[]
 
   for (const colName in columns) {
     if (columns[colName].type === 'fk') {
-      await sql.unsafe(`CREATE INDEX ${tableName}_${colName}_idx ON ${tableName} (${colName})`)
+      statements.push(
+        `CREATE INDEX ${tableName}_${colName}_idx ON ${tableName} (${colName})`
+      )
     }
   }
 
   // History table indexes
-  await sql.unsafe(`
-    CREATE INDEX ${tableName}_h_id_idx ON ${tableName}_h (id);
-    CREATE INDEX ${tableName}_h_op_user_id_idx ON ${tableName}_h (op_user_id);
-  `)
+  statements.push(
+    `CREATE INDEX ${tableName}_h_id_idx ON ${tableName}_h (id)`,
+    `CREATE INDEX ${tableName}_h_op_user_id_idx ON ${tableName}_h (op_user_id)`
+  )
+  return statements
 }
 
-const createCrossTables = async () => {
+const createCrossTables = () => {
+  const statements = [] as string[]
   for (const tableName in schema.tables) {
     const { aggregates } = schema.tables[tableName]
     if (aggregates) {
@@ -116,59 +88,44 @@ const createCrossTables = async () => {
         if (aggregate.type === 'n-n' && aggregate.first) {
           const a = tableName
           const b = aggregate.table
-          const data = aggregate.initialData
           const xTableName = `${a}_x_${b}`
 
           // Create cross reference and history tables
           for (const history of [true, false]) {
-            await sql.unsafe(`
-              CREATE TABLE ${xTableName + (history ? '_h' : '')} (
-                ${a}_id integer NOT NULL,
-                ${b}_id integer NOT NULL
-                ${history ? ',' + historyColDefs.join() : ''}
-              )
-            `)
-          }
-
-          // Initialise data
-          if (data) {
-            for (const [a_id, b_id] of data) {
-              // This should populate history records as well
-              await insertCrossRecordServerOnly(userId, {a, b, first: true, a_id, b_id})
-            }
+            statements.push(
+              `CREATE TABLE ${xTableName + (history ? '_h' : '')} ( ${a}_id integer NOT NULL, ${b}_id integer NOT NULL ${history ? ',' + historyColDefs.join() : ''})`
+            )
           }
 
           // Create indexes and constraints
-          await sql.unsafe(`
-            ALTER TABLE ${xTableName}
-            ADD CONSTRAINT ${xTableName}_un
-            UNIQUE (${a}_id,${b}_id);
-            CREATE INDEX ${xTableName}_${a}_id_idx ON ${xTableName} (${a}_id);
-            CREATE INDEX ${xTableName}_${b}_id_idx ON ${xTableName} (${b}_id);
-          `)
+          statements.push(
+            `ALTER TABLE ${xTableName} ADD CONSTRAINT ${xTableName}_un UNIQUE (${a}_id,${b}_id)`,
+            `CREATE INDEX ${xTableName}_${a}_id_idx ON ${xTableName} (${a}_id)`,
+            `CREATE INDEX ${xTableName}_${b}_id_idx ON ${xTableName} (${b}_id)`
+          )
           
-          await sql.unsafe(
-            `CREATE INDEX ${xTableName}_h_op_user_id_idx `
-            + `ON ${xTableName}_h (op_user_id)`
+          statements.push(
+            `CREATE INDEX ${xTableName}_h_op_user_id_idx ON ${xTableName}_h (op_user_id)`
           )
         }
       }
     }
   }
+  return statements
 }
 
-const createDbSchema = async () => {
-  process.env.userId = '1'
-  await createEnums()
+const createDbSchema = () => {
+  const statements = [] as string[]
+  statements.push(...createEnums())
   for (const tableName in schema.tables) {
-    await createTable(tableName)
-    await createTable(tableName, { history: true })
-    await initialiseData(tableName)
-    await createIndexes(tableName)
+    statements.push(
+      ...createTable(tableName),
+      ...createTable(tableName, { history: true }),
+      ...createIndexes(tableName)
+    )
   }
-  await createCrossTables()
+  statements.push(...createCrossTables())
+  return statements.join(';\n')
 }
 
-await wipeSchema()
-await createDbSchema()
-console.log('Done.')
+console.log(createDbSchema())

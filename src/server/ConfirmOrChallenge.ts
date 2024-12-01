@@ -1,8 +1,7 @@
 "use server"
 
 import { sql } from "./db"
-import { safeWrap } from "./mutate.db"
-import { writeHistory } from "./serverOnly"
+import {safeWrap, writeHistory} from "./mutate.db"
 
 export const getConfirnmationQuestion = safeWrap(async (userId) => {
   "use server"
@@ -11,7 +10,7 @@ export const getConfirnmationQuestion = safeWrap(async (userId) => {
   // TODO: avoid sniping by ...
   // TODO: excluding recent answers up to a random time limit
   // TODO: issuing a token to prove that the question was selected randomly
-  //       Confirm that this avoids bypassing existance of con arguments 
+  //       Confirm that this avoids bypassing existance of con arguments
   // TODO: rate limiting for a single user
   // + what if the intent of creator of the statement was never to ask for confirmation by random sampling. Make marking for random sampling explicit with a flag?
   // TODO: Check behaviour for anonymous user
