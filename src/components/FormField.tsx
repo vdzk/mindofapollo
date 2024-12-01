@@ -1,6 +1,6 @@
 import { Component, Match, Show, Switch } from "solid-js";
 import { schema } from "~/schema/schema";
-import { BooleanColumn, ForeignKey } from "~/schema/type";
+import { BooleanColumn, ForeignKey, TextColumn } from "~/schema/type";
 import { FkInput } from "./FkInput";
 import { ColumnLabel } from "./ColumnLabel";
 import { useSearchParams } from "@solidjs/router";
@@ -38,7 +38,13 @@ export const FormField: Component<{
       />
       <Switch>
         <Match when={column.type === 'text'}>
-          <textarea name={props.colName} class="border w-full px-0.5">{props.value}</textarea>
+          <textarea
+            name={props.colName}
+            class="border w-full px-0.5"
+            rows={(column as TextColumn).lines}
+          >
+            {props.value}
+          </textarea>
         </Match>
         <Match when={column.type === 'boolean' && column.optionLabels}>
           <select name={props.colName} class="max-w-full">

@@ -13,6 +13,7 @@ import { argument_other } from "~/tables/argument_other"
 import { confirmation } from "~/tables/confirmation"
 import { role } from "~/tables/role"
 import { rule } from "~/tables/rule"
+import { argument_judgement } from "~/tables/argument_judgement"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -29,6 +30,7 @@ export const schema: AppDataSchema = {
     research_note,
     confirmation,
     role,
-    rule
+    rule,
+    argument_judgement
   }
 }

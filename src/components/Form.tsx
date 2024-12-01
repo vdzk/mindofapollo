@@ -8,7 +8,7 @@ import { ColumnSchema, DataLiteral, DataRecord } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/server/extRecord.db";
 import { getExtTableName } from "~/util";
 
-const parseForm = (
+export const parseForm = (
   formData: FormData,
   columns: Record<string, ColumnSchema>
 ) => {

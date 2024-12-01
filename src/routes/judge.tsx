@@ -1,30 +1,47 @@
-import { Match, Switch, createResource, createSignal } from "solid-js";
+import { createResource, For } from "solid-js";
+import { parseForm } from "~/components/Form";
+import { FormField } from "~/components/FormField";
+import { PageTitle } from "~/components/PageTitle";
+import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
+import { Task } from "~/components/Task";
+import { schema } from "~/schema/schema";
 import { getJudgeArgument } from "~/server/judge";
+import { insertRecord } from "~/server/mutate.db";
 
-export default function ConfirmOrChallenge() {
+export default function Judge() {
   const [argument, { refetch }] = createResource(getJudgeArgument)
+  const displayColumn: ColumnFilter = (colName, column, visible) => visible && colName !== 'judgement_requested'
+  const formColumns = schema.tables.argument_judgement.columns
 
+  const onSubmit = async (event: SubmitEvent & { target: Element, currentTarget: HTMLFormElement; }) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const record = parseForm(formData, formColumns)
+    await insertRecord("argument_judgement", {id: argument()!.id, ...record})
+    refetch()
+  }
 
   return (
-    <main class="pl-2 max-w-md">
-      <Switch>
-        <Match when={argument.state === 'pending' || argument.state === 'refreshing'}>
-          Loading task data...
-        </Match>
-        <Match when={argument.state === 'ready' && !argument()}>
-          All done
-        </Match>
-        <Match when={argument.state === 'ready' && argument()}>
-          <div>
-            <a
-              class="hover:underline"
-              href={`/show-record?tableName=argument&id=${argument()!.id}`}
-            >
-              {argument()!.title}
-            </a>
-          </div>
-        </Match>
-      </Switch>
-    </main>
+    <Task resource={argument}>
+      <PageTitle>Read argument</PageTitle>
+      <RecordDetails
+        tableName="argument"
+        id={argument()!.id}
+        {...{ displayColumn }}
+      />
+      <PageTitle>Make judgement</PageTitle>
+      <form onSubmit={onSubmit} class="px-2 max-w-screen-sm">
+        <For each={Object.keys(formColumns)}>
+          { colName => (
+            <FormField tableName="argument_judgement" {...{colName}} />
+          )}
+        </For>
+        <div class="pt-2">
+          <button type="submit" class="text-sky-800">
+            [ Submit ]
+          </button>
+        </div>
+      </form>
+    </Task>
   )
 }

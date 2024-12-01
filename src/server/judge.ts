@@ -9,6 +9,11 @@ export const getJudgeArgument = safeWrap(async (userId) => {
     SELECT argument.id, argument.title
     FROM argument
     WHERE argument.judgement_requested
+      AND NOT EXISTS (
+        SELECT 1
+        FROM argument_judgement
+        WHERE argument_judgement.id = argument.id
+      )
     ORDER BY random()
     LIMIT 1
   `

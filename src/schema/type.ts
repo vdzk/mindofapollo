@@ -1,6 +1,5 @@
 import { IconTypes } from "solid-icons"
 
-type PgDataType = 'integer' | 'varchar' | 'text'
 type CustomDataType = 'proportion' | 'link_url' | 'link_title' 
 export type DataLiteral = string | number | boolean | null
 export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
@@ -13,20 +12,26 @@ export type HistoryRecord = DataRecord & {
   op_timestamp: Date
 }
 
-export interface SimpleColumn {
-  type: PgDataType | CustomDataType
+interface SharedColumnProps {
   label?: string
   preview?: boolean //Use this column to represent the whole record
   getVisibility?: (record: DataRecord) => boolean // determine if the field should be visible
-}
-
-export interface BooleanColumn {
-  type: 'boolean'
-  label?: string
-  optionLabels?: [string, string]
-  getVisibility?: (record: DataRecord) => boolean
   readOnly?: boolean
   defaultValue?: boolean
+}
+
+export interface SimpleColumn extends SharedColumnProps {
+  type: 'integer' | 'varchar' | CustomDataType
+}
+
+export interface BooleanColumn extends SharedColumnProps {
+  type: 'boolean'
+  optionLabels?: [string, string]
+}
+
+export interface TextColumn extends SharedColumnProps {
+  type: 'text'
+  lines?: number
 }
 
 export interface ForeignKey {
@@ -42,7 +47,7 @@ export interface ForeignKey {
   getVisibility?: (record: DataRecord) => boolean
 }
 
-export type ColumnSchema = SimpleColumn | BooleanColumn | ForeignKey
+export type ColumnSchema = SimpleColumn | BooleanColumn | TextColumn | ForeignKey
 
 export interface OneToNSchema {
   type: '1-n'
