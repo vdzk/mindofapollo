@@ -43,12 +43,25 @@ export const listForeignRecords = (
   tableName: string,
   fkName: string,
   fkId: number
-) => sql`
-  SELECT *
-  FROM ${sql(tableName)}
-  WHERE ${sql(fkName)} = ${fkId}
-  ORDER BY id
-`.catch(onError);
+) => {
+  const {extendedByTable} = schema.tables[tableName]
+  if (extendedByTable) {
+    return sql`
+      SELECT *, t.id
+      FROM ${sql(tableName)} t
+      LEFT JOIN ${sql(extendedByTable)} e ON e.id = t.id
+      WHERE t.${sql(fkName)} = ${fkId}
+      ORDER BY t.id
+    `.catch(onError)
+  } else {
+    return sql`
+      SELECT *
+      FROM ${sql(tableName)}
+      WHERE ${sql(fkName)} = ${fkId}
+      ORDER BY id
+    `.catch(onError)
+  }
+};
 
 export const listForeignHopRecords = (
   tableName: string,

@@ -17,7 +17,7 @@ interface SharedColumnProps {
   preview?: boolean //Use this column to represent the whole record
   getVisibility?: (record: DataRecord) => boolean // determine if the field should be visible
   readOnly?: boolean
-  defaultValue?: boolean
+  defaultValue?: DataLiteral
 }
 
 export interface SimpleColumn extends SharedColumnProps {
@@ -42,7 +42,8 @@ export interface ForeignKey {
     table: string 
     labelColumn: string
     extensionTables?: boolean // Choose extension table by appending labelColumn value to the table name
-    getLabel?: (record: DataRecord) => string // Generate label from the foreign record
+    getLabel?: (record: DataRecord) => string // Generate label from the foreign record,
+    optional?: boolean  // Foreign key can be NULL
   }
   getVisibility?: (record: DataRecord) => boolean
 }
@@ -69,6 +70,8 @@ export interface TableSchema {
   plural?: string,
   icon?: IconTypes,
   extendsTable?: string, // This table extends another table with its columns
+  extendedByTable?: string, // This table is extended by another table
+  preview?: (record: DataRecord) => string, // Text to represent the whole record
   deny?: DataOp[], // Prevent all users from performing these operations
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>

@@ -14,16 +14,19 @@ export const parseForm = (
 ) => {
   const record: DataRecord = {}
   for (const [colName, column] of Object.entries(columns)) {
+    const inputValue = formData.get(colName)
     if (column.type === 'boolean') {
       if (column.readOnly) {
         continue
       } else if (column.optionLabels) {
-        record[colName] = formData.get(colName) === 'true'
+        record[colName] = inputValue === 'true'
       } else {
         record[colName] = formData.has(colName)
       }
+    } else if (column.type === 'fk' && inputValue === '') {
+      record[colName] = null
     } else {
-      record[colName] = formData.get(colName) as DataLiteral
+      record[colName] = inputValue as DataLiteral
     }
   }
   return record

@@ -1,5 +1,5 @@
 import { createAsync, useAction } from "@solidjs/router";
-import { Component, For, Match, Show, Switch, useContext } from "solid-js";
+import { Component, createEffect, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type";
 import { listForeignRecords } from "~/server/select.db";
@@ -139,7 +139,7 @@ export const Aggregate: Component<{
                       +`&id=${record.id}`}
                     class="hover:underline"
                   >
-                    {record[titleColName()]}
+                    {aggregateTable.preview?.(record) ?? record[titleColName()]}
                   </a>
                 </Match>
               </Switch>

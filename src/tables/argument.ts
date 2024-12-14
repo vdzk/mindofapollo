@@ -1,5 +1,5 @@
 import { TbSword } from "solid-icons/tb";
-import { TableSchema } from "../schema/type";
+import { DataRecord, TableSchema } from "../schema/type";
 
 export const argument: TableSchema = {
   plural: 'arguments',
@@ -37,6 +37,8 @@ export const argument: TableSchema = {
       optionLabels: ['Not requested', 'requested']
     }
   },
+  extendedByTable: 'argument_judgement',
+  preview: (record: DataRecord) => record.title + ((record.strength === null) ? '' : ` (${record.strength})`),
   aggregates: {
     critical_statements: {
       type: '1-n',
@@ -44,6 +46,11 @@ export const argument: TableSchema = {
       column: 'argument_id',
       splitByColumn: 'critical_question_id',
       filterSplitBy: 'argument_type_id'
+    },
+    judgements: {
+      type: '1-n',
+      table: 'argument_judgement',
+      column: 'id'
     }
   }
 }

@@ -34,21 +34,24 @@ const createTable = (tableName: string, options?: { history?: boolean}) => {
       colDefs.push(
         colName + ' ' + fkType + ' '
         + (history ? '' : ('REFERENCES ' + column.fk.table))
-        + ' NOT NULL'
+        + (column.fk.optional ? '' : ' NOT NULL')
       )
     } else {
       const pgType = (column.type in customDataTypes)
         ? customDataTypes[column.type]
         : column.type
-      const defaultValue = (column.type === 'boolean'
-        && column.defaultValue !== undefined
-        && !history)
-        ? ('' + column.defaultValue)
-        : null
+      let defaultValue: string | undefined
+      if (column.defaultValue === undefined) {
+        defaultValue = undefined
+      } else if (column.defaultValue === '') {
+        defaultValue = "''"
+      } else {
+        defaultValue = '' + column.defaultValue
+      }
       colDefs.push(
         colName + ' ' + pgType
         + (column.getVisibility ? '' : ' NOT NULL')
-        + (defaultValue ? ' DEFAULT ' + defaultValue : '')
+        + (defaultValue !== undefined ? ' DEFAULT ' + defaultValue : '')
       )
     }
   }

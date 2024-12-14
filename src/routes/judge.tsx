@@ -6,7 +6,7 @@ import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { getJudgeArgument } from "~/server/judge";
-import { insertRecord } from "~/server/mutate.db";
+import { insertRecord, updateRecord } from "~/server/mutate.db";
 
 export default function Judge() {
   const [argument, { refetch }] = createResource(getJudgeArgument)
@@ -17,7 +17,9 @@ export default function Judge() {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const record = parseForm(formData, formColumns)
+    // TODO: authorazation
     await insertRecord("argument_judgement", {id: argument()!.id, ...record})
+    await updateRecord("argument", argument()!.id, {judgement_requested: false})
     refetch()
   }
 

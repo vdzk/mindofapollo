@@ -18,9 +18,7 @@ export const FkInput: Component<{
       class="max-w-full"
       disabled={props.value && props.column.fk.extensionTables}
     >
-      <Show when={props.value === undefined}>
-        <option></option>
-      </Show>
+      <option></option>
       <For each={records()}>
         {record => (
           <option

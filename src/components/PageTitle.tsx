@@ -1,4 +1,5 @@
 import { IconTypes } from "solid-icons";
+import { IoSquare } from 'solid-icons/io';
 import { Component, ParentComponent } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { schema } from "~/schema/schema";
@@ -16,7 +17,7 @@ export const PageTitleIcon: Component<{
 }> = props => (
   <Dynamic
     component={props.tableName
-      ? schema.tables[props.tableName].icon
+      ? (schema.tables[props.tableName].icon ?? IoSquare)
       : props.component
     }
     size={28}
