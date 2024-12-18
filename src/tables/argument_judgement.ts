@@ -4,13 +4,15 @@ export const argument_judgement: TableSchema = {
   extendsTable: 'argument',
   plural: 'argument judgements',
   columns: {
-    explanation: {
-      type: 'text',
-      lines: 4
-    },
-    strength: {
+    isolated_confidence: {
       preview: true,
-      type: 'proportion'
+      type: 'proportion',
+      label: 'confidence'
+    },
+    isolated_explanation: {
+      type: 'text',
+      lines: 4,
+      label: 'explanation'
     }
   }
 }

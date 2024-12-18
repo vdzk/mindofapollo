@@ -31,15 +31,22 @@ export const titleColumnName = (tableName: string) => {
 
 export const getExtTableName = (
   tableName: string,
-  record: DataRecord
+  record?: DataRecord,
+  extValue?: string
 ) => {
-  const tableSchema = schema.tables[tableName]
-  for (const [colName, column] of Object.entries(tableSchema.columns)) {
-    if (column.type === 'fk' && column.fk.extensionTables) {
-      if (record[colName]) {
-        return tableName + '_' + record[colName]
+  if (record && !extValue) {
+    const tableSchema = schema.tables[tableName]
+    for (const [colName, column] of Object.entries(tableSchema.columns)) {
+      if (column.type === 'fk' && column.fk.extensionTables) {
+        if (record[colName]) {
+          extValue = '' + record[colName]
+          break
+        }
       }
     }
+  }
+  if (extValue) {
+    return [tableName, extValue].join('_')
   }
 }
 

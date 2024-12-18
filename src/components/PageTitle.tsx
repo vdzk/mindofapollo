@@ -11,6 +11,12 @@ export const PageTitle: ParentComponent = (props) => {
   )
 }
 
+export const Subtitle: ParentComponent = (props) => {
+  return (
+    <h1 class="text-xl font-bold px-2 py-2 first-letter:uppercase">{props.children}</h1>
+  )
+}
+
 export const PageTitleIcon: Component<{
   tableName?: string;
   component?: IconTypes

@@ -38,7 +38,7 @@ export const argument: TableSchema = {
     }
   },
   extendedByTable: 'argument_judgement',
-  preview: (record: DataRecord) => record.title + ((record.strength === null) ? '' : ` (${record.strength})`),
+  preview: (record: DataRecord) => record.title + ((record.isolated_confidence === null) ? '' : ` (${record.isolated_confidence})`),
   aggregates: {
     critical_statements: {
       type: '1-n',
@@ -50,6 +50,11 @@ export const argument: TableSchema = {
     judgements: {
       type: '1-n',
       table: 'argument_judgement',
+      column: 'id'
+    },
+    conditionals: {
+      type: '1-n',
+      table: 'argument_conditional',
       column: 'id'
     }
   }

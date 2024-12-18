@@ -1,7 +1,8 @@
 "use server"
 
-import { addedCriticalStatement } from "./judge"
+import { addedCriticalStatement, hasArguments, hasUnjudgedArguments, attemptJudgeQuestion } from "./judge"
 import { updateRecord } from "./mutate.db"
+import { getRecordById } from "./select.db"
 
 
 export interface TableAction {
@@ -20,7 +21,27 @@ const tableActions: Record<string, Record<string, TableAction>> = {
         return qualify ?? false
       },
       execute: async recordId => {
-        await updateRecord('argument', recordId, { judgement_requested: true})
+        await updateRecord('argument', recordId, { judgement_requested: true })
+      }
+    }
+  },
+  question: {
+    requestJudgement: {
+      label: 'Request judgement',
+      getVisibility: async recordId => {
+        const record = await getRecordById('question', recordId)
+        return (
+          !record?.judgement_requested
+          && await hasArguments(recordId)
+          && !(await hasUnjudgedArguments(recordId))
+        ) ?? false
+      },
+      execute: async recordId => {
+        if (await attemptJudgeQuestion(recordId)) {
+          // success
+        } else {
+          await updateRecord('question', recordId, { judgement_requested: true })
+        }
       }
     }
   }
@@ -34,7 +55,7 @@ export const getVisibleActions = async (
     const promises = Object.entries(tableActions[tableName]).map(
       async ([name, action]) => {
         const visible = await action.getVisibility(recordId)
-        return visible ? {name, label: action.label} : null
+        return visible ? { name, label: action.label } : null
       }
     )
     const resolved = await Promise.all(promises)

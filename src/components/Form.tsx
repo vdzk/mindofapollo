@@ -1,5 +1,5 @@
 import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Component, For } from "solid-js";
+import { Component, createContext, createEffect, createSignal, For, Setter } from "solid-js";
 import { insertRecord, updateRecord } from "~/server/mutate.db";
 import { schema } from "~/schema/schema";
 import { getRecords } from "~/server/api";
@@ -7,6 +7,8 @@ import { FormField } from "./FormField";
 import { ColumnSchema, DataLiteral, DataRecord } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/server/extRecord.db";
 import { getExtTableName } from "~/util";
+
+export const ExtValueContext = createContext<Setter<string | undefined>>()
 
 export const parseForm = (
   formData: FormData,
@@ -25,6 +27,8 @@ export const parseForm = (
       }
     } else if (column.type === 'fk' && inputValue === '') {
       record[colName] = null
+    } else if (inputValue === null) {
+      // exclude the value
     } else {
       record[colName] = inputValue as DataLiteral
     }
@@ -38,6 +42,7 @@ export const Form: Component<{
   record?: DataRecord;
 }> = (props) => {
   const [searchParams] = useSearchParams()
+  const [extValue, setExtValue] = createSignal<string>()
 
   const exitPath = (tableName: string) => {
     if (props.id) {
@@ -90,7 +95,7 @@ export const Form: Component<{
 
   const columns = () => schema.tables[props.tableName].columns
   const colNames = () => Object.keys(columns())
-  const extTableName = () => props.record && getExtTableName(props.tableName, props.record)
+  const extTableName = () => getExtTableName(props.tableName, props.record, extValue())
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
@@ -107,13 +112,15 @@ export const Form: Component<{
 
   return (
     <form onSubmit={onSubmit} class="px-2 max-w-screen-sm">
-      <For each={colNames()}>
-        {colName => <FormField
-          tableName={props.tableName}
-          colName={colName}
-          value={props.record?.[colName]}
-        />}
-      </For>
+      <ExtValueContext.Provider value={setExtValue}>
+        <For each={colNames()}>
+          {colName => <FormField
+            tableName={props.tableName}
+            colName={colName}
+            value={props.record?.[colName]}
+          />}
+        </For>
+      </ExtValueContext.Provider>
       <For each={extColNames()}>
         {colName => <FormField
           tableName={extTableName() as string}

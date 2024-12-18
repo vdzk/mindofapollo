@@ -8,7 +8,7 @@ import { schema } from "~/schema/schema";
 import { getJudgeArgument } from "~/server/judge";
 import { insertRecord, updateRecord } from "~/server/mutate.db";
 
-export default function Judge() {
+export default function JudgeArgument() {
   const [argument, { refetch }] = createResource(getJudgeArgument)
   const displayColumn: ColumnFilter = (colName, column, visible) => visible && colName !== 'judgement_requested'
   const formColumns = schema.tables.argument_judgement.columns

@@ -15,6 +15,7 @@ import { role } from "~/tables/role"
 import { rule } from "~/tables/rule"
 import { argument_judgement } from "~/tables/argument_judgement"
 import { rule_change_request } from "~/tables/rule_change_request"
+import { argument_conditional } from "~/tables/argument_conditional"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -33,6 +34,7 @@ export const schema: AppDataSchema = {
     role,
     rule,
     argument_judgement,
-    rule_change_request
+    rule_change_request,
+    argument_conditional
   }
 }

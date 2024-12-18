@@ -8,6 +8,13 @@ export const question: TableSchema = {
     text: {
       type: 'varchar'
     },
+    judgement_requested: {
+      type: 'boolean',
+      readOnly: true,
+      defaultValue: false,
+      label: 'judgement',
+      optionLabels: ['Not requested', 'requested']
+    },
     decided: {
       type: 'boolean',
       readOnly: true,

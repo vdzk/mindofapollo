@@ -58,6 +58,15 @@ export const writeHistory = async (
     `;
   }
 };
+
+// TODO: implement an efficient bulk version
+export const insertRecordsOneByOne = async (
+  tableName: string,
+  records: DataRecord[]
+) => await Promise.all(
+  records.map((record) => insertRecord(tableName, record))
+)
+
 export const updateRecord = safeWrap(async (
   userId: number,
   tableName: string,

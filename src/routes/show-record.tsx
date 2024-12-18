@@ -46,7 +46,12 @@ export default function ShowRecord() {
     <main>
       <Title>{titleText()}</Title>
       <RecordPageTitle tableName={sp.tableName} text={titleText()} />
-      <RecordDetails tableName={sp.tableName} id={sp.id} {...{displayColumn}}/>
+      <RecordDetails
+        tableName={sp.tableName}
+        id={sp.id}
+        {...{displayColumn}}
+        showHistory
+      />
       <Show when={sp.tableName === 'person'}>
         <UserHistory userId={sp.id}/>
       </Show>

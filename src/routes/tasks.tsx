@@ -10,8 +10,13 @@ export default function Tasks() {
         </a>
       </div>
       <div class="pl-2">
-        <a class="text-sky-800" href="/judge">
-          [ Judge ]
+        <a class="text-sky-800" href="/judge-argument">
+          [ Judge arguments ]
+        </a>
+      </div>
+      <div class="pl-2">
+        <a class="text-sky-800" href="/judge-correlations">
+          [ Judge correlations ]
         </a>
       </div>
     </main>

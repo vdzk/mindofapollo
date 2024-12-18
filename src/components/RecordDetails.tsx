@@ -1,39 +1,12 @@
 import { createAsync } from "@solidjs/router";
-import { Component, For, Match, Switch } from "solid-js";
+import { Component, For, Show } from "solid-js";
 import { RecordHistory } from "~/components/RecordHistory";
 import { schema } from "~/schema/schema";
-import { BooleanColumn, ColumnSchema, ForeignKey } from "~/schema/type";
+import { ColumnSchema } from "~/schema/type";
 import { getExtRecordById } from "~/server/extRecord.db";
-import { getRecordById } from "~/server/select.db";
-import { getExtTableName, nbsp } from "~/util";
+import { getExtTableName } from "~/util";
 import { Aggregate } from "../components/Aggregate";
-import { ColumnLabel } from "../components/ColumnLabel";
-
-const FkValue: Component<{
-  column: ForeignKey,
-  id: number
-}> = (props) => {
-  const tableName = props.column.fk.table
-  const record = createAsync(() => {
-    if (props.id === undefined) {
-      // TODO: figure out why this happens
-      return Promise.resolve(undefined)
-    } else {
-      return getRecordById(tableName, props.id)
-    }
-  })
-
-  return (
-    <div>
-      <a
-        class="hover:underline"
-        href={`/show-record?tableName=${tableName}&id=${props.id}`}
-      >
-        {record?.()?.[props.column.fk.labelColumn] ?? nbsp}
-      </a>
-    </div>
-  )
-}
+import { Detail, DetailProps } from "./Detail";
 
 export type ColumnFilter = (
   colName: string,
@@ -45,15 +18,11 @@ export const RecordDetails: Component<{
   tableName: string
   id: number
   displayColumn: ColumnFilter
+  showHistory?: boolean
 }> = props => {
   const record = createAsync(() => getExtRecordById(props.tableName, props.id))
   const extTableName = () => record() ? getExtTableName(props.tableName, record()!) : undefined
   const table = () => schema.tables[props.tableName]
-
-  const columns = () => table().columns
-  const extColumns = () => extTableName()
-    ? schema.tables[extTableName() as string].columns
-    : {}
 
   const aggregatesNames = () => Object.keys(table().aggregates ?? {})
   const extAggregatesNames = () => {
@@ -61,39 +30,25 @@ export const RecordDetails: Component<{
     return etn ? Object.keys(schema.tables[etn].aggregates ?? {}) : []
   }
 
-  const columnEntries = () => {
-    const _record = record()
-    return Object.entries({ ...columns(), ...extColumns() })
-      .filter(([colName, column]) => {
-        const visible = ((_record && column.getVisibility?.(_record)) ?? true);
-        return props.displayColumn(colName, column, visible)
-      })
+  const columnFilter = ({tableName, colName, record}: DetailProps) => {
+    const column = schema.tables[tableName].columns[colName]
+    const visible = ((record && column.getVisibility?.(record)) ?? true);
+    return props.displayColumn(colName, column, visible)
   }
+
+  const details = () => record()
+    ? [props.tableName, extTableName()]
+      .map(tableName => tableName
+        ? Object.keys(schema.tables[tableName].columns)
+          .map(colName => ({tableName, colName, record: record()!}))
+        : []
+      ).flat().filter(columnFilter)
+    : []
 
   return (
     <>
-      <For each={columnEntries()}>
-        {([colName, column]) => (
-          <div class="px-2 pb-2">
-            <ColumnLabel colName={colName} column={column} />
-            <Switch>
-              <Match when={column.type === 'fk'}>
-                <FkValue
-                  column={column as ForeignKey}
-                  id={record()?.[colName] as number}
-                />
-              </Match>
-              <Match when={column.type === 'boolean' && column.optionLabels}>
-                <div>{(column as BooleanColumn).optionLabels?.[record()?.[colName] ? 1 : 0]}</div>
-              </Match>
-              <Match when>
-                <div class="whitespace-pre-line">
-                  {record()?.[colName] || nbsp}
-                </div>
-              </Match>
-            </Switch>
-          </div>
-        )}
+      <For each={details()}>
+        {detail => <Detail {...detail} />}
       </For>
       <For each={aggregatesNames()} >
         {aggregateName => <Aggregate
@@ -110,7 +65,9 @@ export const RecordDetails: Component<{
           aggregateName={aggregateName}
         />}
       </For>
-      <RecordHistory tableName={props.tableName} recordId={props.id} />
+      <Show when={props.showHistory}>
+        <RecordHistory tableName={props.tableName} recordId={props.id} />
+      </Show>
     </>
   );
 }
