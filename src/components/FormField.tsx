@@ -22,10 +22,10 @@ export const FormField: Component<{
   value?: any,
   label?: string
 }> = (props) => {
-  const column = schema.tables[props.tableName].columns[props.colName]
+  const column = () => schema.tables[props.tableName].columns[props.colName]
   const [searchParams] = useSearchParams()
 
-  if (column.type === 'boolean' && column.readOnly) {
+  if (column().type === 'boolean' && (column() as BooleanColumn).readOnly) {
     return null
   }
 
@@ -33,42 +33,51 @@ export const FormField: Component<{
     <label class="block pb-2">
       <ColumnLabel
         colName={props.colName}
-        column={column}
+        column={column()}
         label={props.label}
       />
       <Switch>
-        <Match when={column.type === 'text'}>
+        <Match when={column().type === 'text'}>
           <textarea
             name={props.colName}
             class="border w-full px-0.5"
-            rows={(column as TextColumn).lines}
+            rows={(column() as TextColumn).lines}
           >
             {props.value}
           </textarea>
         </Match>
-        <Match when={column.type === 'boolean' && column.optionLabels}>
+        <Match when={
+          column().type === 'boolean'
+          && (column() as BooleanColumn).optionLabels
+        }>
           <select name={props.colName} class="max-w-full">
             <Show when={props.value === undefined}>
               <option></option>
             </Show>
             <option
               value='true'
-              selected={props.value === true || searchParams[props.colName] === 'true'}
+              selected={
+                props.value === true
+                || searchParams[props.colName] === 'true'
+              }
             >
-              {(column as BooleanColumn).optionLabels?.[1]}
+              {(column() as BooleanColumn).optionLabels?.[1]}
             </option>
             <option
               value='false'
-              selected={props.value === false || searchParams[props.colName] === 'false'}
+              selected={
+                props.value === false
+                || searchParams[props.colName] === 'false'
+              }
             >
-              {(column as BooleanColumn).optionLabels?.[0]}
+              {(column() as BooleanColumn).optionLabels?.[0]}
             </option>
           </select>
         </Match>
-        <Match when={column.type === 'fk'}>
+        <Match when={column().type === 'fk'}>
           <FkInput
             colName={props.colName}
-            column={column as ForeignKey}
+            column={column() as ForeignKey}
             value={props.value}
           />
         </Match>
@@ -76,7 +85,7 @@ export const FormField: Component<{
           <input
             name={props.colName}
             value={props.value ?? ''}
-            type={inputTypes[column.type]}
+            type={inputTypes[column().type]}
             class="border rounded pl-1 w-full"
             autocomplete="off"
           />

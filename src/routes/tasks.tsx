@@ -19,6 +19,16 @@ export default function Tasks() {
           [ Judge correlations ]
         </a>
       </div>
+      <div class="pl-2">
+        <a class="text-sky-800" href="/judge-correlations">
+          [ Judge correlations ]
+        </a>
+      </div>
+      <div class="pl-2">
+        <a class="text-sky-800" href="/vote-change-proposal">
+          [ Vote on a change proposal ]
+        </a>
+      </div>
     </main>
   )
 }

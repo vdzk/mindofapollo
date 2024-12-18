@@ -17,7 +17,7 @@ export type ColumnFilter = (
 export const RecordDetails: Component<{
   tableName: string
   id: number
-  displayColumn: ColumnFilter
+  displayColumn?: ColumnFilter
   showHistory?: boolean
 }> = props => {
   const record = createAsync(() => getExtRecordById(props.tableName, props.id))
@@ -33,7 +33,7 @@ export const RecordDetails: Component<{
   const columnFilter = ({tableName, colName, record}: DetailProps) => {
     const column = schema.tables[tableName].columns[colName]
     const visible = ((record && column.getVisibility?.(record)) ?? true);
-    return props.displayColumn(colName, column, visible)
+    return props.displayColumn?.(colName, column, visible) ?? true
   }
 
   const details = () => record()

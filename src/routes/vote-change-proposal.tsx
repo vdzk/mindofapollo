@@ -1,0 +1,69 @@
+import { createResource } from "solid-js";
+import { Detail } from "~/components/Detail";
+import { PageTitle, Subtitle } from "~/components/PageTitle";
+import { RecordDetails } from "~/components/RecordDetails";
+import { Task } from "~/components/Task";
+import { getChangeProposal, voteChangeProposal } from "~/server/changeProposal";
+import { firstCap, humanCase } from "~/util";
+
+export default function VoteChangeProposal() {
+  const [proposal, { refetch }] = createResource(getChangeProposal)
+
+  const vote = async (inFavour: boolean) => {
+    await voteChangeProposal(proposal()!.id, inFavour)
+    refetch()
+  }
+
+  return (
+    <Task resource={proposal}>
+      <PageTitle>
+        Vote on a change to a {humanCase(proposal()!.table_name)}
+      </PageTitle>
+      <Subtitle>Details</Subtitle>
+      <RecordDetails
+        tableName="argument"
+        id={proposal()!.target_id}
+        showHistory
+      />
+      <Subtitle>Change Proposal</Subtitle>
+      <Detail
+        tableName="change_proposal"
+        colName="column_name"
+        record={proposal()!}
+      />
+      <Detail
+        tableName={proposal()!.table_name}
+        colName={proposal()!.column_name}
+        record={{[proposal()!.column_name]: proposal()!.old_value}}
+        label="Old value"
+      />
+      <Detail
+        tableName={proposal()!.table_name}
+        colName={proposal()!.column_name}
+        record={{[proposal()!.column_name]: proposal()!.new_value}}
+        label="New value"
+      />
+      <Detail
+        tableName="change_proposal"
+        colName="change_explanation"
+        record={proposal()!}
+      />
+      <main class="px-2 max-w-md">
+        <div>
+          <button
+            class="text-sky-800"
+            onClick={() => vote(true)}
+          >
+            [ In Favour ]
+          </button>
+          <button
+            class="pl-2 text-sky-800"
+            onClick={() => vote(false)}
+          >
+            [ Against ]
+          </button>
+        </div>
+      </main>
+    </Task>
+  )
+}

@@ -40,24 +40,29 @@ export interface DetailProps {
 }
 
 export const Detail: Component<DetailProps> = props => {
-  const column = schema.tables[props.tableName].columns[props.colName]
-  const value = props.record[props.colName]
+  const column = () => schema.tables[props.tableName].columns[props.colName]
+  const value = () => props.record[props.colName]
   return (
     <div class="px-2 pb-2">
-      <ColumnLabel {...props} {...{column}} />
+      <ColumnLabel {...props} column={column()} />
       <Switch>
-        <Match when={column.type === 'fk'}>
+        <Match when={column().type === 'fk'}>
           <FkValue
-            column={column as ForeignKey}
-            id={value as number}
+            column={column() as ForeignKey}
+            id={value() as number}
           />
         </Match>
-        <Match when={column.type === 'boolean' && column.optionLabels}>
-          <div>{(column as BooleanColumn).optionLabels?.[value ? 1 : 0]}</div>
+        <Match when={
+          column().type === 'boolean'
+          && (column() as BooleanColumn).optionLabels
+        }>
+          <div>
+            {(column() as BooleanColumn).optionLabels?.[value() ? 1 : 0]}
+          </div>
         </Match>
         <Match when>
           <div class="whitespace-pre-line">
-            {value || nbsp}
+            {value() || nbsp}
           </div>
         </Match>
       </Switch>

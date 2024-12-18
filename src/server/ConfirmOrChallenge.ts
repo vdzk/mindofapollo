@@ -15,7 +15,7 @@ export const getConfirnmationQuestion = safeWrap(async (userId) => {
   // + what if the intent of creator of the statement was never to ask for confirmation by random sampling. Make marking for random sampling explicit with a flag?
   // TODO: Check behaviour for anonymous user
 
-  const result = await sql`
+  const results = await sql`
     SELECT question.id, question.answer
     FROM question
     LEFT JOIN argument
@@ -33,7 +33,7 @@ export const getConfirnmationQuestion = safeWrap(async (userId) => {
     ORDER BY random()
     LIMIT 1
   `
-  return result[0]
+  return results[0]
 })
 
 export const addConfirmation = safeWrap(async (

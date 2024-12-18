@@ -1,0 +1,36 @@
+import { schema } from "./schema";
+
+export const customDataTypes: Record<string, string> = {
+  fk: 'integer',
+  proportion: 'numeric(6, 5)',
+  link_url: 'varchar',
+  link_title: 'varchar'
+}
+
+export const sanitizeTableName = (str: string) => str
+  .trim()
+  .replace(/^[^a-zA-Z_]/, '_')    // Ensure starts with a letter or underscore
+  .replace(/[^a-zA-Z0-9_]/g, '_') // Replace invalid characters with underscores
+  .replace(/_+/g, '_')            // Collapse multiple underscores into one
+  .replace(/^_+|_+$/g, '')        // Trim leading and trailing underscores
+  .substring(0, 63);              // Truncate to 63 characters
+
+export const colType2pgType: Record<string, string> = {}
+export const pgType2valueTypeTableName: Record<string, string> = {}
+for (const tableName in schema.tables) {
+  const table = schema.tables[tableName]
+  for (const colName in table.columns) {
+    const column = table.columns[colName]
+    if (!(column.type in colType2pgType)) {
+      const pgType = (column.type in customDataTypes)
+        ? customDataTypes[column.type]
+        : column.type
+
+      colType2pgType[column.type] = pgType
+      if (!(pgType in pgType2valueTypeTableName)) {
+        pgType2valueTypeTableName[pgType] = 'value_type_'
+          + sanitizeTableName(pgType)
+      }
+    }
+  }
+}

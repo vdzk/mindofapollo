@@ -1,10 +1,5 @@
+import { customDataTypes, pgType2valueTypeTableName } from "~/schema/dataTypes"
 import { schema } from "~/schema/schema"
-
-const customDataTypes: Record<string, string> = {
-  proportion: 'numeric(6, 5)',
-  link_url: 'varchar',
-  link_title: 'varchar'
-}
 
 const historyColDefs = [
   'data_op data_op NOT NULL',
@@ -119,6 +114,12 @@ const createCrossTables = () => {
   return statements
 }
 
+const createValueTypeTables = () => Object.entries(pgType2valueTypeTableName)
+  .map(([pgType, valueTypeTableName]) => (
+    `CREATE TABLE ${valueTypeTableName}
+    ( id SERIAL PRIMARY KEY, value ${pgType})`
+  ))
+
 const createDbSchema = () => {
   const statements = [] as string[]
   statements.push(...createEnums())
@@ -130,6 +131,7 @@ const createDbSchema = () => {
     )
   }
   statements.push(...createCrossTables())
+  statements.push(...createValueTypeTables())
   return statements.join(';\n')
 }
 

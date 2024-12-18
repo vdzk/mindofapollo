@@ -40,7 +40,7 @@ export default function ConfirmOrChallenge() {
 
   return (
     <Task resource={question}>
-      <main class="pl-2 max-w-md">
+      <main class="px-2 max-w-md">
         <div>
           <a
             class="hover:underline"

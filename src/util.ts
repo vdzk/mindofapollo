@@ -55,7 +55,7 @@ export const pluralTableName = (tableName: string) => {
 }
 
 
-export const etv = (fn: (val: string) => void) => (event: {target: { value: string }}) => fn(event.target.value)
+export const etv = (fn: (val: string) => void) => (event: { target: { value: string } }) => fn(event.target.value)
 
 export const arrayToObjects = (arrayOfArrays: any[][], keys: string[]) => {
   return arrayOfArrays.map(innerArray => {
