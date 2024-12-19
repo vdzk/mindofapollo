@@ -17,11 +17,14 @@ import { argument_judgement } from "~/tables/argument_judgement"
 import { rule_change_request } from "~/tables/rule_change_request"
 import { argument_conditional } from "~/tables/argument_conditional"
 import { change_proposal } from "~/tables/change_proposal"
+import { argument_aggregation_type } from "~/tables/argument_aggregation_type"
+import { argument_weight } from "~/tables/argument_weight"
 
 export const schema: AppDataSchema = {
   tables: {
     person,
     tag,
+    argument_aggregation_type,
     question,
     argument_type,
     critical_question,
@@ -37,6 +40,7 @@ export const schema: AppDataSchema = {
     argument_judgement,
     rule_change_request,
     argument_conditional,
-    change_proposal
+    change_proposal,
+    argument_weight
   }
 }

@@ -11,7 +11,7 @@ export default function Tasks() {
       </div>
       <div class="pl-2">
         <a class="text-sky-800" href="/judge-argument">
-          [ Judge arguments ]
+          [ Judge argument ]
         </a>
       </div>
       <div class="pl-2">
@@ -20,8 +20,8 @@ export default function Tasks() {
         </a>
       </div>
       <div class="pl-2">
-        <a class="text-sky-800" href="/judge-correlations">
-          [ Judge correlations ]
+        <a class="text-sky-800" href="/weigh-argument">
+          [ Weigh argument ]
         </a>
       </div>
       <div class="pl-2">

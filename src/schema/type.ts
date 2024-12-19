@@ -1,6 +1,6 @@
 import { IconTypes } from "solid-icons"
 
-type CustomDataType = 'proportion' | 'link_url' | 'link_title' 
+export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' 
 export type DataLiteral = string | number | boolean | null
 export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
 

@@ -1,8 +1,10 @@
 import { schema } from "./schema";
+import { CustomDataType } from "./type";
 
-export const customDataTypes: Record<string, string> = {
+export const customDataTypes: Record<CustomDataType | 'fk', string> = {
   fk: 'integer',
   proportion: 'numeric(6, 5)',
+  weight: 'numeric(9, 2)',
   link_url: 'varchar',
   link_title: 'varchar'
 }
@@ -23,7 +25,7 @@ for (const tableName in schema.tables) {
     const column = table.columns[colName]
     if (!(column.type in colType2pgType)) {
       const pgType = (column.type in customDataTypes)
-        ? customDataTypes[column.type]
+        ? customDataTypes[column.type as CustomDataType | 'fk']
         : column.type
 
       colType2pgType[column.type] = pgType

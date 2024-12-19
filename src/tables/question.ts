@@ -8,6 +8,14 @@ export const question: TableSchema = {
     text: {
       type: 'varchar'
     },
+    argument_aggregation_type_id: {
+      type: 'fk',
+      fk: {
+        table: 'argument_aggregation_type',
+        labelColumn: 'id',
+        optional: true
+      }
+    },
     judgement_requested: {
       type: 'boolean',
       readOnly: true,

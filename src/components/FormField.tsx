@@ -11,6 +11,7 @@ const inputTypes = {
   boolean: 'checkbox',
   integer: 'text',
   proportion: 'text',
+  weight: 'text',
   link_url: 'text',
   link_title: 'text',
   fk: 'hidden'

@@ -17,6 +17,12 @@ const tableActions: Record<string, Record<string, TableAction>> = {
       label: 'Request judgement',
       getVisibility: async recordId => {
         //TODO: if there was not activity for a period of time, qualify any signed in user to make the request
+        const argument = await getRecordById('argument', recordId)
+        if (!argument) return false
+        const question = await getRecordById('question', argument.question_id as number)
+        if (!question || question.argument_aggregation_type_id !== 'evidential') {
+          return false
+        }
         const qualify = await addedCriticalStatement(recordId)
         return qualify ?? false
       },
@@ -42,6 +48,16 @@ const tableActions: Record<string, Record<string, TableAction>> = {
         } else {
           await updateRecord('question', recordId, { judgement_requested: true })
         }
+      }
+    },
+    requestAdditiveJudgement: {
+      label: 'Request judgement',
+      getVisibility: async recordId => {
+        const record = await getRecordById('question', recordId)
+        return !record?.judgement_requested && record?.argument_aggregation_type_id === 'additive'
+      },
+      execute: async recordId => {
+        await updateRecord('question', recordId, { judgement_requested: true })
       }
     }
   }
