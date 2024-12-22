@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta";
-import { RecordPageTitle, Subtitle } from "../components/PageTitle";
+import { RecordPageTitle, Subtitle } from "../../components/PageTitle";
 import { createAsync, useNavigate, useSearchParams } from "@solidjs/router";
 import { getExtRecordById } from "~/server/extRecord.db";
 import { humanCase, titleColumnName } from "~/util";

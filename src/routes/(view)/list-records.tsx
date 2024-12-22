@@ -1,7 +1,7 @@
 import { For, Show, useContext } from "solid-js";
 import { Title } from "@solidjs/meta";
 import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
-import { PageTitle, PageTitleIcon } from "../components/PageTitle";
+import { PageTitle, PageTitleIcon } from "../../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { getRecords } from "~/server/api";

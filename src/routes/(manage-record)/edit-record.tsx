@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
-import { Form } from "../components/Form";
-import { RecordPageTitle } from "../components/PageTitle";
+import { Form } from "../../components/Form";
+import { RecordPageTitle } from "../../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { getExtRecordById } from "~/server/extRecord.db";
 import { titleColumnName } from "~/util";

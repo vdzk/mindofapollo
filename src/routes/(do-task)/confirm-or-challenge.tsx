@@ -2,8 +2,9 @@ import { Match, Switch, createResource, createSignal } from "solid-js";
 import { FormField } from "~/components/FormField";
 import { Task } from "~/components/Task";
 import { addConfirmation, getConfirnmationQuestion } from "~/server/ConfirmOrChallenge";
+import { sql } from "~/server/db";
 import { insertExtRecord } from "~/server/extRecord.db";
-import { updateRecord } from "~/server/mutate.db";
+import { safeWrap, updateRecord, writeHistory } from "~/server/mutate.db";
 
 export default function ConfirmOrChallenge() {
   const [question, { refetch }] = createResource(getConfirnmationQuestion)

@@ -1,5 +1,6 @@
 import { customDataTypes, pgType2valueTypeTableName } from "~/schema/dataTypes"
 import { schema } from "~/schema/schema"
+import { CustomDataType } from "~/schema/type"
 
 const historyColDefs = [
   'data_op data_op NOT NULL',
@@ -33,7 +34,7 @@ const createTable = (tableName: string, options?: { history?: boolean}) => {
       )
     } else {
       const pgType = (column.type in customDataTypes)
-        ? customDataTypes[column.type]
+        ? customDataTypes[column.type as CustomDataType | "fk"]
         : column.type
       let defaultValue: string | undefined
       if (column.defaultValue === undefined) {

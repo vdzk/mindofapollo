@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
-import { Form } from "../components/Form";
-import { PageTitle, PageTitleIcon } from "../components/PageTitle";
+import { Form } from "../../components/Form";
+import { PageTitle, PageTitleIcon } from "../../components/PageTitle";
 import { humanCase } from "~/util";
 import { useSearchParams } from "@solidjs/router";
 

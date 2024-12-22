@@ -9,7 +9,7 @@ import { getRecords } from "~/server/api";
 import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
 import { SessionContext } from "~/SessionContext";
 import { titleColumnName } from "~/util";
-import { RecordPageTitle } from "../components/PageTitle";
+import { RecordPageTitle } from "../../components/PageTitle";
 
 const _delete = action(async (
   tableName: string,

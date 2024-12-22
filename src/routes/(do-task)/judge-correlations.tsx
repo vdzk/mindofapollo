@@ -1,4 +1,4 @@
-import { createEffect, createResource, For, Match, Switch } from "solid-js"
+import { createResource, For, Match, Switch } from "solid-js"
 import { Detail } from "~/components/Detail"
 import { parseForm } from "~/components/Form"
 import { FormField } from "~/components/FormField"

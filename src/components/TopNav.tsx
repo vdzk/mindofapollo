@@ -55,7 +55,7 @@ export const TopNav: Component = () => {
           </select>
           <a href="/home-page"  class="ml-1 text-sky-800">[ Home ]</a>
           <Show when={session!.loggedIn()}>
-            <a href="/tasks"  class="ml-1 text-sky-800">[ Tasks ]</a>
+            <a href="/list-tasks"  class="ml-1 text-sky-800">[ Tasks ]</a>
           </Show>
         </div>
         <div class="px-2 py-0.5">
