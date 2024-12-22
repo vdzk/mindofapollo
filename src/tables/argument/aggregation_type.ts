@@ -1,4 +1,4 @@
-import { TableSchema } from "../schema/type";
+import { TableSchema } from "../../schema/type";
 
 export const argument_aggregation_type: TableSchema = {
   plural: 'argument aggregation types',

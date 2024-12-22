@@ -1,4 +1,4 @@
-import { TableSchema } from "../schema/type";
+import { TableSchema } from "../../schema/type";
 
 export const role: TableSchema = {
   plural: 'roles',

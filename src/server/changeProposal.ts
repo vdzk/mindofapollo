@@ -5,7 +5,7 @@ import { insertRecord, safeWrap, updateRecord } from "./mutate.db"
 import { sql } from "./db"
 import { DataLiteral } from "~/schema/type"
 import { getRecordById } from "./select.db"
-import { ProposalRecord } from "~/tables/change_proposal"
+import { ProposalRecord } from "~/tables/other/change_proposal"
 
 export const saveChangeProposal = safeWrap(async (
   userId,

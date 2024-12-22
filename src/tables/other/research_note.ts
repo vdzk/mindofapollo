@@ -1,4 +1,4 @@
-import { TableSchema } from "../schema/type";
+import { TableSchema } from "../../schema/type";
 import { VsNote } from 'solid-icons/vs'
 
 export const research_note: TableSchema = {

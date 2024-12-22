@@ -1,4 +1,4 @@
-import { TableSchema } from "../schema/type";
+import { TableSchema } from "../../schema/type";
 
 export const argument_conditional: TableSchema = {
   extendsTable: 'argument',
