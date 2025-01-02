@@ -14,5 +14,17 @@ export const person: TableSchema = {
     password: {
       type: 'varchar'
     },
+  },
+  aggregates: {
+    person_categories: {
+      type: 'n-n',
+      table: 'person_category',
+      first: true
+    },
+    moral_weights: {
+      type: '1-n',
+      table: 'moral_weight',
+      column: 'person_id'
+    }
   }
 }

@@ -3,7 +3,8 @@ import { Form } from "../../components/Form";
 import { RecordPageTitle } from "../../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { getExtRecordById } from "~/server/extRecord.db";
-import { titleColumnName } from "~/util";
+import { humanCase, titleColumnName } from "~/util";
+import { Suspense } from "solid-js";
 
 interface EditRecord {
   tableName: string
@@ -17,9 +18,11 @@ export default function EditRecord() {
 
   return (
     <main>
-      <Title>{titleText()}</Title>
-      <RecordPageTitle tableName={sp.tableName} text={titleText()} />
-      <Form id={sp.id} tableName={sp.tableName} record={record()} />
+      <Suspense fallback={`loading ${humanCase(sp.tableName)}...`}>
+        <Title>{titleText()}</Title>
+        <RecordPageTitle tableName={sp.tableName} text={titleText()} />
+        <Form id={sp.id} tableName={sp.tableName} record={record()} />
+      </Suspense>
     </main>
   );
 }

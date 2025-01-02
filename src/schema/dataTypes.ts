@@ -6,7 +6,9 @@ export const customDataTypes: Record<CustomDataType | 'fk', string> = {
   proportion: 'numeric(6, 5)',
   weight: 'numeric(9, 2)',
   link_url: 'varchar',
-  link_title: 'varchar'
+  link_title: 'varchar',
+  option: 'varchar',
+  value_type_id: 'integer'
 }
 
 export const sanitizeTableName = (str: string) => str
@@ -23,7 +25,7 @@ for (const tableName in schema.tables) {
   const table = schema.tables[tableName]
   for (const colName in table.columns) {
     const column = table.columns[colName]
-    if (!(column.type in colType2pgType)) {
+    if (!(column.type in colType2pgType) && column.type !== 'virtual') {
       const pgType = (column.type in customDataTypes)
         ? customDataTypes[column.type as CustomDataType | 'fk']
         : column.type
@@ -36,3 +38,9 @@ for (const tableName in schema.tables) {
     }
   }
 }
+
+export const getValueTypeTableNameByColType = (colType: string) =>  
+  pgType2valueTypeTableName[colType2pgType[colType]]
+
+export const getValueTypeTableName = (tableName: string, colName: string) =>
+  getValueTypeTableNameByColType(schema.tables[tableName].columns[colName].type)

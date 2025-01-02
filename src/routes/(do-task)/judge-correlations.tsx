@@ -1,28 +1,79 @@
-import { createResource, For, Match, Switch } from "solid-js"
+import { Component, createResource, For, Match, Switch } from "solid-js"
+import { createStore, SetStoreFunction } from "solid-js/store"
 import { Detail } from "~/components/Detail"
-import { parseForm } from "~/components/Form"
 import { FormField } from "~/components/FormField"
 import { PageTitle, Subtitle } from "~/components/PageTitle"
 import { RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"
 import { schema } from "~/schema/schema"
+import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { attemptJudgeQuestion, getJudgeCorrelationsData } from "~/server/judge"
 import { insertRecordsOneByOne } from "~/server/mutate.db"
 
-export default function JudgeCorrelations() {
-  const [taskData, { refetch }] = createResource(getJudgeCorrelationsData)
+const CorrelationForm: Component<{
+  argument: DataRecordWithId
+  diffs: Record<number, DataRecord>
+  setDiffs: SetStoreFunction<Record<number, DataRecord>>
+  index: number
+}> = props => {
+  const id = () => props.argument.id
+  props.setDiffs(id(), {})
+  const [diff, setDiff] = createStore<DataRecord>(props.diffs[id()])
   const condCols = schema.tables.argument_conditional.columns
+
+  return (
+    <>
+      <Subtitle>Argument {props.index + 1}</Subtitle>
+      <Detail
+        tableName="argument"
+        colName="title"
+        record={props.argument} />
+      <RecordDetails
+        tableName={['argument', props.argument.argument_type_id].join('_')}
+        id={props.argument.id}
+        displayColumn={colName => colName !== 'id'} />
+      <Detail
+        tableName="argument_judgement"
+        colName="isolated_confidence"
+        label="isolated confidence"
+        record={props.argument} />
+      <Switch>
+        <Match when={props.index === 0}>
+          <Detail
+            tableName="argument_conditional"
+            colName="conditional_confidence"
+            record={{ conditional_confidence: props.argument.isolated_confidence }}
+          />
+          <Detail
+            tableName="argument_conditional"
+            colName="conditional_explanation"
+            record={{ conditional_explanation: "The confidence of the first argument is not conditioned on any previous arguments." }}
+          />
+        </Match>
+        <Match when={props.index > 0}>
+          <form class="px-2" data-recordId={props.argument.id}>
+            <For each={Object.keys(condCols)}>
+              {condColName => <FormField
+                tableName="argument_conditional"
+                colName={condColName}
+                {...{diff, setDiff}}
+              />}
+            </For>
+          </form>
+        </Match>
+      </Switch>
+    </>
+  )
+}
+
+export default function JudgeCorrelations() {
+  const [diffs, setDiffs] = createStore<Record<number, DataRecord>>({})
+  const [taskData, { refetch }] = createResource(getJudgeCorrelationsData)
 
   const onSubmit = async () => {
     const records = taskData()!.arguments
       .slice(1) // The first argument is not conditional and is not included
-      .map(argument => {
-        const formEl = document.querySelector(`form[data-recordId="${argument.id}"]`) as HTMLFormElement
-        const formData = new FormData(formEl)
-        const record = { id: argument.id, ...parseForm(formData, condCols)}
-        return record
-      })
-    
+      .map(argument => diffs[argument.id])
     // TODO: authorize insertion of the correct records
     await insertRecordsOneByOne('argument_conditional', records)
     await attemptJudgeQuestion(taskData()!.question.id)
@@ -47,46 +98,10 @@ export default function JudgeCorrelations() {
         Start with the strongest argument (A₁). Imagine if all of the arguments that you have considered so far have failed, how much confidence in the conclusion will the next argument Aₙ give AFₙ? AFₙ can not accede Aₙ.
       </div>
       <For each={taskData()?.arguments}>
-        {(argument, index) => <>
-          <Subtitle>Argument {index() + 1}</Subtitle>
-          <Detail
-            tableName="argument"
-            colName="title"
-            record={argument} />
-          <RecordDetails
-            tableName={['argument', argument.argument_type_id].join('_')}
-            id={argument.id}
-            displayColumn={colName => colName !== 'id'} />
-          <Detail
-            tableName="argument_judgement"
-            colName="isolated_confidence"
-            label="isolated confidence"
-            record={argument} />
-          <Switch>
-            <Match when={index() === 0}>
-              <Detail
-                tableName="argument_conditional"
-                colName="conditional_confidence"
-                record={{conditional_confidence: argument.isolated_confidence}}
-              />
-              <Detail
-                tableName="argument_conditional"
-                colName="conditional_explanation"
-                record={{conditional_explanation: "The confidence of the first argument is not conditioned on any previous arguments."}}
-              />
-            </Match>
-            <Match when={index() > 0}>
-              <form class="px-2" data-recordId={argument.id}>
-                <For each={Object.keys(condCols)}>
-                  {condColName => <FormField
-                    tableName="argument_conditional"
-                    colName={condColName}
-                  />}
-                </For>
-              </form>
-            </Match>
-          </Switch>
-        </>}
+        {(argument, index) => <CorrelationForm
+          {...{argument, diffs, setDiffs}}
+          index={index()}
+        />}
       </For>
       <div class="px-2 pt-2">
         <button type="button" class="text-sky-800" onClick={onSubmit}>

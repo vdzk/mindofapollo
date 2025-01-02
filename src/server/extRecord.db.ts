@@ -3,9 +3,12 @@
 import { DataRecord } from "~/schema/type"
 import { onError } from "./db"
 import { deleteById } from "./mutate.db";
-import { getRecordById } from "~/server/select.db";
+import { getRecordById, getValueById } from "~/server/select.db";
 import { insertRecord, updateRecord } from "./mutate.db";
 import { getExtTableName } from "~/util"
+import { schema } from "~/schema/schema";
+import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
+import { getTypeByRecordId } from "./valueType";
 
 export const insertExtRecord = async (
   tableName: string,
@@ -33,6 +36,18 @@ export const updateExtRecord = (
 export const getExtRecordById = async (tableName: string, id: number) => {
   const result = await getRecordById(tableName, id)
   if (!result) return
+
+  const { columns } = schema.tables[tableName]
+  for (const colName in columns) {
+    const column = columns[colName]
+    if (column.type === 'value_type_id') {
+      const colType = await getTypeByRecordId(tableName, colName, result.id)
+      const vttn = getValueTypeTableNameByColType(colType)
+      const value = await getValueById(vttn, result[colName] as number)
+      // insert the actual value
+      result[colName] = value
+    }
+  }
 
   const extTableName = getExtTableName(tableName, result)
   if (extTableName) {

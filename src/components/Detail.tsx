@@ -5,6 +5,7 @@ import { createAsync } from "@solidjs/router";
 import { getRecordById } from "~/server/select.db";
 import { nbsp } from "~/util";
 import { schema } from "~/schema/schema";
+import { getOriginTypes } from "~/server/valueType";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -42,23 +43,46 @@ export interface DetailProps {
 export const Detail: Component<DetailProps> = props => {
   const column = () => schema.tables[props.tableName].columns[props.colName]
   const value = () => props.record[props.colName]
+
+  const originTypes = createAsync(async () => {
+    if (column().type === 'value_type_id') {
+      return getOriginTypes(props.tableName, props.colName)
+    }
+  })
+  const columnType = () => {
+    const col = column()
+    if (col.type === 'value_type_id') {
+      props.record[col.typeOriginColumn]
+      const typeOriginId = props.record[col.typeOriginColumn]
+      if (originTypes() && typeOriginId) {
+        return originTypes()![typeOriginId as number]
+      }
+    } else {
+      return col.type
+    }
+  }
+
   return (
     <div class="px-2 pb-2">
       <ColumnLabel {...props} column={column()} />
       <Switch>
-        <Match when={column().type === 'fk'}>
+        <Match when={columnType() === 'fk'}>
           <FkValue
             column={column() as ForeignKey}
             id={value() as number}
           />
         </Match>
-        <Match when={
-          column().type === 'boolean'
-          && (column() as BooleanColumn).optionLabels
-        }>
-          <div>
-            {(column() as BooleanColumn).optionLabels?.[value() ? 1 : 0]}
-          </div>
+        <Match when={columnType() === 'boolean'}>
+          <Switch>
+            <Match when={(column() as BooleanColumn).optionLabels}>
+              <div>
+                {(column() as BooleanColumn).optionLabels?.[value() ? 1 : 0]}
+              </div>
+            </Match>
+            <Match when>
+              {value() ? 'true' : 'false'}
+            </Match>
+          </Switch>
         </Match>
         <Match when>
           <div class="whitespace-pre-line">

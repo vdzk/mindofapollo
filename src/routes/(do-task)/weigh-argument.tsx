@@ -1,15 +1,16 @@
 import { createResource, For, Show } from "solid-js";
-import { parseForm } from "~/components/Form";
+import { createStore } from "solid-js/store";
 import { FormField } from "~/components/FormField";
 import { Subtitle } from "~/components/PageTitle";
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
-import { BooleanColumn } from "~/schema/type";
+import { BooleanColumn, DataRecord } from "~/schema/type";
 import { insertRecord } from "~/server/mutate.db";
 import { attemptAggregateArguments, getWeighArgumentTaskData } from "~/server/weighArgument";
 
 export default function WeighArgument() {
+  const [diff, setDiff] = createStore<DataRecord>({})
   const [taskData, { refetch }] = createResource(getWeighArgumentTaskData)
   const displayColumn: ColumnFilter = (colName, column, visible) => visible && colName !== 'judgement_requested'
   const formColumns = schema.tables.argument_weight.columns
@@ -17,12 +18,9 @@ export default function WeighArgument() {
   const {optionLabels} = schema.tables.argument.columns.pro as BooleanColumn
   const isFirst = () => taskData()!.weightedArguments.length === 0
 
-  const onSubmit = async (event: SubmitEvent & { target: Element, currentTarget: HTMLFormElement; }) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const record = parseForm(formData, formColumns)
+  const onSubmit = async () => {
     // TODO: authorazation
-    await insertRecord( "argument_weight", {id: id(), ...record})
+    await insertRecord( "argument_weight", {id: id(), ...diff})
     await attemptAggregateArguments(taskData()?.argument.question_id)
     refetch()
   }
@@ -63,18 +61,21 @@ export default function WeighArgument() {
         {...{ displayColumn }}
       />
       <Subtitle>Weigh Argument</Subtitle>
-      <form onSubmit={onSubmit} class="px-2 max-w-screen-sm">
+      <div class="px-2 max-w-screen-sm">
         <For each={Object.keys(formColumns)}>
           {colName => (
-            <FormField tableName="argument_weight" {...{ colName }} />
+            <FormField
+              tableName="argument_weight"
+              {...{ colName, diff, setDiff }}
+            />
           )}
         </For>
         <div class="pt-2">
-          <button type="submit" class="text-sky-800">
+          <button class="text-sky-800" onClick={onSubmit}>
             [ Submit ]
           </button>
         </div>
-      </form>
+      </div>
     </Task>
   )
 }

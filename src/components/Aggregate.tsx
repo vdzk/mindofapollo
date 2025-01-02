@@ -17,6 +17,7 @@ export interface AggregateSection {
 }
 
 const FkRecordListItem: Component<{
+  tableName: string,
   aggregate: OneToNSchema,
   titleColumnName: string,
   titleColumn: ForeignKey,
@@ -30,13 +31,18 @@ const FkRecordListItem: Component<{
   )
   const { fk } = props.titleColumn
   const text = fk.getLabel?.(props.record) ?? props.record[fk.labelColumn]
+  const sameTable = props.titleColumn.fk.table === props.tableName
+  const hrefTableName = sameTable
+    ? props.aggregate.table
+    : props.titleColumn.fk.table
+  const hrefId = sameTable
+    ? props.id
+    : props.record[props.titleColumnName]
 
   return (
     <>
       <a class="hover:underline"
-        href={`/show-record`
-          +`?tableName=${props.titleColumn.fk.table}`
-          +`&id=${props.record[props.titleColumnName]}`}
+        href={`/show-record?tableName=${hrefTableName}&id=${hrefId}`}
       >
         {text}
       </a>
@@ -125,6 +131,7 @@ export const Aggregate: Component<{
               <Switch>
                 <Match when={titleColumn().type === 'fk'}>
                   <FkRecordListItem
+                    tableName={props.tableName}
                     aggregate={aggregate as OneToNSchema}
                     titleColumnName={titleColName()}
                     titleColumn={titleColumn() as ForeignKey}
@@ -150,3 +157,4 @@ export const Aggregate: Component<{
     </For>
   )
 }
+

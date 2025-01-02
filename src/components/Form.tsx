@@ -4,44 +4,21 @@ import { insertRecord, updateRecord } from "~/server/mutate.db";
 import { schema } from "~/schema/schema";
 import { getRecords } from "~/server/api";
 import { FormField } from "./FormField";
-import { ColumnSchema, DataLiteral, DataRecord } from "~/schema/type";
+import { DataRecord } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/server/extRecord.db";
 import { getExtTableName } from "~/util";
+import { createStore } from "solid-js/store";
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
-export const parseForm = (
-  formData: FormData,
-  columns: Record<string, ColumnSchema>
-) => {
-  const record: DataRecord = {}
-  for (const [colName, column] of Object.entries(columns)) {
-    const inputValue = formData.get(colName)
-    if (column.type === 'boolean') {
-      if (column.readOnly) {
-        continue
-      } else if (column.optionLabels) {
-        record[colName] = inputValue === 'true'
-      } else {
-        record[colName] = formData.has(colName)
-      }
-    } else if (column.type === 'fk' && inputValue === '') {
-      record[colName] = null
-    } else if (inputValue === null) {
-      // exclude the value
-    } else {
-      record[colName] = inputValue as DataLiteral
-    }
-  }
-  return record
-}
-
 export const Form: Component<{
-  tableName: string,
-  id?: number,
-  record?: DataRecord;
+  tableName: string
+  id?: number
+  record?: DataRecord
 }> = (props) => {
   const [searchParams] = useSearchParams()
+  const [diff, setDiff] = createStore<DataRecord>({})
+  const [diffExt, setDiffExt] = createStore<DataRecord>({})
   const [extValue, setExtValue] = createSignal<string>()
 
   const exitPath = (tableName: string) => {
@@ -93,21 +70,20 @@ export const Form: Component<{
     }
   }))
 
-  const columns = () => schema.tables[props.tableName].columns
-  const colNames = () => Object.keys(columns())
+  const table = () => schema.tables[props.tableName]
+  const colNames = () => Object.keys(table().columns)
   const extTableName = () => getExtTableName(props.tableName, props.record, extValue())
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
-  const onSubmit = async (event: SubmitEvent & { target: Element, currentTarget: HTMLFormElement; }) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const record = parseForm(formData, columns())
+  createEffect(() => !props.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id))
+
+  const onSubmit = async () => {
     const extension = extTableName() ? {
       tableName: extTableName() as string,
-      record: parseForm(formData, extColumns())
+      record: diffExt
     } : undefined
-    saveAction(props.tableName, record, extension)
+    saveAction(props.tableName, diff, extension)
   }
 
   return (
@@ -117,7 +93,9 @@ export const Form: Component<{
           {colName => <FormField
             tableName={props.tableName}
             colName={colName}
-            value={props.record?.[colName]}
+            record={props.record}
+            diff={diff}
+            setDiff={setDiff}
           />}
         </For>
       </ExtValueContext.Provider>
@@ -125,11 +103,13 @@ export const Form: Component<{
         {colName => <FormField
           tableName={extTableName() as string}
           colName={colName}
-          value={props.record?.[colName]}
+          record={props.record}
+          diff={diffExt}
+          setDiff={setDiffExt}
         />}
       </For>
       <div class="pt-2">
-        <button type="submit" class="text-sky-800">
+        <button type="button" class="text-sky-800" onClick={onSubmit}>
           [ Save ]
         </button>
         <a

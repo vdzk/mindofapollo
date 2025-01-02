@@ -60,6 +60,11 @@ export const question: TableSchema = {
       type: 'n-n',
       table: 'tag',
       first: true
+    },
+    directive_consequences: {
+      type: '1-n',
+      table: 'directive_consequence',
+      column: 'id'
     }
   }
 }

@@ -19,6 +19,16 @@ import { argument_conditional } from "~/tables/argument/conditional"
 import { change_proposal } from "~/tables/other/change_proposal"
 import { argument_aggregation_type } from "~/tables/argument/aggregation_type"
 import { argument_weight } from "~/tables/argument/weight"
+import { deed } from "~/tables/morality/deed"
+import { directive_consequence } from "~/tables/morality/directive_consequence"
+import { directive } from "~/tables/morality/directive"
+import { directive_scope } from "~/tables/morality/directive_scope"
+import { moral_good } from "~/tables/morality/moral_good"
+import { moral_persuasion } from "~/tables/morality/moral_persuasion"
+import { moral_weight } from "~/tables/morality/moral_weight"
+import { person_category } from "~/tables/morality/person_category"
+import { presuasion_critique } from "~/tables/morality/persuasion_critique"
+import { unit } from "~/tables/morality/unit"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -41,6 +51,16 @@ export const schema: AppDataSchema = {
     rule_change_request,
     argument_conditional,
     change_proposal,
-    argument_weight
+    argument_weight,
+    deed,
+    directive,
+    unit,
+    moral_good,
+    person_category,
+    directive_consequence,
+    directive_scope,
+    moral_persuasion,
+    moral_weight,
+    presuasion_critique
   }
 }

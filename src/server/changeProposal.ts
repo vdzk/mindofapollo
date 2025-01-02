@@ -1,7 +1,7 @@
 "use server"
 
-import { colType2pgType, pgType2valueTypeTableName } from "~/schema/dataTypes"
-import { insertRecord, safeWrap, updateRecord } from "./mutate.db"
+import { getValueTypeTableName } from "~/schema/dataTypes"
+import { insertRecord, insertValueType, safeWrap, updateRecord } from "./mutate.db"
 import { sql } from "./db"
 import { DataLiteral } from "~/schema/type"
 import { getRecordById } from "./select.db"
@@ -16,18 +16,16 @@ export const saveChangeProposal = safeWrap(async (
   newValue: DataLiteral,
   explanation: string
 ) => {
-  const valueTypeTableName = pgType2valueTypeTableName[colType2pgType[colName]]
-  const results = await sql`
-    INSERT INTO ${sql(valueTypeTableName)} (value)
-    VALUES (${oldValue}), (${newValue})
-    RETURNING id
-  `
+  const vttn = getValueTypeTableName(tableName, colName)
+  const [{id: old_value_id}] = await insertValueType(userId, vttn, oldValue)
+  const [{id: new_value_id}] = await insertValueType(userId, vttn, newValue)
+
   await insertRecord('change_proposal', {
     table_name: tableName,
     target_id: id,
     column_name: colName,
-    old_value_id: results[0].id,
-    new_value_id: results[1].id,
+    old_value_id,
+    new_value_id,
     change_explanation: explanation
   })
 })
@@ -50,8 +48,7 @@ export const getChangeProposal = safeWrap(async (userId) => {
 
   if (!proposal) return
 
-  const valueTypeTableName = pgType2valueTypeTableName[
-    colType2pgType[proposal.column_name]]
+  const valueTypeTableName = getValueTypeTableName(proposal.table_name, proposal.column_name)
   const oldValues = await sql`
     SELECT *
     FROM ${sql(valueTypeTableName)}
@@ -84,8 +81,7 @@ export const voteChangeProposal = safeWrap(async (
   })
   if (inFavour) {
     // Retrieve the new value
-    const valueTypeTableName = pgType2valueTypeTableName[
-      colType2pgType[proposal.column_name]]
+    const valueTypeTableName = getValueTypeTableName(proposal.table_name, proposal.column_name)
     const results = await sql`
       SELECT *
       FROM ${sql(valueTypeTableName)}

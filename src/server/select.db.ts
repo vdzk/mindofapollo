@@ -1,28 +1,90 @@
 "use server"
 
 import { schema } from "~/schema/schema";
-import { DataRecordWithId, ForeignKey } from "~/schema/type";
+import { DataLiteral, DataRecordWithId, ForeignKey, VirtualColumnQueries } from "~/schema/type";
 import { sql, onError } from "./db";
 import chalk from "chalk";
+import { getVirtualColNames, resolveEntries } from "~/util";
+import { Row, RowList } from "postgres";
+import { getVirtualValuesByServerFn } from "./virtualColumns";
 
+export const getVirtualValuesByQueries = async (
+  tableName: string,
+  colNames: string[],
+  ids: number[]
+) => {
+  const getCol = (colName: string) => (schema.tables[tableName].columns
+  [colName] as VirtualColumnQueries)
+  // Use nested Promise.all() to run all queries in paralel 
+  const virtualResults = await resolveEntries(colNames.map(
+    colName => [colName, resolveEntries(
+      Object.entries(getCol(colName).queries).map(
+        ([queryName, query]) => [queryName, sql.unsafe(query, [ids])]
+      )
+    )]
+  ))
+  const virtualValues = Object.fromEntries(
+    Object.entries(virtualResults).map(
+      ([colName, records]) => [colName, getCol(colName).get(ids, records)]
+    )
+  )
+  return virtualValues
+}
 
-export const listRecords = (tableName: string) => sql`
-  SELECT *
-  FROM ${sql(tableName)}
-  ORDER BY id
-`.catch(onError);
+export const injectVirtualValues = async (
+  tableName: string,
+  records?: DataRecordWithId[] | RowList<Row[]>
+) => {
+  const virtualColNames = getVirtualColNames(tableName)
+
+  if (virtualColNames.all.length > 0 && records && records.length > 0) {
+    const ids = records.map(record => record.id as number)
+    const virtualValues = (await Promise.all([
+      getVirtualValuesByQueries(tableName, virtualColNames.queries, ids),
+      getVirtualValuesByServerFn(tableName, virtualColNames.serverFn, ids)
+    ])).reduce((acc, cur) => ({ ...acc, ...cur }), {})
+    for (const record of records) {
+      for (const colName of virtualColNames.all) {
+        record[colName] = virtualValues[colName][record.id]
+      }
+    }
+  }
+}
+
+export const listRecords = async (tableName: string) => {
+  const records = await sql`
+    SELECT *
+    FROM ${sql(tableName)}
+    ORDER BY id
+  `.catch(onError)
+  await injectVirtualValues(tableName, records)
+  return records
+};
 
 export const getRecordById = async (tableName: string, id: string | number) => {
   if (id === undefined) {
-    console.error(chalk.red('ERROR'), 'getRecordById() was called with', {tableName, id})
+    console.error(chalk.red('ERROR'), 'getRecordById() was called with', { tableName, id })
     return undefined
   } else {
-    return  sql`
+    const records = await sql`
       SELECT *
       FROM ${sql(tableName)}
       WHERE id = ${id}
-    `.then(rows => rows[0] as DataRecordWithId).catch(onError)
+    `.catch(onError)
+    if (records) {
+      await injectVirtualValues(tableName, records)
+      return records[0] as DataRecordWithId
+    }
   }
+}
+
+export const getValueById = async (tableName: string, id: number) => {
+  const results = await sql`
+    SELECT value
+    FROM ${sql(tableName)}
+    WHERE id = ${id}
+  `.catch(onError)
+  return results?.[0]?.value as DataLiteral
 }
 
 export const listOverlapRecords = (
@@ -39,14 +101,15 @@ export const listOverlapRecords = (
   ORDER BY ${sql(tableName)}.id
 `.catch(onError);
 
-export const listForeignRecords = (
+export const listForeignRecords = async (
   tableName: string,
   fkName: string,
   fkId: number
 ) => {
-  const {extendedByTable} = schema.tables[tableName]
+  const { extendedByTable } = schema.tables[tableName]
+  let records
   if (extendedByTable) {
-    return sql`
+    records = await sql`
       SELECT *, t.id
       FROM ${sql(tableName)} t
       LEFT JOIN ${sql(extendedByTable)} e ON e.id = t.id
@@ -54,13 +117,15 @@ export const listForeignRecords = (
       ORDER BY t.id
     `.catch(onError)
   } else {
-    return sql`
+    records = await sql`
       SELECT *
       FROM ${sql(tableName)}
       WHERE ${sql(fkName)} = ${fkId}
       ORDER BY id
     `.catch(onError)
   }
+  await injectVirtualValues(tableName, records)
+  return records
 };
 
 export const listForeignHopRecords = (

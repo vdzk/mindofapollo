@@ -10,7 +10,14 @@ const historyColDefs = [
 
 const createEnums = () => ["CREATE TYPE data_op AS ENUM ('INSERT', 'UPDATE', 'DELETE')"]
 
-const createTable = (tableName: string, options?: { history?: boolean}) => {
+// const createEnums = () => [
+//   "CREATE TYPE data_op AS ENUM ('INSERT', 'UPDATE', 'DELETE')",
+//   ...Object.entries(enums).map(([name, values]) => (
+//     `CREATE TYPE ${name} AS ENUM ('${values.join("', '")}')`
+//   ))
+// ]
+
+const createTable = (tableName: string, options?: { history?: boolean }) => {
   const { columns, extendsTable } = schema.tables[tableName]
   const history = !!options?.history
 
@@ -25,6 +32,7 @@ const createTable = (tableName: string, options?: { history?: boolean}) => {
   for (const colName in columns) {
     if (colName === 'id') continue
     const column = columns[colName]
+    if (column.type === 'virtual') continue
     if (column.type === 'fk') {
       let fkType = schema.tables[column.fk.table].columns.id?.type ?? 'integer'
       colDefs.push(
@@ -92,7 +100,7 @@ const createCrossTables = () => {
           const xTableName = `${a}_x_${b}`
 
           // Create cross reference and history tables
-          for (const history of [true, false]) {
+          for (const history of [false, true]) {
             statements.push(
               `CREATE TABLE ${xTableName + (history ? '_h' : '')} ( ${a}_id integer NOT NULL, ${b}_id integer NOT NULL ${history ? ',' + historyColDefs.join() : ''})`
             )
@@ -104,7 +112,7 @@ const createCrossTables = () => {
             `CREATE INDEX ${xTableName}_${a}_id_idx ON ${xTableName} (${a}_id)`,
             `CREATE INDEX ${xTableName}_${b}_id_idx ON ${xTableName} (${b}_id)`
           )
-          
+
           statements.push(
             `CREATE INDEX ${xTableName}_h_op_user_id_idx ON ${xTableName}_h (op_user_id)`
           )
@@ -116,10 +124,15 @@ const createCrossTables = () => {
 }
 
 const createValueTypeTables = () => Object.entries(pgType2valueTypeTableName)
-  .map(([pgType, valueTypeTableName]) => (
-    `CREATE TABLE ${valueTypeTableName}
-    ( id SERIAL PRIMARY KEY, value ${pgType})`
-  ))
+  .map(([pgType, valueTypeTableName]) =>
+    [false, true].map(history => (
+      `CREATE TABLE ${valueTypeTableName + (history ? '_h' : '')} (
+        id SERIAL PRIMARY KEY,
+        value ${pgType}
+        ${history ? ',' + historyColDefs.join() : ''}
+      )`
+    ))
+  ).flat()
 
 const createDbSchema = () => {
   const statements = [] as string[]

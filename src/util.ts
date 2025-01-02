@@ -26,6 +26,7 @@ export const titleColumnName = (tableName: string) => {
       break
     }
   }
+  // console.log('titleColumnName', tableName, result)
   return result
 }
 
@@ -55,7 +56,9 @@ export const pluralTableName = (tableName: string) => {
 }
 
 
-export const etv = (fn: (val: string) => void) => (event: { target: { value: string } }) => fn(event.target.value)
+export const etv = (fn: (val: string, name: string) => void) =>
+  (event: { target: { value: string, name: string } }) =>
+    fn(event.target.value, event.target.name)
 
 export const arrayToObjects = (arrayOfArrays: any[][], keys: string[]) => {
   return arrayOfArrays.map(innerArray => {
@@ -65,3 +68,34 @@ export const arrayToObjects = (arrayOfArrays: any[][], keys: string[]) => {
     }, {});
   });
 }
+
+// Dummy function to enable SQL syntax highlighting
+export const sqlStr = (strings: TemplateStringsArray) => strings[0]
+
+export const getVirtualColNames = (tableName: string) => {
+  const all = []
+  const queries = []
+  const serverFn = []
+  const { columns } = schema.tables[tableName]
+  for (const colName in columns) {
+    const column = columns[colName]
+    if (column.type === 'virtual') {
+      all.push(colName)
+      if (('serverFn' in column) && column.serverFn) {
+        serverFn.push(colName)
+      } else {
+        queries.push(colName)
+      }
+    }
+  }
+  return {all, queries, serverFn}
+}
+
+export const resolveEntries = async <T>(entries: [string, Promise<T>][]) =>
+  Object.fromEntries(
+    await Promise.all(
+      entries.map(
+        async ([key, promise]) => [key, await promise]
+      )
+    )
+  ) as Record<string, T>;  

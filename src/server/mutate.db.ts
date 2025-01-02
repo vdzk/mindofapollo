@@ -1,9 +1,12 @@
 "use server"
 
-import { DataOp, DataRecord } from "~/schema/type";
+import { DataLiteral, DataOp, DataRecord } from "~/schema/type";
 import { onError, sql } from "./db";
 import { getUserId } from "./session";
 import { listRecords } from "./select.db";
+import { schema } from "~/schema/schema";
+import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
+import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
 
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
@@ -29,11 +32,53 @@ export function safeWrap<
   };
 }
 
+// TODO: implement efficient bulk version 
+export const insertValueType = async (
+  userId: number,
+  tableName: string,
+  value: DataLiteral,
+) => {
+  const result = await sql`
+    INSERT INTO ${sql(tableName)} (value)
+    VALUES (${value})
+    RETURNING *
+  `
+  await writeHistory(userId, 'INSERT', tableName, result[0]);
+  return result
+}
+
+export const injectValueTypes = async (
+  userId: number,
+  tableName: string,
+  record: DataRecord,
+  recordId?: number
+) => {
+  const { columns } = schema.tables[tableName]
+  for (const colName in columns) {
+    const column = columns[colName]
+    if (column.type === 'value_type_id') {
+      // Assume that the value is provided insed of the id
+      const value = record[colName]
+      if (value !== undefined) {
+        const originId = record[column.typeOriginColumn] as number | undefined
+        const colType = recordId && !originId
+          ? await getTypeByRecordId(tableName, colName, recordId)
+          : await getTypeByOriginId(tableName, colName, originId as number)
+        const vttn = getValueTypeTableNameByColType(colType)
+        console.log('injectValueTypes', {vttn, tableName, colName, value})
+        const [{id}] = await insertValueType(userId, vttn, value)
+        record[colName] = id
+      }
+    }
+  }
+}
+
 export const insertRecord = safeWrap(async (
   userId: number,
   tableName: string,
   record: DataRecord
 ) => {
+  await injectValueTypes(userId, tableName, record)
   const result = await sql`
     INSERT INTO ${sql(tableName)} ${sql(record)}
     RETURNING *
@@ -42,6 +87,7 @@ export const insertRecord = safeWrap(async (
   return result;
 });
 
+// TODO: implementefficient bulk version 
 export const writeHistory = async (
   userId: number,
   data_op: DataOp,
@@ -73,6 +119,7 @@ export const updateRecord = safeWrap(async (
   id: number,
   record: DataRecord
 ) => {
+  await injectValueTypes(userId, tableName, record, id)
   const result = await sql`
     UPDATE ${sql(tableName)}
     SET ${sql(record, Object.keys(record))}
