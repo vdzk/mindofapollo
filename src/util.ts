@@ -98,4 +98,7 @@ export const resolveEntries = async <T>(entries: [string, Promise<T>][]) =>
         async ([key, promise]) => [key, await promise]
       )
     )
-  ) as Record<string, T>;  
+  ) as Record<string, T>;
+
+export const indexBy = (records: DataRecord[], colName: string) =>
+  Object.fromEntries(records.map(record => [record[colName], record]))

@@ -32,20 +32,31 @@ export const FkInput: Component<{
       return null
     }
   }
+  const onChange = props.onChangeFormat(format)
+  
+  createEffect(() => {
+    const spValue = searchParams[props.colName]
+    if (spValue) {
+      onChange({target: {
+        value: spValue,
+        name: props.colName
+      }})
+    }
+  })
 
   return (
     <select
       name={props.colName}
       class="max-w-full"
       disabled={props.value && props.column.fk.extensionTables}
-      onChange={props.onChangeFormat(format)}
+      onChange={onChange}
     >
       <option></option>
       <For each={records()}>
         {record => (
           <option
             value={record.id}
-            selected={record.id === props.value || record.id + '' === searchParams[props.colName]}
+            selected={record.id === props.value}
           >
             {record[props.column.fk.labelColumn]}
           </option>

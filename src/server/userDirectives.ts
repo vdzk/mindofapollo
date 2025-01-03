@@ -6,7 +6,7 @@ import { getDirConcsWithValues } from "./directive";
 import { safeWrap } from "./mutate.db";
 
 export const getUserDirectives = safeWrap(async (userId) => {
-  const directives = Object.fromEntries((await sql`
+  const directives = await sql`
     SELECT directive.id, deed.text
     FROM ${sql(xName('person', 'person_category', true))} pxpc
     JOIN directive_scope
@@ -16,26 +16,25 @@ export const getUserDirectives = safeWrap(async (userId) => {
     JOIN deed
       ON deed.id = directive.deed_id
     WHERE pxpc.person_id = ${userId}
-  `).map(record => [record.id, record]))
-
+  `
   const dirConcs = await sql`
     SELECT dc.directive_id, dc.id, dc.moral_good_id, dc.value_id
     FROM directive_consequence dc
-    WHERE dc.directive_id IN ${sql(Object.keys(directives))}
+    WHERE dc.directive_id IN ${sql(directives.map(x => x.id))}
   `
-  const dirConcsWithValues = getDirConcsWithValues(dirConcs.map(x => x.id))
+  const dirConcsWithValues = await getDirConcsWithValues(dirConcs.map(x => x.id))
   const moralGoods = await sql`
     SELECT moral_good.id, moral_good.name, moral_good.unit_id
     FROM moral_good
     WHERE moral_good.id IN ${sql(dirConcs.map(x => x.moral_good_id))}
   `
   const units = await sql`
-    SELECT 
+    SELECT *
     FROM unit
     WHERE unit.id IN ${sql(moralGoods.map(x => x.unit_id))}
   `
   const moralWeights = await sql`
-    SELECT moral_weight.id, moral_weight.weight
+    SELECT moral_weight.moral_good_id, moral_weight.weight
     FROM moral_weight
     WHERE moral_weight.person_id = ${userId}
   `
