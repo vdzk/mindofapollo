@@ -1,5 +1,6 @@
+import { Title } from "@solidjs/meta";
 import { createAsync } from "@solidjs/router";
-import { For, Match, Switch, createResource, createSignal } from "solid-js";
+import { For } from "solid-js";
 import { PageTitle } from "~/components/PageTitle";
 import { getRecords } from "~/server/api";
 
@@ -9,7 +10,8 @@ export default function ConfirmOrChallenge() {
 
   return (
     <main>
-      <PageTitle> We are fox and cat </PageTitle>
+      <Title>Home Page</Title>
+      <PageTitle>Home Page</PageTitle>
       <div class="flex">
         <div class="pl-2">
           <For each={tags()}>

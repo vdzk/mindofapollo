@@ -3,6 +3,7 @@ import { sqlStr } from "~/util";
 
 export const moral_weight: TableSchema = {
   plural: 'moral weights',
+  // personal: true,
   columns: {
     label: {
       type: 'virtual',

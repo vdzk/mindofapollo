@@ -65,7 +65,6 @@ export const injectValueTypes = async (
           ? await getTypeByRecordId(tableName, colName, recordId)
           : await getTypeByOriginId(tableName, colName, originId as number)
         const vttn = getValueTypeTableNameByColType(colType)
-        console.log('injectValueTypes', {vttn, tableName, colName, value})
         const [{id}] = await insertValueType(userId, vttn, value)
         record[colName] = id
       }

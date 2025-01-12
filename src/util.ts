@@ -1,3 +1,5 @@
+import { useLocation } from "@solidjs/router"
+import { publicRoutes, url } from "./constant"
 import { schema } from "./schema/schema"
 import { DataRecord } from "./schema/type"
 import TimeAgo from 'javascript-time-ago'
@@ -76,6 +78,7 @@ export const getVirtualColNames = (tableName: string) => {
   const all = []
   const queries = []
   const serverFn = []
+  const local = []
   const { columns } = schema.tables[tableName]
   for (const colName in columns) {
     const column = columns[colName]
@@ -83,12 +86,14 @@ export const getVirtualColNames = (tableName: string) => {
       all.push(colName)
       if (('serverFn' in column) && column.serverFn) {
         serverFn.push(colName)
+      } else if ('getLocal' in column) {
+        local.push(colName)
       } else {
         queries.push(colName)
       }
     }
   }
-  return {all, queries, serverFn}
+  return {all, queries, serverFn, local}
 }
 
 export const resolveEntries = async <T>(entries: [string, Promise<T>][]) =>
@@ -102,3 +107,21 @@ export const resolveEntries = async <T>(entries: [string, Promise<T>][]) =>
 
 export const indexBy = (records: DataRecord[], colName: string) =>
   Object.fromEntries(records.map(record => [record[colName], record]))
+
+export const getUrl = (path: string) =>
+  url.scheme + '://' + url.host + ':' + url.port + path
+
+export const genCode = (length: number) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let code = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters[randomIndex];
+  }
+  return code;
+}
+
+export const useIsPublicRoute = () => {
+  const location = useLocation()
+  return () => publicRoutes.includes(location.pathname)
+}

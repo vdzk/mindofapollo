@@ -1,9 +1,10 @@
 import { IoPersonSharp } from "solid-icons/io";
-import { TableSchema } from "~/schema/type";
+import { DataOp, TableSchema } from "~/schema/type";
 
 export const person: TableSchema = {
   plural: 'persons',
   icon: IoPersonSharp,
+  deny: ['INSERT', 'DELETE'],
   columns: {
     name: {
       type: 'varchar'

@@ -1,12 +1,14 @@
 "use server"
 
 import { schema } from "~/schema/schema";
-import { DataLiteral, DataRecordWithId, ForeignKey, VirtualColumnQueries } from "~/schema/type";
+import { DataLiteral, DataRecordWithId, ForeignKey, VirtualColumnLocal, VirtualColumnQueries } from "~/schema/type";
 import { sql, onError } from "./db";
 import chalk from "chalk";
 import { getVirtualColNames, resolveEntries } from "~/util";
 import { Row, RowList } from "postgres";
 import { getVirtualValuesByServerFn } from "./virtualColumns";
+import { safeWrap } from "./mutate.db";
+import { getUserId } from "./session";
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -31,6 +33,19 @@ export const getVirtualValuesByQueries = async (
   return virtualValues
 }
 
+export const getVirtualValuesByLocal = (
+  tableName: string,
+  colNames: string[],
+  records: DataRecordWithId[]
+) => Object.fromEntries(colNames.map(colName => [
+  colName,
+  Object.fromEntries(records.map(record => [
+    record.id,
+    (schema.tables[tableName].columns[colName] as VirtualColumnLocal)
+      .getLocal(record)
+  ])) as Record<number, string>
+]))
+
 export const injectVirtualValues = async (
   tableName: string,
   records?: DataRecordWithId[] | RowList<Row[]>
@@ -41,7 +56,8 @@ export const injectVirtualValues = async (
     const ids = records.map(record => record.id as number)
     const virtualValues = (await Promise.all([
       getVirtualValuesByQueries(tableName, virtualColNames.queries, ids),
-      getVirtualValuesByServerFn(tableName, virtualColNames.serverFn, ids)
+      getVirtualValuesByServerFn(tableName, virtualColNames.serverFn, ids),
+      getVirtualValuesByLocal(tableName, virtualColNames.local, records as DataRecordWithId[])
     ])).reduce((acc, cur) => ({ ...acc, ...cur }), {})
     for (const record of records) {
       for (const colName of virtualColNames.all) {
@@ -51,11 +67,24 @@ export const injectVirtualValues = async (
   }
 }
 
-export const listRecords = async (tableName: string) => {
+export const listRecords = async ( tableName: string ) => {
+  const userId = await getUserId();
+  const { personal } = schema.tables[tableName]
+  if (personal && !userId) {
+    return []
+  }
+  const createdBy = (tableName: string, userId: number) => sql`
+  JOIN ${sql(tableName + '_h')} h
+    ON h.id = t.id
+    AND h.op_user_id = ${userId}
+    AND h.data_op = 'INSERT'
+`
+
   const records = await sql`
-    SELECT *
-    FROM ${sql(tableName)}
-    ORDER BY id
+    SELECT t.*
+    FROM ${sql(tableName)} t
+    ${ personal ? createdBy(tableName, userId!) : sql``}
+    ORDER BY t.id
   `.catch(onError)
   await injectVirtualValues(tableName, records)
   return records

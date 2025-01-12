@@ -67,6 +67,11 @@ export interface VirtualColumnServerFn extends SharedColumnProps {
   serverFn: true
 }
 
+export interface VirtualColumnLocal extends SharedColumnProps {
+  type: 'virtual',
+  getLocal: (record: DataRecordWithId) => string
+}
+
 export interface ForeignKey {
   type: 'fk'
   label?: string
@@ -81,7 +86,7 @@ export interface ForeignKey {
   getVisibility?: (record: DataRecord) => boolean
 }
 
-export type ColumnSchema = SimpleColumn | BooleanColumn | TextColumn | ForeignKey | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn
+export type ColumnSchema = SimpleColumn | BooleanColumn | TextColumn | ForeignKey | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal
 
 export interface OneToNSchema {
   type: '1-n'
@@ -101,6 +106,7 @@ export type AggregateSchema = OneToNSchema | NToNSchema
 
 export interface TableSchema {
   plural?: string,
+  personal?: boolean, //only show the records created by the current user
   icon?: IconTypes,
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
@@ -108,6 +114,7 @@ export interface TableSchema {
   deny?: DataOp[], // Prevent all users from performing these operations
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>
+  createRecord?: () => DataRecord // Generate new records automatically
 }
 
 export interface AppDataSchema {

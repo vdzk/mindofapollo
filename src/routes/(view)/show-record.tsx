@@ -61,9 +61,11 @@ export default function ShowRecord() {
           <a href={`/propose-change?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
             [ Propose Change ]
           </a>
-          <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
-            [ Edit ]
-          </a>
+          <Show when={!table().deny?.includes('UPDATE')}>
+            <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
+              [ Edit ]
+            </a>
+          </Show>
           <Show when={!table().deny?.includes('DELETE')}>
             <button class="mx-2 text-sky-800" onClick={onDelete}>
               [ Delete ]

@@ -29,6 +29,7 @@ import { moral_weight } from "~/tables/morality/moral_weight"
 import { person_category } from "~/tables/morality/person_category"
 import { presuasion_critique } from "~/tables/morality/persuasion_critique"
 import { unit } from "~/tables/morality/unit"
+import { invite } from "~/tables/other/invite"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -61,6 +62,7 @@ export const schema: AppDataSchema = {
     directive_scope,
     moral_persuasion,
     moral_weight,
-    presuasion_critique
+    presuasion_critique,
+    invite
   }
 }

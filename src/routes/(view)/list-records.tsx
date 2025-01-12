@@ -1,12 +1,13 @@
-import { For, Show, useContext } from "solid-js";
+import { For, Match, Show, Switch, useContext } from "solid-js";
 import { Title } from "@solidjs/meta";
 import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
 import { PageTitle, PageTitleIcon } from "../../components/PageTitle";
-import { createAsync, useSearchParams } from "@solidjs/router";
+import { action, createAsync, json, useAction, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { getRecords } from "~/server/api";
 import { ImList } from 'solid-icons/im'
 import { schema } from "~/schema/schema";
+import { insertRecord } from "~/server/mutate.db";
 
 interface ListRecordProps {
   tableName: string
@@ -19,6 +20,13 @@ export default function ListRecords() {
   const title = () => firstCap(pluralTableName(sp.tableName))
   const canAdd = () => session?.loggedIn()
     && !schema.tables[sp.tableName].deny?.includes('INSERT')
+  const table = () => schema.tables[sp.tableName]
+
+  const addAction = useAction(action(async () => {
+    const record = table().createRecord!()
+    await insertRecord(sp.tableName, record)
+    return json( 'ok', { revalidate: [ getRecords.keyFor(sp.tableName) ] })
+  }))
 
   return (
     <main>
@@ -42,9 +50,24 @@ export default function ListRecords() {
       </section>
       <section>
         <Show when={canAdd()}>
-          <a href={`/create-record/?tableName=${sp.tableName}`} class="mx-2 text-sky-800">
-            [ + Add ]
-          </a>
+          <Switch>
+            <Match when={table().createRecord}>
+              <button
+                onClick={addAction}
+                class="mx-2 text-sky-800"
+              >
+                [ + Add ]
+              </button>
+            </Match>
+            <Match when>
+              <a
+                href={`/create-record/?tableName=${sp.tableName}`}
+                class="mx-2 text-sky-800"
+              >
+                [ + Add ]
+              </a>
+            </Match>
+          </Switch>
         </Show>
       </section>
     </main>

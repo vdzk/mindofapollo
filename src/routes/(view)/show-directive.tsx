@@ -1,13 +1,11 @@
 import { createAsync } from "@solidjs/router";
-import { createEffect, For, Suspense } from "solid-js";
+import { For, Suspense } from "solid-js";
 import { PageTitle } from "~/components/PageTitle";
 import { getUserDirectives } from "~/server/userDirectives";
 import { indexBy } from "~/util";
 
 export default function ShowDirective() {
   const data = createAsync(getUserDirectives)
-
-  createEffect(() => console.log(data()))
 
   const rows = () => {
     const _data = data()
