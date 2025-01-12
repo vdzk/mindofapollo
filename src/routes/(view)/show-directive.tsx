@@ -1,7 +1,7 @@
 import { createAsync } from "@solidjs/router";
 import { For, Suspense } from "solid-js";
 import { PageTitle } from "~/components/PageTitle";
-import { getUserDirectives } from "~/server/userDirectives";
+import { getUserDirectives } from "~/api/view/show-directive";
 import { indexBy } from "~/util";
 
 export default function ShowDirective() {

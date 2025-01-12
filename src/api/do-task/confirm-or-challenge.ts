@@ -1,7 +1,7 @@
 "use server"
 
-import { sql } from "./db"
-import {safeWrap, writeHistory} from "./mutate.db"
+import { sql } from "../../db"
+import {safeWrap, writeHistory} from "../shared/mutate"
 
 export const getConfirnmationQuestion = safeWrap(async (userId) => {
   "use server"

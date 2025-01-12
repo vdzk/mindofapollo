@@ -3,7 +3,7 @@ import { Detail } from "~/components/Detail";
 import { PageTitle, Subtitle } from "~/components/PageTitle";
 import { RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
-import { getChangeProposal, voteChangeProposal } from "~/server/changeProposal";
+import { getChangeProposal, voteChangeProposal } from "~/api/do-task/vote-change-proposal";
 import { firstCap, humanCase } from "~/util";
 
 export default function VoteChangeProposal() {

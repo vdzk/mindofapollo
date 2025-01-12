@@ -1,8 +1,8 @@
 "use server"
 
 import { calcQuestionConfidenceAdditively, WeightedArgument } from "~/compute";
-import { sql } from "./db";
-import { safeWrap, updateRecord } from "./mutate.db";
+import { sql } from "../../db";
+import { safeWrap, updateRecord } from "../shared/mutate";
 
 const getWeightedArguments = (questionId: number) => sql`
   SELECT *

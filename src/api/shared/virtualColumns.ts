@@ -1,7 +1,7 @@
 "use server"
 
 import { resolveEntries } from "~/util"
-import { getDirConcsWithValues } from "./directive"
+import { getDirConcsWithValues } from "./getDirConcsWithValues"
 
 const virtualColumns: Record<string, Record<string,
   (ids: number[]) => Promise<Record<number, string>>

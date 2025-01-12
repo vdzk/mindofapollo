@@ -1,13 +1,13 @@
 import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Component, createContext, createEffect, createSignal, For, Setter } from "solid-js";
-import { insertRecord, updateRecord } from "~/server/mutate.db";
+import { insertRecord, updateRecord } from "~/api/shared/mutate";
 import { schema } from "~/schema/schema";
-import { getRecords } from "~/server/api";
 import { FormField } from "./FormField";
 import { DataRecord } from "~/schema/type";
-import { insertExtRecord, updateExtRecord } from "~/server/extRecord.db";
+import { insertExtRecord, updateExtRecord } from "~/api/shared/extRecord";
 import { getExtTableName } from "~/util";
 import { createStore } from "solid-js/store";
+import {getRecords} from "~/api/shared/select";
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 

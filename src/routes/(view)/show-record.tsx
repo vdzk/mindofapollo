@@ -3,13 +3,13 @@ import { action, createAsync, redirect, useAction, useSearchParams } from "@soli
 import { Show, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
-import { UserHistory } from "~/components/UserHistory";
 import { schema } from "~/schema/schema";
-import { getRecords } from "~/server/api";
-import { deleteExtById, getExtRecordById } from "~/server/extRecord.db";
+import { deleteExtById, getExtRecordById } from "~/api/shared/extRecord";
 import { SessionContext } from "~/SessionContext";
 import { titleColumnName } from "~/util";
 import { RecordPageTitle } from "../../components/PageTitle";
+import {getRecords} from "~/api/shared/select";
+import {UserHistory} from "~/components/histories";
 
 const _delete = action(async (
   tableName: string,
@@ -37,7 +37,7 @@ export default function ShowRecord() {
   const titleColumn = () => table().columns[titleColName()]
   const displayColumn: ColumnFilter = (colName, column, visible) => visible
     && (colName !== titleColName() // show non-title
-    || titleColumn().type === 'fk') // and title that is foreign key 
+    || titleColumn().type === 'fk') // and title that is foreign key
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
   const titleText = () => (record()?.[titleColName()] ?? '') as string

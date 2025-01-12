@@ -1,7 +1,7 @@
 import { useNavigate } from "@solidjs/router";
 import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
-import { logout } from "~/server/session";
+import { logout } from "~/api/shared/session";
 import { SessionContext } from "~/SessionContext";
 import { firstCap, pluralTableName, titleColumnName, useIsPublicRoute } from "~/util";
 import { IoPersonSharp } from 'solid-icons/io'
@@ -18,7 +18,7 @@ export const TopNav: Component = () => {
     )
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([tableName]) => tableName)
-  
+
   const onLogout = async () => {
     await logout()
     session!.refetch()

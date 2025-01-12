@@ -1,15 +1,15 @@
 import { Title } from "@solidjs/meta";
 import { RecordPageTitle, Subtitle } from "../../components/PageTitle";
 import { createAsync, useNavigate, useSearchParams } from "@solidjs/router";
-import { getExtRecordById } from "~/server/extRecord.db";
+import { getExtRecordById } from "~/api/shared/extRecord";
 import { humanCase, titleColumnName } from "~/util";
 import { createSignal, For, Show } from "solid-js";
 import { schema } from "~/schema/schema";
 import { Detail } from "~/components/Detail";
 import { FormField } from "~/components/FormField";
-import { saveChangeProposal } from "~/server/changeProposal";
 import { createStore } from "solid-js/store";
 import { DataRecord } from "~/schema/type";
+import {saveChangeProposal} from "~/api/manage-record/propose-change";
 
 interface ProposeChange {
   tableName: string

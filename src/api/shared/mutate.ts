@@ -1,9 +1,9 @@
 "use server"
 
 import { DataLiteral, DataOp, DataRecord } from "~/schema/type";
-import { onError, sql } from "./db";
+import { onError, sql } from "../../db";
 import { getUserId } from "./session";
-import { listRecords } from "./select.db";
+import { listRecords } from "./select";
 import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
@@ -32,7 +32,7 @@ export function safeWrap<
   };
 }
 
-// TODO: implement efficient bulk version 
+// TODO: implement efficient bulk version
 export const insertValueType = async (
   userId: number,
   tableName: string,
@@ -86,7 +86,7 @@ export const insertRecord = safeWrap(async (
   return result;
 });
 
-// TODO: implementefficient bulk version 
+// TODO: implementefficient bulk version
 export const writeHistory = async (
   userId: number,
   data_op: DataOp,

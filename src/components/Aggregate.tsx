@@ -2,13 +2,16 @@ import { createAsync, useAction } from "@solidjs/router";
 import { Component, createEffect, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type";
-import { listForeignRecords } from "~/server/select.db";
-import { listOverlapRecords, listRecords } from "~/server/select.db";
-import { listCrossRecords } from "~/server/cross.db";
+import {listCrossRecords, listRecords} from "~/api/shared/select";
 import { titleColumnName } from "~/util";
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
 import { SessionContext } from "~/SessionContext";
-import { deleteForeignHopRecordAction, listForeignHopRecordsCache } from "~/server/api";
+import {
+  deleteForeignHopRecordAction,
+  listForeignHopRecordsCache,
+  listForeignRecords,
+  listOverlapRecords
+} from "~/api/components/Aggregate";
 
 export interface AggregateSection {
   title: string;

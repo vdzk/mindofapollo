@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { Form } from "../../components/Form";
 import { RecordPageTitle } from "../../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
-import { getExtRecordById } from "~/server/extRecord.db";
+import { getExtRecordById } from "~/api/shared/extRecord";
 import { humanCase, titleColumnName } from "~/util";
 import { Suspense } from "solid-js";
 

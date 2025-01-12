@@ -1,5 +1,5 @@
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
-import { sql } from "./db";
+import { sql } from "../../db";
 
 export const getDirConcsWithValues = async (ids: number[]) => {
   const records = await sql`

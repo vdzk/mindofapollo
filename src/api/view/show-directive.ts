@@ -1,9 +1,9 @@
 "use server"
 
-import { xName } from "./cross.db";
-import { sql } from "./db";
-import { getDirConcsWithValues } from "./directive";
-import { safeWrap } from "./mutate.db";
+import { sql } from "../../db";
+import { getDirConcsWithValues } from "../shared/getDirConcsWithValues";
+import { safeWrap } from "../shared/mutate";
+import {xName} from "~/util";
 
 export const getUserDirectives = safeWrap(async (userId) => {
   const directives = await sql`

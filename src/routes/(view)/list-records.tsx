@@ -4,10 +4,10 @@ import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
 import { PageTitle, PageTitleIcon } from "../../components/PageTitle";
 import { action, createAsync, json, useAction, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
-import { getRecords } from "~/server/api";
 import { ImList } from 'solid-icons/im'
 import { schema } from "~/schema/schema";
-import { insertRecord } from "~/server/mutate.db";
+import { insertRecord } from "~/api/shared/mutate";
+import {getRecords} from "~/api/shared/select";
 
 interface ListRecordProps {
   tableName: string

@@ -2,7 +2,7 @@
 
 import { schema } from "~/schema/schema"
 import { ColumnType, ValueTypeIdColumn } from "~/schema/type"
-import { onError, sql } from "./db"
+import { onError, sql } from "../../db"
 
 export const getOriginTypes = async (tableName: string, colName: string) => {
   const query = (schema.tables[tableName].columns[colName] as ValueTypeIdColumn).getOriginTypesQuery

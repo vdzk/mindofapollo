@@ -6,8 +6,8 @@ import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { DataRecord } from "~/schema/type";
-import { getJudgeArgument } from "~/server/judge";
-import { insertRecord, updateRecord } from "~/server/mutate.db";
+import { insertRecord, updateRecord } from "~/api/shared/mutate";
+import {getJudgeArgument} from "~/api/do-task/judge-arguments";
 
 export default function JudgeArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})

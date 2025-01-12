@@ -1,10 +1,10 @@
 "use server";
 
 import { DataRecord } from "~/schema/type"
-import { onError } from "./db"
-import { deleteById } from "./mutate.db";
-import { getRecordById, getValueById } from "~/server/select.db";
-import { insertRecord, updateRecord } from "./mutate.db";
+import { onError } from "../../db"
+import { deleteById } from "./mutate";
+import { getRecordById, getValueById } from "~/api/shared/select";
+import { insertRecord, updateRecord } from "./mutate";
 import { getExtTableName } from "~/util"
 import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";

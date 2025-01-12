@@ -1,7 +1,7 @@
 "use server"
 
 import { schema } from "~/schema/schema";
-import { onError, sql } from "./db";
+import { onError, sql } from "../../db";
 import { HistoryRecord } from "~/schema/type";
 
 export const listRecordHistory = (
@@ -25,6 +25,6 @@ export const listUserHistory = (
   `.then(result => (result as unknown as HistoryRecord[])
     .map(record => ({ tableName, ...record })))
   )
-).then(results => results.flat().sort((a, b) => 
+).then(results => results.flat().sort((a, b) =>
   b.op_timestamp.getTime() - a.op_timestamp.getTime())
 ).catch(onError)

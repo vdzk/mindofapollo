@@ -1,10 +1,10 @@
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { Component, createEffect, For, useContext } from "solid-js";
 import { ForeignKey } from "~/schema/type";
-import { getRecords } from "~/server/api";
 import { ExtValueContext } from "./Form";
 import { OnChangeFormat } from "./FormField";
 import { schema } from "~/schema/schema";
+import {getRecords} from "~/api/shared/select";
 
 
 export const FkInput: Component<{
@@ -33,7 +33,7 @@ export const FkInput: Component<{
     }
   }
   const onChange = props.onChangeFormat(format)
-  
+
   createEffect(() => {
     const spValue = searchParams[props.colName]
     if (spValue) {

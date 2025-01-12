@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from "@solidjs/router"
 import { createStore } from "solid-js/store"
 import { FormField } from "~/components/FormField"
 import { PageTitle } from "~/components/PageTitle"
-import { join } from "~/server/join"
-import { login } from "~/server/session"
+import { join } from "~/api/system/join"
+import { login } from "~/api/shared/session"
 
 interface Join {
   code: string

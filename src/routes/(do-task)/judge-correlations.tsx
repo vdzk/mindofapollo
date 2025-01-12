@@ -7,8 +7,9 @@ import { RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"
 import { schema } from "~/schema/schema"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { attemptJudgeQuestion, getJudgeCorrelationsData } from "~/server/judge"
-import { insertRecordsOneByOne } from "~/server/mutate.db"
+import { insertRecordsOneByOne } from "~/api/shared/mutate"
+import {getJudgeCorrelationsData} from "~/api/do-task/judge-correlations";
+import {attemptJudgeQuestion} from "~/api/shared/attemptJudgeQuestion";
 
 const CorrelationForm: Component<{
   argument: DataRecordWithId

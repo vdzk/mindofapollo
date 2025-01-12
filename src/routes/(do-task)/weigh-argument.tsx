@@ -6,8 +6,8 @@ import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { BooleanColumn, DataRecord } from "~/schema/type";
-import { insertRecord } from "~/server/mutate.db";
-import { attemptAggregateArguments, getWeighArgumentTaskData } from "~/server/weighArgument";
+import { insertRecord } from "~/api/shared/mutate";
+import { attemptAggregateArguments, getWeighArgumentTaskData } from "~/api/do-task/weigh-argument";
 
 export default function WeighArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})

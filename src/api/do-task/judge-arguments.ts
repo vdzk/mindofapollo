@@ -1,0 +1,21 @@
+"use server"
+
+import {safeWrap} from "~/api/shared/mutate";
+import {sql} from "~/db";
+
+export const getJudgeArgument = safeWrap(async (userId) => {
+    // TODO: postpone new entries for a random priod of time to avoid sniping?
+    const result = await sql`
+    SELECT argument.id, argument.title
+    FROM argument
+    WHERE argument.judgement_requested
+      AND NOT EXISTS (
+        SELECT 1
+        FROM argument_judgement
+        WHERE argument_judgement.id = argument.id
+      )
+    ORDER BY random()
+    LIMIT 1
+  `
+    return result[0]
+})

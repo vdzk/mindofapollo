@@ -1,7 +1,7 @@
 "use server"
 
-import { onError, sql } from "./db"
-import { writeHistory } from "./mutate.db"
+import { onError, sql } from "../../db"
+import { writeHistory } from "../shared/mutate"
 
 export const join = async (name: string, code: string) => {
   const invites = await sql`

@@ -1,8 +1,11 @@
 "use server"
 
-import { addedCriticalStatement, hasArguments, hasUnjudgedArguments, attemptJudgeQuestion } from "./judge"
-import { updateRecord } from "./mutate.db"
-import { getRecordById } from "./select.db"
+import {updateRecord} from "../shared/mutate"
+import {getRecordById} from "../shared/select"
+import {addedCriticalStatement} from "~/api/tableActions/argument";
+import {hasArguments, hasUnjudgedArguments} from "~/api/tableActions/question";
+import {attemptJudgeQuestion} from "~/api/shared/attemptJudgeQuestion";
+import {action, cache, json} from "@solidjs/router";
 
 
 export interface TableAction {
@@ -94,3 +97,27 @@ export const executeAction = async (
     return 'This action is no longer available.'
   }
 }
+
+export const getVisibleActionsCache = cache(getVisibleActions, 'getVisibleActions')
+
+export const executeTableAction = action(
+    async (
+        tableName: string,
+        actionName: string,
+        recordId: number
+    ) => {
+      const error = await executeAction(tableName, actionName, recordId)
+      if (error) {
+        return error
+      } else {
+        return json(
+            undefined,
+            {
+              revalidate: [
+                getVisibleActionsCache.keyFor(tableName, recordId)
+              ]
+            }
+        )
+      }
+    }
+)

@@ -1,5 +1,5 @@
 import { createContext, createEffect, createResource, createSignal, onMount, ParentComponent, Resource, Setter, Show } from "solid-js";
-import { getUser } from "./server/session";
+import { getUser } from "./api/shared/session";
 import { DataRecordWithId } from "./schema/type";
 import { useNavigate } from "@solidjs/router";
 import { useIsPublicRoute } from "./util";
@@ -31,7 +31,7 @@ export const SessionContextProvider: ParentComponent = (props) => {
       }
     }
   })
-  
+
   return (
     <SessionContext.Provider value={session}>
       <Show when={mounted() && user.state === 'ready'}>

@@ -2,10 +2,10 @@ import { Component, Match, Switch } from "solid-js";
 import { BooleanColumn, ColumnSchema, DataLiteral, DataRecord, ForeignKey } from "~/schema/type";
 import { ColumnLabel } from "./ColumnLabel";
 import { createAsync } from "@solidjs/router";
-import { getRecordById } from "~/server/select.db";
+import { getRecordById } from "~/api/shared/select";
 import { nbsp } from "~/util";
 import { schema } from "~/schema/schema";
-import { getOriginTypes } from "~/server/valueType";
+import { getOriginTypes } from "~/api/shared/valueType";
 
 const FkValue: Component<{
   column: ForeignKey,

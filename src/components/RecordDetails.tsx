@@ -1,9 +1,9 @@
 import { createAsync } from "@solidjs/router";
 import { Component, For, Show } from "solid-js";
-import { RecordHistory } from "~/components/RecordHistory";
+import { RecordHistory } from "~/components/histories";
 import { schema } from "~/schema/schema";
 import { ColumnSchema } from "~/schema/type";
-import { getExtRecordById } from "~/server/extRecord.db";
+import { getExtRecordById } from "~/api/shared/extRecord";
 import { getExtTableName } from "~/util";
 import { Aggregate } from "../components/Aggregate";
 import { Detail, DetailProps } from "./Detail";

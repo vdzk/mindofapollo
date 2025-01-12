@@ -1,7 +1,7 @@
 import { createAsync, useAction } from "@solidjs/router";
 import { Component, createSignal, For, Show, useContext } from "solid-js";
-import { executeTableAction, getVisibleActionsCache } from "~/server/api";
 import { SessionContext } from "~/SessionContext";
+import {executeTableAction, getVisibleActionsCache} from "~/api/tableActions/tableActions";
 
 const Action: Component<{
   tableName: string
@@ -29,7 +29,7 @@ const Action: Component<{
       </div>
     </Show>
   )
-} 
+}
 
 export const Actions: Component<{
   tableName: string

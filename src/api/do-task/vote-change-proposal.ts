@@ -1,34 +1,10 @@
 "use server"
 
-import { getValueTypeTableName } from "~/schema/dataTypes"
-import { insertRecord, insertValueType, safeWrap, updateRecord } from "./mutate.db"
-import { sql } from "./db"
-import { DataLiteral } from "~/schema/type"
-import { getRecordById } from "./select.db"
-import { ProposalRecord } from "~/tables/other/change_proposal"
-
-export const saveChangeProposal = safeWrap(async (
-  userId,
-  tableName: string,
-  id: number,
-  colName: string,
-  oldValue: DataLiteral,
-  newValue: DataLiteral,
-  explanation: string
-) => {
-  const vttn = getValueTypeTableName(tableName, colName)
-  const [{id: old_value_id}] = await insertValueType(userId, vttn, oldValue)
-  const [{id: new_value_id}] = await insertValueType(userId, vttn, newValue)
-
-  await insertRecord('change_proposal', {
-    table_name: tableName,
-    target_id: id,
-    column_name: colName,
-    old_value_id,
-    new_value_id,
-    change_explanation: explanation
-  })
-})
+import {getValueTypeTableName} from "~/schema/dataTypes"
+import {safeWrap, updateRecord} from "../shared/mutate"
+import {sql} from "../../db"
+import {getRecordById} from "../shared/select"
+import {ProposalRecord} from "~/tables/other/change_proposal"
 
 export const getChangeProposal = safeWrap(async (userId) => {
   const proposals = await sql`
