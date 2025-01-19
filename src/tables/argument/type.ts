@@ -1,9 +1,7 @@
-import { TbChess } from "solid-icons/tb";
 import { TableSchema } from "../../schema/type";
 
 export const argument_type: TableSchema = {
   plural: 'argument types',
-  icon: TbChess,
   columns: {
     id: {
       // TODO: prevent editing this field

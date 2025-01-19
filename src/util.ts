@@ -1,5 +1,4 @@
-import {useLocation} from "@solidjs/router"
-import {publicRoutes, url} from "./constant"
+import {url} from "./constant"
 import {schema} from "./schema/schema"
 import {DataRecord} from "./schema/type"
 import TimeAgo from 'javascript-time-ago'
@@ -121,8 +120,4 @@ export const genCode = (length: number) => {
   return code;
 }
 
-export const useIsPublicRoute = () => {
-  const location = useLocation()
-  return () => publicRoutes.includes(location.pathname)
-}
 export const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] : [b, a]).join('_x_');

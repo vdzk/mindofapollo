@@ -1,9 +1,7 @@
-import { ImPriceTag } from "solid-icons/im";
 import { TableSchema } from "../../schema/type";
 
 export const tag: TableSchema = {
   plural: 'tags',
-  icon: ImPriceTag,
   columns: {
     name: {
       type: 'varchar'

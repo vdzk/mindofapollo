@@ -1,5 +1,5 @@
-import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Component, createContext, createEffect, createSignal, For, Setter } from "solid-js";
+import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
+import { Component, createContext, createEffect, createSignal, For, Setter, useContext } from "solid-js";
 import { insertRecord, updateRecord } from "~/api/shared/mutate";
 import { schema } from "~/schema/schema";
 import { FormField } from "./FormField";
@@ -7,8 +7,9 @@ import { DataRecord } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/api/shared/extRecord";
 import { getExtTableName } from "~/util";
 import { createStore } from "solid-js/store";
-import {getRecords} from "~/api/shared/select";
 import { getPermission } from "~/getPermission";
+import {getRecords} from "~/client-only/query";
+import { SessionContext } from "~/SessionContext";
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
@@ -17,6 +18,7 @@ export const Form: Component<{
   id?: number
   record?: DataRecord
 }> = (props) => {
+  const session = useContext(SessionContext)
   const [searchParams] = useSearchParams()
   const [diff, setDiff] = createStore<DataRecord>({})
   const [diffExt, setDiffExt] = createStore<DataRecord>({})
@@ -72,7 +74,7 @@ export const Form: Component<{
   }))
 
   const table = () => schema.tables[props.tableName]
-  const permission = createAsync(() => getPermission('update', props.tableName))
+  const permission = () => getPermission(session?.user?.()?.id ,'update', props.tableName)
   const colNames = () => {
     if (permission() && permission()?.granted) {
       return permission()?.colNames ?? Object.keys(table().columns)
@@ -84,7 +86,7 @@ export const Form: Component<{
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
-  createEffect(() => !props.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id))
+  createEffect(() => !props.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
 
   const onSubmit = async () => {
     const extension = extTableName() ? {

@@ -1,9 +1,7 @@
-import { RiCommunicationQuestionnaireFill } from "solid-icons/ri";
 import { TableSchema } from "../schema/type";
 
 export const question: TableSchema = {
   plural: 'questions',
-  icon: RiCommunicationQuestionnaireFill,
   columns: {
     text: {
       type: 'varchar'

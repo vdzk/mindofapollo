@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { createAsync } from "@solidjs/router";
 import { For } from "solid-js";
 import { PageTitle } from "~/components/PageTitle";
-import {getRecords} from "~/api/shared/select";
+import {getRecords} from "~/client-only/query";
 
 export default function ConfirmOrChallenge() {
   const tags = createAsync(() => getRecords('tag'))

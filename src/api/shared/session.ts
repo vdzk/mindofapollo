@@ -1,6 +1,4 @@
 "use server"
-
-import { redirect } from "@solidjs/router";
 import { useSession } from "vinxi/http";
 import { getRecordById } from "~/api/shared/select";
 
@@ -14,9 +12,6 @@ export const getSession = () => useSession<UserSession>({password: 'secret_secre
 export const login = async (userId: number) => {
   const session = await getSession()
   await session.update({userId})
-
-  // TODO: this seems to do nothing
-  return redirect('/')
 }
 
 export const logout = async () => {

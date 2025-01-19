@@ -78,7 +78,7 @@ export const insertRecord = safeWrap(async (
   tableName: string,
   record: DataRecord
 ) => {
-  const permission = await getPermission('create', tableName)
+  const permission = getPermission(userId, 'create', tableName)
   if (!permission.granted) return
   await injectValueTypes(userId, tableName, record)
   const result = await sql`

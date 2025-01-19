@@ -8,9 +8,9 @@ import { deleteExtById, getExtRecordById } from "~/api/shared/extRecord";
 import { SessionContext } from "~/SessionContext";
 import { titleColumnName } from "~/util";
 import { RecordPageTitle } from "../../components/PageTitle";
-import {getRecords} from "~/api/shared/select";
 import {UserHistory} from "~/components/histories";
 import { getPermission } from "~/getPermission";
+import {getRecords} from "~/client-only/query";
 
 const _delete = action(async (
   tableName: string,
@@ -42,8 +42,8 @@ export default function ShowRecord() {
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
   const titleText = () => (record()?.[titleColName()] ?? '') as string
-  const premU = createAsync(() => getPermission('update', sp.tableName))
-  const premD = createAsync(() => getPermission('delete', sp.tableName))
+  const premU = () => getPermission(session?.user?.()?.id ,'update', sp.tableName)
+  const premD = () => getPermission(session?.user?.()?.id ,'delete', sp.tableName)
 
   return (
     <main>

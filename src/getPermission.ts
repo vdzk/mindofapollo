@@ -1,4 +1,3 @@
-import { getSession } from "./api/shared/session"
 import { schema } from "./schema/schema"
 
 const excludeCols = (tableName: string, colNames: string[]) =>
@@ -10,19 +9,18 @@ const noEditCols: Record<string, string[]> = {
   argument: ['judgement_requested']
 }
 
-export const getPermission = async (
+export const getPermission = (
+  userId: number | undefined,
   action: 'create' | 'read' | 'update' | 'delete',
   tableName: string,
   recordId?: number,
   parentId?: number // id of the parent record
 ) => {
-  const session = await getSession()
   const create = action === 'create'
   const read = action === 'read'
   const update = action === 'update'
   const _delete = action === 'delete'
   const mutate = create || update || _delete
-  const userId = session.data?.userId
   const loggedIn = !!userId
   const self = recordId === userId
   const ofSelf = parentId === userId

@@ -2,13 +2,10 @@ import { Title } from "@solidjs/meta";
 import { createAsync, useAction, useSearchParams } from "@solidjs/router";
 import { For } from "solid-js";
 import { RecordPageTitle } from "~/components/PageTitle";
-import {getRecordById, getRecords} from "~/api/shared/select";
+import {getRecordById} from "~/api/shared/select";
 import { firstCap, pluralTableName, titleColumnName } from "~/util";
-import {
-  deleteCrossRecordAction,
-  insertCrossRecordAction,
-  listCrossRecordsCache
-} from "~/api/manage-record/edit-cross-ref";
+import {getRecords, listCrossRecordsCache} from "~/client-only/query";
+import {deleteCrossRecordAction, insertCrossRecordAction} from "~/client-only/action";
 
 interface EditCrossRefParams {
   a: string

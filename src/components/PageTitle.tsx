@@ -1,8 +1,4 @@
-import { IconTypes } from "solid-icons";
-import { IoSquare } from 'solid-icons/io';
 import { Component, ParentComponent } from "solid-js";
-import { Dynamic } from "solid-js/web";
-import { schema } from "~/schema/schema";
 import { firstCap, humanCase } from "~/util";
 
 export const PageTitle: ParentComponent = (props) => {
@@ -17,20 +13,6 @@ export const Subtitle: ParentComponent = (props) => {
   )
 }
 
-export const PageTitleIcon: Component<{
-  tableName?: string;
-  component?: IconTypes
-}> = props => (
-  <Dynamic
-    component={props.tableName
-      ? (schema.tables[props.tableName].icon ?? IoSquare)
-      : props.component
-    }
-    size={28}
-    class="inline mr-2 mb-1"
-  />
-)
-
 export const RecordPageTitle: Component<{
   tableName: string,
   text: string
@@ -38,8 +20,6 @@ export const RecordPageTitle: Component<{
   <div>
     <div class="relative top-5 pl-2.5">{firstCap(humanCase(props.tableName))}:</div>
     <PageTitle>
-
-      <PageTitleIcon tableName={props.tableName} />
       {props.text}
     </PageTitle>
   </div>

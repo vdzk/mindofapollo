@@ -3,8 +3,8 @@ import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { logout } from "~/api/shared/session";
 import { SessionContext } from "~/SessionContext";
-import { firstCap, pluralTableName, titleColumnName, useIsPublicRoute } from "~/util";
-import { IoPersonSharp } from 'solid-icons/io'
+import { firstCap, pluralTableName, titleColumnName } from "~/util";
+import { useIsPublicRoute } from "~/client-only/util";
 
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
@@ -56,7 +56,6 @@ export const TopNav: Component = () => {
         <div class="px-2 py-0.5">
           <Switch>
             <Match when={session!.loggedIn()}>
-              <IoPersonSharp size={15} class="inline mr-1" />
               {session!.user()?.name}
               <button
                 class="text-sky-800 pl-2"

@@ -1,5 +1,5 @@
-import {action, cache, json} from "@solidjs/router"
-import {deleteById} from "~/api/shared/mutate"
+"use server"
+
 import {schema} from "~/schema/schema"
 import {onError, sql} from "~/db"
 import {ForeignKey} from "~/schema/type"
@@ -65,22 +65,3 @@ export const listForeignHopRecords = (
   `.catch(onError);
 };
 
-export const deleteForeignHopRecordAction = action(async (
-    tableName: string,
-    fkName: string,
-    fkId: number,
-    hopColName: string,
-    deleteId: number
-) => {
-    await deleteById(tableName, deleteId)
-    return json(
-        'ok',
-        {
-            revalidate: [
-                listForeignHopRecordsCache.keyFor(tableName, fkName, fkId, hopColName)
-            ]
-        }
-    )
-})
-
-export const listForeignHopRecordsCache = cache(listForeignHopRecords, 'listForeignHopRecords')

@@ -3,7 +3,7 @@ import { Form } from "~/components/Form";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { schema } from "~/schema/schema";
-import {getRecords} from "~/api/shared/select";
+import {getRecords} from "~/client-only/query";
 
 interface ManageRecordProps {
   tableName: string

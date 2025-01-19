@@ -1,5 +1,3 @@
-import { IconTypes } from "solid-icons"
-
 export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id'
 export type DataLiteral = string | number | boolean | null
 export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
@@ -106,7 +104,6 @@ export type AggregateSchema = OneToNSchema | NToNSchema
 export interface TableSchema {
   plural?: string,
   personal?: boolean, //only show the records created by the current user
-  icon?: IconTypes,
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
   preview?: (record: DataRecord) => string, // Text to represent the whole record

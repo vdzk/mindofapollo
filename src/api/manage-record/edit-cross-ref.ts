@@ -1,12 +1,8 @@
 "use server"
 
-import { action, cache, json } from "@solidjs/router";
-import { listCrossRecords } from "~/api/shared/select";
-import { safeWrap, writeHistory } from "~/api/shared/mutate";
-import { sql } from "~/db";
-import { xName } from "~/util";
-
-export const listCrossRecordsCache = cache(listCrossRecords, 'listCrossRecords')
+import {safeWrap, writeHistory} from "~/api/shared/mutate";
+import {sql} from "~/db";
+import {xName} from "~/util";
 
 export interface CrossRecordMutateProps {
   a: string;
@@ -29,21 +25,6 @@ export const deleteCrossRecord = safeWrap(async (
   `
   writeHistory(userId, 'DELETE', tableName, result[0])
 })
-export const deleteCrossRecordAction = action(
-  async (props: CrossRecordMutateProps) => {
-    await deleteCrossRecord(props)
-    return json(
-      'ok',
-      {
-        revalidate: [
-          listCrossRecordsCache.keyFor(
-            props.b, props.a, props.a_id, props.first
-          )
-        ]
-      }
-    )
-  }
-)
 export const insertCrossRecord = safeWrap(async (
   userId: number,
   props: CrossRecordMutateProps
@@ -57,18 +38,3 @@ export const insertCrossRecord = safeWrap(async (
   `;
   writeHistory(userId, 'INSERT', tableName, result[0]);
 })
-export const insertCrossRecordAction = action(
-  async (props: CrossRecordMutateProps) => {
-    await insertCrossRecord(props)
-    return json(
-      'ok',
-      {
-        revalidate: [
-          listCrossRecordsCache.keyFor(
-            props.b, props.a, props.a_id, props.first
-          )
-        ]
-      }
-    )
-  }
-)

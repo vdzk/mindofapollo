@@ -1,9 +1,7 @@
-import { BsExclamationDiamondFill } from "solid-icons/bs";
 import { DataRecord, TableSchema } from "../../schema/type";
 
 export const critical_statement: TableSchema = {
   plural: 'critical statements',
-  icon: BsExclamationDiamondFill,
   columns: {
     argument_id: {
       type: 'fk',

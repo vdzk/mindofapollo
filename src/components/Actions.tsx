@@ -1,7 +1,8 @@
 import { createAsync, useAction } from "@solidjs/router";
 import { Component, createSignal, For, Show, useContext } from "solid-js";
 import { SessionContext } from "~/SessionContext";
-import {executeTableAction, getVisibleActionsCache} from "~/api/tableActions/tableActions";
+import {getVisibleActionsCache} from "~/client-only/query";
+import {executeTableAction} from "~/client-only/action";
 
 const Action: Component<{
   tableName: string

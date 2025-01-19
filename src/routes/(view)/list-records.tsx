@@ -1,22 +1,23 @@
-import { For, Match, Show, Switch } from "solid-js";
+import { For, Match, Show, Switch, useContext } from "solid-js";
 import { Title } from "@solidjs/meta";
 import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
-import { PageTitle, PageTitleIcon } from "../../components/PageTitle";
+import { PageTitle } from "../../components/PageTitle";
 import { action, createAsync, json, useAction, useSearchParams } from "@solidjs/router";
-import { ImList } from 'solid-icons/im'
 import { schema } from "~/schema/schema";
 import { insertRecord } from "~/api/shared/mutate";
-import {getRecords} from "~/api/shared/select";
 import { getPermission } from "~/getPermission";
+import {getRecords} from "~/client-only/query";
+import { SessionContext } from "~/SessionContext";
 
 interface ListRecordProps {
   tableName: string
 }
 
 export default function ListRecords() {
+  const session = useContext(SessionContext)
   const [sp] = useSearchParams() as unknown as [ListRecordProps]
   const records = createAsync(() => getRecords(sp.tableName))
-  const premC = createAsync(() => getPermission('create', sp.tableName))
+  const premC = () => getPermission(session?.user?.()?.id, 'create', sp.tableName)
   const title = () => firstCap(pluralTableName(sp.tableName))
   const table = () => schema.tables[sp.tableName]
 
@@ -30,8 +31,6 @@ export default function ListRecords() {
     <main>
       <Title>{title()}</Title>
       <PageTitle>
-        <PageTitleIcon tableName={sp.tableName} />
-        <PageTitleIcon component={ImList} />
         {title()}
       </PageTitle>
       <section class="pb-2">

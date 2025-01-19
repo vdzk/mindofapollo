@@ -2,7 +2,7 @@ import { createContext, createEffect, createResource, createSignal, onMount, Par
 import { getUser } from "./api/shared/session";
 import { DataRecordWithId } from "./schema/type";
 import { useNavigate } from "@solidjs/router";
-import { useIsPublicRoute } from "./util";
+import { useIsPublicRoute } from "./client-only/util";
 
 export const SessionContext = createContext<{
   user: Resource<DataRecordWithId | undefined>;
@@ -19,9 +19,9 @@ export const SessionContextProvider: ParentComponent = (props) => {
 
   const session = {user, loggedIn, refetch, mutate}
 
-  const [mounted, setMounted] = createSignal(false)
-  // TODO: find a way to remove this hack that avoids hydration mismatch
-  onMount(() => setMounted(true))
+  // const [mounted, setMounted] = createSignal(false)
+  // // TODO: find a way to remove this hack that avoids hydration mismatch
+  // // onMount(() => setMounted(true))
   // onMount(() => setTimeout(() => setMounted(true), 300))
 
   createEffect(() => {
@@ -34,7 +34,7 @@ export const SessionContextProvider: ParentComponent = (props) => {
 
   return (
     <SessionContext.Provider value={session}>
-      <Show when={mounted() && user.state === 'ready'}>
+      <Show when={/*mounted() &&*/ user.state === 'ready'}>
         {props.children}
       </Show>
     </SessionContext.Provider>

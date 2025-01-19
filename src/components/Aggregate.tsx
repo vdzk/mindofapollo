@@ -7,11 +7,11 @@ import { titleColumnName } from "~/util";
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
 import { SessionContext } from "~/SessionContext";
 import {
-  deleteForeignHopRecordAction,
-  listForeignHopRecordsCache,
   listForeignRecords,
   listOverlapRecords
 } from "~/api/components/Aggregate";
+import {listForeignHopRecordsCache} from "~/client-only/query";
+import {deleteForeignHopRecordAction} from "~/client-only/action";
 
 export interface AggregateSection {
   title: string;
