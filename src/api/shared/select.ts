@@ -1,16 +1,14 @@
 "use server"
 
-import {schema} from "~/schema/schema";
-import {DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries} from "~/schema/type";
-import {onError, sql} from "../../db";
-import chalk from "chalk";
-import {getVirtualColNames, resolveEntries, xName} from "~/util";
-import {Row, RowList} from "postgres";
-import {getVirtualValuesByServerFn} from "./virtualColumns";
-import {getUserId} from "./session";
-import {cache} from "@solidjs/router";
-
-export const getRecords = cache(listRecords, 'getRecords');
+import {schema} from "~/schema/schema"
+import {DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries} from "~/schema/type"
+import {onError, sql} from "../../db"
+import chalk from "chalk"
+import {getVirtualColNames, resolveEntries, xName} from "~/util"
+import {Row, RowList} from "postgres"
+import {getVirtualValuesByServerFn} from "./virtualColumns"
+import {getUserId} from "./session"
+import {cache} from "@solidjs/router"
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -90,7 +88,8 @@ export const listRecords = async ( tableName: string ) => {
   `.catch(onError)
   await injectVirtualValues(tableName, records)
   return records
-};
+}
+export const getRecords = cache(listRecords, 'getRecords')
 
 export const getRecordById = async (tableName: string, id: string | number) => {
   if (id === undefined) {

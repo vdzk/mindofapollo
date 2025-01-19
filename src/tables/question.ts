@@ -18,14 +18,12 @@ export const question: TableSchema = {
     },
     judgement_requested: {
       type: 'boolean',
-      readOnly: true,
       defaultValue: false,
       label: 'judgement',
       optionLabels: ['Not requested', 'requested']
     },
     decided: {
       type: 'boolean',
-      readOnly: true,
       defaultValue: false,
       label: 'status',
       optionLabels: ['Undecided', 'Decided']

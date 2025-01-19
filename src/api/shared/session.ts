@@ -12,16 +12,16 @@ type UserSession = {
 export const getSession = () => useSession<UserSession>({password: 'secret_secret_secret_secret_secret_secret_secret_secret_secret'})
 
 export const login = async (userId: number) => {
-  const session = await getSession();
-  await session.update({userId});
+  const session = await getSession()
+  await session.update({userId})
 
   // TODO: this seems to do nothing
-  return redirect('/');
+  return redirect('/')
 }
 
 export const logout = async () => {
-  const session = await getSession();
-  await session.clear();
+  const session = await getSession()
+  await session.clear()
 }
 
 export const getUserId = async () => {

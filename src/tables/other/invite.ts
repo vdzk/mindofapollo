@@ -4,7 +4,6 @@ import { genCode, getUrl } from "~/util";
 export const invite: TableSchema = {
   plural: 'invites',
   personal: true,
-  deny: ['DELETE', 'UPDATE' ],
   columns: {
     code: {
       type: 'varchar'

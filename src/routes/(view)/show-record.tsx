@@ -10,6 +10,7 @@ import { titleColumnName } from "~/util";
 import { RecordPageTitle } from "../../components/PageTitle";
 import {getRecords} from "~/api/shared/select";
 import {UserHistory} from "~/components/histories";
+import { getPermission } from "~/getPermission";
 
 const _delete = action(async (
   tableName: string,
@@ -41,6 +42,8 @@ export default function ShowRecord() {
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp.tableName, sp.id)
   const titleText = () => (record()?.[titleColName()] ?? '') as string
+  const premU = createAsync(() => getPermission('update', sp.tableName))
+  const premD = createAsync(() => getPermission('delete', sp.tableName))
 
   return (
     <main>
@@ -61,12 +64,12 @@ export default function ShowRecord() {
           <a href={`/propose-change?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
             [ Propose Change ]
           </a>
-          <Show when={!table().deny?.includes('UPDATE')}>
+          <Show when={premU()?.granted}>
             <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
               [ Edit ]
             </a>
           </Show>
-          <Show when={!table().deny?.includes('DELETE')}>
+          <Show when={premD()?.granted}>
             <button class="mx-2 text-sky-800" onClick={onDelete}>
               [ Delete ]
             </button>

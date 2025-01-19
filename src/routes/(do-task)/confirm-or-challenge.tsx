@@ -2,15 +2,16 @@ import { Match, Switch, createResource, createSignal } from "solid-js";
 import { FormField } from "~/components/FormField";
 import { Task } from "~/components/Task";
 import { addConfirmation, getConfirnmationQuestion } from "~/api/do-task/confirm-or-challenge";
-import { sql } from "~/db";
 import { insertExtRecord } from "~/api/shared/extRecord";
-import { safeWrap, updateRecord, writeHistory } from "~/api/shared/mutate";
+import { updateRecord } from "~/api/shared/mutate";
+import { createStore } from "solid-js/store";
+import { DataRecord } from "~/schema/type";
 
 export default function ConfirmOrChallenge() {
+  const [diff, setDiff] = createStore<DataRecord>({})
   const [question, { refetch }] = createResource(getConfirnmationQuestion)
 
   const [challenge, setChallenge] = createSignal(false)
-  let formRef!: HTMLFormElement
 
   // TODO: refactor using solid-js actions
   const onConfirm = async (questionId: number) => {
@@ -24,8 +25,7 @@ export default function ConfirmOrChallenge() {
   }
 
   const onArgument = async (questionId: number) => {
-    const formData = new FormData(formRef)
-    const title = (formData.get('title') as string).trim()
+    const title = (diff.title as string).trim()
     if (title) {
       await insertExtRecord('argument', {
         questionId,
@@ -67,13 +67,12 @@ export default function ConfirmOrChallenge() {
               </button>
             </Match>
             <Match when={challenge()}>
-              <form ref={formRef}>
-                <FormField
-                  tableName="argument"
-                  colName="title"
-                  label="Argument against"
-                />
-              </form>
+              <FormField
+                tableName="argument"
+                colName="title"
+                label="Argument against"
+                {...{ diff, setDiff }}
+              />
               <button
                 class="text-sky-800"
                 onClick={() => onArgument(question()!.id)}

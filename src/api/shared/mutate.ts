@@ -7,6 +7,7 @@ import { listRecords } from "./select";
 import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
+import { getPermission } from "~/getPermission";
 
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
@@ -77,6 +78,8 @@ export const insertRecord = safeWrap(async (
   tableName: string,
   record: DataRecord
 ) => {
+  const permission = await getPermission('create', tableName)
+  if (!permission.granted) return
   await injectValueTypes(userId, tableName, record)
   const result = await sql`
     INSERT INTO ${sql(tableName)} ${sql(record)}
@@ -86,7 +89,7 @@ export const insertRecord = safeWrap(async (
   return result;
 });
 
-// TODO: implementefficient bulk version
+// TODO: implement efficient bulk version
 export const writeHistory = async (
   userId: number,
   data_op: DataOp,

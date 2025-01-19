@@ -4,7 +4,6 @@ import { TableSchema } from "../../schema/type";
 export const argument_type: TableSchema = {
   plural: 'argument types',
   icon: TbChess,
-  deny: ['INSERT', 'DELETE'],
   columns: {
     id: {
       // TODO: prevent editing this field

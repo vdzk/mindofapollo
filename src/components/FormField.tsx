@@ -1,12 +1,12 @@
-import { Component, createEffect, For, Match, Show, Switch } from "solid-js";
+import { Component, For, Match, Show, Switch } from "solid-js";
 import { schema } from "~/schema/schema";
 import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, OptionColumn, TextColumn } from "~/schema/type";
 import { FkInput } from "./FkInput";
 import { ColumnLabel } from "./ColumnLabel";
-import { createAsync, useSearchParams } from "@solidjs/router";
-import { getOriginTypes } from "~/api/shared/valueType";
-import { SetStoreFunction, unwrap } from "solid-js/store";
-import { etv } from "~/util";
+import { createAsync, useSearchParams } from "@solidjs/router"
+import { getOriginTypes } from "~/api/shared/valueType"
+import { SetStoreFunction } from "solid-js/store"
+import { etv } from "~/util"
 
 const inputTypes = {
   varchar: 'text',
@@ -66,10 +66,7 @@ export const FormField: Component<{
     }
   }
 
-  if (
-    (columnType() === 'boolean' && (column() as BooleanColumn).readOnly)
-    || (columnType() === 'virtual' && !props.record)
-  ) return null
+  if (columnType() === 'virtual' && !props.record) return null
 
   return (
     <label class="block pb-2">

@@ -2,7 +2,6 @@ import { TableSchema } from "../../schema/type";
 
 export const argument_aggregation_type: TableSchema = {
   plural: 'argument aggregation types',
-  deny: ['INSERT', 'DELETE'],
   columns: {
     id: {
       // TODO: prevent editing this field

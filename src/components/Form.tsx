@@ -1,4 +1,4 @@
-import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
+import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Component, createContext, createEffect, createSignal, For, Setter } from "solid-js";
 import { insertRecord, updateRecord } from "~/api/shared/mutate";
 import { schema } from "~/schema/schema";
@@ -8,6 +8,7 @@ import { insertExtRecord, updateExtRecord } from "~/api/shared/extRecord";
 import { getExtTableName } from "~/util";
 import { createStore } from "solid-js/store";
 import {getRecords} from "~/api/shared/select";
+import { getPermission } from "~/getPermission";
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
@@ -71,7 +72,14 @@ export const Form: Component<{
   }))
 
   const table = () => schema.tables[props.tableName]
-  const colNames = () => Object.keys(table().columns)
+  const permission = createAsync(() => getPermission('update', props.tableName))
+  const colNames = () => {
+    if (permission() && permission()?.granted) {
+      return permission()?.colNames ?? Object.keys(table().columns)
+    } else {
+      return []
+    }
+  }
   const extTableName = () => getExtTableName(props.tableName, props.record, extValue())
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())

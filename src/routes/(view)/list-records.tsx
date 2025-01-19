@@ -1,13 +1,13 @@
-import { For, Match, Show, Switch, useContext } from "solid-js";
+import { For, Match, Show, Switch } from "solid-js";
 import { Title } from "@solidjs/meta";
 import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
 import { PageTitle, PageTitleIcon } from "../../components/PageTitle";
 import { action, createAsync, json, useAction, useSearchParams } from "@solidjs/router";
-import { SessionContext } from "~/SessionContext";
 import { ImList } from 'solid-icons/im'
 import { schema } from "~/schema/schema";
 import { insertRecord } from "~/api/shared/mutate";
 import {getRecords} from "~/api/shared/select";
+import { getPermission } from "~/getPermission";
 
 interface ListRecordProps {
   tableName: string
@@ -15,11 +15,9 @@ interface ListRecordProps {
 
 export default function ListRecords() {
   const [sp] = useSearchParams() as unknown as [ListRecordProps]
-  const session = useContext(SessionContext)
   const records = createAsync(() => getRecords(sp.tableName))
+  const premC = createAsync(() => getPermission('create', sp.tableName))
   const title = () => firstCap(pluralTableName(sp.tableName))
-  const canAdd = () => session?.loggedIn()
-    && !schema.tables[sp.tableName].deny?.includes('INSERT')
   const table = () => schema.tables[sp.tableName]
 
   const addAction = useAction(action(async () => {
@@ -49,7 +47,7 @@ export default function ListRecords() {
         )}</For>
       </section>
       <section>
-        <Show when={canAdd()}>
+        <Show when={premC()?.granted}>
           <Switch>
             <Match when={table().createRecord}>
               <button

@@ -2,7 +2,6 @@ import { TableSchema } from "../../schema/type";
 
 export const role: TableSchema = {
   plural: 'roles',
-  deny: ['INSERT', 'DELETE'],
   columns: {
     id: {
       // TODO: prevent editing this field

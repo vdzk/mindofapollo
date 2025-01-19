@@ -1,11 +1,9 @@
-import {action, cache, json} from "@solidjs/router";
-import {deleteById} from "~/api/shared/mutate";
-import {schema} from "~/schema/schema";
-import {onError, sql} from "~/db";
-import {ForeignKey} from "~/schema/type";
-import {injectVirtualValues} from "~/api/shared/select";
-
-export const listForeignHopRecordsCache = cache(listForeignHopRecords, 'listForeignHopRecords')
+import {action, cache, json} from "@solidjs/router"
+import {deleteById} from "~/api/shared/mutate"
+import {schema} from "~/schema/schema"
+import {onError, sql} from "~/db"
+import {ForeignKey} from "~/schema/type"
+import {injectVirtualValues} from "~/api/shared/select"
 
 export const listOverlapRecords = (
     tableName: string,
@@ -84,3 +82,5 @@ export const deleteForeignHopRecordAction = action(async (
         }
     )
 })
+
+export const listForeignHopRecordsCache = cache(listForeignHopRecords, 'listForeignHopRecords')
