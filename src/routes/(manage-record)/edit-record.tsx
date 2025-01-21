@@ -8,12 +8,13 @@ import { Suspense } from "solid-js";
 
 interface EditRecord {
   tableName: string
-  id: number
+  id: string
 }
 
 export default function EditRecord() {
   const [sp] = useSearchParams() as unknown as [EditRecord]
-  const record = createAsync(async () => getExtRecordById(sp.tableName, sp.id))
+  const recordId = () => parseInt(sp.id)
+  const record = createAsync(async () => getExtRecordById(sp.tableName, recordId()))
   const titleText = () => '' + (record()?.[titleColumnName(sp.tableName)] ?? '')
 
   return (
@@ -21,7 +22,7 @@ export default function EditRecord() {
       <Suspense fallback={`loading ${humanCase(sp.tableName)}...`}>
         <Title>{titleText()}</Title>
         <RecordPageTitle tableName={sp.tableName} text={titleText()} />
-        <Form id={sp.id} tableName={sp.tableName} record={record()} />
+        <Form id={recordId()} tableName={sp.tableName} record={record()} />
       </Suspense>
     </main>
   );

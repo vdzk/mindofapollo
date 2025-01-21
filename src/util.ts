@@ -27,7 +27,6 @@ export const titleColumnName = (tableName: string) => {
       break
     }
   }
-  // console.log('titleColumnName', tableName, result)
   return result
 }
 
@@ -78,6 +77,7 @@ export const getVirtualColNames = (tableName: string) => {
   const queries = []
   const serverFn = []
   const local = []
+  const non = ['id']
   const { columns } = schema.tables[tableName]
   for (const colName in columns) {
     const column = columns[colName]
@@ -90,9 +90,11 @@ export const getVirtualColNames = (tableName: string) => {
       } else {
         queries.push(colName)
       }
+    } else {
+      non.push(colName)
     }
   }
-  return {all, queries, serverFn, local}
+  return {all, non, queries, serverFn, local}
 }
 
 export const resolveEntries = async <T>(entries: [string, Promise<T>][]) =>

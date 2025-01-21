@@ -1,4 +1,4 @@
-import { createContext, createEffect, createResource, createSignal, onMount, ParentComponent, Resource, Setter, Show } from "solid-js";
+import { createContext, createEffect, createResource, ParentComponent, Resource, Setter, Show } from "solid-js";
 import { getUser } from "./api/shared/session";
 import { DataRecordWithId } from "./schema/type";
 import { useNavigate } from "@solidjs/router";
@@ -19,11 +19,6 @@ export const SessionContextProvider: ParentComponent = (props) => {
 
   const session = {user, loggedIn, refetch, mutate}
 
-  // const [mounted, setMounted] = createSignal(false)
-  // // TODO: find a way to remove this hack that avoids hydration mismatch
-  // // onMount(() => setMounted(true))
-  // onMount(() => setTimeout(() => setMounted(true), 300))
-
   createEffect(() => {
     if (user.state == 'ready') {
       if (!user() && !isPublicRoute()) {
@@ -34,7 +29,7 @@ export const SessionContextProvider: ParentComponent = (props) => {
 
   return (
     <SessionContext.Provider value={session}>
-      <Show when={/*mounted() &&*/ user.state === 'ready'}>
+      <Show when={user.state === 'ready'}>
         {props.children}
       </Show>
     </SessionContext.Provider>

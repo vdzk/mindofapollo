@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Show, useContext } from "solid-js";
+import { createEffect, Show, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { schema } from "~/schema/schema";
@@ -26,13 +26,15 @@ const _delete = action(async (
 
 interface ShowRecord {
   tableName: string
-  id: number
+  id: string
 }
 
 export default function ShowRecord() {
   const [sp] = useSearchParams() as unknown as [ShowRecord]
   const session = useContext(SessionContext)
-  const record = createAsync(() => getExtRecordById(sp.tableName, sp.id))
+  const recordId = () => parseInt(sp.id)
+  const userId = () => session?.user?.()?.id
+  const record = createAsync(() => getExtRecordById(sp.tableName, recordId()))
   const table = () => schema.tables[sp.tableName]
   const titleColName = () => titleColumnName(sp.tableName)
   const titleColumn = () => table().columns[titleColName()]
@@ -40,10 +42,10 @@ export default function ShowRecord() {
     && (colName !== titleColName() // show non-title
     || titleColumn().type === 'fk') // and title that is foreign key
   const deleteAction = useAction(_delete);
-  const onDelete = () => deleteAction(sp.tableName, sp.id)
+  const onDelete = () => deleteAction(sp.tableName, recordId())
   const titleText = () => (record()?.[titleColName()] ?? '') as string
-  const premU = () => getPermission(session?.user?.()?.id ,'update', sp.tableName)
-  const premD = () => getPermission(session?.user?.()?.id ,'delete', sp.tableName)
+  const premU = () => getPermission(userId() ,'update', sp.tableName, recordId())
+  const premD = () => getPermission(userId() ,'delete', sp.tableName, recordId())
 
   return (
     <main>
@@ -51,25 +53,25 @@ export default function ShowRecord() {
       <RecordPageTitle tableName={sp.tableName} text={titleText()} />
       <RecordDetails
         tableName={sp.tableName}
-        id={sp.id}
+        id={recordId()}
         {...{displayColumn}}
         showHistory
       />
       <Show when={sp.tableName === 'person'}>
-        <UserHistory userId={sp.id}/>
+        <UserHistory userId={recordId()}/>
       </Show>
       <Show when={session!.loggedIn()}>
-        <Actions tableName={sp.tableName} recordId={sp.id}/>
+        <Actions tableName={sp.tableName} recordId={recordId()}/>
         <div>
-          <a href={`/propose-change?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
+          <a href={`/propose-change?tableName=${sp.tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
             [ Propose Change ]
           </a>
-          <Show when={premU()?.granted}>
-            <a href={`/edit-record?tableName=${sp.tableName}&id=${sp.id}`} class="mx-2 text-sky-800">
+          <Show when={premU().granted}>
+            <a href={`/edit-record?tableName=${sp.tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
               [ Edit ]
             </a>
           </Show>
-          <Show when={premD()?.granted}>
+          <Show when={premD().granted}>
             <button class="mx-2 text-sky-800" onClick={onDelete}>
               [ Delete ]
             </button>

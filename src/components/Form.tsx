@@ -1,5 +1,5 @@
 import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Component, createContext, createEffect, createSignal, For, Setter, useContext } from "solid-js";
+import { Component, createContext, createEffect, createSignal, For, Setter, Show, useContext } from "solid-js";
 import { insertRecord, updateRecord } from "~/api/shared/mutate";
 import { schema } from "~/schema/schema";
 import { FormField } from "./FormField";
@@ -8,7 +8,7 @@ import { insertExtRecord, updateExtRecord } from "~/api/shared/extRecord";
 import { getExtTableName } from "~/util";
 import { createStore } from "solid-js/store";
 import { getPermission } from "~/getPermission";
-import {getRecords} from "~/client-only/query";
+import { getRecords } from "~/client-only/query";
 import { SessionContext } from "~/SessionContext";
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
@@ -74,7 +74,7 @@ export const Form: Component<{
   }))
 
   const table = () => schema.tables[props.tableName]
-  const permission = () => getPermission(session?.user?.()?.id ,'update', props.tableName)
+  const permission = () => getPermission(session?.user?.()?.id, 'update', props.tableName, props.id)
   const colNames = () => {
     if (permission() && permission()?.granted) {
       return permission()?.colNames ?? Object.keys(table().columns)
@@ -87,6 +87,8 @@ export const Form: Component<{
   const extColNames = () => Object.keys(extColumns())
 
   createEffect(() => !props.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
+  const pristine = () => Object.entries(diff).every(
+    ([key, value]) => (key === 'id') || value === undefined)
 
   const onSubmit = async () => {
     const extension = extTableName() ? {
@@ -119,11 +121,13 @@ export const Form: Component<{
         />}
       </For>
       <div class="pt-2">
-        <button type="button" class="text-sky-800" onClick={onSubmit}>
-          [ Save ]
-        </button>
+        <Show when={!pristine()}>
+          <button type="button" class="text-sky-800 mr-2" onClick={onSubmit}>
+            [ Save ]
+          </button>
+        </Show>
         <a
-          class="text-sky-800 mx-2"
+          class="text-sky-800"
           href={exitPath(props.tableName)}
         >
           [ Cancel ]

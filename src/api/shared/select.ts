@@ -8,6 +8,7 @@ import {getVirtualColNames, resolveEntries, xName} from "~/util"
 import {Row, RowList} from "postgres"
 import {getVirtualValuesByServerFn} from "./virtualColumns"
 import {getUserId} from "./session"
+import { getPermission } from "~/getPermission"
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -67,7 +68,7 @@ export const injectVirtualValues = async (
 }
 
 export const listRecords = async ( tableName: string ) => {
-  const userId = await getUserId();
+  const userId = await getUserId()
   const { personal } = schema.tables[tableName]
   if (personal && !userId) {
     return []
@@ -90,19 +91,18 @@ export const listRecords = async ( tableName: string ) => {
 }
 
 export const getRecordById = async (tableName: string, id: string | number) => {
-  if (id === undefined) {
-    console.error(chalk.red('ERROR'), 'getRecordById() was called with', { tableName, id })
-    return undefined
-  } else {
-    const records = await sql`
-      SELECT *
-      FROM ${sql(tableName)}
-      WHERE id = ${id}
-    `.catch(onError)
-    if (records) {
-      await injectVirtualValues(tableName, records)
-      return records[0] as DataRecordWithId
-    }
+  const userId = await getUserId()
+  const permission = getPermission(userId, 'read', tableName, id)
+  if (!permission.granted) return
+  let colNames = permission.colNames ?? getVirtualColNames(tableName).non
+  const records = await sql`
+    SELECT ${sql(colNames)}
+    FROM ${sql(tableName)}
+    WHERE id = ${id}
+  `.catch(onError)
+  if (records) {
+    await injectVirtualValues(tableName, records)
+    return records[0] as DataRecordWithId
   }
 }
 

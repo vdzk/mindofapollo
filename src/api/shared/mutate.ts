@@ -78,8 +78,7 @@ export const insertRecord = safeWrap(async (
   tableName: string,
   record: DataRecord
 ) => {
-  const permission = getPermission(userId, 'create', tableName)
-  if (!permission.granted) return
+  if (!getPermission(userId, 'create', tableName).granted) return
   await injectValueTypes(userId, tableName, record)
   const result = await sql`
     INSERT INTO ${sql(tableName)} ${sql(record)}
@@ -121,10 +120,16 @@ export const updateRecord = safeWrap(async (
   id: number,
   record: DataRecord
 ) => {
+  const permission = getPermission(userId, 'update', tableName, id)
+  if (!permission.granted) return
   await injectValueTypes(userId, tableName, record, id)
+  const diff = permission.colNames
+    ? Object.fromEntries(Object.entries(record)
+      .filter(([colName]) => permission.colNames!.includes(colName)))
+    : record
   const result = await sql`
     UPDATE ${sql(tableName)}
-    SET ${sql(record, Object.keys(record))}
+    SET ${sql(diff, Object.keys(diff))}
     WHERE id = ${id}
     RETURNING *
   `;

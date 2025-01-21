@@ -13,7 +13,7 @@ export const getPermission = (
   userId: number | undefined,
   action: 'create' | 'read' | 'update' | 'delete',
   tableName: string,
-  recordId?: number,
+  recordId?: string | number,
   parentId?: number // id of the parent record
 ) => {
   const create = action === 'create'
