@@ -1,47 +1,50 @@
-import { Title } from "@solidjs/meta";
-import { createAsync } from "@solidjs/router";
-import { For } from "solid-js";
-import { PageTitle } from "~/components/PageTitle";
-import {getRecords} from "~/client-only/query";
+import { Title } from "@solidjs/meta"
+import { createAsync, query } from "@solidjs/router"
+import { createEffect, createSignal, For } from "solid-js"
+import { getHomePageQuestions } from "~/api/view/home-page"
+import { getRecords } from "~/client-only/query"
+import { MasterDetail } from "~/components/MasterDetail"
 
-export default function ConfirmOrChallenge() {
+const getHomePageQuestionsQuery = query(getHomePageQuestions, 'getHomePageQuestions')
+
+export default function HomePage() {
   const tags = createAsync(() => getRecords('tag'))
-  const questions = createAsync(() => getRecords('question'))
+
+  const featuredOption = { id: -1, label: 'featured' }
+  const tagOptions = () => tags()?.map(
+    tag => ({ id: tag.id, label: tag.name })
+  ) ?? []
+  const options = () => [featuredOption, ...tagOptions()]
+
+  const [selectedId, setSelectedId] = createSignal(featuredOption.id)
+
+  const featured = () => selectedId() === featuredOption.id
+  const tagId = () => featured() ? undefined : selectedId()
+  const questions = createAsync(() => getHomePageQuestionsQuery(featured(), tagId()))
 
   return (
     <main>
       <Title>Home Page</Title>
-      <PageTitle>Home Page</PageTitle>
-      <div class="flex">
-        <div class="pl-2">
-          <For each={tags()}>
-            {tag => (
-              <div>
-                <a
-                  href={`/show-record?tableName=tag&id=${tag.id}`}
-                  class="hover:underline"
-                >
-                  {tag.name}
-                </a>
-              </div>
-            )}
-          </For>
-        </div>
+      <MasterDetail
+        options={options()}
+        selectedId={selectedId()}
+        onChange={setSelectedId}
+      >
         <div class="pl-2">
           <For each={questions()}>
             {question => (
               <div>
                 <a
-                  href={`/show-record?tableName=question&id=${question.id}`}
+                  href={`/show-record?tableName=${question.directive ? 'directive' : 'question'}&id=${question.id}`}
                   class="hover:underline"
                 >
-                  {question.text}
+                  {question.label}
                 </a>
               </div>
             )}
           </For>
         </div>
-      </div>
+      </MasterDetail>
     </main>
   )
 }

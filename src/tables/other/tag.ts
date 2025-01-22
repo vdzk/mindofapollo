@@ -11,6 +11,10 @@ export const tag: TableSchema = {
     questions: {
       type: 'n-n',
       table: 'question'
+    },
+    directives: {
+      type: 'n-n',
+      table: 'directive'
     }
   }
 }

@@ -114,15 +114,21 @@ export const getValueById = async (tableName: string, id: number) => {
   `.catch(onError)
   return results?.[0]?.value as DataLiteral
 }
-export const listCrossRecords = (
+export const listCrossRecords = async (
     b: string,
     a: string,
     id: number,
     first: boolean
-) => sql`
-  SELECT ${sql(b)}.*
-  FROM ${sql(b)}
-  JOIN ${sql(xName(a, b, first))} ON ${sql(b + '_id')} = id
-  WHERE ${sql(a + '_id')} = ${id}
-  ORDER BY id
-`.catch(onError)
+) => {
+  const records = await sql`
+    SELECT ${sql(b)}.*
+    FROM ${sql(b)}
+    JOIN ${sql(xName(a, b, first))} ON ${sql(b + '_id')} = id
+    WHERE ${sql(a + '_id')} = ${id}
+    ORDER BY id
+  `.catch(onError)
+  if (records) {
+    await injectVirtualValues(b, records)
+    return records
+  }
+}

@@ -33,6 +33,10 @@ export const question: TableSchema = {
     confidence: {
       type: 'proportion',
       getVisibility: record => record.decided as boolean
+    },
+    featured: {
+      type: 'boolean',
+      defaultValue: false
     }
   },
   aggregates: {

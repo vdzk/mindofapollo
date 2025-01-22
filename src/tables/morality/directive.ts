@@ -36,7 +36,7 @@ export const directive: TableSchema = {
           id => {
             const {deed, scope: [exclude, include]} = directives[id]
             return [id,
-              `${deed} +(${include.join(' ,')}) −(${exclude.join(' ,')})`]
+              `Should a ${include.join(' ,')} ${exclude.length > 0 ? 'who is not a ' + exclude.join(' ,') : ''} ${deed}?`]
           }
         ))
         return labels
@@ -48,6 +48,10 @@ export const directive: TableSchema = {
         table: 'deed',
         labelColumn: 'text'
       }
+    },
+    featured: {
+      type: 'boolean',
+      defaultValue: false
     }
   },
   aggregates: {
@@ -60,6 +64,11 @@ export const directive: TableSchema = {
       type: '1-n',
       table: 'directive_consequence',
       column: 'directive_id'
+    },
+    tags: {
+      type: 'n-n',
+      table: 'tag',
+      first: true
     }
   }
 }
