@@ -1,10 +1,9 @@
-import { MetaProvider } from "@solidjs/meta";
-import { Router } from "@solidjs/router";
-import { FileRoutes } from "@solidjs/start/router";
-import { Suspense } from "solid-js";
+import { MetaProvider } from "@solidjs/meta"
+import { Router } from "@solidjs/router"
+import { FileRoutes } from "@solidjs/start/router"
 import "./index.css"
-import { TopNav } from "./components/TopNav";
-import { SessionContextProvider } from "./SessionContext";
+import { TopNav } from "./components/TopNav"
+import { SessionContextProvider } from "./SessionContext"
 
 
 
@@ -14,10 +13,8 @@ export default function App() {
       root={props => (
         <MetaProvider>
           <SessionContextProvider>
-            <Suspense>
-                <TopNav />
-              {props.children}
-            </Suspense>
+            <TopNav />
+            {props.children}
           </SessionContextProvider>
         </MetaProvider>
       )}
