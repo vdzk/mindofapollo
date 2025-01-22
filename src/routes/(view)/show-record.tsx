@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { createEffect, Show, useContext } from "solid-js";
+import { Show, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { schema } from "~/schema/schema";
@@ -11,6 +11,7 @@ import { RecordPageTitle } from "../../components/PageTitle";
 import {UserHistory} from "~/components/histories";
 import { getPermission } from "~/getPermission";
 import {getRecords} from "~/client-only/query";
+import { useSafeParams } from "~/client-only/util";
 
 const _delete = action(async (
   tableName: string,
@@ -30,7 +31,7 @@ interface ShowRecord {
 }
 
 export default function ShowRecord() {
-  const [sp] = useSearchParams() as unknown as [ShowRecord]
+  const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
   const session = useContext(SessionContext)
   const recordId = () => parseInt(sp.id)
   const userId = () => session?.user?.()?.id

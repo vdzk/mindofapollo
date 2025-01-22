@@ -8,15 +8,12 @@ import { getPermission } from "~/getPermission";
 import {getRecords} from "~/client-only/query";
 import { SessionContext } from "~/SessionContext";
 import { PageTitle } from "~/components/PageTitle";
-
-interface ListRecordProps {
-  tableName: string
-}
+import { useSafeParams } from "~/client-only/util";
 
 export default function ListRecords() {
   const session = useContext(SessionContext)
-  // const [sp] = useSearchParams() as unknown as [ListRecordProps]
-  const [sp] = useSearchParams() as unknown as [ListRecordProps]
+  const sp = useSafeParams<{tableName: string}>(['tableName'])
+
   const records = createAsync(() => getRecords(sp.tableName))
   const premC = () => getPermission(session?.user?.()?.id, 'create', sp.tableName)
   const title = () => firstCap(pluralTableName(sp.tableName))

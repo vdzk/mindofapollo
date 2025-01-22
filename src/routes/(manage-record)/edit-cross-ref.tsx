@@ -6,6 +6,7 @@ import {getRecordById} from "~/api/shared/select";
 import { firstCap, pluralTableName, titleColumnName } from "~/util";
 import {getRecords, listCrossRecordsCache} from "~/client-only/query";
 import {deleteCrossRecordAction, insertCrossRecordAction} from "~/client-only/action";
+import { useSafeParams } from "~/client-only/util";
 
 interface EditCrossRefParams {
   a: string
@@ -15,7 +16,7 @@ interface EditCrossRefParams {
 }
 
 export default function EditCrossRef() {
-  const [sp] = useSearchParams() as unknown as [EditCrossRefParams]
+  const sp = useSafeParams<EditCrossRefParams>(['a', 'b', 'id'])
   const first = sp.first === 'true'
   const id = parseInt(sp.id)
 

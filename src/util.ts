@@ -52,10 +52,8 @@ export const getExtTableName = (
 }
 
 export const pluralTableName = (tableName: string) => {
-  console.log({tableName})
   return schema.tables[tableName].plural ?? humanCase(tableName) + ' items'
 }
-
 
 export const etv = (fn: (val: string, name: string) => void) =>
   (event: { target: { value: string, name: string } }) =>
