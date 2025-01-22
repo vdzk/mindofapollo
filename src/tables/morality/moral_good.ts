@@ -1,5 +1,5 @@
 import { TableSchema } from "~/schema/type";
-import { sqlStr } from "~/util";
+import { sqlStr } from "~/util-no-circle";
 
 export const moral_good: TableSchema = {
   plural: 'moral goods',

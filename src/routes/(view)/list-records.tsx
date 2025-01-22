@@ -1,13 +1,13 @@
 import { For, Match, Show, Switch, useContext } from "solid-js";
 import { Title } from "@solidjs/meta";
 import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
-import { PageTitle } from "../../components/PageTitle";
 import { action, createAsync, json, useAction, useSearchParams } from "@solidjs/router";
 import { schema } from "~/schema/schema";
 import { insertRecord } from "~/api/shared/mutate";
 import { getPermission } from "~/getPermission";
 import {getRecords} from "~/client-only/query";
 import { SessionContext } from "~/SessionContext";
+import { PageTitle } from "~/components/PageTitle";
 
 interface ListRecordProps {
   tableName: string
@@ -15,6 +15,7 @@ interface ListRecordProps {
 
 export default function ListRecords() {
   const session = useContext(SessionContext)
+  // const [sp] = useSearchParams() as unknown as [ListRecordProps]
   const [sp] = useSearchParams() as unknown as [ListRecordProps]
   const records = createAsync(() => getRecords(sp.tableName))
   const premC = () => getPermission(session?.user?.()?.id, 'create', sp.tableName)

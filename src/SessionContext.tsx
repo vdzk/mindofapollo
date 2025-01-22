@@ -1,4 +1,4 @@
-import { createContext, createEffect, createResource, createSignal, ParentComponent, Resource, Setter, Show } from "solid-js"
+import { createContext, createEffect, createResource, ParentComponent, Resource, Setter } from "solid-js"
 import { getUser } from "./api/shared/session"
 import { DataRecordWithId } from "./schema/type"
 import { useNavigate } from "@solidjs/router"
@@ -19,22 +19,17 @@ export const SessionContextProvider: ParentComponent = (props) => {
 
   const session = {user, loggedIn, refetch, mutate}
 
-  const [userWasReady, setUserWasRready] = createSignal(false)
-
   createEffect(() => {
     if (user.state == 'ready') {
       if (!user() && !isPublicRoute()) {
         navigate('/login', { replace: true })
       }
-      setUserWasRready(true)
     }
   })
 
   return (
     <SessionContext.Provider value={session}>
-      <Show when={userWasReady()}>
-        {props.children}
-      </Show>
+      {props.children}
     </SessionContext.Provider>
   )
 }

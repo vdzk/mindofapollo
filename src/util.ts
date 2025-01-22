@@ -52,6 +52,7 @@ export const getExtTableName = (
 }
 
 export const pluralTableName = (tableName: string) => {
+  console.log({tableName})
   return schema.tables[tableName].plural ?? humanCase(tableName) + ' items'
 }
 
@@ -68,9 +69,6 @@ export const arrayToObjects = (arrayOfArrays: any[][], keys: string[]) => {
     }, {});
   });
 }
-
-// Dummy function to enable SQL syntax highlighting
-export const sqlStr = (strings: TemplateStringsArray) => strings[0]
 
 export const getVirtualColNames = (tableName: string) => {
   const all = []

@@ -17,10 +17,10 @@ export default function AdminTools() {
     <main>
       <Title>Admin Tools</Title>
       <PageTitle>Tables</PageTitle>
-      <div class="px-2 max-w-screen-sm flex flex-wrap">
+      <div class="px-2 max-w-screen-md flex flex-wrap">
         <For each={tableNames}>
           {(tableName) => (
-            <a href={`/list-records?tableName=${tableName}`} class="mr-1 text-sky-800">
+            <a href={`/list-records?tableName=${tableName}`} class="mr-1 text-sky-800 min-w-60 block">
               [ {firstCap(pluralTableName(tableName))} ]
             </a>
           )}
