@@ -3,7 +3,7 @@ import { BooleanColumn, ColumnSchema, DataLiteral, DataRecord, ForeignKey } from
 import { ColumnLabel } from "./ColumnLabel";
 import { createAsync } from "@solidjs/router";
 import { getRecordById } from "~/api/shared/select";
-import { nbsp } from "~/util";
+import { getPercent, nbsp } from "~/util";
 import { schema } from "~/schema/schema";
 import { getOriginTypes } from "~/api/shared/valueType";
 
@@ -83,6 +83,9 @@ export const Detail: Component<DetailProps> = props => {
               {value() ? 'true' : 'false'}
             </Match>
           </Switch>
+        </Match>
+        <Match when={columnType() === 'proportion'}>
+          {value() ? getPercent(value() as number) : nbsp}
         </Match>
         <Match when>
           <div class="whitespace-pre-line">

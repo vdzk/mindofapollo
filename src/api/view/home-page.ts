@@ -23,13 +23,13 @@ export const getHomePageQuestions = async (
   let questions
   if (featured) {
     questions = await sql`
-      SELECT id, text as label
+      SELECT *
       FROM question
       WHERE featured
     `.catch(onError)
   } else {
     questions = await sql`
-      SELECT q.id, q.text as label
+      SELECT q.*
       FROM question q
       JOIN question_x_tag x
         ON x.question_id = q.id
@@ -37,6 +37,7 @@ export const getHomePageQuestions = async (
     `.catch(onError)
   }
   if (questions) {
+    await injectVirtualValues('question', questions)
     results = questions as unknown as HpQuestion[]
   }
 

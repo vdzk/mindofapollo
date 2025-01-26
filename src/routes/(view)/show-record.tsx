@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta";
-import { action, createAsync, redirect, useAction } from "@solidjs/router";
+import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { createEffect, createSignal, Match, Show, Switch, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
@@ -33,6 +33,7 @@ interface ShowRecord {
 }
 
 export default function ShowRecord() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
   const session = useContext(SessionContext)
   const recordId = () => Number.isNaN(parseInt(sp().id)) ? sp().id : parseInt(sp().id)
@@ -67,8 +68,7 @@ export default function ShowRecord() {
     options.push({ id: 'actions', label: 'actions' })
     return options
   }
-  const [selectedSection, setSelectedSection] = createSignal<string>()
-  createEffect(() => setSelectedSection(sectionOptions()[0].id))
+  const selectedSection = () => (searchParams.section as string | undefined) ?? sectionOptions()[0].id
 
   return (
     <main>
@@ -77,7 +77,7 @@ export default function ShowRecord() {
       <MasterDetail
         options={sectionOptions()}
         selectedId={selectedSection()}
-        onChange={setSelectedSection}
+        onChange={(sectionId) => setSearchParams({section: sectionId})}
       >
         <Switch>
           <Match when={selectedSection() === 'userHisory'}>

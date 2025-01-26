@@ -1,3 +1,4 @@
+import { getPercent } from "~/util";
 import { TableSchema } from "../schema/type";
 
 export const question: TableSchema = {
@@ -14,12 +15,6 @@ export const question: TableSchema = {
         optional: true
       }
     },
-    judgement_requested: {
-      type: 'boolean',
-      defaultValue: false,
-      label: 'judgement',
-      optionLabels: ['Not requested', 'requested']
-    },
     decided: {
       type: 'boolean',
       defaultValue: false,
@@ -34,9 +29,20 @@ export const question: TableSchema = {
       type: 'proportion',
       getVisibility: record => record.decided as boolean
     },
+    judgement_requested: {
+      type: 'boolean',
+      defaultValue: false,
+      label: 'judgement',
+      optionLabels: ['Not requested', 'requested']
+    },
     featured: {
       type: 'boolean',
       defaultValue: false
+    },
+    label: {
+      type: 'virtual',
+      getLocal: (record) => `(${record.decided ? getPercent(record.confidence as number) : '?'}) ${record.text}`,
+      preview: true
     }
   },
   aggregates: {
@@ -56,6 +62,11 @@ export const question: TableSchema = {
       table: 'person',
       first: true
     },
+    confirmations: {
+      type: '1-n',
+      table: 'confirmation',
+      column: 'id'
+    },
     tags: {
       type: 'n-n',
       table: 'tag',
@@ -71,6 +82,10 @@ export const question: TableSchema = {
     arguments: {
       label: 'arguments',
       fields: ['arguments']
+    },
+    evaluation: {
+      label: 'evaluation',
+      fields: ['confirmations', 'answer_approvals', 'decided', 'confidence', 'judgement_requested']
     },
     other: {
       label: 'other details'

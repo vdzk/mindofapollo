@@ -1,3 +1,4 @@
+import { getPercent } from "~/util";
 import { DataRecord, TableSchema } from "../../schema/type";
 
 export const argument: TableSchema = {
@@ -35,7 +36,7 @@ export const argument: TableSchema = {
     }
   },
   extendedByTable: 'argument_judgement',
-  preview: (record: DataRecord) => record.title + ((record.isolated_confidence === null) ? '' : ` (${record.isolated_confidence})`),
+  preview: (record: DataRecord) => ((record.isolated_confidence === null) ? '' : `(${getPercent(record.isolated_confidence as number)}) `) + record.title,
   aggregates: {
     critical_statements: {
       type: '1-n',
