@@ -10,7 +10,7 @@ export const MasterDetail = <T,>(props: {
 }) => {
   return (
     <div class="flex">
-      <div>
+      <div class="shrink-0">
         <For each={props.options}>
           {option => {
             const selected = () => option.id === props.selectedId
@@ -29,7 +29,9 @@ export const MasterDetail = <T,>(props: {
           }}
         </For>
       </div>
-      {props.children}
+      <div>
+        {props.children}
+      </div>
     </div>
   )
 }

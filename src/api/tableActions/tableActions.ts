@@ -3,12 +3,13 @@ import {getRecordById} from "../shared/select"
 import {addedCriticalStatement} from "~/api/tableActions/argument";
 import {hasArguments, hasUnjudgedArguments} from "~/api/tableActions/question";
 import {attemptJudgeQuestion} from "~/api/shared/attemptJudgeQuestion";
+import { Id } from "~/types";
 
 
 export interface TableAction {
   label: string,
-  getVisibility: (recordId: number) => Promise<boolean> | boolean
-  execute: (recordId: number) => Promise<void>
+  getVisibility: (recordId: Id) => Promise<boolean> | boolean
+  execute: (recordId: Id) => Promise<void>
 }
 
 const tableActions: Record<string, Record<string, TableAction>> = {
@@ -65,7 +66,7 @@ const tableActions: Record<string, Record<string, TableAction>> = {
 
 export const getVisibleActions = async (
   tableName: string,
-  recordId: number
+  recordId: Id
 ) => {
   if (tableActions[tableName]) {
     const promises = Object.entries(tableActions[tableName]).map(
@@ -85,7 +86,7 @@ export const getVisibleActions = async (
 export const executeAction = async (
   tableName: string,
   actionName: string,
-  recordId: number
+  recordId: Id
 ) => {
   const action = tableActions[tableName][actionName]
   if (await action.getVisibility(recordId)) {

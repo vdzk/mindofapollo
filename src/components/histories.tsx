@@ -1,12 +1,12 @@
-import { createAsync } from "@solidjs/router";
-import { Component, For } from "solid-js";
-import { listRecordHistory, listUserHistory } from "~/api/components/histories";
-import { humanCase, timeAgo } from "~/util";
-import { Collapse } from "./Collapse";
+import { createAsync } from "@solidjs/router"
+import { Component, For } from "solid-js"
+import { listRecordHistory, listUserHistory } from "~/api/components/histories"
+import { Id } from "~/types"
+import { humanCase, timeAgo } from "~/util"
 
-const HistoryList: Component<{
+export const RecordHistory: Component<{
   tableName: string,
-  recordId: number,
+  recordId: Id,
 }> = props => {
   const recordHistory = createAsync(() => listRecordHistory(props.tableName, props.recordId))
 
@@ -30,37 +30,26 @@ const HistoryList: Component<{
   )
 }
 
-export const RecordHistory: Component<{
-  tableName: string,
-  recordId: number,
-}> = props => (
-  <Collapse label={'History'}>
-    <HistoryList {...props} />
-  </Collapse>
-)
-
 export const UserHistory: Component<{
-  userId: number
+  userId: Id
 }> = props => {
   const userHistory = createAsync(() => listUserHistory(props.userId))
   return (
-    <Collapse label="User history">
-      <For each={userHistory()}>
-        {opRecord => (
-          <div class="px-2">
-            {timeAgo.format(opRecord.op_timestamp)}
-            {' '}
-            {humanCase(opRecord.tableName)}
-            {' '}
-            {opRecord.data_op}
-            {' '}
-            {Object.entries(opRecord)
-              .filter(([key]) => !['op_timestamp', 'data_op', 'op_user_id'].includes(key))
-              .map(([key, value]) => `[${key}: ${value}]`)
-              .join(' ')}
-          </div>
-        )}
-      </For>
-    </Collapse>
+    <For each={userHistory()}>
+      {opRecord => (
+        <div class="px-2">
+          {timeAgo.format(opRecord.op_timestamp)}
+          {' '}
+          {humanCase(opRecord.tableName)}
+          {' '}
+          {opRecord.data_op}
+          {' '}
+          {Object.entries(opRecord)
+            .filter(([key]) => !['op_timestamp', 'data_op', 'op_user_id'].includes(key))
+            .map(([key, value]) => `[${key}: ${value}]`)
+            .join(' ')}
+        </div>
+      )}
+    </For>
   )
 }

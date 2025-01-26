@@ -23,7 +23,6 @@ export default function VoteChangeProposal() {
       <RecordDetails
         tableName="argument"
         id={proposal()!.target_id}
-        showHistory
       />
       <Subtitle>Change Proposal</Subtitle>
       <Detail

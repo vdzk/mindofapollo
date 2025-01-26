@@ -101,6 +101,11 @@ export interface NToNSchema {
 
 export type AggregateSchema = OneToNSchema | NToNSchema
 
+interface Section {
+  label: string
+  fields?: string[]
+}
+
 export interface TableSchema {
   plural?: string,
   personal?: boolean, //only show the records created by the current user
@@ -110,6 +115,7 @@ export interface TableSchema {
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>
   createRecord?: () => DataRecord // Generate new records automatically
+  sections?: Record<string, Section>
 }
 
 export interface AppDataSchema {

@@ -4,12 +4,13 @@ import {schema} from "~/schema/schema"
 import {onError, sql} from "~/db"
 import {ForeignKey} from "~/schema/type"
 import {injectVirtualValues} from "~/api/shared/select"
+import { Id } from "~/types"
 
 export const listOverlapRecords = (
     tableName: string,
     sharedColumn: string,
     filterTable: string,
-    filterId: number
+    filterId: Id
 ) => sql`
   SELECT ${sql(tableName)}.*
   FROM ${sql(tableName)}
@@ -22,7 +23,7 @@ export const listOverlapRecords = (
 export const listForeignRecords = async (
     tableName: string,
     fkName: string,
-    fkId: number
+    fkId: Id
 ) => {
     const {extendedByTable} = schema.tables[tableName]
     let records
@@ -49,7 +50,7 @@ export const listForeignRecords = async (
 export const listForeignHopRecords = (
     tableName: string,
     fkName: string,
-    fkId: number,
+    fkId: Id,
     hopColName: string
 ) => {
     const extColumn = schema.tables[tableName].columns[hopColName] as ForeignKey;

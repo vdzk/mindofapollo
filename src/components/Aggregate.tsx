@@ -1,5 +1,5 @@
 import { createAsync, useAction } from "@solidjs/router";
-import { Component, createEffect, For, Match, Show, Switch, useContext } from "solid-js";
+import { Component, For, Match, Show, Switch, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type";
 import {listCrossRecords, listRecords} from "~/api/shared/select";
@@ -12,6 +12,7 @@ import {
 } from "~/api/components/Aggregate";
 import {listForeignHopRecordsCache} from "~/client-only/query";
 import {deleteForeignHopRecordAction} from "~/client-only/action";
+import { Id } from "~/types";
 
 export interface AggregateSection {
   title: string;
@@ -25,7 +26,7 @@ const FkRecordListItem: Component<{
   titleColumnName: string,
   titleColumn: ForeignKey,
   record: DataRecord,
-  id: number
+  id: Id
 }> = props => {
   const deleteAction = useAction(deleteForeignHopRecordAction);
   const onDelete = () => deleteAction(
@@ -56,7 +57,7 @@ const FkRecordListItem: Component<{
 
 export const Aggregate: Component<{
   tableName: string;
-  id: number;
+  id: Id;
   aggregateName: string;
 }> = (props) => {
   const session = useContext(SessionContext)

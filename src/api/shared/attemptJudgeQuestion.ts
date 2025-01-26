@@ -3,8 +3,9 @@
 import {safeWrap, updateRecord} from "~/api/shared/mutate";
 import {sql} from "~/db";
 import {calcQuestionConfidence} from "~/compute";
+import { Id } from "~/types";
 
-export const attemptJudgeQuestion = safeWrap(async (userId, questionId: number) => {
+export const attemptJudgeQuestion = safeWrap(async (userId, questionId: Id) => {
   const results = await sql`
   SELECT *, argument.id
   FROM argument

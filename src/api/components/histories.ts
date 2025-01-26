@@ -3,10 +3,11 @@
 import { schema } from "~/schema/schema";
 import { onError, sql } from "../../db";
 import { HistoryRecord } from "~/schema/type";
+import { Id } from "~/types";
 
 export const listRecordHistory = (
   tableName: string,
-  recordId: number
+  recordId: Id
 ) => sql`
   SELECT h.*, person.name AS op_user_name
   FROM ${sql(tableName + '_h')} h
@@ -16,7 +17,7 @@ export const listRecordHistory = (
 `.catch(onError)
 
 export const listUserHistory = (
-  userId: number
+  userId: Id
 ) => Promise.all(
   Object.keys(schema.tables).map(tableName => sql`
     SELECT *

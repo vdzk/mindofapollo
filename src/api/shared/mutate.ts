@@ -8,6 +8,7 @@ import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
 import { getPermission } from "~/getPermission";
+import { Id } from "~/types";
 
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
@@ -52,7 +53,7 @@ export const injectValueTypes = async (
   userId: number,
   tableName: string,
   record: DataRecord,
-  recordId?: number
+  recordId?: Id
 ) => {
   const { columns } = schema.tables[tableName]
   for (const colName in columns) {
@@ -117,7 +118,7 @@ export const insertRecordsOneByOne = async (
 export const updateRecord = safeWrap(async (
   userId: number,
   tableName: string,
-  id: number,
+  id: Id,
   record: DataRecord
 ) => {
   const permission = getPermission(userId, 'update', tableName, id)
@@ -139,7 +140,7 @@ export const updateRecord = safeWrap(async (
 export const deleteById = safeWrap(async (
   userId: number,
   tableName: string,
-  id: number
+  id: Id
 ) => {
   const result = await sql`
     DELETE FROM ${sql(tableName)}

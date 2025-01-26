@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
-import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Show, useContext } from "solid-js";
+import { action, createAsync, redirect, useAction } from "@solidjs/router";
+import { createEffect, createSignal, Match, Show, Switch, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { schema } from "~/schema/schema";
@@ -8,14 +8,16 @@ import { deleteExtById, getExtRecordById } from "~/api/shared/extRecord";
 import { SessionContext } from "~/SessionContext";
 import { titleColumnName } from "~/util";
 import { RecordPageTitle } from "../../components/PageTitle";
-import {UserHistory} from "~/components/histories";
+import { RecordHistory, UserHistory } from "~/components/histories";
 import { getPermission } from "~/getPermission";
-import {getRecords} from "~/client-only/query";
+import { getRecords } from "~/client-only/query";
 import { useSafeParams } from "~/client-only/util";
+import { MasterDetail } from "~/components/MasterDetail";
+import { Id } from "~/types";
 
 const _delete = action(async (
   tableName: string,
-  id: number
+  id: Id
 ) => {
   await deleteExtById(tableName, id)
   throw redirect(
@@ -33,52 +35,85 @@ interface ShowRecord {
 export default function ShowRecord() {
   const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
   const session = useContext(SessionContext)
-  const recordId = () => parseInt(sp.id)
+  const recordId = () => Number.isNaN(parseInt(sp().id)) ? sp().id : parseInt(sp().id)
   const userId = () => session?.user?.()?.id
-  const record = createAsync(() => getExtRecordById(sp.tableName, recordId()))
-  const table = () => schema.tables[sp.tableName]
-  const titleColName = () => titleColumnName(sp.tableName)
+  const record = createAsync(() => getExtRecordById(sp().tableName, recordId()))
+  const table = () => schema.tables[sp().tableName]
+  const titleColName = () => titleColumnName(sp().tableName)
   const titleColumn = () => table().columns[titleColName()]
   const displayColumn: ColumnFilter = (colName, column, visible) => visible
     && (colName !== titleColName() // show non-title
-    || titleColumn().type === 'fk') // and title that is foreign key
+      || titleColumn().type === 'fk') // and title that is foreign key
   const deleteAction = useAction(_delete);
-  const onDelete = () => deleteAction(sp.tableName, recordId())
+  const onDelete = () => deleteAction(sp().tableName, recordId())
   const titleText = () => (record()?.[titleColName()] ?? '') as string
-  const premU = () => getPermission(userId() ,'update', sp.tableName, recordId())
-  const premD = () => getPermission(userId() ,'delete', sp.tableName, recordId())
+  const premU = () => getPermission(userId(), 'update', sp().tableName, recordId())
+  const premD = () => getPermission(userId(), 'delete', sp().tableName, recordId())
+
+  const sectionOptions = () => {
+    const options = []
+    const { sections } = schema.tables[sp().tableName]
+    if (sections) {
+      for (const key in sections) {
+        options.push({id: key, label: sections[key].label})
+      }
+    } else {
+      options.push({ id: 'allDetails', label: 'details' })
+    }
+    if (sp().tableName === 'person') {
+      options.push({ id: 'userHisory', label: 'user history' })
+    }
+    options.push({ id: 'history', label: 'history' })
+    options.push({ id: 'actions', label: 'actions' })
+    return options
+  }
+  const [selectedSection, setSelectedSection] = createSignal<string>()
+  createEffect(() => setSelectedSection(sectionOptions()[0].id))
 
   return (
     <main>
       <Title>{titleText()}</Title>
-      <RecordPageTitle tableName={sp.tableName} text={titleText()} />
-      <RecordDetails
-        tableName={sp.tableName}
-        id={recordId()}
-        {...{displayColumn}}
-        showHistory
-      />
-      <Show when={sp.tableName === 'person'}>
-        <UserHistory userId={recordId()}/>
-      </Show>
-      <Show when={session!.loggedIn()}>
-        <Actions tableName={sp.tableName} recordId={recordId()}/>
-        <div>
-          <a href={`/propose-change?tableName=${sp.tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
-            [ Propose Change ]
-          </a>
-          <Show when={premU().granted}>
-            <a href={`/edit-record?tableName=${sp.tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
-              [ Edit ]
-            </a>
-          </Show>
-          <Show when={premD().granted}>
-            <button class="mx-2 text-sky-800" onClick={onDelete}>
-              [ Delete ]
-            </button>
-          </Show>
-        </div>
-      </Show>
+      <RecordPageTitle tableName={sp().tableName} text={titleText()} />
+      <MasterDetail
+        options={sectionOptions()}
+        selectedId={selectedSection()}
+        onChange={setSelectedSection}
+      >
+        <Switch>
+          <Match when={selectedSection() === 'userHisory'}>
+            <UserHistory userId={recordId()} />
+          </Match>
+          <Match when={selectedSection() === 'history'}>
+            <RecordHistory tableName={sp().tableName} recordId={recordId()} />
+          </Match>
+          <Match when={selectedSection() === 'actions'}>
+            <Actions tableName={sp().tableName} recordId={recordId()} />
+            <div>
+              <a href={`/propose-change?tableName=${sp().tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
+                [ Propose Change ]
+              </a>
+              <Show when={premU().granted}>
+                <a href={`/edit-record?tableName=${sp().tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
+                  [ Edit ]
+                </a>
+              </Show>
+              <Show when={premD().granted}>
+                <button class="mx-2 text-sky-800" onClick={onDelete}>
+                  [ Delete ]
+                </button>
+              </Show>
+            </div>
+          </Match>
+          <Match when>
+            <RecordDetails
+              tableName={sp().tableName}
+              id={recordId()}
+              selectedSection={selectedSection()}
+              {...{ displayColumn }}
+            />
+          </Match>
+        </Switch>
+      </MasterDetail>
     </main>
   );
 }

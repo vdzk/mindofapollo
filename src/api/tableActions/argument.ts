@@ -1,8 +1,9 @@
 "use server"
 import {safeWrap} from "~/api/shared/mutate";
 import {sql} from "~/db";
+import { Id } from "~/types";
 
-export const addedCriticalStatement = safeWrap(async (userId, argumentId: number) => {
+export const addedCriticalStatement = safeWrap(async (userId, argumentId: Id) => {
     const result = await sql`
     SELECT csh.id
     FROM critical_statement_h csh

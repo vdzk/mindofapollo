@@ -66,5 +66,14 @@ export const question: TableSchema = {
       table: 'directive_consequence',
       column: 'id'
     }
+  },
+  sections: {
+    arguments: {
+      label: 'arguments',
+      fields: ['arguments']
+    },
+    other: {
+      label: 'other details'
+    }
   }
 }

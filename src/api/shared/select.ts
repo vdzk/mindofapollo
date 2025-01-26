@@ -9,6 +9,7 @@ import {Row, RowList} from "postgres"
 import {getVirtualValuesByServerFn} from "./virtualColumns"
 import {getUserId} from "./session"
 import { getPermission } from "~/getPermission"
+import { Id } from "~/types"
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -117,7 +118,7 @@ export const getValueById = async (tableName: string, id: number) => {
 export const listCrossRecords = async (
     b: string,
     a: string,
-    id: number,
+    id: Id,
     first: boolean
 ) => {
   const records = await sql`

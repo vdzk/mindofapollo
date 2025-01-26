@@ -1,5 +1,5 @@
 import { useLocation, useSearchParams } from "@solidjs/router";
-import { createEffect, createSignal } from "solid-js";
+import { Accessor, createEffect, createSignal } from "solid-js";
 import { publicRoutes } from "~/constant";
 
 export const useIsPublicRoute = () => {
@@ -16,5 +16,5 @@ export const useSafeParams = <T,>(paramNames: string[]) => {
       setSafeSearchParams({...searchParams})
     }
   })
-  return safeSearchParams() as T
+  return safeSearchParams as Accessor<T>
 }

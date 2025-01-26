@@ -17,12 +17,12 @@ interface EditCrossRefParams {
 
 export default function EditCrossRef() {
   const sp = useSafeParams<EditCrossRefParams>(['a', 'b', 'id'])
-  const first = sp.first === 'true'
-  const id = parseInt(sp.id)
+  const first = sp().first === 'true'
+  const id = parseInt(sp().id)
 
-  const aRecord = createAsync(() => getRecordById(sp.a, sp.id))
-  const linkedRecords = createAsync(() => listCrossRecordsCache( sp.b, sp.a, id, first ))
-  const allRrcords = createAsync(() => getRecords(sp.b))
+  const aRecord = createAsync(() => getRecordById(sp().a, sp().id))
+  const linkedRecords = createAsync(() => listCrossRecordsCache( sp().b, sp().a, id, first ))
+  const allRrcords = createAsync(() => getRecords(sp().b))
 
 
   const linkedRecordIds = () => linkedRecords()?.map(lr => lr.id)
@@ -34,8 +34,8 @@ export default function EditCrossRef() {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     insertCrossRecordRun({
-      a: sp.a,
-      b: sp.b,
+      a: sp().a,
+      b: sp().b,
       first,
       a_id: id,
       b_id: parseInt(formData.get('id') as string)
@@ -45,23 +45,23 @@ export default function EditCrossRef() {
   const deleteCrossRecordRun = useAction(deleteCrossRecordAction)
 
   const onDelete = (linkedId: number) => {
-    deleteCrossRecordRun({a: sp.a, b: sp.b, first, a_id: id, b_id: linkedId})
+    deleteCrossRecordRun({a: sp().a, b: sp().b, first, a_id: id, b_id: linkedId})
   }
 
-  const bColName = titleColumnName(sp.b)
-  const titleText = () => aRecord()?.[titleColumnName(sp.a)] as string | undefined
+  const bColName = titleColumnName(sp().b)
+  const titleText = () => aRecord()?.[titleColumnName(sp().a)] as string | undefined
 
   return (
     <main>
       <Title>{titleText()}</Title>
-      <RecordPageTitle tableName={sp.a} text={titleText() ?? ''} />
+      <RecordPageTitle tableName={sp().a} text={titleText() ?? ''} />
       <div class="px-2 pb-2">
-      <div class="font-bold">{firstCap(pluralTableName(sp.b))}</div>
+      <div class="font-bold">{firstCap(pluralTableName(sp().b))}</div>
         <For each={linkedRecords()}>
           {lr => (
             <div>
               <a
-                href={`/show-record?tableName=${sp.b}&id=${lr.id}`}
+                href={`/show-record?tableName=${sp().b}&id=${lr.id}`}
                 class="hover:underline"
               >
                 {lr[bColName]}
@@ -88,7 +88,7 @@ export default function EditCrossRef() {
         &nbsp;
         <button type="submit" class="text-sky-800" >[ + Add ]</button>
       </form>
-      <a class="text-sky-800 px-2" href={`/show-record?tableName=${sp.a}&id=${sp.id}`}>[ Back ]</a>
+      <a class="text-sky-800 px-2" href={`/show-record?tableName=${sp().a}&id=${sp().id}`}>[ Back ]</a>
     </main>
   )
 }

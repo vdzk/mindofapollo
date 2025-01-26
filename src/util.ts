@@ -119,3 +119,6 @@ export const genCode = (length: number) => {
 }
 
 export const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] : [b, a]).join('_x_');
+
+export const getAllKeys = (objects: (Record<string, any> | undefined)[]) =>
+  objects.map(obj => obj ? Object.keys(obj) : []).flat()
