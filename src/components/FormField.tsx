@@ -1,4 +1,4 @@
-import { Component, For, Match, Show, Switch } from "solid-js";
+import { Component, createEffect, For, Match, Show, Switch } from "solid-js";
 import { schema } from "~/schema/schema";
 import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, OptionColumn, TextColumn } from "~/schema/type";
 import { FkInput } from "./FkInput";
@@ -65,6 +65,12 @@ export const FormField: Component<{
       return col.type
     }
   }
+
+  createEffect(() => {
+    if (searchParams[props.colName] && columnType() === 'boolean') {
+      updateDiffValue(props.colName, JSON.stringify(searchParams[props.colName]))
+    }
+  })
 
   if (columnType() === 'virtual' && !props.record) return null
 

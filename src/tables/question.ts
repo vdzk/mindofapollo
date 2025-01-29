@@ -23,11 +23,13 @@ export const question: TableSchema = {
     },
     answer: {
       type: 'varchar',
-      getVisibility: record => record.decided as boolean
+      getVisibility: record => record.decided as boolean,
+      defaultValue: ''
     },
     confidence: {
       type: 'proportion',
-      getVisibility: record => record.decided as boolean
+      getVisibility: record => record.decided as boolean,
+      defaultValue: 0.5
     },
     judgement_requested: {
       type: 'boolean',

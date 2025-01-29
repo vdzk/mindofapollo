@@ -38,7 +38,7 @@ export const FkInput: Component<{
     const spValue = searchParams[props.colName]
     if (spValue) {
       onChange({target: {
-        value: spValue,
+        value: spValue as string,
         name: props.colName
       }})
     }

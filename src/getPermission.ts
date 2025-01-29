@@ -5,7 +5,7 @@ const excludeCols = (tableName: string, colNames: string[]) =>
     .filter(colName => !colNames.includes(colName))
 
 const noEditCols: Record<string, string[]> = {
-  question: ['judgement_requested', 'decided'],
+  question: ['judgement_requested', 'decided', 'confidence', 'answer', 'featured'],
   argument: ['judgement_requested']
 }
 
