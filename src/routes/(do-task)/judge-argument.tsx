@@ -6,8 +6,7 @@ import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { DataRecord } from "~/schema/type";
-import { insertRecord, updateRecord } from "~/api/shared/mutate";
-import {getJudgeArgument} from "~/api/do-task/judge-arguments";
+import {getJudgeArgument, judgeArgument} from "~/api/do-task/judge-arguments";
 
 export default function JudgeArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})
@@ -16,9 +15,7 @@ export default function JudgeArgument() {
   const formColumns = schema.tables.argument_judgement.columns
 
   const onSubmit = async () => {
-    // TODO: authorazation
-    await insertRecord("argument_judgement", {id: argument()!.id, ...diff})
-    await updateRecord("argument", argument()!.id, {judgement_requested: false})
+    await judgeArgument(argument()!.id, diff)
     refetch()
   }
 

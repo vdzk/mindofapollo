@@ -1,5 +1,5 @@
 //https://docs.google.com/spreadsheets/d/1lwBvNssVy33m0RcAOSJx_n_w56ZnhgSOpOMJ1PdiRio/edit?gid=880944073#gid=880944073
-export const calcQuestionConfidence = (argStrengths: [number[], number[]]) => {
+export const calcStatementConfidence = (argStrengths: [number[], number[]]) => {
   const argConfidences = argStrengths.map(
     strengths => strengths.map(strength => (strength + 1) / 2)
   )
@@ -15,7 +15,9 @@ export const calcQuestionConfidence = (argStrengths: [number[], number[]]) => {
     }
   )
   const [conConf, proConf] = sideConfidences
-  const confidence = proConf / (proConf + conConf)
+  const conTotalConf = conConf * (1 - proConf)
+  const proTotalConf = proConf * (1 - conConf)
+  const confidence = proTotalConf / (proTotalConf + conTotalConf)
   return confidence
 }
 
@@ -46,7 +48,7 @@ export interface WeightedArgument {
   weight_upper_limit: number
 }
 
-export const calcQuestionConfidenceAdditively = (
+export const calcStatementConfidenceAdditively = (
   weightedArguments: WeightedArgument[]
 ) => {
   const generators = weightedArguments.map(

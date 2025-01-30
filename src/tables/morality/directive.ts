@@ -36,7 +36,7 @@ export const directive: TableSchema = {
           id => {
             const {deed, scope: [exclude, include]} = directives[id]
             return [id,
-              `Should a ${include.join(' ,')} ${exclude.length > 0 ? 'who is not a ' + exclude.join(' ,') : ''} ${deed}?`]
+              `${include.join(' ,')}${exclude.length > 0 ? ' who is not a ' + exclude.join(' ,') : ''}, ${deed}`]
           }
         ))
         return labels

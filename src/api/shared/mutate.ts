@@ -9,6 +9,7 @@ import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
 import { getPermission } from "~/getPermission";
 import { Id } from "~/types";
+import chalk from "chalk";
 
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
@@ -124,18 +125,31 @@ export const updateRecord = safeWrap(async (
   const permission = getPermission(userId, 'update', tableName, id)
   if (!permission.granted) return
   await injectValueTypes(userId, tableName, record, id)
-  const diff = permission.colNames
-    ? Object.fromEntries(Object.entries(record)
-      .filter(([colName]) => permission.colNames!.includes(colName)))
-    : record
+  const forbiddenColumn = Object.keys(record)
+    .find(colName => !permission.colNames!.includes(colName))
+  if (forbiddenColumn) {
+    // TODO: return and process error on the client
+    console.trace()
+    console.log(chalk.red('ERROR'), {forbiddenColumn})
+  } else {
+    _updateRecord(userId, tableName, id, record)
+  }
+})
+
+export const _updateRecord = async (
+  userId: number,
+  tableName: string,
+  id: Id,
+  record: DataRecord
+) => {
   const result = await sql`
     UPDATE ${sql(tableName)}
-    SET ${sql(diff, Object.keys(diff))}
+    SET ${sql(record, Object.keys(record))}
     WHERE id = ${id}
     RETURNING *
   `;
   await writeHistory(userId, 'UPDATE', tableName, result[0])
-});
+}
 
 export const deleteById = safeWrap(async (
   userId: number,

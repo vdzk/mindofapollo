@@ -1,12 +1,12 @@
 import { Title } from "@solidjs/meta"
 import { createAsync, query } from "@solidjs/router"
 import { createSignal, For } from "solid-js"
-import { getHomePageQuestions } from "~/api/view/home-page"
+import { getHomePageStatements } from "~/api/view/home-page"
 import { getRecords } from "~/client-only/query"
 import { MasterDetail } from "~/components/MasterDetail"
 import { PageTitle } from "~/components/PageTitle"
 
-const getHomePageQuestionsQuery = query(getHomePageQuestions, 'getHomePageQuestions')
+const getHomePageStatementsQuery = query(getHomePageStatements, 'getHomePageStatements')
 
 export default function HomePage() {
   const tags = createAsync(() => getRecords('tag'))
@@ -21,14 +21,14 @@ export default function HomePage() {
 
   const featured = () => selectedId() === featuredOption.id
   const tagId = () => featured() ? undefined : selectedId()
-  const questions = createAsync(() => getHomePageQuestionsQuery(featured(), tagId()))
+  const statements = createAsync(() => getHomePageStatementsQuery(featured(), tagId()))
 
   return (
     <main>
       <Title>Home Page</Title>
       <PageTitle>Things to do</PageTitle>
-      <a href="/create-record?tableName=question" class="ml-2 text-sky-800">[ Add a factual queston ]</a>
-      <a href="/create-record?tableName=directive" class="ml-1 text-sky-800">[ Add a moral queston ]</a>
+      <a href="/create-record?tableName=statement" class="ml-2 text-sky-800">[ Add a statement ]</a>
+      <a href="/create-record?tableName=directive" class="ml-1 text-sky-800">[ Add a directive ]</a>
       <br/>
       <a href="/list-tasks" class="ml-2 text-sky-800">[ Tasks ]</a>
       <a href="/show-directive" class="ml-1 text-sky-800">[ Directives ]</a>
@@ -41,14 +41,14 @@ export default function HomePage() {
         onChange={setSelectedId}
       >
         <div class="pt-1 pl-2">
-          <For each={questions()}>
-            {question => (
+          <For each={statements()}>
+            {statement => (
               <div>
                 <a
-                  href={`/show-record?tableName=${question.directive ? 'directive' : 'question'}&id=${question.id}`}
+                  href={`/show-record?tableName=${statement.directive ? 'directive' : 'statement'}&id=${statement.id}`}
                   class="hover:underline"
                 >
-                  {question.label}
+                  {statement.label}
                 </a>
               </div>
             )}

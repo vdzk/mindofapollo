@@ -9,7 +9,7 @@ import { schema } from "~/schema/schema"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { insertRecordsOneByOne } from "~/api/shared/mutate"
 import {getJudgeCorrelationsData} from "~/api/do-task/judge-correlations";
-import {attemptJudgeQuestion} from "~/api/shared/attemptJudgeQuestion";
+import {attemptJudgeStatement} from "~/api/shared/attemptJudgeStatement";
 
 const CorrelationForm: Component<{
   argument: DataRecordWithId
@@ -77,17 +77,17 @@ export default function JudgeCorrelations() {
       .map(argument => diffs[argument.id])
     // TODO: authorize insertion of the correct records
     await insertRecordsOneByOne('argument_conditional', records)
-    await attemptJudgeQuestion(taskData()!.question.id)
+    await attemptJudgeStatement(taskData()!.statement.id)
     refetch()
   }
 
   return (
     <Task resource={taskData}>
       <Detail
-        tableName="question"
+        tableName="statement"
         colName="text"
-        label="question"
-        record={taskData()!.question}
+        label="statement"
+        record={taskData()!.statement}
       />
       <Detail
         tableName="argument"

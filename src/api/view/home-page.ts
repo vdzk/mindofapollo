@@ -5,40 +5,40 @@ import { getUserId } from "../shared/session"
 import { onError, sql } from "~/db"
 import { injectVirtualValues } from "../shared/select"
 
-interface HpQuestion {
+interface HpStatement {
   id: number,
   label: string,
   directive?: boolean
 }
 
-export const getHomePageQuestions = async (
+export const getHomePageStatements = async (
   featured: boolean,
   tagId?: number
 ) => {
   const userId = await getUserId()
-  if (!getPermission(userId, 'read', 'question').granted) return
+  if (!getPermission(userId, 'read', 'statement').granted) return
   if (!getPermission(userId, 'read', 'directive').granted) return
-  let results: HpQuestion[] = []
+  let results: HpStatement[] = []
 
-  let questions
+  let statements
   if (featured) {
-    questions = await sql`
+    statements = await sql`
       SELECT *
-      FROM question
+      FROM statement
       WHERE featured
     `.catch(onError)
   } else {
-    questions = await sql`
-      SELECT q.*
-      FROM question q
-      JOIN question_x_tag x
-        ON x.question_id = q.id
+    statements = await sql`
+      SELECT s.*
+      FROM statement s
+      JOIN statement_x_tag x
+        ON x.statement_id = s.id
       WHERE x.tag_id = ${tagId!}
     `.catch(onError)
   }
-  if (questions) {
-    await injectVirtualValues('question', questions)
-    results = questions as unknown as HpQuestion[]
+  if (statements) {
+    await injectVirtualValues('statement', statements)
+    results = statements as unknown as HpStatement[]
   }
 
   let directives

@@ -1,8 +1,8 @@
 import { getPercent } from "~/util";
 import { TableSchema } from "../schema/type";
 
-export const question: TableSchema = {
-  plural: 'questions',
+export const statement: TableSchema = {
+  plural: 'statements',
   columns: {
     text: {
       type: 'varchar'
@@ -20,11 +20,6 @@ export const question: TableSchema = {
       defaultValue: false,
       label: 'status',
       optionLabels: ['Undecided', 'Decided']
-    },
-    answer: {
-      type: 'varchar',
-      getVisibility: record => record.decided as boolean,
-      defaultValue: ''
     },
     confidence: {
       type: 'proportion',
@@ -51,15 +46,15 @@ export const question: TableSchema = {
     arguments: {
       type: '1-n',
       table: 'argument',
-      column: 'question_id',
+      column: 'statement_id',
       splitByColumn: 'pro'
     },
     research_notes: {
       type: '1-n',
       table: 'research_note',
-      column: 'question_id'
+      column: 'statement_id'
     },
-    answer_approvals: {
+    statement_approvals: {
       type: 'n-n',
       table: 'person',
       first: true
@@ -87,7 +82,7 @@ export const question: TableSchema = {
     },
     evaluation: {
       label: 'evaluation',
-      fields: ['confirmations', 'answer_approvals', 'decided', 'confidence', 'judgement_requested']
+      fields: ['confirmations', 'statement_approvals', 'decided', 'confidence', 'judgement_requested']
     },
     other: {
       label: 'other details'

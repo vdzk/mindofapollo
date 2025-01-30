@@ -1,0 +1,1 @@
+If a function in a "use server" file starts with "_" it must not be called from the client. It must only be called from other internal server functions. This is because this function doesn't do authorisation.

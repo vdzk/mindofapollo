@@ -1,7 +1,7 @@
 import { AppDataSchema } from "./type"
 import { person } from "~/tables/other/person"
 import { tag } from "~/tables/other/tag"
-import { question } from "~/tables/question"
+import { statement } from "~/tables/statement"
 import { argument_type } from "~/tables/argument/type"
 import { critical_question } from "~/tables/other/critical_question"
 import { argument } from "~/tables/argument/argument"
@@ -36,7 +36,7 @@ export const schema: AppDataSchema = {
     person,
     tag,
     argument_aggregation_type,
-    question,
+    statement,
     argument_type,
     critical_question,
     argument,

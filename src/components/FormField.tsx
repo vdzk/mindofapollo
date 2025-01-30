@@ -68,7 +68,7 @@ export const FormField: Component<{
 
   createEffect(() => {
     if (searchParams[props.colName] && columnType() === 'boolean') {
-      updateDiffValue(props.colName, JSON.stringify(searchParams[props.colName]))
+      updateDiffValue(props.colName, searchParams[props.colName] === 'true')
     }
   })
 

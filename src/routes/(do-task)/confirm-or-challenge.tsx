@@ -1,34 +1,28 @@
 import { Match, Switch, createResource, createSignal } from "solid-js";
 import { FormField } from "~/components/FormField";
 import { Task } from "~/components/Task";
-import { addConfirmation, getConfirnmationQuestion } from "~/api/do-task/confirm-or-challenge";
+import { addConfirmation, getConfirnmationStatement } from "~/api/do-task/confirm-or-challenge";
 import { insertExtRecord } from "~/api/shared/extRecord";
-import { updateRecord } from "~/api/shared/mutate";
 import { createStore } from "solid-js/store";
 import { DataRecord } from "~/schema/type";
 
 export default function ConfirmOrChallenge() {
   const [diff, setDiff] = createStore<DataRecord>({})
-  const [question, { refetch }] = createResource(getConfirnmationQuestion)
+  const [statement, { refetch }] = createResource(getConfirnmationStatement)
 
   const [challenge, setChallenge] = createSignal(false)
 
   // TODO: refactor using solid-js actions
-  const onConfirm = async (questionId: number) => {
-    const count = await addConfirmation(questionId)
-    // TODO: make this number dynamic, depending on the number of users
-    const requiredConfirmations = 2
-    if (count && (count >= requiredConfirmations)) {
-      await updateRecord('question', questionId, { decided: true })
-    }
+  const onConfirm = async (statementId: number) => {
+    await addConfirmation(statementId)
     refetch()
   }
 
-  const onArgument = async (questionId: number) => {
+  const onArgument = async (statementId: number) => {
     const title = (diff.title as string).trim()
     if (title) {
       await insertExtRecord('argument', {
-        questionId,
+        statementId,
         pro: false,
         title,
         // TODO: change to null and handle that case
@@ -40,14 +34,14 @@ export default function ConfirmOrChallenge() {
   }
 
   return (
-    <Task resource={question}>
+    <Task resource={statement}>
       <main class="px-2 max-w-md">
         <div>
           <a
             class="hover:underline"
-            href={`/show-record?tableName=question&id=${question()!.id}`}
+            href={`/show-record?tableName=statement&id=${statement()!.id}`}
           >
-            {question()!.answer}
+            {statement()!.text}
           </a>
         </div>
         <div>
@@ -55,7 +49,7 @@ export default function ConfirmOrChallenge() {
             <Match when={!challenge()}>
               <button
                 class="text-sky-800"
-                onClick={() => onConfirm(question()!.id)}
+                onClick={() => onConfirm(statement()!.id)}
               >
                 [ Confirm ]
               </button>
@@ -75,7 +69,7 @@ export default function ConfirmOrChallenge() {
               />
               <button
                 class="text-sky-800"
-                onClick={() => onArgument(question()!.id)}
+                onClick={() => onArgument(statement()!.id)}
               >
                 [ Submit ]
               </button>

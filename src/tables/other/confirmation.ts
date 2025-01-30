@@ -2,7 +2,7 @@ import { TableSchema } from "~/schema/type";
 
 export const confirmation: TableSchema = {
   plural: 'confirmations',
-  extendsTable: 'question',
+  extendsTable: 'statement',
   columns: {
     count: {
       type: 'integer'

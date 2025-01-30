@@ -2,7 +2,7 @@ import { TableSchema } from "~/schema/type";
 import { sqlStr } from "~/util-no-circle";
 
 export const directive_consequence: TableSchema = {
-  extendsTable: 'question',
+  extendsTable: 'statement',
   plural: 'directive consequences',
   columns: {
     label: {
@@ -52,9 +52,9 @@ export const directive_consequence: TableSchema = {
     }
   },
   aggregates: {
-    questions: {
+    statements: {
       type: '1-n',
-      table: 'question',
+      table: 'statement',
       column: 'id'
     }
   }

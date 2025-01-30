@@ -26,6 +26,12 @@ export default function AdminTools() {
           )}
         </For>
       </div>
+      <PageTitle>Sandboxes</PageTitle>
+      <div class="px-2">
+        <a href="/confidence-calculator" class="text-sky-800">
+          [ Confidence calculator ]
+        </a>
+      </div>
     </main>
   )
 }

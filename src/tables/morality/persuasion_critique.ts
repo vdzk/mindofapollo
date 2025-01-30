@@ -10,15 +10,15 @@ export const presuasion_critique: TableSchema = {
         labelColumn: 'title'
       }
     },
-    question_answer_id: {
+    statement_id: {
       type: 'fk',
       label: 'statement',
       preview: true,
       fk: {
-        table: 'question',
-        labelColumn: 'answer',
+        table: 'statement',
+        labelColumn: 'text',
         getLabel: (record: DataRecord) => record.decided
-          ? `(c: ${record.confidence}) ${record.answer}`
+          ? `(c: ${record.confidence}) ${record.text}`
           : record.text as string
       }
     }

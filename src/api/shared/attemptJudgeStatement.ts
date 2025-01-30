@@ -1,19 +1,19 @@
 "use server";
 
-import {safeWrap, updateRecord} from "~/api/shared/mutate";
+import {_updateRecord, safeWrap} from "~/api/shared/mutate";
 import {sql} from "~/db";
-import {calcQuestionConfidence} from "~/compute";
+import {calcStatementConfidence} from "~/compute";
 import { Id } from "~/types";
 
-export const attemptJudgeQuestion = safeWrap(async (userId, questionId: Id) => {
+export const attemptJudgeStatement = safeWrap(async (userId, statementId: Id) => {
   const results = await sql`
-  SELECT *, argument.id
-  FROM argument
-  LEFT JOIN argument_judgement
-    ON argument_judgement.id = argument.id
-  LEFT JOIN argument_conditional
-    ON argument_conditional.id = argument.id
-  WHERE argument.question_id = ${questionId}
+    SELECT *, argument.id
+    FROM argument
+    LEFT JOIN argument_judgement
+      ON argument_judgement.id = argument.id
+    LEFT JOIN argument_conditional
+      ON argument_conditional.id = argument.id
+    WHERE argument.statement_id = ${statementId}
   `
   let canJudge = true
   let hasNonConditional = [false, false]
@@ -41,9 +41,9 @@ export const attemptJudgeQuestion = safeWrap(async (userId, questionId: Id) => {
   }
   if (canJudge) {
 
-    await updateRecord("question", questionId, {
+    await _updateRecord(userId, "statement", statementId, {
       judgement_requested: false,
-      confidence: calcQuestionConfidence(confidences),
+      confidence: calcStatementConfidence(confidences),
       decided: true
     })
   } else {

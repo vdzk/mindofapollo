@@ -12,13 +12,21 @@ export const sql = postgres({
   password: 'jZrZg7aLWkQu',
   debug: true,
   onnotice: notice => console.log(chalk.green('NOTICE'), notice.message),
+  types: {
+    numeric: {
+      to: 1700, // PG numeric type
+      from: [1700],
+      serialize: (value: any) => value.toString(),
+      parse: (value: string) => parseFloat(value)
+    }
+  },
   // transform: {
   //   ...postgres.camel,
   //   undefined: null
   // }
 });
 
-export const onError = (error: Error & {[key: string]: any}) => {
+export const onError = (error: Error & { [key: string]: any }) => {
   if (error.name === 'PostgresError') {
     console.log()
     console.log(error.query.trim().replaceAll(/\n\s+/g, '\n'))

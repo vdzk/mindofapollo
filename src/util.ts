@@ -123,4 +123,6 @@ export const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] 
 export const getAllKeys = (objects: (Record<string, any> | undefined)[]) =>
   objects.map(obj => obj ? Object.keys(obj) : []).flat()
 
+export const isEmpty = (obj: Record<string, any>) => Object.keys(obj).length === 0
+
 export const getPercent = (x: number) => Math.round(x * 100) + '%'

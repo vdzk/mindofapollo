@@ -21,7 +21,7 @@ export default function WeighArgument() {
   const onSubmit = async () => {
     // TODO: authorazation
     await insertRecord( "argument_weight", {id: id(), ...diff})
-    await attemptAggregateArguments(taskData()?.argument.question_id)
+    await attemptAggregateArguments(taskData()?.argument.statement_id)
     refetch()
   }
 

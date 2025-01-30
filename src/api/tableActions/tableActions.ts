@@ -1,15 +1,17 @@
-import {updateRecord} from "../shared/mutate"
+"use server"
+
+import {_updateRecord, safeWrap, updateRecord} from "../shared/mutate"
 import {getRecordById} from "../shared/select"
 import {addedCriticalStatement} from "~/api/tableActions/argument";
-import {hasArguments, hasUnjudgedArguments} from "~/api/tableActions/question";
-import {attemptJudgeQuestion} from "~/api/shared/attemptJudgeQuestion";
+import {hasArguments, hasUnjudgedArguments} from "~/api/tableActions/statement";
+import {attemptJudgeStatement} from "~/api/shared/attemptJudgeStatement";
 import { Id } from "~/types";
 
 
 export interface TableAction {
   label: string,
   getVisibility: (recordId: Id) => Promise<boolean> | boolean
-  execute: (recordId: Id) => Promise<void>
+  execute: (userId: number, recordId: Id) => Promise<void>
 }
 
 const tableActions: Record<string, Record<string, TableAction>> = {
@@ -20,45 +22,45 @@ const tableActions: Record<string, Record<string, TableAction>> = {
         //TODO: if there was not activity for a period of time, qualify any signed in user to make the request
         const argument = await getRecordById('argument', recordId)
         if (!argument) return false
-        const question = await getRecordById('question', argument.question_id as number)
-        if (!question || question.argument_aggregation_type_id !== 'evidential') {
+        const statement = await getRecordById('statement', argument.statement_id as number)
+        if (!statement || statement.argument_aggregation_type_id !== 'evidential') {
           return false
         }
         const qualify = await addedCriticalStatement(recordId)
         return qualify ?? false
       },
-      execute: async recordId => {
-        await updateRecord('argument', recordId, { judgement_requested: true })
+      execute: async (userId, recordId) => {
+        await _updateRecord(userId, 'argument', recordId, { judgement_requested: true })
       }
     }
   },
-  question: {
+  statement: {
     requestJudgement: {
       label: 'Request judgement',
       getVisibility: async recordId => {
-        const record = await getRecordById('question', recordId)
+        const record = await getRecordById('statement', recordId)
         return (
           !record?.judgement_requested
           && await hasArguments(recordId)
           && !(await hasUnjudgedArguments(recordId))
         ) ?? false
       },
-      execute: async recordId => {
-        if (await attemptJudgeQuestion(recordId)) {
+      execute: async (userId, recordId) => {
+        if (await attemptJudgeStatement(recordId)) {
           // success
         } else {
-          await updateRecord('question', recordId, { judgement_requested: true })
+          await _updateRecord(userId, 'statement', recordId, { judgement_requested: true })
         }
       }
     },
     requestAdditiveJudgement: {
       label: 'Request judgement',
       getVisibility: async recordId => {
-        const record = await getRecordById('question', recordId)
+        const record = await getRecordById('statement', recordId)
         return !record?.judgement_requested && record?.argument_aggregation_type_id === 'additive'
       },
-      execute: async recordId => {
-        await updateRecord('question', recordId, { judgement_requested: true })
+      execute: async (userId, recordId) => {
+        await _updateRecord(userId, 'statement', recordId, { judgement_requested: true })
       }
     }
   }
@@ -83,16 +85,17 @@ export const getVisibleActions = async (
   }
 }
 
-export const executeAction = async (
+export const executeAction = safeWrap(async (
+  userId: number,
   tableName: string,
   actionName: string,
   recordId: Id
 ) => {
   const action = tableActions[tableName][actionName]
   if (await action.getVisibility(recordId)) {
-    await action.execute(recordId)
+    await action.execute(userId, recordId)
   } else {
     return 'This action is no longer available.'
   }
-}
+})
 

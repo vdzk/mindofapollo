@@ -1,7 +1,8 @@
 "use server"
 
-import {safeWrap} from "~/api/shared/mutate";
+import {_updateRecord, insertRecord, safeWrap} from "~/api/shared/mutate";
 import {sql} from "~/db";
+import { DataRecord } from "~/schema/type";
 
 export const getJudgeArgument = safeWrap(async (userId) => {
     // TODO: postpone new entries for a random priod of time to avoid sniping?
@@ -18,4 +19,10 @@ export const getJudgeArgument = safeWrap(async (userId) => {
     LIMIT 1
   `
     return result[0]
+})
+
+export const judgeArgument = safeWrap(async (userId, id: number, record: DataRecord) => {
+  // TODO: authorazation
+  await insertRecord("argument_judgement", {id, ...record})
+  await _updateRecord(userId, "argument", id, {judgement_requested: false})
 })

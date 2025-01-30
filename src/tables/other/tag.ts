@@ -8,9 +8,9 @@ export const tag: TableSchema = {
     }
   },
   aggregates: {
-    questions: {
+    statements: {
       type: 'n-n',
-      table: 'question'
+      table: 'statement'
     },
     directives: {
       type: 'n-n',

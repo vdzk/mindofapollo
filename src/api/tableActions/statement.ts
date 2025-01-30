@@ -3,21 +3,21 @@ import {safeWrap} from "~/api/shared/mutate";
 import {sql} from "~/db";
 import { Id } from "~/types";
 
-export const hasArguments = safeWrap(async (userId, questionId: Id) => {
+export const hasArguments = safeWrap(async (userId, statementId: Id) => {
     const result = await sql`
     SELECT id
     FROM argument
-    WHERE question_id = ${questionId}
+    WHERE statement_id = ${statementId}
     LIMIT 1
   `
     return result.length > 0
 })
 
-export const hasUnjudgedArguments = safeWrap(async (userId, questionId: Id) => {
+export const hasUnjudgedArguments = safeWrap(async (userId, statementId: Id) => {
     const result = await sql`
     SELECT id
     FROM argument
-    WHERE question_id = ${questionId}
+    WHERE statement_id = ${statementId}
       AND ( judgement_requested  OR NOT EXISTS (
         SELECT 1
         FROM argument_judgement

@@ -4,10 +4,10 @@ import { DataRecord, TableSchema } from "../../schema/type";
 export const argument: TableSchema = {
   plural: 'arguments',
   columns: {
-    question_id: {
+    statement_id: {
       type: 'fk',
       fk: {
-        table: 'question',
+        table: 'statement',
         labelColumn: 'text'
       }
     },
@@ -54,6 +54,20 @@ export const argument: TableSchema = {
       type: '1-n',
       table: 'argument_conditional',
       column: 'id'
+    }
+  },
+  sections: {
+    details: {
+      label: 'details',
+      fields: ['statement_id', 'pro']
+    },
+    criticism: {
+      label: 'crticism',
+      fields: ['critical_statements']
+    },
+    evaluaion: {
+      label: 'evaluation',
+      fields: ['judgement_requested', 'judgements', 'conditionals']
     }
   }
 }

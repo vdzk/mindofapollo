@@ -12,9 +12,9 @@ export const argument_aggregation_type: TableSchema = {
     }
   },
   aggregates: {
-    questions: {
+    statements: {
       type: '1-n',
-      table: 'question',
+      table: 'statement',
       column: 'argument_aggregation_type_id'
     }
   }

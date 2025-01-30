@@ -1,34 +1,33 @@
 "use server"
 
 import { sql } from "../../db"
-import {safeWrap, writeHistory} from "../shared/mutate"
+import {_updateRecord, safeWrap, writeHistory} from "../shared/mutate"
 
-export const getConfirnmationQuestion = safeWrap(async (userId) => {
+export const getConfirnmationStatement = safeWrap(async (userId) => {
   "use server"
   // TODO: use TABLESAMPLE when the table grows enough
-  // TODO: exclude answers created by the user
+  // TODO: exclude statements created by the user
   // TODO: avoid sniping by ...
-  // TODO: excluding recent answers up to a random time limit
-  // TODO: issuing a token to prove that the question was selected randomly
+  // TODO: excluding recent statements up to a random time limit
+  // TODO: issuing a token to prove that the statement was selected randomly
   //       Confirm that this avoids bypassing existance of con arguments
   // TODO: rate limiting for a single user
   // + what if the intent of creator of the statement was never to ask for confirmation by random sampling. Make marking for random sampling explicit with a flag?
   // TODO: Check behaviour for anonymous user
 
   const results = await sql`
-    SELECT question.id, question.answer
-    FROM question
+    SELECT statement.id, statement.text
+    FROM statement
     LEFT JOIN argument
-      ON question.id = argument.question_id
+      ON statement.id = argument.statement_id
       AND argument.pro = false
     LEFT JOIN confirmation_h
-      ON question.id = confirmation_h.id
+      ON statement.id = confirmation_h.id
       AND confirmation_h.op_user_id = ${userId}
     WHERE NOT decided 
-      AND answer != ''
-      -- exclude questions with con arguments
-      AND argument.question_id IS NULL
-      -- exclude questions that the user has already confirmed
+      -- exclude statements with con arguments
+      AND argument.statement_id IS NULL
+      -- exclude statements that the user has already confirmed
       AND confirmation_h.id IS NULL
     ORDER BY random()
     LIMIT 1
@@ -38,12 +37,12 @@ export const getConfirnmationQuestion = safeWrap(async (userId) => {
 
 export const addConfirmation = safeWrap(async (
   userId: number,
-  questionId: number
+  statementId: number
 ) => {
-  "use server"
+  // TODO: check permissions
   const result = await sql`
     INSERT INTO confirmation (id, count)
-    VALUES (${questionId}, 1)
+    VALUES (${statementId}, 1)
     ON CONFLICT (id)
     DO UPDATE SET count = confirmation.count + 1
     RETURNING *
@@ -52,5 +51,9 @@ export const addConfirmation = safeWrap(async (
   const count = record.count as number
   await writeHistory(
     userId, count === 1 ? 'INSERT' : 'UPDATE', 'confirmation', record)
-  return count
+  // TODO: make this number dynamic, depending on the number of users
+  const requiredConfirmations = 2
+  if (count >= requiredConfirmations) {
+    await _updateRecord(userId, 'statement', statementId, { decided: true, confidence: 1 })
+  }
 })

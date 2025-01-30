@@ -5,7 +5,7 @@ import { schema } from "~/schema/schema";
 import { FormField } from "./FormField";
 import { DataRecord } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/api/shared/extRecord";
-import { getExtTableName } from "~/util";
+import { getExtTableName, isEmpty } from "~/util";
 import { createStore } from "solid-js/store";
 import { getPermission } from "~/getPermission";
 import { getRecords } from "~/client-only/query";
@@ -91,7 +91,7 @@ export const Form: Component<{
     ([key, value]) => (key === 'id') || value === undefined)
 
   const onSubmit = async () => {
-    const extension = extTableName() ? {
+    const extension = extTableName() && !isEmpty(diffExt) ? {
       tableName: extTableName() as string,
       record: diffExt
     } : undefined

@@ -3,10 +3,10 @@ import { TableSchema } from "../../schema/type";
 export const research_note: TableSchema = {
   plural: 'research notes',
   columns: {
-    question_id: {
+    statement_id: {
       type: 'fk',
       fk: {
-        table: 'question',
+        table: 'statement',
         labelColumn: 'text'
       }
     },
