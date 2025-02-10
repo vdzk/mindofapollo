@@ -1,3 +1,5 @@
+import { Id } from "~/types"
+
 export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id'
 export type DataLiteral = string | number | boolean | null
 export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
@@ -6,7 +8,9 @@ export type ColumnType = 'boolean' | 'integer'
 export interface DataRecord {[column: string]: DataLiteral }
 export type DataRecordWithId = DataRecord & {id: number}
 export type HistoryRecord = DataRecord & {
+  id: Id,
   data_op: DataOp
+  op_action: string
   op_user_id: number
   op_timestamp: Date
 }

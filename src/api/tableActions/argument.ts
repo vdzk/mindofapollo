@@ -1,20 +1,19 @@
 "use server"
-import {safeWrap} from "~/api/shared/mutate";
-import {sql} from "~/db";
+import { onError, sql } from "~/db";
 import { Id } from "~/types";
 
-export const addedCriticalStatement = safeWrap(async (userId, argumentId: Id) => {
-    const result = await sql`
-    SELECT csh.id
-    FROM critical_statement_h csh
-    LEFT JOIN argument a
-      ON csh.argument_id = a.id
-      AND a.judgement_requested = true
-    WHERE csh.argument_id = ${argumentId}
-      AND csh.op_user_id = ${userId}
-      AND csh.data_op = 'INSERT'
-      AND a.id IS NULL
+export const _getCreatedCriticalStatement = async (
+  userId: number,
+  argumentId: Id
+) => {
+  const result = await sql`
+    SELECT cs.id, cs.id_expl_id
+    FROM critical_statement cs
+    JOIN expl
+      ON expl.id = cs.id_expl_id
+    WHERE cs.argument_id = ${argumentId}
+      AND expl.userId = ${userId}
     LIMIT 1
-  `
-    return result.length > 0
-})
+  `.catch(onError)
+  return result?.[0]
+}

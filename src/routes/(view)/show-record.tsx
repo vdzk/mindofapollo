@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { createEffect, createSignal, Match, Show, Switch, useContext } from "solid-js";
+import { Match, Show, Switch, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { schema } from "~/schema/schema";

@@ -1,6 +1,5 @@
 import { Component, Match, Switch } from "solid-js";
-import { BooleanColumn, ColumnSchema, DataLiteral, DataRecord, ForeignKey } from "~/schema/type";
-import { ColumnLabel } from "./ColumnLabel";
+import { BooleanColumn, DataRecord, ForeignKey } from "~/schema/type";
 import { createAsync } from "@solidjs/router";
 import { getRecordById } from "~/api/shared/select";
 import { getPercent, nbsp } from "~/util";
@@ -22,25 +21,23 @@ const FkValue: Component<{
   })
 
   return (
-    <div>
-      <a
-        class="hover:underline"
-        href={`/show-record?tableName=${tableName}&id=${props.id}`}
-      >
-        {record?.()?.[props.column.fk.labelColumn] ?? nbsp}
-      </a>
-    </div>
+    <a
+      class="hover:underline"
+      href={`/show-record?tableName=${tableName}&id=${props.id}`}
+    >
+      {record?.()?.[props.column.fk.labelColumn] ?? nbsp}
+    </a>
   )
 }
 
-export interface DetailProps {
+export interface DisplayValue {
   tableName: string
   colName: string
   label?: string
   record: DataRecord
 }
 
-export const Detail: Component<DetailProps> = props => {
+export const DisplayValue: Component<DisplayValue> = props => {
   const column = () => schema.tables[props.tableName].columns[props.colName]
   const value = () => props.record[props.colName]
 
@@ -63,36 +60,31 @@ export const Detail: Component<DetailProps> = props => {
   }
 
   return (
-    <div class="px-2 pb-2">
-      <ColumnLabel {...props} column={column()} />
-      <Switch>
-        <Match when={columnType() === 'fk'}>
-          <FkValue
-            column={column() as ForeignKey}
-            id={value() as number}
-          />
-        </Match>
-        <Match when={columnType() === 'boolean'}>
-          <Switch>
-            <Match when={(column() as BooleanColumn).optionLabels}>
-              <div>
-                {(column() as BooleanColumn).optionLabels?.[value() ? 1 : 0]}
-              </div>
-            </Match>
-            <Match when>
-              {value() ? 'true' : 'false'}
-            </Match>
-          </Switch>
-        </Match>
-        <Match when={columnType() === 'proportion'}>
-          {value() ? getPercent(value() as number) : nbsp}
-        </Match>
-        <Match when>
-          <div class="whitespace-pre-line">
-            {value() || nbsp}
-          </div>
-        </Match>
-      </Switch>
-    </div>
+    <Switch>
+      <Match when={columnType() === 'fk'}>
+        <FkValue
+          column={column() as ForeignKey}
+          id={value() as number}
+        />
+      </Match>
+      <Match when={columnType() === 'boolean'}>
+        <Switch>
+          <Match when={(column() as BooleanColumn).optionLabels}>
+            {(column() as BooleanColumn).optionLabels?.[value() ? 1 : 0]}
+          </Match>
+          <Match when>
+            {value() ? 'true' : 'false'}
+          </Match>
+        </Switch>
+      </Match>
+      <Match when={columnType() === 'proportion'}>
+        {value() ? getPercent(value() as number) : nbsp}
+      </Match>
+      <Match when>
+        <span class="whitespace-pre-line">
+          {value() || nbsp}
+        </span>
+      </Match>
+    </Switch>
   )
 }

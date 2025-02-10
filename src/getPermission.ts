@@ -9,6 +9,8 @@ const noEditCols: Record<string, string[]> = {
   argument: ['judgement_requested']
 }
 
+// TODO: it doesn't make sense for a normal user to adit a critical statment, only delete and create a new one instead. 
+
 export const getPermission = (
   userId: number | undefined,
   action: 'create' | 'read' | 'update' | 'delete',

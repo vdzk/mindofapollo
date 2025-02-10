@@ -5,7 +5,7 @@ import { ColumnSchema } from "~/schema/type";
 import { getExtRecordById } from "~/api/shared/extRecord";
 import { getAllKeys, getExtTableName } from "~/util";
 import { Aggregate } from "../components/Aggregate";
-import { Detail, DetailProps } from "./Detail";
+import { Detail, DetailProps } from "./details";
 import { getPermission } from "~/getPermission";
 import { SessionContext } from "~/SessionContext";
 import { Id } from "~/types";

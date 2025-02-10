@@ -1,5 +1,5 @@
 import { createResource } from "solid-js";
-import { Detail } from "~/components/Detail";
+import { Detail } from "~/components/details";
 import { PageTitle, Subtitle } from "~/components/PageTitle";
 import { RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";

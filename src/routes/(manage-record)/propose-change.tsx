@@ -5,7 +5,7 @@ import { getExtRecordById } from "~/api/shared/extRecord";
 import { humanCase, titleColumnName } from "~/util";
 import { createSignal, For, Show } from "solid-js";
 import { schema } from "~/schema/schema";
-import { Detail } from "~/components/Detail";
+import { Detail } from "~/components/details";
 import { FormField } from "~/components/FormField";
 import { createStore } from "solid-js/store";
 import { DataRecord } from "~/schema/type";

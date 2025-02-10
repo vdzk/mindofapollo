@@ -1,6 +1,6 @@
-import {url} from "./constant"
-import {schema} from "./schema/schema"
-import {DataRecord} from "./schema/type"
+import { url } from "./constant"
+import { schema } from "./schema/schema"
+import { DataRecord } from "./schema/type"
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 
@@ -90,7 +90,7 @@ export const getVirtualColNames = (tableName: string) => {
       non.push(colName)
     }
   }
-  return {all, non, queries, serverFn, local}
+  return { all, non, queries, serverFn, local }
 }
 
 export const resolveEntries = async <T>(entries: [string, Promise<T>][]) =>
@@ -126,3 +126,26 @@ export const getAllKeys = (objects: (Record<string, any> | undefined)[]) =>
 export const isEmpty = (obj: Record<string, any>) => Object.keys(obj).length === 0
 
 export const getPercent = (x: number) => Math.round(x * 100) + '%'
+
+export const pick = <T extends Record<string, any>, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> =>
+  keys.reduce((acc, key) => {
+    if (key in obj) acc[key] = obj[key]
+    return acc
+  }, {} as Pick<T, K>)
+
+export const pickWithExplId = <T extends Record<string, any>, K extends keyof T & string>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> & Record<`${K}_expl_id`, number> => {
+  const picked = pick(obj, keys)
+
+  const withExplId = keys.reduce((acc, key, index) => {
+    acc[`${key}_expl_id`] = index
+    return acc
+  }, {} as Record<`${K}_expl_id`, number>)
+
+  return { ...picked, ...withExplId }
+}

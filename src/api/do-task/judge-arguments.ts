@@ -23,6 +23,6 @@ export const getJudgeArgument = safeWrap(async (userId) => {
 
 export const judgeArgument = safeWrap(async (userId, id: number, record: DataRecord) => {
   // TODO: authorazation
-  await insertRecord("argument_judgement", {id, ...record})
-  await _updateRecord(userId, "argument", id, {judgement_requested: false})
+  await insertRecord('judge', "argument_judgement", {id, ...record})
+  await _updateRecord(userId, 'judge', "argument", id, {judgement_requested: false})
 })
