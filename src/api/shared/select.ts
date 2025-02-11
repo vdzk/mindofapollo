@@ -74,17 +74,10 @@ export const listRecords = async ( tableName: string ) => {
   if (personal && !userId) {
     return []
   }
-  const createdBy = (tableName: string, userId: number) => sql`
-  JOIN ${sql(tableName + '_h')} h
-    ON h.id = t.id
-    AND h.op_user_id = ${userId}
-    AND h.data_op = 'INSERT'
-`
 
   const records = await sql`
     SELECT t.*
     FROM ${sql(tableName)} t
-    ${ personal ? createdBy(tableName, userId!) : sql``}
     ORDER BY t.id
   `.catch(onError)
   await injectVirtualValues(tableName, records)

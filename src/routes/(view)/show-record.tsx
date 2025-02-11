@@ -8,7 +8,6 @@ import { deleteExtById, getExtRecordById } from "~/api/shared/extRecord";
 import { SessionContext } from "~/SessionContext";
 import { titleColumnName } from "~/util";
 import { RecordPageTitle } from "../../components/PageTitle";
-import { RecordHistory, UserHistory } from "~/components/histories";
 import { getPermission } from "~/getPermission";
 import { getRecords } from "~/client-only/query";
 import { useSafeParams } from "~/client-only/util";
@@ -61,13 +60,10 @@ export default function ShowRecord() {
     } else {
       options.push({ id: 'allDetails', label: 'details' })
     }
-    if (sp().tableName === 'person') {
-      options.push({ id: 'userHisory', label: 'user history' })
-    }
-    options.push({ id: 'history', label: 'history' })
     options.push({ id: 'actions', label: 'actions' })
     return options
   }
+  
   const selectedSection = () => (searchParams.section as string | undefined) ?? sectionOptions()[0].id
 
   return (
@@ -80,12 +76,6 @@ export default function ShowRecord() {
         onChange={(sectionId) => setSearchParams({section: sectionId})}
       >
         <Switch>
-          <Match when={selectedSection() === 'userHisory'}>
-            <UserHistory userId={recordId()} />
-          </Match>
-          <Match when={selectedSection() === 'history'}>
-            <RecordHistory tableName={sp().tableName} recordId={recordId()} />
-          </Match>
           <Match when={selectedSection() === 'actions'}>
             <Actions tableName={sp().tableName} recordId={recordId()} />
             <div>

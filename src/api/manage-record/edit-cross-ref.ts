@@ -1,6 +1,6 @@
 "use server"
 
-import {safeWrap, writeHistory} from "~/api/shared/mutate";
+import {safeWrap} from "~/api/shared/mutate";
 import {sql} from "~/db";
 import {xName} from "~/util";
 
@@ -23,7 +23,7 @@ export const deleteCrossRecord = safeWrap(async (
     AND ${sql(params.b + '_id')} = ${params.b_id}
   RETURNING *
   `
-  writeHistory(userId, 'DELETE', tableName, result[0])
+  return result;
 })
 export const insertCrossRecord = safeWrap(async (
   userId: number,
@@ -36,5 +36,5 @@ export const insertCrossRecord = safeWrap(async (
   VALUES (${props.a_id}, ${props.b_id})
   RETURNING *
   `;
-  writeHistory(userId, 'INSERT', tableName, result[0]);
+  return result;
 })

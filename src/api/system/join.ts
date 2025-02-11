@@ -1,7 +1,6 @@
 "use server"
 
 import { onError, sql } from "../../db"
-import { writeHistory } from "../shared/mutate"
 
 export const join = async (name: string, code: string) => {
   const invites = await sql`
@@ -19,14 +18,12 @@ export const join = async (name: string, code: string) => {
     `.catch(onError)
     if (persons?.[0]) {
       const person = persons[0]
-      await writeHistory(person.id, 'INSERT', 'person', person)
-      const results = await sql`
+      await sql`
         UPDATE invite
         SET person_id = ${person.id}
         WHERE id = ${invite.id}
         RETURNING *
       `
-      await writeHistory(person.id, 'UPDATE', 'invite', results[0])
       return person.id
     }
   }

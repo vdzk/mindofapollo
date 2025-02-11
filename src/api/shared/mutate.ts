@@ -102,26 +102,6 @@ export const insertRecord = safeWrap(async (
 });
 
 // TODO: implement efficient bulk version
-export const writeHistory = async (
-  userId: number,
-  op_action: string,
-  data_op: DataOp,
-  tableName: string,
-  record?: DataRecord
-) => {
-  if (record) {
-    await sql`
-      INSERT INTO ${sql(tableName + '_h')} ${sql({
-        ...record,
-        data_op,
-        op_action,
-        op_user_id: userId
-      })}
-    `;
-  }
-};
-
-// TODO: implement an efficient bulk version
 export const insertRecordsOneByOne = async (
   tableName: string,
   records: DataRecord[]

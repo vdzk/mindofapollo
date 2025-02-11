@@ -1,7 +1,8 @@
 "use server"
 
 import { sql } from "../../db"
-import {_updateRecord, safeWrap, writeHistory} from "../shared/mutate"
+import {_updateRecord, safeWrap} from "../shared/mutate"
+import { getRecordById } from "../shared/select";
 
 export const getConfirnmationStatement = safeWrap(async (userId) => {
   "use server"
@@ -49,11 +50,20 @@ export const addConfirmation = safeWrap(async (
   `
   const record = result[0]
   const count = record.count as number
-  await writeHistory(
-    userId, count === 1 ? 'INSERT' : 'UPDATE', 'confirmation', record)
   // TODO: make this number dynamic, depending on the number of users
   const requiredConfirmations = 2
   if (count >= requiredConfirmations) {
-    await _updateRecord(userId, 'statement', statementId, { decided: true, confidence: 1 })
+    await _updateRecord('statement', statementId, null, { decided: true, confidence: 1 })
   }
+})
+
+export const confirmOrChallenge = safeWrap(async (
+  userId: number,
+  tableName: string,
+  id: number,
+  action: 'confirm' | 'challenge'
+) => {
+  const record = await getRecordById(tableName, id)
+  await _updateRecord(tableName, id, userId, {...record})
+  return []
 })

@@ -7,13 +7,6 @@ export type ColumnType = 'boolean' | 'integer'
 
 export interface DataRecord {[column: string]: DataLiteral }
 export type DataRecordWithId = DataRecord & {id: number}
-export type HistoryRecord = DataRecord & {
-  id: Id,
-  data_op: DataOp
-  op_action: string
-  op_user_id: number
-  op_timestamp: Date
-}
 
 interface SharedColumnProps {
   label?: string
