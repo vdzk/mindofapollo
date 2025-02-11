@@ -4,6 +4,19 @@ import { CustomDataType } from "~/schema/type"
 
 const createEnums = () => []
 
+const createExplTable = () => [
+  `CREATE TABLE expl (
+    id serial PRIMARY KEY,
+    userId integer,
+    action text NOT NULL,
+    version integer NOT NULL,
+    tableName text,
+    recordId integer,
+    data jsonb,
+    timestamp timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`
+]
+
 const createTable = (tableName: string) => {
   const { columns, extendsTable } = schema.tables[tableName]
   let idDataType = 'serial'
@@ -12,8 +25,12 @@ const createTable = (tableName: string) => {
   } else if (columns.id) {
     idDataType = columns.id.type
   }
-  const colDefs = ['id ' + idDataType + ' PRIMARY KEY']
+  const colDefs = [
+    'id ' + idDataType + ' PRIMARY KEY',
+    'id_expl_id integer REFERENCES expl(id)'
+  ]
   
+  // Add base column definitions
   for (const colName in columns) {
     if (colName === 'id') continue
     const column = columns[colName]
@@ -42,6 +59,13 @@ const createTable = (tableName: string) => {
         + (column.getVisibility ? '' : ' NOT NULL')
         + (defaultValue !== undefined ? ' DEFAULT ' + defaultValue : '')
       )
+    }
+  }
+
+  // Add expl_id columns for each column
+  for (const colName in columns) {
+    if (columns[colName].type !== 'virtual') {
+      colDefs.push(`${colName}_expl_id integer REFERENCES expl(id)`)
     }
   }
 
@@ -74,7 +98,12 @@ const createCrossTables = () => {
           const xTableName = `${a}_x_${b}`
 
           statements.push(
-            `CREATE TABLE ${xTableName} ( ${a}_id integer NOT NULL, ${b}_id integer NOT NULL)`,
+            `CREATE TABLE ${xTableName} (
+              ${a}_id integer NOT NULL,
+              ${b}_id integer NOT NULL,
+              ${a}_id_expl_id integer REFERENCES expl(id),
+              ${b}_id_expl_id integer REFERENCES expl(id)
+            )`,
             `ALTER TABLE ${xTableName} ADD CONSTRAINT ${xTableName}_un UNIQUE (${a}_id,${b}_id)`,
             `CREATE INDEX ${xTableName}_${a}_id_idx ON ${xTableName} (${a}_id)`,
             `CREATE INDEX ${xTableName}_${b}_id_idx ON ${xTableName} (${b}_id)`
@@ -90,13 +119,16 @@ const createValueTypeTables = () => Object.entries(pgType2valueTypeTableName)
   .map(([pgType, valueTypeTableName]) => (
     `CREATE TABLE ${valueTypeTableName} (
       id SERIAL PRIMARY KEY,
-      value ${pgType}
+      id_expl_id integer REFERENCES expl(id),
+      value ${pgType},
+      value_expl_id integer REFERENCES expl(id)
     )`
   ))
 
 const createDbSchema = () => {
   const statements = [] as string[]
   statements.push(...createEnums())
+  statements.push(...createExplTable())
   for (const tableName in schema.tables) {
     statements.push(
       ...createTable(tableName),
