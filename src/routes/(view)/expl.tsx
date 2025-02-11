@@ -5,11 +5,13 @@ import { Dynamic } from "solid-js/web"
 import { getRecordById } from "~/api/shared/select"
 import { getExpl } from "~/api/view/expl"
 import { useSafeParams } from "~/client-only/util"
-import { DetailDiff } from "~/components/details"
+import { Detail, DetailDiff } from "~/components/details"
 import { actions } from "~/components/expl/actions/actions"
 import { ExplLink } from "~/components/expl/ExplLink"
 import { Link } from "~/components/Link"
 import { PageTitle, Subtitle } from "~/components/PageTitle"
+import { DataRecord } from "~/schema/type"
+import { humanCase } from "~/util"
 
 export default function Expl() {
   const sp = useSafeParams<{ id: number }>(['id'])
@@ -53,6 +55,23 @@ export default function Expl() {
         </Switch>
         <br/>
         Timestamp: {expl()!.timestamp.toISOString().split('.')[0]}
+        <Show when={expl()!.data.insert}>
+          <Subtitle>Inserts</Subtitle>
+          <For each={Object.entries(expl()!.data.insert)}>
+            {([tableName, record]) => (
+              <>
+                <div class="font-bold mt-2">{humanCase(tableName)}</div>
+                <For each={Object.keys(record as DataRecord)}>
+                  {colName => <Detail
+                    tableName={tableName}
+                    colName={colName}
+                    record={record as DataRecord}
+                  />}
+                </For>
+              </>
+            )}
+          </For>
+        </Show>
         <Show when={expl()!.data.diff}>
           <Subtitle>Updates</Subtitle>
           <For each={diffColNames}>

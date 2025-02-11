@@ -38,8 +38,6 @@ export function safeWrap<
 
 // TODO: implement efficient bulk version
 export const insertValueType = async (
-  userId: number,
-  op_action: string,
   tableName: string,
   value: DataLiteral,
 ) => {
@@ -48,13 +46,10 @@ export const insertValueType = async (
     VALUES (${value})
     RETURNING *
   `
-  await writeHistory(userId, op_action, 'INSERT', tableName, result[0]);
   return result
 }
 
 export const injectValueTypes = async (
-  userId: number,
-  op_action: string,
   tableName: string,
   record: DataRecord,
   recordId?: Id
@@ -63,7 +58,6 @@ export const injectValueTypes = async (
   for (const colName in columns) {
     const column = columns[colName]
     if (column.type === 'value_type_id') {
-      // Assume that the value is provided insed of the id
       const value = record[colName]
       if (value !== undefined) {
         const originId = record[column.typeOriginColumn] as number | undefined
@@ -71,27 +65,40 @@ export const injectValueTypes = async (
           ? await getTypeByRecordId(tableName, colName, recordId)
           : await getTypeByOriginId(tableName, colName, originId as number)
         const vttn = getValueTypeTableNameByColType(colType)
-        const [{id}] = await insertValueType(userId, op_action, vttn, value)
+        const [{id}] = await insertValueType(vttn, value)
         record[colName] = id
       }
     }
   }
 }
 
+export const _insertRecord = async (
+  tableName: string,
+  record: DataRecord,
+  explId: number
+) => {
+  await injectValueTypes(tableName, record)
+  const colNames = Object.keys(record)
+  const explIdFragment = Object.fromEntries(
+    colNames.map(colName => [`${colName}_expl_id`, explId])
+  )
+  
+  const result = await sql`
+    INSERT INTO ${sql(tableName)} ${sql({...record, ...explIdFragment})}
+    RETURNING *
+  `;
+  return result[0];
+};
+
 export const insertRecord = safeWrap(async (
   userId: number,
-  op_action: string,
   tableName: string,
   record: DataRecord
 ) => {
   if (!getPermission(userId, 'create', tableName).granted) return
-  await injectValueTypes(userId, op_action, tableName, record)
-  const result = await sql`
-    INSERT INTO ${sql(tableName)} ${sql(record)}
-    RETURNING *
-  `;
-  await writeHistory(userId, op_action, 'INSERT', tableName, result[0]);
-  return result;
+  await injectValueTypes(tableName, record)
+  const result = await _insertRecord(tableName, record, userId);
+  return [result];
 });
 
 // TODO: implement efficient bulk version
@@ -116,23 +123,21 @@ export const writeHistory = async (
 
 // TODO: implement an efficient bulk version
 export const insertRecordsOneByOne = async (
-  op_action: string,
   tableName: string,
   records: DataRecord[]
 ) => await Promise.all(
-  records.map((record) => insertRecord(op_action, tableName, record))
+  records.map((record) => insertRecord(tableName, record))
 )
 
 export const updateRecord = safeWrap(async (
   userId: number,
-  op_action: string,
   tableName: string,
   id: Id,
   record: DataRecord
 ) => {
   const permission = getPermission(userId, 'update', tableName, id)
   if (!permission.granted) return
-  await injectValueTypes(userId, op_action, tableName, record, id)
+  await injectValueTypes(tableName, record, id)
   const forbiddenColumn = Object.keys(record)
     .find(colName => !permission.colNames!.includes(colName))
   if (forbiddenColumn) {
@@ -140,7 +145,7 @@ export const updateRecord = safeWrap(async (
     console.trace()
     console.log(chalk.red('ERROR'), {forbiddenColumn})
   } else {
-    _updateRecord(userId, op_action, tableName, id, record)
+    _updateRecord(tableName, id, userId, record)
   }
 })
 
@@ -178,7 +183,6 @@ export const _updateRecord = async <T extends DataRecord>(
 
 export const deleteById = safeWrap(async (
   userId: number,
-  op_action: string,
   tableName: string,
   id: Id
 ) => {
@@ -187,7 +191,7 @@ export const deleteById = safeWrap(async (
     WHERE id = ${id}
     RETURNING *
   `;
-  await writeHistory(userId, op_action, 'DELETE', tableName, result[0])
+  return result;
 });
 export const multiListRecords = (tableNames: string[]) => Promise.all(tableNames.map(listRecords)).catch(onError);
 

@@ -76,7 +76,8 @@ export const attemptJudgeStatement = safeWrap(async (
       diff
     }
     await finishExpl(explId, data)
+    return explId
   } else {
-    return false
+    return
   }
 })

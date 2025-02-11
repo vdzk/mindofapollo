@@ -8,6 +8,7 @@ import { finishExpl, startExpl } from "~/server-only/expl";
 import { ReqArgJudgeExpl } from "~/components/expl/actions/ReqArgJudge";
 import { pickWithExplId } from "~/util";
 import { _getCreatedCriticalStatement } from "./argument";
+import { ReqStatementJudgeExpl } from "~/components/expl/actions/ReqStatementJudge";
 
 
 export type TableAction = (
@@ -42,32 +43,41 @@ const tableActions: Record<string, Record<string, TableAction>> = {
     }
   },
   statement: {
-    requestJudgement: {
-      label: 'Request judgement',
-      getVisibility: async recordId => {
-        const record = await getRecordById('statement', recordId)
-        return (
-          !record?.judgement_requested
-          && await hasArguments(recordId)
-          && !(await hasUnjudgedArguments(recordId))
-        ) ?? false
-      },
-      execute: async (userId, recordId) => {
-        if (await attemptJudgeStatement(recordId)) {
-          // success
-        } else {
-          await _updateRecord(userId, 'requestJudgement', 'statement', recordId, { judgement_requested: true })
+    requestJudgement: async (userId, recordId, execute) => {
+      const record = await getRecordById('statement', recordId)
+      if (record && !record.judgement_requested
+        && await hasArguments(recordId)
+        && !(await hasUnjudgedArguments(recordId))
+      ) {
+        if (!execute) return 'Request judgement'
+        const explId = await startExpl(userId, 'ReqStatementJudge', 1, 'statement', recordId)
+        
+        const judged_expl_id = await attemptJudgeStatement(
+          recordId, explId, 'user requested judgement of the statement'
+        )
+        
+        const data: ReqStatementJudgeExpl = {
+          statement: pickWithExplId(record, ['id', 'text']),
+          judged_expl_id
         }
+
+        if (!judged_expl_id) {
+          const diff = await _updateRecord('statement', recordId, userId, { judgement_requested: true })
+          data.diff = diff
+        }
+        
+        await finishExpl(explId, data)
+        return true
       }
     },
-    requestAdditiveJudgement: {
-      label: 'Request judgement',
-      getVisibility: async recordId => {
-        const record = await getRecordById('statement', recordId)
-        return !record?.judgement_requested && record?.argument_aggregation_type_id === 'additive'
-      },
-      execute: async (userId, recordId) => {
-        await _updateRecord(userId, 'requestAdditiveJudgement', 'statement', recordId, { judgement_requested: true })
+    requestAdditiveJudgement: async (userId, recordId, execute) => {
+      const record = await getRecordById('statement', recordId)
+      if (!record?.judgement_requested && record?.argument_aggregation_type_id === 'additive') {
+        if (!execute) return 'Request judgement'
+        const explId = await startExpl(userId, 'ReqAdditiveJudge', 1, 'statement', recordId)
+        const diff = await _updateRecord('statement', recordId, userId, { judgement_requested: true })
+        await finishExpl(explId, { statement: pickWithExplId(record, ['id', 'text']), diff })
+        return true
       }
     }
   }
@@ -99,7 +109,7 @@ export const executeAction = safeWrap(async (
   actionName: string,
   recordId: number
 ) => {
-  const success = tableActions[tableName][actionName](userId, recordId, true)
+  const success = await tableActions[tableName][actionName](userId, recordId, true)
   if (!success) {
     return 'This action is no longer available.'
   }

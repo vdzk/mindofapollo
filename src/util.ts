@@ -149,3 +149,12 @@ export const pickWithExplId = <T extends Record<string, any>, K extends keyof T 
 
   return { ...picked, ...withExplId }
 }
+
+// add _axpl_id properties to the object
+export const addExplIds = (record: Record<string, any>, explId: number) => {
+  const result = { ...record }
+  for (const key in record) {
+    result[`${key}_expl_id`] = explId
+  }
+  return result
+} 
