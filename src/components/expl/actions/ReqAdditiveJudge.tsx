@@ -18,7 +18,7 @@ export const ReqAdditiveJudge: ExplComponent<ReqAdditiveJudgeExpl> = props => {
       "<Link
         label={props.statement.title}
         route="show-record"
-        params={{tableName: 'statement', id: props.recordId}}
+        params={{tableName: 'statement', id: props.record_id}}
       />"
       <ExplLink explId={props.statement.title_expl_id} />
     </div>

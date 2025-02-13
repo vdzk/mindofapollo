@@ -15,9 +15,3 @@ export const Button: Component<{
     </button>
   )
 }
-
-export const ExplBtn: Component<{onClick: () => void}> = props => <Button
-  label="EXPL"
-  tooltip="explain"
-  onClick={props.onClick}
-/>

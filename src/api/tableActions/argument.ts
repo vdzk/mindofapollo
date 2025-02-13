@@ -12,7 +12,7 @@ export const _getCreatedCriticalStatement = async (
     JOIN expl
       ON expl.id = cs.id_expl_id
     WHERE cs.argument_id = ${argumentId}
-      AND expl.userId = ${userId}
+      AND expl.user_id = ${userId}
     LIMIT 1
   `.catch(onError)
   return result?.[0]

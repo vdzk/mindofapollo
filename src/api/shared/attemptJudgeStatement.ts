@@ -7,7 +7,7 @@ import { finishExpl, startExpl } from "~/server-only/expl";
 import { JudgeStatementExpl } from "~/components/expl/actions/JudgeStatement";
 import { AddExplId } from "~/components/expl/types";
 import { getRecordById } from "./select";
-import { pickWithExplId } from "~/util";
+import { addExplIdColNames, pickWithExplId } from "~/util";
 
 export const attemptJudgeStatement = safeWrap(async (
   userId,
@@ -16,14 +16,13 @@ export const attemptJudgeStatement = safeWrap(async (
   triggerLabel: string
 ) => {
   const colNames = ['pro', 'isolated_confidence', 'conditional_confidence']
-  const explIdColNames = colNames.map(colName => colName + '_expl_id')
   
   const argumentConfidences: AddExplId<{
       pro: boolean,
       isolated_confidence: number | null,
       conditional_confidence: number | null
     }>[] = await sql`
-    SELECT ${sql([...colNames, ...explIdColNames])}
+    SELECT ${sql(addExplIdColNames(colNames))}
     FROM argument
     LEFT JOIN argument_judgement
       ON argument_judgement.id = argument.id

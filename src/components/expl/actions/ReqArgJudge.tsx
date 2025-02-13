@@ -15,21 +15,24 @@ export interface ReqArgJudgeExpl {
 export const ReqArgJudge: ExplComponent<ReqArgJudgeExpl> = props => {
   return (<>
     <Subtitle>Summary</Subtitle>
-    An authorised user requested judgement for the argument
-    "<Link
-      label={props.argument.title}
-      route="show-record"
-      params={{ tableName: 'argument', id: props.recordId }}
-    />"<ExplLink explId={props.argument.title_expl_id} />
+    <div class="px-2">
+      An authorised user requested judgement for the argument
+      "<Link
+        label={props.argument.title}
+        route="show-record"
+        params={{ tableName: 'argument', id: props.record_id }}
+      />" <ExplLink explId={props.argument.title_expl_id} />
+    </div>
     
     <Checks items={[
-      <>Arguments for/against the target statment are evidential
+      <>Arguments for/against the target statment are evidential{' '}
       <ExplLink explId={props.statement.argument_aggregation_type_id_expl_id} />
       , so initially they can be assesed independently of each other.</>,
 
-      <>The user has added a critical statement against the argument.
-      <ExplLink explId={props.critical_statement.id_expl_id} />
-      Hence the user is less likely to be very biased for the argument. Hence it's less likely that the user was trying to protect the argument against criticism by requesting judgement before others had a chance to criticise it.</>
+      <>The user has added a critical statement against the argument{' '}
+      <ExplLink explId={props.critical_statement.id_expl_id} />.{' '}
+      <br/>Hence the user is less likely to be very biased for the argument.
+      <br/>Hence it's less likely that the user was trying to protect the argument against criticism by requesting judgement before others had a chance to criticise it.</>
     ]}/>
   </>)
 }

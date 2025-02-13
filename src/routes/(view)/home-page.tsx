@@ -3,6 +3,7 @@ import { createAsync, query } from "@solidjs/router"
 import { createSignal, For } from "solid-js"
 import { getHomePageStatements } from "~/api/view/home-page"
 import { getRecords } from "~/client-only/query"
+import { Link } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
 import { PageTitle } from "~/components/PageTitle"
 
@@ -55,6 +56,14 @@ export default function HomePage() {
           </For>
         </div>
       </MasterDetail>
+      <div class="px-2 mt-2">
+        <Link
+          label="All statements"
+          route="list-records"
+          type="button"
+          params={{tableName: 'statement'}}
+        />
+      </div>
     </main>
   )
 }

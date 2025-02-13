@@ -4,7 +4,7 @@ import {schema} from "~/schema/schema"
 import {DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries} from "~/schema/type"
 import {onError, sql} from "../../db"
 import chalk from "chalk"
-import {getVirtualColNames, resolveEntries, xName} from "~/util"
+import {addExplIdColNames, getVirtualColNames, resolveEntries, xName} from "~/util"
 import {Row, RowList} from "postgres"
 import {getVirtualValuesByServerFn} from "./virtualColumns"
 import {getUserId} from "./session"
@@ -90,7 +90,7 @@ export const getRecordById = async (tableName: string, id: string | number) => {
   if (!permission.granted) return
   let colNames = permission.colNames ?? getVirtualColNames(tableName).non
   const records = await sql`
-    SELECT ${sql(colNames)}
+    SELECT ${sql(addExplIdColNames(colNames))}
     FROM ${sql(tableName)}
     WHERE id = ${id}
   `.catch(onError)

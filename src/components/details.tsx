@@ -1,9 +1,8 @@
-import { Component } from "solid-js";
-import { DataRecord } from "~/schema/type";
-import { ColumnLabel } from "./ColumnLabel";
-import { DisplayValue } from "./DislayValue";
-import { ExplDiff } from "./expl/types";
-import { ExplLink } from "./expl/ExplLink";
+import { Component } from "solid-js"
+import { DataRecord } from "~/schema/type"
+import { ColumnLabel } from "./ColumnLabel"
+import { DisplayValue } from "./DislayValue"
+import { ExplDiff } from "./expl/types"
 
 export interface DetailProps {
   tableName: string
@@ -30,7 +29,6 @@ export const DetailDiff: Component<{
     <div class="px-2 pb-2">
       <ColumnLabel {...props} />
       <DisplayValue {...props} record={props.diff.before} />
-      <ExplLink explId={props.diff.before[props.colName + '_expl_id']} />
       →
       <DisplayValue {...props} record={props.diff.after} />
     </div>

@@ -1,11 +1,6 @@
 import { url } from "./constant"
 import { schema } from "./schema/schema"
 import { DataRecord } from "./schema/type"
-import TimeAgo from 'javascript-time-ago'
-import en from 'javascript-time-ago/locale/en'
-
-TimeAgo.addDefaultLocale(en)
-export const timeAgo = new TimeAgo('en-US')
 
 export const humanCase = (str: string) => str
   .split('_')
@@ -136,25 +131,22 @@ export const pick = <T extends Record<string, any>, K extends keyof T>(
     return acc
   }, {} as Pick<T, K>)
 
+
+export const addExplIdColNames = <K extends string>(colNames: K[]) => [
+  ...colNames,
+  ...colNames.map(colName => colName + '_expl_id' as `${K}_expl_id` )
+]
+
 export const pickWithExplId = <T extends Record<string, any>, K extends keyof T & string>(
   obj: T,
   keys: K[]
-): Pick<T, K> & Record<`${K}_expl_id`, number> => {
-  const picked = pick(obj, keys)
+): Pick<T, K> & Record<`${K}_expl_id`, number> => pick(obj, addExplIdColNames(keys))
 
-  const withExplId = keys.reduce((acc, key, index) => {
-    acc[`${key}_expl_id`] = index
-    return acc
-  }, {} as Record<`${K}_expl_id`, number>)
-
-  return { ...picked, ...withExplId }
-}
-
-// add _axpl_id properties to the object
+// add _expl_id properties to the object
 export const addExplIds = (record: Record<string, any>, explId: number) => {
   const result = { ...record }
   for (const key in record) {
     result[`${key}_expl_id`] = explId
   }
   return result
-} 
+}

@@ -7,11 +7,11 @@ const createEnums = () => []
 const createExplTable = () => [
   `CREATE TABLE expl (
     id serial PRIMARY KEY,
-    userId integer,
+    user_id integer,
     action text NOT NULL,
     version integer NOT NULL,
-    tableName text,
-    recordId integer,
+    table_name text,
+    record_id integer,
     data jsonb,
     timestamp timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
   )`
@@ -64,7 +64,7 @@ const createTable = (tableName: string) => {
 
   // Add expl_id columns for each column
   for (const colName in columns) {
-    if (columns[colName].type !== 'virtual') {
+    if (colName !== 'id' && columns[colName].type !== 'virtual') {
       colDefs.push(`${colName}_expl_id integer REFERENCES expl(id)`)
     }
   }

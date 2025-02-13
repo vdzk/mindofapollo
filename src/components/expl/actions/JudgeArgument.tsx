@@ -23,24 +23,25 @@ export interface JudgeArgumentExpl {
 export const JudgeArgument: ExplComponent<JudgeArgumentExpl> = props => {
   return (<>
     <Subtitle>Summary</Subtitle>
-    <div>
+    <div class="px-2">
       The user judged the argument 
       "<Link
         label={props.argument.title}
         route="show-record"
         params={{tableName: 'argument', id: props.argument.id}}
-      />"
+      />"{' '}
       <ExplLink explId={props.argument.title_expl_id} />
-      {' '} for the statement "
+      <br/>for/against the statement "
       <Link
         label={props.statement.text}
         route="show-record"
         params={{tableName: 'statement', id: props.argument.statement_id}}
-      />"
+      />"{' '}
       <ExplLink explId={props.statement.text_expl_id} />
     </div>
     
     <Checks items={[
+      <>The argument was not created by the user themself</>,
       <>The argument was in the pool of arguments pending judgment</>,
       <>The argument was randomly selected from the pending pool to ensure fair processing order</>,
     ]}/>

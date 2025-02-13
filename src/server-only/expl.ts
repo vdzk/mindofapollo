@@ -1,19 +1,30 @@
 import { onError, sql } from "~/db"
 
 export const startExpl = async (
-  userId: number | null,
+  user_id: number | null,
   action: string,
   version: number,
-  tableName: string | null,
-  recordId: number | null
+  table_name: string | null,
+  record_id: number | null
 ) => {
   const result = await sql`
     INSERT INTO expl ${sql({
-      userId, action, version, tableName, recordId
+      user_id, action, version, table_name, record_id
     })}
     RETURNING id
   `.catch(onError)
   return result![0].id as number
+}
+
+export const setExplRecordId = async (
+  explId: number,
+  record_id: number
+) => {
+  await sql`
+    UPDATE expl
+    SET record_id = ${record_id}
+    WHERE id = ${explId}
+  `.catch(onError)
 }
 
 export const finishExpl = async (

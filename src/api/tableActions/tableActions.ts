@@ -22,7 +22,7 @@ const tableActions: Record<string, Record<string, TableAction>> = {
     requestJudgement: async (userId, recordId, execute) => {
       //TODO: if there was not activity for a period of time, qualify any signed in user to make the request
       const argument = await getRecordById('argument', recordId)
-      if (!argument) return
+      if (!argument || argument.judgement_requested) return
       const statement = await getRecordById('statement', argument.statement_id as number)
       if (!statement || statement.argument_aggregation_type_id !== 'evidential') return
       const critical_statement = await _getCreatedCriticalStatement(userId, recordId)
@@ -91,7 +91,7 @@ export const getVisibleActions = safeWrap(async (
   if (tableActions[tableName]) {
     const promises = Object.entries(tableActions[tableName]).map(
       async ([name, action]) => {
-        const actionLabel = await action(userId, recordId, true)
+        const actionLabel = await action(userId, recordId, false)
         return actionLabel ? { name, label: actionLabel } : null
       }
     )

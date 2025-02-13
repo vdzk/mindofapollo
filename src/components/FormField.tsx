@@ -77,8 +77,8 @@ export const FormField: Component<{
   return (
     <label class="block pb-2">
       <ColumnLabel
+        tableName={props.tableName}
         colName={props.colName}
-        column={column()}
         label={props.label}
       />
       <Switch>

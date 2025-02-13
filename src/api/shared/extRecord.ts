@@ -2,7 +2,7 @@
 
 import { DataRecord } from "~/schema/type"
 import { onError } from "../../db"
-import { deleteById } from "./mutate";
+import { deleteById, safeWrap } from "./mutate";
 import { getRecordById, getValueById } from "~/api/shared/select";
 import { _insertRecord, updateRecord } from "./mutate";
 import { getExtTableName } from "~/util"
@@ -10,9 +10,9 @@ import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByRecordId } from "./valueType";
 import { Id } from "~/types";
-import { startExpl } from "~/server-only/expl";
+import { setExplRecordId, startExpl } from "~/server-only/expl";
 
-export const insertExtRecord = async (
+export const insertExtRecord = safeWrap(async (
   userId: number,
   tableName: string,
   record: DataRecord,
@@ -21,11 +21,11 @@ export const insertExtRecord = async (
 ) => {
   const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)
-  if (result && result.length > 0) {
-    const extExplId = await startExpl(userId, 'genericChange', 1, extTableName, result[0].id);
-    await _insertRecord(extTableName, {id: result[0].id, ...extRecord}, extExplId)
+  if (result) {
+    await _insertRecord(extTableName, {id: result.id, ...extRecord}, explId)
+    await setExplRecordId(explId, result.id)
   }
-}
+})
 
 export const updateExtRecord = (
   tableName: string,

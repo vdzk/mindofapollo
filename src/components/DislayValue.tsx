@@ -1,10 +1,11 @@
-import { Component, Match, Switch } from "solid-js";
+import { Component, Match, Show, Switch } from "solid-js";
 import { BooleanColumn, DataRecord, ForeignKey } from "~/schema/type";
 import { createAsync } from "@solidjs/router";
 import { getRecordById } from "~/api/shared/select";
 import { getPercent, nbsp } from "~/util";
 import { schema } from "~/schema/schema";
 import { getOriginTypes } from "~/api/shared/valueType";
+import { ExplLink } from "./expl/ExplLink";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -59,32 +60,40 @@ export const DisplayValue: Component<DisplayValue> = props => {
     }
   }
 
+  const explId = () => props.record[props.colName + '_expl_id']
+
   return (
-    <Switch>
-      <Match when={columnType() === 'fk'}>
-        <FkValue
-          column={column() as ForeignKey}
-          id={value() as number}
-        />
-      </Match>
-      <Match when={columnType() === 'boolean'}>
-        <Switch>
-          <Match when={(column() as BooleanColumn).optionLabels}>
-            {(column() as BooleanColumn).optionLabels?.[value() ? 1 : 0]}
-          </Match>
-          <Match when>
-            {value() ? 'true' : 'false'}
-          </Match>
-        </Switch>
-      </Match>
-      <Match when={columnType() === 'proportion'}>
-        {value() ? getPercent(value() as number) : nbsp}
-      </Match>
-      <Match when>
-        <span class="whitespace-pre-line">
-          {value() || nbsp}
-        </span>
-      </Match>
-    </Switch>
+    <>
+      <Switch>
+        <Match when={columnType() === 'fk'}>
+          <FkValue
+            column={column() as ForeignKey}
+            id={value() as number}
+          />
+        </Match>
+        <Match when={columnType() === 'boolean'}>
+          <Switch>
+            <Match when={(column() as BooleanColumn).optionLabels}>
+              {(column() as BooleanColumn).optionLabels?.[value() ? 1 : 0]}
+            </Match>
+            <Match when>
+              {value() ? 'true' : 'false'}
+            </Match>
+          </Switch>
+        </Match>
+        <Match when={columnType() === 'proportion'}>
+          {value() ? getPercent(value() as number) : nbsp}
+        </Match>
+        <Match when>
+          <span class="whitespace-pre-line">
+            {value() || nbsp}
+          </span>
+        </Match>
+      </Switch>
+      <Show when={explId()}>
+        {' '}
+        <ExplLink explId={explId() as number} />
+      </Show>
+    </>
   )
 }

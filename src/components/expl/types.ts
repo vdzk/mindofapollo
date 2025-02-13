@@ -1,11 +1,11 @@
 import { Component } from "solid-js"
 
 export type ExplComponent<T> = Component<{
-  userId: number | null
+  user_id: number | null
   action: string
   version: number
-  tableName: string | null
-  recordId: number | null
+  table_name: string | null
+  record_id: number | null
   timestamp: Date
 } & T>
 

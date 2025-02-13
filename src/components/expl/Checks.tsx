@@ -4,7 +4,7 @@ import { Subtitle } from "../PageTitle";
 export const Checks: Component<{items: JSXElement[]}> = props => (
   <>
     <Subtitle>Checks</Subtitle>
-    <ol>
+    <ol class="px-6 list-decimal">
       <For each={props.items}>
         { item => <li>{item}</li>}
       </For>

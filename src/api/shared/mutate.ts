@@ -1,6 +1,6 @@
 "use server"
 
-import { DataLiteral, DataOp, DataRecord } from "~/schema/type";
+import { DataLiteral, DataRecord } from "~/schema/type";
 import { onError, sql } from "../../db";
 import { getUserId } from "./session";
 import { listRecords } from "./select";
@@ -11,6 +11,9 @@ import { getPermission } from "~/getPermission";
 import { Id } from "~/types";
 import chalk from "chalk";
 import { AddExplId } from "~/components/expl/types";
+import { setExplRecordId, startExpl } from "~/server-only/expl";
+import { addExplIdColNames, addExplIds } from "~/util";
+import { virtual } from "vinxi/dist/types/lib/plugins/virtual";
 
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
@@ -78,13 +81,18 @@ export const _insertRecord = async (
   explId: number
 ) => {
   await injectValueTypes(tableName, record)
-  const colNames = Object.keys(record)
-  const explIdFragment = Object.fromEntries(
-    colNames.map(colName => [`${colName}_expl_id`, explId])
+  const allColNames = ['id', ...Object.entries(schema.tables[tableName].columns)
+    .filter(([colName, column]) =>
+      colName !== 'id' && column.type !== 'virtual')
+    .map(([colName]) => colName)
+  ]
+
+  const explIds = Object.fromEntries(
+    allColNames.map(colName => [`${colName}_expl_id`, explId])
   )
   
   const result = await sql`
-    INSERT INTO ${sql(tableName)} ${sql({...record, ...explIdFragment})}
+    INSERT INTO ${sql(tableName)} ${sql({...record, ...explIds})}
     RETURNING *
   `;
   return result[0];
@@ -97,7 +105,9 @@ export const insertRecord = safeWrap(async (
 ) => {
   if (!getPermission(userId, 'create', tableName).granted) return
   await injectValueTypes(tableName, record)
-  const result = await _insertRecord(tableName, record, userId);
+  const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
+  const result = await _insertRecord(tableName, record, explId);
+  await setExplRecordId(explId, result.id)
   return [result];
 });
 
@@ -136,21 +146,19 @@ export const _updateRecord = async <T extends DataRecord>(
   newFragment: T
 ) => {
   const colNames = Object.keys(newFragment)
-  const explIdColNames = colNames.map(colName => colName + '_expl_id')
+  const colNamesWithExplId = addExplIdColNames(colNames)
 
   const oldFragments = await sql`
-    SELECT ${sql([...colNames, ...explIdColNames])}
+    SELECT ${sql(colNamesWithExplId)}
     FROM ${sql(tableName)}
     WHERE id = ${id}
   `
-  const explIdFragment = Object.fromEntries(
-    explIdColNames.map(key => [key, explId]))
   
   await sql`
     UPDATE ${sql(tableName)}
     SET ${sql(
-      {...newFragment, ...explIdFragment} as any,
-      [...colNames, ...explIdColNames]
+      addExplIds(newFragment, explId),
+      colNamesWithExplId
     )}
     WHERE id = ${id}
   `

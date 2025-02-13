@@ -38,12 +38,7 @@ export default function ShowRecord() {
   const recordId = () => Number.isNaN(parseInt(sp().id)) ? sp().id : parseInt(sp().id)
   const userId = () => session?.user?.()?.id
   const record = createAsync(() => getExtRecordById(sp().tableName, recordId()))
-  const table = () => schema.tables[sp().tableName]
   const titleColName = () => titleColumnName(sp().tableName)
-  const titleColumn = () => table().columns[titleColName()]
-  const displayColumn: ColumnFilter = (colName, column, visible) => visible
-    && (colName !== titleColName() // show non-title
-      || titleColumn().type === 'fk') // and title that is foreign key
   const deleteAction = useAction(_delete);
   const onDelete = () => deleteAction(sp().tableName, recordId())
   const titleText = () => (record()?.[titleColName()] ?? '') as string
@@ -99,7 +94,6 @@ export default function ShowRecord() {
               tableName={sp().tableName}
               id={recordId()}
               selectedSection={selectedSection()}
-              {...{ displayColumn }}
             />
           </Match>
         </Switch>

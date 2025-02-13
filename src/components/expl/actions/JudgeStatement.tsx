@@ -29,26 +29,28 @@ export const JudgeStatement: ExplComponent<JudgeStatementExpl> = props => {
 
   return (<>
     <Subtitle>Summary</Subtitle>
-    The system calculated its confidence in the statement
-    <Show when={props.statement}>
-      "<Link
-        label={props.statement!.text}
-        route="show-record"
-        params={{ tableName: 'statement', id: props.recordId }}
-      />"
-      <ExplLink explId={props.statement!.text_expl_id} />
-    </Show>
-    to be {getPercent(props.diff.after.confidence)}.
+    <div class="px-2">
+      The system calculated its confidence in the statement{' '}
+      <Show when={props.statement}>
+        "<Link
+          label={props.statement!.text}
+          route="show-record"
+          params={{ tableName: 'statement', id: props.record_id }}
+        />"
+        <ExplLink explId={props.statement!.text_expl_id} />
+      </Show>
+      <br/>to be {getPercent(props.diff.after.confidence)}.
+    </div>
 
     <Checks items={[
       <>All of the arguments have been judged.</>,
       <>For each side, the confidence of each subsequent argument was judged conditionally on all preceding arguments</>
-    ]}/>
+    ]} />
 
     <Subtitle>Derivation</Subtitle>
     <For each={[{ label: 'Pro', pro: true }, { label: 'Con', pro: false }]}>
       {({ label, pro }) => (
-        <>
+        <div class="px-2">
           <h3>{label}</h3>
           <ul>
             <For each={sideArgs(pro)}>
@@ -62,7 +64,7 @@ export const JudgeStatement: ExplComponent<JudgeStatementExpl> = props => {
                         value !== null && (
                           <div>
                             {firstCap(type)} confidence: {value}{' '}
-                            <ExplLink {...{explId}} />
+                            <ExplLink {...{ explId }} />
                           </div>
                         )
                       )
@@ -72,12 +74,12 @@ export const JudgeStatement: ExplComponent<JudgeStatementExpl> = props => {
               )}
             </For>
           </ul>
-        </>
+        </div>
       )}
     </For>
 
 
-    <div>
+    <div class="px-2">
       Final confidences of the arguments
       <ul>
         <For each={[{ label: 'Pro', pro: 1 }, { label: 'Con', pro: 0 }]}>
@@ -89,9 +91,9 @@ export const JudgeStatement: ExplComponent<JudgeStatementExpl> = props => {
         </For>
       </ul>
     </div>
-    <div>
-      The system applied the statement confidence formula to the confidences above. You can test it out in the
-      <Link label="confidence calculator" route="confience-calculator" />.
+    <div class="px-2">
+      The system applied the statement confidence formula to the confidences above. You can test it out in the{' '}
+      <Link label="confidence calculator" route="confidence-calculator" />.
     </div>
   </>)
 }
