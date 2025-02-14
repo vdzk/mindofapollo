@@ -7,6 +7,7 @@ dist
 .vinxi
 app.config.timestamp_*.js
 schema-dir
+temp
 
 # Environment
 .env

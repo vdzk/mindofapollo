@@ -5,9 +5,7 @@ export const statement: TableSchema = {
   plural: 'statements',
   columns: {
     text: {
-      type: 'virtual',
-      getLocal: (record) => `(${record.decided ? getPercent(record.confidence as number) : '?'}) ${record.text}`,
-      preview: true
+      type: 'varchar'
     },
     argument_aggregation_type_id: {
       type: 'fk',
