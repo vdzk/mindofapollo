@@ -7,10 +7,11 @@ import {getRecords} from "~/client-only/query";
 
 
 export const FkInput: Component<{
-  tableName: string,
-  colName: string,
-  column: ForeignKey,
+  tableName: string
+  colName: string
+  column: ForeignKey
   value?: number
+  isNew: boolean
   onChangeFormat: OnChangeFormat
 }> = (props) => {
   const [searchParams] = useSearchParams()
@@ -19,7 +20,11 @@ export const FkInput: Component<{
   const format = (value: string) => {
     const { fk } = props.column
     if (fk.extensionTables) {
-      setExtValue(value || undefined)
+      if (value) {
+        setExtValue(fk.extensionTables[parseInt(value)])
+      } else {
+        setExtValue(undefined)
+      }
     }
     if (value) {
       return parseInt(value)
@@ -42,7 +47,7 @@ export const FkInput: Component<{
     <select
       name={props.colName}
       class="max-w-full"
-      disabled={props.value !== undefined && !!props.column.fk.extensionTables}
+      disabled={!props.isNew && !!props.column.fk.extensionTables}
       onChange={onChange}
     >
       <option></option>

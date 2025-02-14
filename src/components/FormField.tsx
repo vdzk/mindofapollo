@@ -40,6 +40,7 @@ export const FormField: Component<{
   const column = () => schema.tables[props.tableName].columns[props.colName]
   const [searchParams] = useSearchParams()
   const value = () => props.diff[props.colName] ?? props.record?.[props.colName]
+  const isNew = () => !props.record
 
   const updateDiffValue = (colName: string, val: DataLiteral) => {
     const diffValue = (props.record?.[colName] === val) ? undefined! : val
@@ -72,7 +73,7 @@ export const FormField: Component<{
     }
   })
 
-  if (columnType() === 'virtual' && !props.record) return null
+  if (columnType() === 'virtual' && isNew()) return null
 
   return (
     <label class="block pb-2">
@@ -152,7 +153,8 @@ export const FormField: Component<{
             tableName={props.tableName}
             colName={props.colName}
             column={column() as ForeignKey}
-            value={value()}
+            value={value() as number | undefined}
+            isNew={isNew()}
             {...{ onChangeFormat }}
           />
         </Match>
