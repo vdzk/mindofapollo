@@ -22,8 +22,6 @@ const createTable = (tableName: string) => {
   let idDataType = 'serial'
   if (extendsTable) {
     idDataType = 'integer'
-  } else if (columns.id) {
-    idDataType = columns.id.type
   }
   const colDefs = [
     'id ' + idDataType + ' PRIMARY KEY',
@@ -36,9 +34,8 @@ const createTable = (tableName: string) => {
     const column = columns[colName]
     if (column.type === 'virtual') continue
     if (column.type === 'fk') {
-      let fkType = schema.tables[column.fk.table].columns.id?.type ?? 'integer'
       colDefs.push(
-        colName + ' ' + fkType + ' '
+        colName + ' integer '
         + 'REFERENCES ' + column.fk.table
         + (column.fk.optional ? '' : ' NOT NULL')
       )
@@ -129,13 +126,13 @@ const createDbSchema = () => {
   const statements = [] as string[]
   statements.push(...createEnums())
   statements.push(...createExplTable())
-  for (const tableName in schema.tables) {
+    for (const tableName in schema.tables) {
     statements.push(
       ...createTable(tableName),
       ...createIndexes(tableName)
     )
   }
-  statements.push(...createCrossTables())
+    statements.push(...createCrossTables())
   statements.push(...createValueTypeTables())
   return statements.join(';\n')
 }

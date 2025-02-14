@@ -3,9 +3,9 @@ import { TableSchema } from "../../schema/type";
 export const argument_type: TableSchema = {
   plural: 'argument types',
   columns: {
-    id: {
-      // TODO: prevent editing this field
-      type: 'varchar'
+    name: {
+      type: 'varchar',
+      preview: true
     },
     description: {
       type: 'text'

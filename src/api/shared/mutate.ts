@@ -8,22 +8,19 @@ import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
 import { getPermission } from "~/getPermission";
-import { Id } from "~/types";
 import chalk from "chalk";
 import { AddExplId } from "~/components/expl/types";
 import { setExplRecordId, startExpl } from "~/server-only/expl";
 import { addExplIdColNames, addExplIds } from "~/util";
-import { virtual } from "vinxi/dist/types/lib/plugins/virtual";
-
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
 
 // Handle SQL error and userId checking
 export function safeWrap<
-  F extends (userId: number, ...args: any[]) => any>(
-    fn: F): (
-      ...args: Tail<Parameters<F>>
-    ) => Promise<Awaited<ReturnType<F>> | undefined> {
+F extends (userId: number, ...args: any[]) => any>(
+  fn: F): (
+...args: Tail<Parameters<F>>
+) => Promise<Awaited<ReturnType<F>> | undefined> {
   return async function (...args: Tail<Parameters<F>>): Promise<Awaited<ReturnType<F>> | undefined> {
     const userId = await getUserId();
     // const userId = 1
@@ -31,7 +28,7 @@ export function safeWrap<
       onError(new Error('Error: no userId'));
     } else {
       try {
-        return await fn(userId, ...args);
+    return await fn(userId, ...args);
       } catch (error) {
         onError(error as any);
       }
@@ -55,7 +52,7 @@ export const insertValueType = async (
 export const injectValueTypes = async (
   tableName: string,
   record: DataRecord,
-  recordId?: Id
+  recordId?: number
 ) => {
   const { columns } = schema.tables[tableName]
   for (const colName in columns) {
@@ -108,7 +105,7 @@ export const insertRecord = safeWrap(async (
   const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId);
   await setExplRecordId(explId, result.id)
-  return [result];
+  return[result];
 });
 
 // TODO: implement efficient bulk version
@@ -122,7 +119,7 @@ export const insertRecordsOneByOne = async (
 export const updateRecord = safeWrap(async (
   userId: number,
   tableName: string,
-  id: Id,
+  id: number,
   record: DataRecord
 ) => {
   const permission = getPermission(userId, 'update', tableName, id)
@@ -135,13 +132,13 @@ export const updateRecord = safeWrap(async (
     console.trace()
     console.log(chalk.red('ERROR'), {forbiddenColumn})
   } else {
-    _updateRecord(tableName, id, userId, record)
+    await _updateRecord(tableName, id, userId, record)
   }
 })
 
 export const _updateRecord = async <T extends DataRecord>(
   tableName: string,
-  id: Id,
+  id: number,
   explId: number,
   newFragment: T
 ) => {
@@ -172,7 +169,7 @@ export const _updateRecord = async <T extends DataRecord>(
 export const deleteById = safeWrap(async (
   userId: number,
   tableName: string,
-  id: Id
+  id: number
 ) => {
   const result = await sql`
     DELETE FROM ${sql(tableName)}

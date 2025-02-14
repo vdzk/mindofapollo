@@ -9,7 +9,6 @@ import { getExtTableName } from "~/util"
 import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByRecordId } from "./valueType";
-import { Id } from "~/types";
 import { setExplRecordId, startExpl } from "~/server-only/expl";
 
 export const insertExtRecord = safeWrap(async (
@@ -38,7 +37,7 @@ export const updateExtRecord = (
   updateRecord(extTableName, id, extRecord),
 ]).catch(onError)
 
-export const getExtRecordById = async (tableName: string, id: Id) => {
+export const getExtRecordById = async (tableName: string, id: number) => {
   const result = await getRecordById(tableName, id)
   if (!result) return
 
@@ -63,7 +62,7 @@ export const getExtRecordById = async (tableName: string, id: Id) => {
   }
 }
 
-export const deleteExtById = async (tableName: string, id: Id) => {
+export const deleteExtById = async (tableName: string, id: number) => {
   const result = await getRecordById(tableName, id)
   if (!result) return
   const extTableName = getExtTableName(tableName, result)

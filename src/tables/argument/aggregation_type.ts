@@ -3,9 +3,9 @@ import { TableSchema } from "../../schema/type";
 export const argument_aggregation_type: TableSchema = {
   plural: 'argument aggregation types',
   columns: {
-    id: {
-      // TODO: prevent editing this field
-      type: 'varchar'
+    name: {
+      type: 'varchar',
+      preview: true
     },
     description: {
       type: 'text'

@@ -11,7 +11,7 @@ export const FkInput: Component<{
   tableName: string,
   colName: string,
   column: ForeignKey,
-  value?: any
+  value?: number
   onChangeFormat: OnChangeFormat
 }> = (props) => {
   const [searchParams] = useSearchParams()
@@ -23,14 +23,9 @@ export const FkInput: Component<{
       setExtValue(value || undefined)
     }
     if (value) {
-      if (!schema.tables[fk.table].columns.id) {
-        return parseInt(value)
-      } else {
-        return value
-      }
-    } else {
-      return null
+      return parseInt(value)
     }
+    return null
   }
   const onChange = props.onChangeFormat(format)
 
@@ -48,7 +43,7 @@ export const FkInput: Component<{
     <select
       name={props.colName}
       class="max-w-full"
-      disabled={props.value && props.column.fk.extensionTables}
+      disabled={props.value !== undefined && props.column.fk.extensionTables}
       onChange={onChange}
     >
       <option></option>

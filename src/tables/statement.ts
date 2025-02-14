@@ -5,13 +5,15 @@ export const statement: TableSchema = {
   plural: 'statements',
   columns: {
     text: {
-      type: 'varchar'
+      type: 'virtual',
+      getLocal: (record) => `(${record.decided ? getPercent(record.confidence as number) : '?'}) ${record.text}`,
+      preview: true
     },
     argument_aggregation_type_id: {
       type: 'fk',
       fk: {
         table: 'argument_aggregation_type',
-        labelColumn: 'id',
+        labelColumn: 'name',
         optional: true
       }
     },

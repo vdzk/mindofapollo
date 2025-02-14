@@ -8,7 +8,6 @@ import { Aggregate } from "../components/Aggregate";
 import { Detail, DetailProps } from "./details";
 import { getPermission } from "~/getPermission";
 import { SessionContext } from "~/SessionContext";
-import { Id } from "~/types";
 
 export type ColumnFilter = (
   colName: string,
@@ -18,7 +17,7 @@ export type ColumnFilter = (
 
 export const RecordDetails: Component<{
   tableName: string
-  id: Id
+  id: number
   selectedSection?: string
   displayColumn?: ColumnFilter
 }> = props => {

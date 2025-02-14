@@ -24,7 +24,7 @@ export const argument: TableSchema = {
       type: 'fk',
       fk: {
         table: 'argument_type',
-        labelColumn: 'id',
+        labelColumn: 'name',
         extensionTables: true
       }
     },
@@ -62,10 +62,10 @@ export const argument: TableSchema = {
       fields: ['statement_id', 'pro']
     },
     criticism: {
-      label: 'crticism',
+      label: 'criticism',
       fields: ['critical_statements']
     },
-    evaluaion: {
+    evaluation: {
       label: 'evaluation',
       fields: ['judgement_requested', 'judgements', 'conditionals']
     }

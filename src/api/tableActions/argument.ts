@@ -1,10 +1,9 @@
 "use server"
-import { onError, sql } from "~/db";
-import { Id } from "~/types";
+import { sql, onError } from "~/db";
 
 export const _getCreatedCriticalStatement = async (
   userId: number,
-  argumentId: Id
+  argumentId: number
 ) => {
   const result = await sql`
     SELECT cs.id, cs.id_expl_id

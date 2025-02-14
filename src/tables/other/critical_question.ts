@@ -7,7 +7,7 @@ export const critical_question: TableSchema = {
       type: 'fk',
       fk: {
         table: 'argument_type',
-        labelColumn: 'id'
+        labelColumn: 'name'
       }
     },
     text: {

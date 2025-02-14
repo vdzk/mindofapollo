@@ -7,7 +7,7 @@ export const rule: TableSchema = {
       type: 'fk',
       fk: {
         table: 'role',
-        labelColumn: 'id'
+        labelColumn: 'name'
       }
     },
     name: {

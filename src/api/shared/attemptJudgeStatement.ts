@@ -23,12 +23,10 @@ export const attemptJudgeStatement = safeWrap(async (
       conditional_confidence: number | null
     }>[] = await sql`
     SELECT ${sql(addExplIdColNames(colNames))}
-    FROM argument
-    LEFT JOIN argument_judgement
-      ON argument_judgement.id = argument.id
-    LEFT JOIN argument_conditional
-      ON argument_conditional.id = argument.id
-    WHERE argument.statement_id = ${statementId}
+    FROM argument a
+    LEFT JOIN argument_judgement aj ON aj.id = a.id
+    LEFT JOIN argument_conditional ac ON ac.id = a.id
+    WHERE a.statement_id = ${statementId}
   `
   let canJudge = true
   let hasNonConditional = [false, false] // [con, pro]

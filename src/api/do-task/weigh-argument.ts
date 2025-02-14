@@ -17,7 +17,8 @@ export const getWeighArgumentTaskData = safeWrap(async (userId) => {
     SELECT a.*
     FROM argument a
     JOIN statement s ON a.statement_id = s.id
-    WHERE s.argument_aggregation_type_id = 'additive'
+    JOIN argument_aggregation_type aat ON aat.id = s.argument_aggregation_type_id
+    WHERE aat.name = 'additive'
       AND s.judgement_requested = true
       AND NOT EXISTS (
         SELECT 1

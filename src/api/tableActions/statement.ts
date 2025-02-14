@@ -1,9 +1,8 @@
 "use server"
 import {safeWrap} from "~/api/shared/mutate";
 import {sql} from "~/db";
-import { Id } from "~/types";
 
-export const hasArguments = safeWrap(async (userId, statementId: Id) => {
+export const hasArguments = safeWrap(async (userId, statementId: number) => {
     const result = await sql`
     SELECT id
     FROM argument
@@ -13,7 +12,7 @@ export const hasArguments = safeWrap(async (userId, statementId: Id) => {
     return result.length > 0
 })
 
-export const hasUnjudgedArguments = safeWrap(async (userId, statementId: Id) => {
+export const hasUnjudgedArguments = safeWrap(async (userId, statementId: number) => {
     const result = await sql`
     SELECT id
     FROM argument

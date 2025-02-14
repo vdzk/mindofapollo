@@ -20,7 +20,11 @@ export const getJudgeCorrelationsData = safeWrap(async (userId) => {
       JOIN argument a ON s.id = a.question_id
       LEFT JOIN argument_conditional ac ON a.id = ac.id
       WHERE s.judgement_requested = true
-        AND s.argument_aggregation_type_id = 'evidential'
+        AND EXISTS (
+          SELECT 1 FROM argument_aggregation_type aat 
+          WHERE aat.id = s.argument_aggregation_type_id 
+          AND aat.name = 'evidential'
+        )
         AND a.pro = ${pro}
         AND ac.id IS NULL
       GROUP BY s.id

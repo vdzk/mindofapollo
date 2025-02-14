@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Match, Show, Switch, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
-import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
+import {  RecordDetails } from "~/components/RecordDetails";
 import { schema } from "~/schema/schema";
 import { deleteExtById, getExtRecordById } from "~/api/shared/extRecord";
 import { SessionContext } from "~/SessionContext";
@@ -12,11 +12,10 @@ import { getPermission } from "~/getPermission";
 import { getRecords } from "~/client-only/query";
 import { useSafeParams } from "~/client-only/util";
 import { MasterDetail } from "~/components/MasterDetail";
-import { Id } from "~/types";
 
 const _delete = action(async (
   tableName: string,
-  id: Id
+  id: number
 ) => {
   await deleteExtById(tableName, id)
   throw redirect(
@@ -35,11 +34,11 @@ export default function ShowRecord() {
   const [searchParams, setSearchParams] = useSearchParams()
   const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
   const session = useContext(SessionContext)
-  const recordId = () => Number.isNaN(parseInt(sp().id)) ? sp().id : parseInt(sp().id)
+  const recordId = () => parseInt(sp().id)
   const userId = () => session?.user?.()?.id
   const record = createAsync(() => getExtRecordById(sp().tableName, recordId()))
   const titleColName = () => titleColumnName(sp().tableName)
-  const deleteAction = useAction(_delete);
+  const deleteAction = useAction(_delete)
   const onDelete = () => deleteAction(sp().tableName, recordId())
   const titleText = () => (record()?.[titleColName()] ?? '') as string
   const premU = () => getPermission(userId(), 'update', sp().tableName, recordId())

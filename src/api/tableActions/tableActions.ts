@@ -24,7 +24,9 @@ const tableActions: Record<string, Record<string, TableAction>> = {
       const argument = await getRecordById('argument', recordId)
       if (!argument || argument.judgement_requested) return
       const statement = await getRecordById('statement', argument.statement_id as number)
-      if (!statement || statement.argument_aggregation_type_id !== 'evidential') return
+      if (!statement) return
+      const aggType = await getRecordById('argument_aggregation_type', statement.argument_aggregation_type_id as number)
+      if (!aggType || aggType.name !== 'evidential') return
       const critical_statement = await _getCreatedCriticalStatement(userId, recordId)
       if (!critical_statement) return
       if (!execute) return 'Request judgement'

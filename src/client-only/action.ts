@@ -3,12 +3,11 @@ import {deleteById} from "~/api/shared/mutate";
 import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache} from "~/client-only/query";
 import {CrossRecordMutateProps, deleteCrossRecord, insertCrossRecord} from "~/api/manage-record/edit-cross-ref";
 import {executeAction} from "~/api/tableActions/tableActions";
-import { Id } from "~/types";
 
 export const deleteForeignHopRecordAction = action(async (
   tableName: string,
   fkName: string,
-  fkId: Id,
+  fkId: number,
   hopColName: string,
   deleteId: number
 ) => {
@@ -56,7 +55,7 @@ export const executeTableAction = action(
   async (
     tableName: string,
     actionName: string,
-    recordId: Id
+    recordId: number
   ) => {
     const error = await executeAction(tableName, actionName, recordId)
     if (error) {

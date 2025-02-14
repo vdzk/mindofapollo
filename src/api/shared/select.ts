@@ -3,13 +3,11 @@
 import {schema} from "~/schema/schema"
 import {DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries} from "~/schema/type"
 import {onError, sql} from "../../db"
-import chalk from "chalk"
 import {addExplIdColNames, getVirtualColNames, resolveEntries, xName} from "~/util"
 import {Row, RowList} from "postgres"
 import {getVirtualValuesByServerFn} from "./virtualColumns"
 import {getUserId} from "./session"
 import { getPermission } from "~/getPermission"
-import { Id } from "~/types"
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -84,7 +82,7 @@ export const listRecords = async ( tableName: string ) => {
   return records
 }
 
-export const getRecordById = async (tableName: string, id: string | number) => {
+export const getRecordById = async (tableName: string, id: number) => {
   const userId = await getUserId()
   const permission = getPermission(userId, 'read', tableName, id)
   if (!permission.granted) return
@@ -111,7 +109,7 @@ export const getValueById = async (tableName: string, id: number) => {
 export const listCrossRecords = async (
     b: string,
     a: string,
-    id: Id,
+    id: number,
     first: boolean
 ) => {
   const records = await sql`
