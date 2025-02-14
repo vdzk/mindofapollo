@@ -71,7 +71,7 @@ export interface ForeignKey {
   fk: {
     table: string 
     labelColumn: string
-    extensionTables?: boolean // Choose extension table by appending labelColumn value to the table name
+    extensionTables?: string[] // Choose extension table by appending the array element corresponding to the referenced id to the table name
     getLabel?: (record: DataRecord) => string // Generate label from the foreign record,
     optional?: boolean  // Foreign key can be NULL
   }

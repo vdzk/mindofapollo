@@ -3,7 +3,6 @@ import { Component, createEffect, For, useContext } from "solid-js";
 import { ForeignKey } from "~/schema/type";
 import { ExtValueContext } from "./Form";
 import { OnChangeFormat } from "./FormField";
-import { schema } from "~/schema/schema";
 import {getRecords} from "~/client-only/query";
 
 
@@ -43,7 +42,7 @@ export const FkInput: Component<{
     <select
       name={props.colName}
       class="max-w-full"
-      disabled={props.value !== undefined && props.column.fk.extensionTables}
+      disabled={props.value !== undefined && !!props.column.fk.extensionTables}
       onChange={onChange}
     >
       <option></option>

@@ -33,10 +33,13 @@ export const getExtTableName = (
   if (record && !extValue) {
     const tableSchema = schema.tables[tableName]
     for (const [colName, column] of Object.entries(tableSchema.columns)) {
-      if (column.type === 'fk' && column.fk.extensionTables) {
-        if (record[colName]) {
-          extValue = '' + record[colName]
-          break
+      if (column.type === 'fk') {
+        const { extensionTables } = column.fk
+        if (extensionTables) {
+          if (record[colName]) {
+            extValue = extensionTables[record[colName] as number]
+            break
+          }
         }
       }
     }
