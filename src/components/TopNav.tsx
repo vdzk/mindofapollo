@@ -1,13 +1,18 @@
-import { useNavigate } from "@solidjs/router";
+import { createAsync, useNavigate } from "@solidjs/router";
 import { Component, Match, Show, Switch, useContext } from "solid-js";
 import { logout } from "~/api/shared/session";
 import { SessionContext } from "~/SessionContext";
 import { useIsPublicRoute } from "~/client-only/util";
+import { getRecordById } from "~/api/shared/select";
 
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
   const navigate = useNavigate()
   const isPublicRoute = useIsPublicRoute()
+  const user = createAsync(async () => session?.userSession()
+    ? getRecordById('person', session!.userSession()!.userId)
+    : undefined
+  )
 
   const onLogout = async () => {
     await logout()
@@ -24,7 +29,7 @@ export const TopNav: Component = () => {
         <div class="px-2 py-0.5">
           <Switch>
             <Match when={session!.loggedIn()}>
-              {session!.user()?.name}
+              {user()?.name}
               <button
                 class="text-sky-800 pl-2"
                 onClick={onLogout}

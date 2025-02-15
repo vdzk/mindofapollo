@@ -2,7 +2,7 @@
 
 import { DataLiteral, DataRecord } from "~/schema/type";
 import { onError, sql } from "../../db";
-import { getUserId } from "./session";
+import { getUserSession } from "./session";
 import { listRecords } from "./select";
 import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
@@ -12,23 +12,23 @@ import chalk from "chalk";
 import { AddExplId } from "~/components/expl/types";
 import { finishExpl, setExplRecordId, startExpl } from "~/server-only/expl";
 import { addExplIdColNames, addExplIds } from "~/util";
+import { UserSession } from "~/types";
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
 
 // Handle SQL error and userId checking
 export function safeWrap<
-  F extends (userId: number, ...args: any[]) => any>(
+  F extends (session: UserSession, ...args: any[]) => any>(
     fn: F): (
       ...args: Tail<Parameters<F>>
     ) => Promise<Awaited<ReturnType<F>> | undefined> {
   return async function (...args: Tail<Parameters<F>>): Promise<Awaited<ReturnType<F>> | undefined> {
-    const userId = await getUserId();
-    // const userId = 1
-    if (!userId) {
-      onError(new Error('Error: no userId'));
+    const userSession = await getUserSession()
+    if (!userSession) {
+      onError(new Error('Error: no user session'));
     } else {
       try {
-        return await fn(userId, ...args);
+        return await fn(userSession, ...args);
       } catch (error) {
         onError(error as any);
       }

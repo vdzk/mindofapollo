@@ -1,27 +1,27 @@
 import { createContext, createEffect, createResource, ParentComponent, Resource, Setter } from "solid-js"
-import { getUser } from "./api/shared/session"
-import { DataRecordWithId } from "./schema/type"
+import { getUserSession } from "./api/shared/session"
 import { useNavigate } from "@solidjs/router"
 import { useIsPublicRoute } from "./client-only/util"
+import { UserSession } from "./types"
 
 export const SessionContext = createContext<{
-  user: Resource<DataRecordWithId | undefined>;
+  userSession: Resource<UserSession | undefined>;
   loggedIn: () => boolean;
-  refetch: (info?: unknown) => DataRecordWithId | Promise<DataRecordWithId | undefined> | null | undefined;
-  mutate: Setter<DataRecordWithId | undefined>;
+  refetch: (info?: unknown) => UserSession | Promise<UserSession | undefined> | null | undefined;
+  mutate: Setter<UserSession | undefined>;
 }>();
 
 export const SessionContextProvider: ParentComponent = (props) => {
   const isPublicRoute = useIsPublicRoute()
   const navigate = useNavigate()
-  const [user, { mutate, refetch }] = createResource(getUser);
-  const loggedIn = () => !!user()
+  const [userSession, { mutate, refetch }] = createResource(getUserSession);
+  const loggedIn = () => !!userSession()
 
-  const session = {user, loggedIn, refetch, mutate}
+  const session = {userSession, loggedIn, refetch, mutate}
 
   createEffect(() => {
-    if (user.state == 'ready') {
-      if (!user() && !isPublicRoute()) {
+    if (userSession.state == 'ready') {
+      if (!userSession() && !isPublicRoute()) {
         navigate('/login', { replace: true })
       }
     }

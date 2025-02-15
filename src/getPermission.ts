@@ -1,4 +1,5 @@
 import { schema } from "./schema/schema"
+import { UserSession } from "./types"
 
 const excludeCols = (tableName: string, colNames: string[]) =>
   Object.keys(schema.tables[tableName].columns)
@@ -12,7 +13,7 @@ const noEditCols: Record<string, string[]> = {
 // TODO: it doesn't make sense for a normal user to adit a critical statment, only delete and create a new one instead. 
 
 export const getPermission = (
-  userId: number | undefined,
+  userSession: UserSession | undefined,
   action: 'create' | 'read' | 'update' | 'delete',
   tableName: string,
   recordId?: string | number,
@@ -23,11 +24,13 @@ export const getPermission = (
   const update = action === 'update'
   const _delete = action === 'delete'
   const mutate = create || update || _delete
-  const loggedIn = !!userId
-  const self = recordId === userId
-  const ofSelf = parentId === userId
+  const loggedIn = !!userSession
+  const self = recordId === userSession?.userId
+  const ofSelf = parentId === userSession?.userId
   const f = { granted: false, colNames: undefined }
   let colNames
+
+  if (userSession?.authorization_category === 'admin') return { granted: true }
 
   if (loggedIn) {
 
