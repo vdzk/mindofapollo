@@ -12,9 +12,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   const submit = async () => {
-    await login(parseInt(userId()))
-    session!.refetch()
-    navigate("/home-page");
+    const userSession = await login(parseInt(userId()))
+    if (userSession) {
+      session!.mutate(() => userSession)
+      navigate("/home-page");
+    }
   }
 
   return (

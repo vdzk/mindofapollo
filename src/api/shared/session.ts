@@ -19,6 +19,7 @@ export const login = async (userId: number) => {
     userId,
     authorization_category: authorizationCategory.name as UserSession['authorization_category']
   }) 
+  return session.data
 }
 
 export const logout = async () => {

@@ -24,16 +24,23 @@ export const getPermission = (
   const update = action === 'update'
   const _delete = action === 'delete'
   const mutate = create || update || _delete
-  const loggedIn = !!userSession
-  const self = recordId === userSession?.userId
-  const ofSelf = parentId === userSession?.userId
+  const t = { granted: true, colNames: undefined }
   const f = { granted: false, colNames: undefined }
+
+  // Only logged in users have permissions
+  if (!userSession) return f
+
+  const { userId, authorizationCategory } = userSession
+  
+  // Admin has full access
+  if (authorizationCategory === 'admin') return t
+
+  const self = recordId === userId
+  const ofSelf = parentId === userId
   let colNames
 
-  if (userSession?.authorization_category === 'admin') return { granted: true }
-
-  if (loggedIn) {
-
+  // Invited user permissions
+  if (authorizationCategory === 'invited') {
     if (tableName === 'person') {
       if (self) {
         if (create || _delete) return f
@@ -50,9 +57,9 @@ export const getPermission = (
       if (update || _delete) return f
     } else if (tableName === 'argument_aggregation_type') {
       if (create || _delete) return f
-    } if (tableName === 'argument_type') {
+    } else if (tableName === 'argument_type') {
       if (create || _delete) return f
-    } if (tableName === 'role') {
+    } else if (tableName === 'role') {
       if (create || _delete) return f
     }
 
@@ -62,7 +69,8 @@ export const getPermission = (
       }
     }
 
-  } else return f
+    return { granted: true, colNames }
+  }
 
-  return { granted: true, colNames }
+  return f
 }

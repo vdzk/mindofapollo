@@ -7,5 +7,5 @@ export type AuthorizationCategory = 'admin' | 'invited'
 
 export interface UserSession {
   userId: number
-  authorization_category: AuthorizationCategory
+  authorizationCategory: AuthorizationCategory
 }

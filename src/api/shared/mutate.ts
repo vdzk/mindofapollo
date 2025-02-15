@@ -18,7 +18,7 @@ type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
 
 // Handle SQL error and userId checking
 export function safeWrap<
-  F extends (session: UserSession, ...args: any[]) => any>(
+  F extends (userSession: UserSession, ...args: any[]) => any>(
     fn: F): (
       ...args: Tail<Parameters<F>>
     ) => Promise<Awaited<ReturnType<F>> | undefined> {
@@ -96,13 +96,13 @@ export const _insertRecord = async (
 };
 
 export const insertRecord = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   tableName: string,
   record: DataRecord
 ) => {
-  if (!getPermission(userId, 'create', tableName).granted) return
+  if (!getPermission(userSession, 'create', tableName).granted) return
   await injectValueTypes(tableName, record)
-  const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
+  const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId);
   await setExplRecordId(explId, result.id)
   return [result];
@@ -117,12 +117,12 @@ export const insertRecordsOneByOne = async (
 )
 
 export const updateRecord = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   tableName: string,
   id: number,
   record: DataRecord
 ) => {
-  const permission = getPermission(userId, 'update', tableName, id)
+  const permission = getPermission(userSession, 'update', tableName, id)
   if (!permission.granted) return
   if (permission.colNames) {
     const forbiddenColumn = Object.keys(record)
@@ -135,7 +135,7 @@ export const updateRecord = safeWrap(async (
     }
   }
   await injectValueTypes(tableName, record, id)
-  const explId = await startExpl(userId, 'genericChange', 1, tableName, id);
+  const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, id);
   const diff = await _updateRecord(tableName, id, explId, record)
   await finishExpl(explId, {diff})
 })
@@ -171,10 +171,11 @@ export const _updateRecord = async <T extends DataRecord>(
 }
 
 export const deleteById = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   tableName: string,
   id: number
 ) => {
+  if (!getPermission(userSession, 'delete', tableName, id).granted) return
   const result = await sql`
     DELETE FROM ${sql(tableName)}
     WHERE id = ${id}
