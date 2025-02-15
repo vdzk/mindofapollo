@@ -12,6 +12,7 @@ export const statement: TableSchema = {
       fk: {
         table: 'argument_aggregation_type',
         labelColumn: 'name',
+        defaultValueLabel: 'evidential',
         optional: true
       }
     },
@@ -82,10 +83,14 @@ export const statement: TableSchema = {
     },
     evaluation: {
       label: 'evaluation',
-      fields: ['confirmations', 'statement_approvals', 'decided', 'confidence', 'judgement_requested']
+      fields: [
+        'confirmations', 'statement_approvals', 'decided',
+        'confidence', 'judgement_requested'
+      ]
     },
     other: {
       label: 'other details'
     }
-  }
+  },
+  advanced: ['argument_aggregation_type_id']
 }

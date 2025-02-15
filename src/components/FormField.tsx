@@ -7,21 +7,7 @@ import { createAsync, useSearchParams } from "@solidjs/router"
 import { getOriginTypes } from "~/api/shared/valueType"
 import { SetStoreFunction } from "solid-js/store"
 import { etv } from "~/util"
-
-const inputTypes = {
-  varchar: 'text',
-  text: 'hidden',
-  boolean: 'checkbox',
-  integer: 'text',
-  proportion: 'text',
-  weight: 'text',
-  link_url: 'text',
-  link_title: 'text',
-  fk: 'hidden',
-  virtual: 'text',
-  option: 'text',
-  value_type_id: 'text'
-}
+import { TextInput } from "./TextInput";
 
 const getCurrent = (colName: string, diff: DataRecord, record?: DataRecord) =>
   diff[colName] ?? record?.[colName]
@@ -36,6 +22,7 @@ export const FormField: Component<{
   record?: DataRecord
   diff: DataRecord
   setDiff: SetStoreFunction<DataRecord>
+  hidden?: boolean
 }> = (props) => {
   const column = () => schema.tables[props.tableName].columns[props.colName]
   const [searchParams] = useSearchParams()
@@ -76,7 +63,10 @@ export const FormField: Component<{
   if (columnType() === 'virtual' && isNew()) return null
 
   return (
-    <label class="block pb-2">
+    <label 
+      class="block pb-2"
+      classList={{ "hidden": props.hidden }}
+    >
       <ColumnLabel
         tableName={props.tableName}
         colName={props.colName}
@@ -162,14 +152,11 @@ export const FormField: Component<{
           <></>
         </Match>
         <Match when>
-          <input
-            name={props.colName}
-            value={(value() ?? '') + ''}
-            type={inputTypes[columnType()!]}
-            class="border rounded pl-1 w-full"
-            autocomplete="off"
-            readonly={columnType() === 'virtual'}
-            {...{ onChange }}
+          <TextInput
+            value={value()}
+            onChange={onChange}
+            tableName={props.tableName}
+            colName={props.colName}
           />
         </Match>
       </Switch>

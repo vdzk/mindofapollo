@@ -102,6 +102,28 @@ export const getRecordById = async (tableName: string, id: number) => {
   return _getRecordById(tableName, id, colNames)
 }
 
+export const getIdByRecord = async (tableName: string, record: Record<string, DataLiteral>) => {
+  if (Object.keys(record).length === 0) {
+    return undefined;
+  }
+  
+  const conditions = Object.entries(record).map(
+    ([key, value]) => sql`${sql(key)} = ${value}`
+  );
+  
+  const whereClause = conditions.reduce(
+    (acc, condition, idx) => 
+      idx === 0 ? condition : sql`${acc} AND ${condition}`
+  );
+
+  const results = await sql`
+    SELECT id
+    FROM ${sql(tableName)}
+    WHERE ${whereClause}
+  `.catch(onError)
+  return results?.[0]?.id as number
+}
+
 export const getValueById = async (tableName: string, id: number) => {
   const results = await sql`
     SELECT value

@@ -73,6 +73,7 @@ export interface ForeignKey {
     labelColumn: string
     extensionTables?: string[] // Choose extension table by appending the array element corresponding to the referenced id to the table name
     getLabel?: (record: DataRecord) => string // Generate label from the foreign record,
+    defaultValueLabel?: string // the FK value should be set to id corresponding to this label by default
     optional?: boolean  // Foreign key can be NULL
   }
   getVisibility?: (record: DataRecord) => boolean
@@ -111,6 +112,7 @@ export interface TableSchema {
   aggregates?: Record<string, AggregateSchema>
   createRecord?: () => DataRecord // Generate new records automatically
   sections?: Record<string, Section>
+  advanced?: string[] // Columns that are not shown by default when editing
 }
 
 export interface AppDataSchema {

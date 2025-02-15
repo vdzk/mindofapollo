@@ -23,6 +23,7 @@ export const Form: Component<{
   const [diff, setDiff] = createStore<DataRecord>({})
   const [diffExt, setDiffExt] = createStore<DataRecord>({})
   const [extValue, setExtValue] = createSignal<string>()
+  const [showAdvanced, setShowAdvanced] = createSignal(false)
 
   const exitPath = (tableName: string) => {
     if (props.id) {
@@ -78,9 +79,15 @@ export const Form: Component<{
   const colNames = () => {
     if (permission() && permission()?.granted) {
       return permission()?.colNames ?? Object.keys(table().columns)
-    } else {
-      return []
     }
+    return []
+  }
+
+  const isAdvanced = (colName: string) => table().advanced?.includes(colName)
+
+  const hasAdvancedFields = () => {
+    const tableSchema = table()
+    return tableSchema.advanced ? tableSchema.advanced.length > 0 : false
   }
   const extTableName = () => getExtTableName(props.tableName, props.record, extValue())
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
@@ -102,13 +109,16 @@ export const Form: Component<{
     <form onSubmit={onSubmit} class="px-2 max-w-screen-sm">
       <ExtValueContext.Provider value={setExtValue}>
         <For each={colNames()}>
-          {colName => <FormField
-            tableName={props.tableName}
-            colName={colName}
-            record={props.record}
-            diff={diff}
-            setDiff={setDiff}
-          />}
+          {colName => (
+            <FormField
+              tableName={props.tableName}
+              colName={colName}
+              record={props.record}
+              diff={diff}
+              setDiff={setDiff}
+              hidden={isAdvanced(colName) && !showAdvanced()}
+            />
+          )}
         </For>
       </ExtValueContext.Provider>
       <For each={extColNames()}>
@@ -120,6 +130,15 @@ export const Form: Component<{
           setDiff={setDiffExt}
         />}
       </For>
+      <Show when={hasAdvancedFields()}>
+        <button 
+          type="button"
+          class="text-sky-800 mt-4"
+          onClick={() => setShowAdvanced(!showAdvanced())}
+        >
+          [ {showAdvanced() ? 'Hide' : 'Show'} Advanced Fields ]
+        </button>
+      </Show>
       <div class="pt-2">
         <Show when={!pristine()}>
           <button type="button" class="text-sky-800 mr-2" onClick={onSubmit}>

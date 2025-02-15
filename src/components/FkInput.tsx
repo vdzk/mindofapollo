@@ -4,6 +4,7 @@ import { ForeignKey } from "~/schema/type";
 import { ExtValueContext } from "./Form";
 import { OnChangeFormat } from "./FormField";
 import {getRecords} from "~/client-only/query";
+import { getIdByRecord } from "~/api/shared/select";
 
 
 export const FkInput: Component<{
@@ -16,6 +17,7 @@ export const FkInput: Component<{
 }> = (props) => {
   const [searchParams] = useSearchParams()
   const records = createAsync(() => getRecords(props.column.fk.table))
+
   const setExtValue = useContext(ExtValueContext)!
   const format = (value: string) => {
     const { fk } = props.column
@@ -31,13 +33,32 @@ export const FkInput: Component<{
     }
     return null
   }
-  const onChange = props.onChangeFormat(format)
+  const onSelectChange = props.onChangeFormat(format)
 
   createEffect(() => {
     const spValue = searchParams[props.colName]
     if (spValue) {
-      onChange({target: {
+      onSelectChange({target: {
         value: spValue as string,
+        name: props.colName
+      }})
+    }
+  })
+
+  const defaultValue = createAsync(async () => {
+    const { fk } = props.column
+    if (fk.defaultValueLabel) {
+      return getIdByRecord(
+        fk.table,
+        {[fk.labelColumn]: fk.defaultValueLabel}
+      )
+    }
+    return undefined  
+  })
+  createEffect(() => {
+    if (props.isNew) {
+      onSelectChange({target: {
+        value: '' + defaultValue(),
         name: props.colName
       }})
     }
@@ -48,7 +69,7 @@ export const FkInput: Component<{
       name={props.colName}
       class="max-w-full"
       disabled={!props.isNew && !!props.column.fk.extensionTables}
-      onChange={onChange}
+      onChange={onSelectChange}
     >
       <option></option>
       <For each={records()}>
