@@ -4,8 +4,9 @@ import { sql } from "../../db";
 import { getDirConcsWithValues } from "../shared/getDirConcsWithValues";
 import { safeWrap } from "../shared/mutate";
 import {xName} from "~/util";
+import { UserSession } from "~/types";
 
-export const getUserDirectives = safeWrap(async (userId) => {
+export const getUserDirectives = safeWrap(async (userSession: UserSession) => {
   const directives = await sql`
     SELECT directive.id, deed.text
     FROM ${sql(xName('person', 'person_category', true))} pxpc
@@ -15,7 +16,7 @@ export const getUserDirectives = safeWrap(async (userId) => {
       ON directive.id = directive_scope.directive_id
     JOIN deed
       ON deed.id = directive.deed_id
-    WHERE pxpc.person_id = ${userId}
+    WHERE pxpc.person_id = ${userSession.userId}
   `
   const dirConcs = await sql`
     SELECT dc.directive_id, dc.id, dc.moral_good_id, dc.value_id
@@ -36,7 +37,7 @@ export const getUserDirectives = safeWrap(async (userId) => {
   const moralWeights = await sql`
     SELECT moral_weight.moral_good_id, moral_weight.weight
     FROM moral_weight
-    WHERE moral_weight.person_id = ${userId}
+    WHERE moral_weight.person_id = ${userSession.userId}
   `
 
   return {directives, dirConcs, dirConcsWithValues, moralGoods, units, moralWeights}

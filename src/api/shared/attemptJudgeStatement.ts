@@ -8,9 +8,10 @@ import { JudgeStatementExpl } from "~/components/expl/actions/JudgeStatement";
 import { AddExplId } from "~/components/expl/types";
 import { getRecordById } from "./select";
 import { addExplIdColNames, pickWithExplId } from "~/util";
+import { UserSession } from "~/types";
 
 export const attemptJudgeStatement = safeWrap(async (
-  userId,
+  userSession: UserSession,
   statementId: number,
   triggerExplId: number,
   triggerLabel: string

@@ -3,6 +3,7 @@
 import {safeWrap} from "~/api/shared/mutate";
 import {sql} from "~/db";
 import {xName} from "~/util";
+import { UserSession } from "~/types";
 
 export interface CrossRecordMutateProps {
   a: string;
@@ -13,7 +14,7 @@ export interface CrossRecordMutateProps {
 }
 
 export const deleteCrossRecord = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   params: CrossRecordMutateProps
 ) => {
   const tableName = xName(params.a, params.b, params.first)
@@ -25,8 +26,9 @@ export const deleteCrossRecord = safeWrap(async (
   `
   return result;
 })
+
 export const insertCrossRecord = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   props: CrossRecordMutateProps
 ) => {
   const tableName = xName(props.a, props.b, props.first);

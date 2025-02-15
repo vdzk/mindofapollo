@@ -2,10 +2,10 @@
 
 import { sql } from "../../db"
 import {_updateRecord, safeWrap} from "../shared/mutate"
-import { getRecordById } from "../shared/select";
 import { startExpl } from "../../server-only/expl";
+import { UserSession } from "~/types";
 
-export const getConfirnmationStatement = safeWrap(async (userId) => {
+export const getConfirnmationStatement = safeWrap(async (userSession: UserSession) => {
   "use server"
   // TODO: use TABLESAMPLE when the table grows enough
   // TODO: exclude statements created by the user
@@ -25,7 +25,7 @@ export const getConfirnmationStatement = safeWrap(async (userId) => {
       AND argument.pro = false
     LEFT JOIN confirmation_h
       ON statement.id = confirmation_h.id
-      AND confirmation_h.op_user_id = ${userId}
+      AND confirmation_h.op_user_id = ${userSession.userId}
     WHERE NOT decided 
       -- exclude statements with con arguments
       AND argument.statement_id IS NULL
@@ -38,10 +38,11 @@ export const getConfirnmationStatement = safeWrap(async (userId) => {
 })
 
 export const addConfirmation = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   statementId: number
 ) => {
-  // TODO: check permissions
+// TODO: check permissions
+// TODO: check permissions
   const result = await sql`
     INSERT INTO confirmation (id, count)
     VALUES (${statementId}, 1)
@@ -54,19 +55,8 @@ export const addConfirmation = safeWrap(async (
   // TODO: make this number dynamic, depending on the number of users
   const requiredConfirmations = 2
   if (count >= requiredConfirmations) {
-    const explId = await startExpl(userId, 'genericChange', 1, 'statement', statementId);
+    const explId = await startExpl(userSession.userId, 'genericChange', 1, 'statement', statementId);
     await _updateRecord('statement', statementId, explId, { decided: true, confidence: 1 })
   }
 })
 
-export const confirmOrChallenge = safeWrap(async (
-  userId: number,
-  tableName: string,
-  id: number,
-  action: 'confirm' | 'challenge'
-) => {
-  const record = await getRecordById(tableName, id)
-  const explId = await startExpl(userId, 'genericChange', 1, tableName, id);
-  await _updateRecord(tableName, id, explId, {...record})
-  return []
-})

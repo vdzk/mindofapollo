@@ -4,9 +4,10 @@ import { _insertRecord, insertValueType, safeWrap } from "~/api/shared/mutate";
 import { DataLiteral } from "~/schema/type";
 import { getValueTypeTableName } from "~/schema/dataTypes";
 import { startExpl } from "~/server-only/expl";
+import { UserSession } from "~/types";
 
 export const saveChangeProposal = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   tableName: string,
   id: number,
   colName: string,
@@ -17,7 +18,7 @@ export const saveChangeProposal = safeWrap(async (
   const vttn = getValueTypeTableName(tableName, colName)
   const [{ id: old_value_id }] = await insertValueType(vttn, oldValue)
   const [{ id: new_value_id }] = await insertValueType(vttn, newValue)
-  const explId = await startExpl(userId, 'genericChange', 1, 'change_proposal', null);
+  const explId = await startExpl(userSession.userId, 'genericChange', 1, 'change_proposal', null);
 
   await _insertRecord('change_proposal', {
     table_name: tableName,

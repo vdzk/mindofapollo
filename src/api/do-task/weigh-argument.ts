@@ -3,6 +3,7 @@
 import { calcStatementConfidenceAdditively } from "~/compute";
 import { sql } from "../../db";
 import { safeWrap, updateRecord } from "../shared/mutate";
+import { UserSession } from "~/types";
 
 const getWeightedArguments = (statementId: number) => sql`
   SELECT *
@@ -12,7 +13,7 @@ const getWeightedArguments = (statementId: number) => sql`
   WHERE argument.statement_id = ${statementId}   
 `
 
-export const getWeighArgumentTaskData = safeWrap(async (userId) => {
+export const getWeighArgumentTaskData = safeWrap(async (userSession: UserSession) => {
   const [argument] = await sql`
     SELECT a.*
     FROM argument a
@@ -34,7 +35,7 @@ export const getWeighArgumentTaskData = safeWrap(async (userId) => {
 })
 
 export const attemptAggregateArguments = safeWrap(async (
-  userId,
+  userSession: UserSession,
   statementId: number
 ) => {
   const checkResults = await sql`

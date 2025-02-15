@@ -10,20 +10,22 @@ import { schema } from "~/schema/schema";
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
 import { getTypeByRecordId } from "./valueType";
 import { setExplRecordId, startExpl } from "~/server-only/expl";
+import { UserSession } from "~/types";
 
 export const insertExtRecord = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   tableName: string,
   record: DataRecord,
   extTableName: string,
   extRecord: DataRecord
 ) => {
-  const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
+  const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)
   if (result) {
     await _insertRecord(extTableName, {id: result.id, ...extRecord}, explId)
     await setExplRecordId(explId, result.id)
   }
+  return result
 })
 
 export const updateExtRecord = (

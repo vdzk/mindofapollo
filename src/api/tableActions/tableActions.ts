@@ -9,6 +9,7 @@ import { ReqArgJudgeExpl } from "~/components/expl/actions/ReqArgJudge";
 import { pickWithExplId } from "~/util";
 import { _getCreatedCriticalStatement } from "./argument";
 import { ReqStatementJudgeExpl } from "~/components/expl/actions/ReqStatementJudge";
+import { UserSession } from "~/types";
 
 
 export type TableAction = (
@@ -86,14 +87,14 @@ const tableActions: Record<string, Record<string, TableAction>> = {
 }
 
 export const getVisibleActions = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   tableName: string,
   recordId: number
 ) => {
   if (tableActions[tableName]) {
     const promises = Object.entries(tableActions[tableName]).map(
       async ([name, action]) => {
-        const actionLabel = await action(userId, recordId, false)
+        const actionLabel = await action(userSession.userId, recordId, false)
         return actionLabel ? { name, label: actionLabel } : null
       }
     )
@@ -106,12 +107,12 @@ export const getVisibleActions = safeWrap(async (
 })
 
 export const executeAction = safeWrap(async (
-  userId: number,
+  userSession: UserSession,
   tableName: string,
   actionName: string,
   recordId: number
 ) => {
-  const success = await tableActions[tableName][actionName](userId, recordId, true)
+  const success = await tableActions[tableName][actionName](userSession.userId, recordId, true)
   if (!success) {
     return 'This action is no longer available.'
   }

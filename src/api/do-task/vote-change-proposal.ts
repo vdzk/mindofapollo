@@ -5,13 +5,14 @@ import {safeWrap, updateRecord} from "../shared/mutate"
 import {sql} from "../../db"
 import {getRecordById} from "../shared/select"
 import {ProposalRecord} from "~/tables/other/change_proposal"
+import { UserSession } from "~/types";
 
-export const getChangeProposal = safeWrap(async (userId) => {
+export const getChangeProposal = safeWrap(async (userSession: UserSession) => {
   const proposals = await sql`
     WITH user_changes AS (
       SELECT id
       FROM change_proposal_h
-      WHERE op_user_id = ${userId} AND data_op IN ('INSERT', 'UPDATE')
+      WHERE op_user_id = ${userSession.userId} AND data_op IN ('INSERT', 'UPDATE')
     )
     SELECT *
     FROM change_proposal
