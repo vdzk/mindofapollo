@@ -17,7 +17,7 @@ export const login = async (userId: number) => {
   const session = await getSession()
   await session.update({
     userId,
-    authorization_category: authorizationCategory.name as UserSession['authorization_category']
+    authorizationCategory: authorizationCategory.name as UserSession['authorizationCategory']
   }) 
   return session.data
 }

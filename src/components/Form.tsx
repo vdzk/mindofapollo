@@ -74,7 +74,7 @@ export const Form: Component<{
   }))
 
   const table = () => schema.tables[props.tableName]
-  const permission = () => getPermission(session?.user?.()?.id, 'update', props.tableName, props.id)
+  const permission = () => getPermission(session?.userSession?.(), 'update', props.tableName, props.id)
   const colNames = () => {
     if (permission() && permission()?.granted) {
       return permission()?.colNames ?? Object.keys(table().columns)

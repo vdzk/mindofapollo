@@ -1,7 +1,7 @@
 "use server"
 
 import { getPermission } from "~/getPermission"
-import { getUserId } from "../shared/session"
+import { getUserSession } from "../shared/session"
 import { onError, sql } from "~/db"
 import { injectVirtualValues } from "../shared/select"
 
@@ -15,9 +15,9 @@ export const getHomePageStatements = async (
   featured: boolean,
   tagId?: number
 ) => {
-  const userId = await getUserId()
-  if (!getPermission(userId, 'read', 'statement').granted) return
-  if (!getPermission(userId, 'read', 'directive').granted) return
+  const userSession = await getUserSession()
+  if (!getPermission(userSession, 'read', 'statement').granted) return
+  if (!getPermission(userSession, 'read', 'directive').granted) return
   let results: HpStatement[] = []
 
   let statements

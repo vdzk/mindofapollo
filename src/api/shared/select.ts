@@ -6,7 +6,7 @@ import {onError, sql} from "../../db"
 import {addExplIdColNames, getVirtualColNames, resolveEntries, xName} from "~/util"
 import {Row, RowList} from "postgres"
 import {getVirtualValuesByServerFn} from "./virtualColumns"
-import {getUserId} from "./session"
+import {getUserId, getUserSession} from "./session"
 import { getPermission } from "~/getPermission"
 
 export const getVirtualValuesByQueries = async (
@@ -83,8 +83,8 @@ export const listRecords = async ( tableName: string ) => {
 }
 
 export const getRecordById = async (tableName: string, id: number) => {
-  const userId = await getUserId()
-  const permission = getPermission(userId, 'read', tableName, id)
+  const userSession = await getUserSession()
+  const permission = getPermission(userSession, 'read', tableName, id)
   if (!permission.granted) return
   let colNames = permission.colNames ?? getVirtualColNames(tableName).non
   const records = await sql`

@@ -22,11 +22,10 @@ export const RecordDetails: Component<{
   displayColumn?: ColumnFilter
 }> = props => {
   const session = useContext(SessionContext)
-  const userId = () => session?.user?.()?.id
   const record = createAsync(() => getExtRecordById(props.tableName, props.id))
   const extTableName = () => record() ? getExtTableName(props.tableName, record()!) : undefined
   const table = () => schema.tables[props.tableName]
-  const permission = () => getPermission(userId(), 'read', props.tableName, props.id)
+  const permission = () => getPermission(session?.userSession?.(), 'read', props.tableName, props.id)
 
   // TODO: check how to optimise this if necesary
   const fieldsInSection = (tableName: string) => {

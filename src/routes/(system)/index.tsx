@@ -7,7 +7,7 @@ export default function Home() {
   const navigate = useNavigate()
   createEffect(() => {
     if (session) {
-      if (session.user.state === 'ready') {
+      if (session.userSession.state === 'ready') {
         navigate(
           session.loggedIn() ? '/home-page' : '/login',
           { replace: true }

@@ -35,14 +35,13 @@ export default function ShowRecord() {
   const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
   const session = useContext(SessionContext)
   const recordId = () => parseInt(sp().id)
-  const userId = () => session?.user?.()?.id
   const record = createAsync(() => getExtRecordById(sp().tableName, recordId()))
   const titleColName = () => titleColumnName(sp().tableName)
   const deleteAction = useAction(_delete)
   const onDelete = () => deleteAction(sp().tableName, recordId())
   const titleText = () => (record()?.[titleColName()] ?? '') as string
-  const premU = () => getPermission(userId(), 'update', sp().tableName, recordId())
-  const premD = () => getPermission(userId(), 'delete', sp().tableName, recordId())
+  const premU = () => getPermission(session?.userSession?.(), 'update', sp().tableName, recordId())
+  const premD = () => getPermission(session?.userSession?.(), 'delete', sp().tableName, recordId())
 
   const sectionOptions = () => {
     const options = []

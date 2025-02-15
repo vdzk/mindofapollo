@@ -15,7 +15,7 @@ export default function ListRecords() {
   const sp = useSafeParams<{tableName: string}>(['tableName'])
 
   const records = createAsync(() => getRecords(sp().tableName))
-  const premC = () => getPermission(session?.user?.()?.id, 'create', sp().tableName)
+  const premC = () => getPermission(session?.userSession?.(), 'create', sp().tableName)
   const title = () => firstCap(pluralTableName(sp().tableName))
   const table = () => schema.tables[sp().tableName]
 

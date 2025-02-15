@@ -3,11 +3,10 @@ import { Component, createSignal, For, Show, useContext } from "solid-js";
 import { SessionContext } from "~/SessionContext";
 import {getVisibleActionsCache} from "~/client-only/query";
 import {executeTableAction} from "~/client-only/action";
-import { Id } from "~/types";
 
 const Action: Component<{
   tableName: string
-  recordId: Id
+  recordId: number
   name: string
   label: string
 }> = props => {
@@ -35,10 +34,10 @@ const Action: Component<{
 
 export const Actions: Component<{
   tableName: string
-  recordId: Id
+  recordId: number
 }> = props => {
   const session = useContext(SessionContext)
-  const userId = session?.user()!.id!
+  const userId = session?.userSession()?.userId
 
   const actions = createAsync(() => getVisibleActionsCache(props.tableName, props.recordId))
 
