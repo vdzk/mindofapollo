@@ -12,6 +12,14 @@ export const person: TableSchema = {
     password: {
       type: 'varchar'
     },
+    authorization_category_id: {
+      type: 'fk',
+      fk: {
+        table: 'authorization_category',
+        labelColumn: 'name',
+        optional: true  //TODO: assign to all users and make required
+      }
+    } 
   },
   aggregates: {
     person_categories: {

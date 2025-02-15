@@ -30,9 +30,11 @@ import { person_category } from "~/tables/morality/person_category"
 import { presuasion_critique } from "~/tables/morality/persuasion_critique"
 import { unit } from "~/tables/morality/unit"
 import { invite } from "~/tables/other/invite"
+import { authorization_category } from "~/tables/other/authorization_category"
 
 export const schema: AppDataSchema = {
   tables: {
+    authorization_category,
     person,
     tag,
     argument_aggregation_type,

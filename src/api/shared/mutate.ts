@@ -10,17 +10,17 @@ import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
 import { getPermission } from "~/getPermission";
 import chalk from "chalk";
 import { AddExplId } from "~/components/expl/types";
-import { setExplRecordId, startExpl } from "~/server-only/expl";
+import { finishExpl, setExplRecordId, startExpl } from "~/server-only/expl";
 import { addExplIdColNames, addExplIds } from "~/util";
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
 
 // Handle SQL error and userId checking
 export function safeWrap<
-F extends (userId: number, ...args: any[]) => any>(
-  fn: F): (
-...args: Tail<Parameters<F>>
-) => Promise<Awaited<ReturnType<F>> | undefined> {
+  F extends (userId: number, ...args: any[]) => any>(
+    fn: F): (
+      ...args: Tail<Parameters<F>>
+    ) => Promise<Awaited<ReturnType<F>> | undefined> {
   return async function (...args: Tail<Parameters<F>>): Promise<Awaited<ReturnType<F>> | undefined> {
     const userId = await getUserId();
     // const userId = 1
@@ -28,7 +28,7 @@ F extends (userId: number, ...args: any[]) => any>(
       onError(new Error('Error: no userId'));
     } else {
       try {
-    return await fn(userId, ...args);
+        return await fn(userId, ...args);
       } catch (error) {
         onError(error as any);
       }
@@ -65,7 +65,7 @@ export const injectValueTypes = async (
           ? await getTypeByRecordId(tableName, colName, recordId)
           : await getTypeByOriginId(tableName, colName, originId as number)
         const vttn = getValueTypeTableNameByColType(colType)
-        const [{id}] = await insertValueType(vttn, value)
+        const [{ id }] = await insertValueType(vttn, value)
         record[colName] = id
       }
     }
@@ -87,9 +87,9 @@ export const _insertRecord = async (
   const explIds = Object.fromEntries(
     allColNames.map(colName => [`${colName}_expl_id`, explId])
   )
-  
+
   const result = await sql`
-    INSERT INTO ${sql(tableName)} ${sql({...record, ...explIds})}
+    INSERT INTO ${sql(tableName)} ${sql({ ...record, ...explIds })}
     RETURNING *
   `;
   return result[0];
@@ -105,7 +105,7 @@ export const insertRecord = safeWrap(async (
   const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId);
   await setExplRecordId(explId, result.id)
-  return[result];
+  return [result];
 });
 
 // TODO: implement efficient bulk version
@@ -124,16 +124,20 @@ export const updateRecord = safeWrap(async (
 ) => {
   const permission = getPermission(userId, 'update', tableName, id)
   if (!permission.granted) return
-  await injectValueTypes(tableName, record, id)
-  const forbiddenColumn = Object.keys(record)
-    .find(colName => !permission.colNames!.includes(colName))
-  if (forbiddenColumn) {
-    // TODO: return and process error on the client
-    console.trace()
-    console.log(chalk.red('ERROR'), {forbiddenColumn})
-  } else {
-    await _updateRecord(tableName, id, userId, record)
+  if (permission.colNames) {
+    const forbiddenColumn = Object.keys(record)
+      .find(colName => !permission.colNames!.includes(colName))
+    if (forbiddenColumn) {
+      // TODO: return and process error on the client
+      console.trace()
+      console.log(chalk.red('ERROR'), { forbiddenColumn })
+      return
+    }
   }
+  await injectValueTypes(tableName, record, id)
+  const explId = await startExpl(userId, 'genericChange', 1, tableName, id);
+  const diff = await _updateRecord(tableName, id, explId, record)
+  await finishExpl(explId, {diff})
 })
 
 export const _updateRecord = async <T extends DataRecord>(
@@ -150,13 +154,13 @@ export const _updateRecord = async <T extends DataRecord>(
     FROM ${sql(tableName)}
     WHERE id = ${id}
   `
-  
+
   await sql`
     UPDATE ${sql(tableName)}
     SET ${sql(
-      addExplIds(newFragment, explId),
-      colNamesWithExplId
-    )}
+    addExplIds(newFragment, explId),
+    colNamesWithExplId
+  )}
     WHERE id = ${id}
   `
   const diff = {
