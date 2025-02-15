@@ -9,7 +9,7 @@ export default function Home() {
     if (session) {
       if (session.userSession.state === 'ready') {
         navigate(
-          session.loggedIn() ? '/home-page' : '/login',
+          session.userSession()?.authenticated ? '/home-page' : '/login',
           { replace: true }
         )
       }

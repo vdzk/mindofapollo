@@ -16,8 +16,7 @@ export const person: TableSchema = {
       type: 'fk',
       fk: {
         table: 'authorization_category',
-        labelColumn: 'name',
-        optional: true  //TODO: assign to all users and make required
+        labelColumn: 'name'
       }
     } 
   },

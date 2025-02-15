@@ -1,11 +1,10 @@
 import { AggregateSchema, BooleanColumn, DataRecord, ForeignKey, NToNSchema, OneToNSchema, TableSchema } from "~/schema/type";
 import { firstCap, pluralTableName, titleColumnName } from "~/util";
-import { AggregateSection } from "./Aggregate";
-import { Id } from "~/types";
+import { AggregateSection } from "./Aggregate"
 
 export type Aggregator = (props: {
   tableName: string
-  id: Id
+  id: number
   aggregateTable: TableSchema
   aggregate: AggregateSchema
   records: () => DataRecord[] | undefined,

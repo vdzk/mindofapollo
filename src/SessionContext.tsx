@@ -6,7 +6,6 @@ import { UserSession } from "./types"
 
 export const SessionContext = createContext<{
   userSession: Resource<UserSession | undefined>;
-  loggedIn: () => boolean;
   refetch: (info?: unknown) => UserSession | Promise<UserSession | undefined> | null | undefined;
   mutate: Setter<UserSession | undefined>;
 }>();
@@ -15,13 +14,12 @@ export const SessionContextProvider: ParentComponent = (props) => {
   const isPublicRoute = useIsPublicRoute()
   const navigate = useNavigate()
   const [userSession, { mutate, refetch }] = createResource(getUserSession);
-  const loggedIn = () => !!userSession()
 
-  const session = {userSession, loggedIn, refetch, mutate}
+  const session = {userSession, refetch, mutate}
 
   createEffect(() => {
     if (userSession.state == 'ready') {
-      if (!userSession() && !isPublicRoute()) {
+      if (!userSession()?.authenticated && !isPublicRoute()) {
         navigate('/login', { replace: true })
       }
     }

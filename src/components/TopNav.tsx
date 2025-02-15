@@ -28,7 +28,7 @@ export const TopNav: Component = () => {
         </div>
         <div class="px-2 py-0.5">
           <Switch>
-            <Match when={session!.loggedIn()}>
+            <Match when={session!.userSession()?.authenticated}>
               {user()?.name}
               <button
                 class="text-sky-800 pl-2"

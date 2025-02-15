@@ -12,7 +12,6 @@ import {
 } from "~/api/components/Aggregate";
 import {listForeignHopRecordsCache} from "~/client-only/query";
 import {deleteForeignHopRecordAction} from "~/client-only/action";
-import { Id } from "~/types";
 
 export interface AggregateSection {
   title: string;
@@ -26,7 +25,7 @@ const FkRecordListItem: Component<{
   titleColumnName: string,
   titleColumn: ForeignKey,
   record: DataRecord,
-  id: Id
+  id: number
 }> = props => {
   const deleteAction = useAction(deleteForeignHopRecordAction);
   const onDelete = () => deleteAction(
@@ -57,7 +56,7 @@ const FkRecordListItem: Component<{
 
 export const Aggregate: Component<{
   tableName: string;
-  id: Id;
+  id: number;
   aggregateName: string;
 }> = (props) => {
   const session = useContext(SessionContext)
@@ -122,7 +121,7 @@ export const Aggregate: Component<{
         <section class="pb-2">
           <div>
             <span class="px-2 font-bold">{section.title}</span>
-            <Show when={session?.loggedIn()}>
+            <Show when={session?.userSession()?.authenticated}>
               <a
                 class="text-sky-800"
                 href={section.link.href}

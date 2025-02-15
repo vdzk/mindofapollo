@@ -82,11 +82,7 @@ export const listRecords = async ( tableName: string ) => {
   return records
 }
 
-export const getRecordById = async (tableName: string, id: number) => {
-  const userSession = await getUserSession()
-  const permission = getPermission(userSession, 'read', tableName, id)
-  if (!permission.granted) return
-  let colNames = permission.colNames ?? getVirtualColNames(tableName).non
+export const _getRecordById = async (tableName: string, id: number, colNames: string[]) => {
   const records = await sql`
     SELECT ${sql(addExplIdColNames(colNames))}
     FROM ${sql(tableName)}
@@ -96,6 +92,14 @@ export const getRecordById = async (tableName: string, id: number) => {
     await injectVirtualValues(tableName, records)
     return records[0] as DataRecordWithId
   }
+}
+
+export const getRecordById = async (tableName: string, id: number) => {
+  const userSession = await getUserSession()
+  const permission = getPermission(userSession, 'read', tableName, id)
+  if (!permission.granted) return
+  const colNames = permission.colNames ?? getVirtualColNames(tableName).non
+  return _getRecordById(tableName, id, colNames)
 }
 
 export const getValueById = async (tableName: string, id: number) => {

@@ -6,6 +6,7 @@ export type Option<TId> = {
 export type AuthorizationCategory = 'admin' | 'invited'
 
 export interface UserSession {
+  authenticated?: boolean
   userId: number
   authorizationCategory: AuthorizationCategory
 }

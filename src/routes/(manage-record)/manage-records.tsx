@@ -17,7 +17,7 @@ export default function ManageRecords() {
 
   return (
     <div style={{ display: 'flex' }}>
-      <Show when={session?.loggedIn()}>
+      <Show when={session?.userSession()?.authenticated}>
         <Form tableName={sp.tableName} />
       </Show>
       <table>

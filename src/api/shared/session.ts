@@ -1,21 +1,23 @@
 "use server"
 import { useSession } from "vinxi/http";
-import { getRecordById } from "~/api/shared/select";
+import { _getRecordById, getRecordById } from "~/api/shared/select";
 import { UserSession } from "~/types";
 
 // TODO: store secret in .env file
 export const getSession = () => useSession<UserSession>({password: 'secret_secret_secret_secret_secret_secret_secret_secret_secret'})
 
 export const login = async (userId: number) => {
-  const person = await getRecordById('person', userId)
+  const person = await _getRecordById('person', userId, ['authorization_category_id'])
   if (!person) return
-  const authorizationCategory = await getRecordById(
+  const authorizationCategory = await _getRecordById(
     'authorization_category',
-    person.authorization_category_id as number
+    person.authorization_category_id as number,
+    ['name']
   )
   if (!authorizationCategory) return
   const session = await getSession()
   await session.update({
+    authenticated: true,
     userId,
     authorizationCategory: authorizationCategory.name as UserSession['authorizationCategory']
   }) 
