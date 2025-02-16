@@ -47,7 +47,7 @@ export default function ListRecords() {
           </div>
         )}</For>
       </section>
-      <section>
+      <section class="px-2">
         <Show when={premC()?.granted}>
           <Switch>
             <Match when={table().createRecord}>
