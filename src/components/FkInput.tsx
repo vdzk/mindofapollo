@@ -56,7 +56,7 @@ export const FkInput: Component<{
     return undefined  
   })
   createEffect(() => {
-    if (props.isNew) {
+    if (props.isNew && defaultValue()) {
       onSelectChange({target: {
         value: '' + defaultValue(),
         name: props.colName

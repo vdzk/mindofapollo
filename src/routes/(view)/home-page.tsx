@@ -3,9 +3,9 @@ import { createAsync, query } from "@solidjs/router"
 import { createSignal, For } from "solid-js"
 import { getHomePageStatements } from "~/api/view/home-page"
 import { getRecords } from "~/client-only/query"
-import { Link } from "~/components/Link"
+import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
-import { PageTitle } from "~/components/PageTitle"
+import { Subtitle } from "~/components/PageTitle"
 
 const getHomePageStatementsQuery = query(getHomePageStatements, 'getHomePageStatements')
 
@@ -27,15 +27,8 @@ export default function HomePage() {
   return (
     <main>
       <Title>Home Page</Title>
-      <PageTitle>Things to do</PageTitle>
-      <a href="/create-record?tableName=statement" class="ml-2 text-sky-800">[ Add a statement ]</a>
-      <a href="/create-record?tableName=directive" class="ml-1 text-sky-800">[ Add a directive ]</a>
-      <br/>
-      <a href="/list-tasks" class="ml-2 text-sky-800">[ Tasks ]</a>
-      <a href="/show-directive" class="ml-1 text-sky-800">[ Directives ]</a>
-      <a href="/list-records?tableName=invite" class="ml-1 text-sky-800">[ Invites ]</a>
-      <a href="/admin-tools" class="ml-1 text-sky-800">[ Administrate ]</a>
-      <PageTitle>Explore</PageTitle>
+      <div class="h-3" />
+      <Subtitle>Statements & directives</Subtitle>
       <MasterDetail
         options={options()}
         selectedId={selectedId()}
@@ -45,23 +38,88 @@ export default function HomePage() {
           <For each={statements()}>
             {statement => (
               <div>
-                <a
-                  href={`/show-record?tableName=${statement.directive ? 'directive' : 'statement'}&id=${statement.id}`}
-                  class="hover:underline"
-                >
-                  {statement.label}
-                </a>
+                <Link
+                  label={statement.label}
+                  route="show-record"
+                  params={{
+                    tableName: statement.directive ? 'directive' : 'statement',
+                    id: statement.id
+                  }}
+                />
               </div>
             )}
           </For>
         </div>
       </MasterDetail>
-      <div class="px-2 mt-2">
-        <Link
-          label="All statements"
-          route="list-records"
+      <div class="px-2 mt-2 pb-6">
+        <Links 
           type="button"
-          params={{tableName: 'statement'}}
+          links={[
+            {
+              label: "All statements",
+              route: "list-records",
+              params: { tableName: 'statement' }
+            },
+            {
+              label: "Add a statement",
+              route: "create-record",
+              params: { tableName: 'statement' }
+            }
+          ]}
+        />
+        <Links 
+          type="button"
+          links={[
+            {
+              label: "All directives",
+              route: "list-records",
+              params: { tableName: 'directive' }
+            },
+            {
+              label: "Add a directive",
+              route: "create-record",
+              params: { tableName: 'directive' }
+            }
+          ]}
+        />
+      </div>
+      <Subtitle>Things to do</Subtitle>
+      <div class="px-2 pb-6">
+        <Links 
+          type="button"
+          links={[
+            {
+              label: "Tasks",
+              route: "list-tasks"
+            },
+            {
+              label: "My directives",
+              route: "show-directive"
+            },
+            {
+              label: "Invites",
+              route: "list-records",
+              params: { tableName: 'invite' }
+            }
+          ]}
+        />
+      </div>
+      <Subtitle>Other</Subtitle>
+      <div class="px-2">
+        <Links 
+          type="button"
+          links={[
+            {
+              label: "Tables",
+              route: "list-tables",
+              params: { tableName: 'statement' }
+            },
+            {
+              label: "Sandboxes",
+              route: "list-sandboxes",
+              params: { tableName: 'directive' }
+            }
+          ]}
         />
       </div>
     </main>

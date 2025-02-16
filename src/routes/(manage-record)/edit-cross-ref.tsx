@@ -18,10 +18,10 @@ interface EditCrossRefParams {
 export default function EditCrossRef() {
   const sp = useSafeParams<EditCrossRefParams>(['a', 'b', 'id'])
   const first = sp().first === 'true'
-  const id = parseInt(sp().id)
+  const id = () => parseInt(sp().id)
 
-  const aRecord = createAsync(() => getRecordById(sp().a, sp().id))
-  const linkedRecords = createAsync(() => listCrossRecordsCache( sp().b, sp().a, id, first ))
+  const aRecord = createAsync(() => getRecordById(sp().a, id()))
+  const linkedRecords = createAsync(() => listCrossRecordsCache( sp().b, sp().a, id(), first ))
   const allRrcords = createAsync(() => getRecords(sp().b))
 
 
@@ -37,7 +37,7 @@ export default function EditCrossRef() {
       a: sp().a,
       b: sp().b,
       first,
-      a_id: id,
+      a_id: id(),
       b_id: parseInt(formData.get('id') as string)
     })
   }
@@ -45,7 +45,7 @@ export default function EditCrossRef() {
   const deleteCrossRecordRun = useAction(deleteCrossRecordAction)
 
   const onDelete = (linkedId: number) => {
-    deleteCrossRecordRun({a: sp().a, b: sp().b, first, a_id: id, b_id: linkedId})
+    deleteCrossRecordRun({a: sp().a, b: sp().b, first, a_id: id(), b_id: linkedId})
   }
 
   const bColName = titleColumnName(sp().b)

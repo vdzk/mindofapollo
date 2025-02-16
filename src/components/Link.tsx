@@ -36,3 +36,25 @@ export const Link: Component<{
     </Switch>
   )
 }
+
+export const Links: Component<{
+  links: Array<{
+    params?: Record<string, any>
+    label?: DataLiteral
+    route: string
+    tooltip?: string
+  }>,
+  type?: 'button'
+}> = props => {
+  return (
+    <div>
+      {props.links.map((link, index) => (
+        <>
+          {index > 0 && ' '}
+          <Link {...link} type={props.type} />
+        </>
+      ))}
+    </div>
+  )
+}
+
