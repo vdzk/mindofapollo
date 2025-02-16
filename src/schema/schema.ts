@@ -32,6 +32,7 @@ import { unit } from "~/tables/morality/unit"
 import { invite } from "~/tables/other/invite"
 import { authorization_category } from "~/tables/other/authorization_category"
 import { argument_explanation } from "~/tables/argument/explanation"
+import { chat_message } from "~/tables/other/chat_message"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -67,6 +68,7 @@ export const schema: AppDataSchema = {
     moral_persuasion,
     moral_weight,
     presuasion_critique,
-    invite
+    invite,
+    chat_message
   }
 }

@@ -8,6 +8,9 @@ export interface TextInputProps {
   onChange: (event: { target: { value: string; name: string } }) => void;
   tableName: string;
   colName: string;
+  placeholder?: string;
+  disabled?: boolean;
+  onKeyDown?: (e: KeyboardEvent) => void;
 }
 
 export const TextInput: Component<TextInputProps> = (props) => {
@@ -15,6 +18,13 @@ export const TextInput: Component<TextInputProps> = (props) => {
   const isReadonly = () => column().type === 'virtual';
   const displayValue = () => (props.value ?? '') + '';
   const onInput = debounce(props.onChange, 500);
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      props.onChange({ target: { value: displayValue(), name: props.colName } });
+    }
+  };
 
   return (
     <input
@@ -26,6 +36,9 @@ export const TextInput: Component<TextInputProps> = (props) => {
       readonly={isReadonly()}
       onChange={props.onChange}
       onInput={onInput}
+      onKeyDown={props.onKeyDown}
+      placeholder={props.placeholder}
+      disabled={props.disabled}
     />
   );
 };

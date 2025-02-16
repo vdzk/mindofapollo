@@ -97,6 +97,10 @@ export default function HomePage() {
               label: "Invites",
               route: "list-records",
               params: { tableName: 'invite' }
+            },
+            {
+              label: "Chat",
+              route: "chat"
             }
           ]}
         />

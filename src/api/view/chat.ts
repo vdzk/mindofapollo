@@ -1,0 +1,43 @@
+"use server"
+
+import { sql } from "../../db";
+import { getUserSession } from "../shared/session";
+import { onError } from "~/db";
+
+export interface ChatMessage {
+  id: number;
+  text: string;
+  user_id: number;
+  sender_name: string;
+  timestamp: number;
+}
+
+export const getChatMessages = async () => {
+  const userSession = await getUserSession();
+  if (!userSession?.authenticated) return [];
+
+  const messages = await sql`
+    SELECT m.id, m.text, m.user_id, m.timestamp, p.name as sender_name
+    FROM chat_message m
+    JOIN person p ON p.id = m.user_id
+    ORDER BY m.timestamp DESC
+    LIMIT 100
+  `.catch(onError);
+
+  return messages || [];
+};
+
+export const sendChatMessage = async (text: string) => {
+  const userSession = await getUserSession();
+  if (!userSession?.authenticated) return null;
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+
+  const result = await sql`
+    INSERT INTO chat_message (text, user_id, timestamp)
+    VALUES (${text}, ${userSession.userId}, ${currentTimestamp})
+    RETURNING id, text, user_id, timestamp
+  `.catch(onError);
+
+  return result?.[0] || null;
+};
