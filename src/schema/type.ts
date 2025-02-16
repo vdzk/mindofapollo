@@ -100,6 +100,7 @@ export type AggregateSchema = OneToNSchema | NToNSchema
 interface Section {
   label: string
   fields?: string[]
+  component?: string
 }
 
 export interface TableSchema {

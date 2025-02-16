@@ -31,6 +31,7 @@ import { presuasion_critique } from "~/tables/morality/persuasion_critique"
 import { unit } from "~/tables/morality/unit"
 import { invite } from "~/tables/other/invite"
 import { authorization_category } from "~/tables/other/authorization_category"
+import { argument_explanation } from "~/tables/argument/explanation"
 
 export const schema: AppDataSchema = {
   tables: {
@@ -44,6 +45,7 @@ export const schema: AppDataSchema = {
     argument,
     argument_analogy,
     argument_authority,
+    argument_explanation,
     argument_other,
     critical_statement,
     research_note,

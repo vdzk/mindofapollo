@@ -3,7 +3,8 @@ import { Link } from "../Link";
 
 export const ExplLink:Component<{explId: number}> = props => <Link
   type="button"
-  label="EXPL"
+  label="?"
   route="expl"
   params={{id: props.explId}}
+  tooltip="Explain"
 />

@@ -31,5 +31,18 @@ export const person: TableSchema = {
       table: 'moral_weight',
       column: 'person_id'
     }
+  },
+  sections: {
+    details: {
+      label: 'Details',
+      fields: [
+        'name', 'email', 'password', 'authorization_category_id',
+        'person_categories', 'moral_weights'
+      ]
+    },
+    activity: {
+      label: 'Activity',
+      component: 'UserActivity'
+    }
   }
 }

@@ -32,7 +32,11 @@ export const TopNav: Component = () => {
         <div class="px-2 py-0.5">
           <Switch>
             <Match when={session!.userSession()?.authenticated}>
-              {user()?.name}
+              <Link
+                route="show-record"
+                params={{ tableName: 'person', id: session!.userSession()!.userId }}
+                label={user()?.name}
+              />
               <span class="inline-block w-2" />
               <Button
                 label="Logout"

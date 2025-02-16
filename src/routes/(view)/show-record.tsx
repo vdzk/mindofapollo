@@ -1,6 +1,7 @@
 import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Match, Show, Switch, useContext } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import { Actions } from "~/components/Actions";
 import { RecordDetails } from "~/components/RecordDetails";
 import { schema } from "~/schema/schema";
@@ -14,6 +15,7 @@ import { useSafeParams } from "~/client-only/util";
 import { MasterDetail } from "~/components/MasterDetail";
 import { Link } from "~/components/Link";
 import { Button } from "~/components/buttons";
+import { componentsByName } from "~/components/componentsByName";
 
 const _delete = action(async (
   tableName: string,
@@ -60,6 +62,11 @@ export default function ShowRecord() {
   }
 
   const selectedSection = () => (searchParams.section as string | undefined) ?? sectionOptions()[0].id
+  
+  const getCurrentComponent = () => {
+    const section = schema.tables[sp().tableName].sections?.[selectedSection()]
+    return section?.component ? componentsByName[section.component] : undefined
+  }
 
   return (
     <main>
@@ -98,6 +105,9 @@ export default function ShowRecord() {
                 />
               </Show>
             </div>
+          </Match>
+          <Match when={getCurrentComponent()}>
+            <Dynamic component={getCurrentComponent()} id={recordId()} />
           </Match>
           <Match when>
             <RecordDetails
