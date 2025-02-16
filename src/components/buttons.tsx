@@ -1,23 +1,34 @@
 import { Component } from "solid-js";
 
-// export const btnStyle = `border-2 border-black rounded-lg bg-yellow-400 
-// px-2 hover:bg-yellow-500 leading-6 inline-block`
-// export const btnStyle = `rounded-md bg-blue-500 text-white 
-// px-2 hover:bg-blue-700 leading-6 inline-block`
+export const btnStyle = (params?: { disabled?: boolean }) => `
+  /* Layout */
+  rounded-lg
+  px-2
+  leading-6
+  inline-block
 
-export const btnStyle = ` rounded-lg bg-yellow-400 text-gray-900
-px-2 hover:bg-yellow-500 leading-6 inline-block`
+  /* Colors */
+  bg-yellow-400
+  text-gray-900
+  ${!params?.disabled ? 'hover:bg-yellow-500' : ''}
+
+  /* Disabled state */
+  ${params?.disabled ? 'opacity-50 cursor-default' : ''}
+`.trim()
 
 export const Button: Component<{
   label: string
   onClick: () => void
   tooltip?: string
+  disabled?: boolean
 }> = props => {
   return (
     <button
-      class={btnStyle}
+      class={btnStyle({ disabled: props.disabled })}
       onClick={props.onClick}
       title={props.tooltip}
+      type="button"
+      disabled={props.disabled}
     >
       {props.label}
     </button>

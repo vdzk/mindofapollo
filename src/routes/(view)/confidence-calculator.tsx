@@ -4,6 +4,7 @@ import { createStore } from "solid-js/store";
 import { PageTitle } from "~/components/PageTitle";
 import { calcStatementConfidence } from "~/compute";
 import { etv } from "~/util";
+import { Button } from "~/components/buttons";
 
 export default function ConfidenceCalculator() {
   const [statements, setStatements] = createStore<[number[], number[]][]>([])
@@ -17,13 +18,13 @@ export default function ConfidenceCalculator() {
         <For each={statements}>
           {(statement, statementIndex) => (
             <div class="px-2 border-r">
-              <button
-                class="text-sky-800"
-                title="remove statement"
+              <Button
+                label="XX"
                 onClick={() => setStatements(
                   (statements) => statements.filter((s, index) => index !== statementIndex())
                 )}
-              >[ XX ]</button>
+                tooltip="remove statement"
+              />
               <br/>
               <For each={[1, 0]}>
                 {pro => (
@@ -40,23 +41,23 @@ export default function ConfidenceCalculator() {
                             )}
                           />
                           <br/>
-                          <button
-                            class="text-sky-800"
-                            title="remove argument"
+                          <Button
+                            label="X"
                             onClick={() => setStatements(
                               statementIndex(), pro, (acs) => acs.filter((ac, index) => index !== acIndex())
                             )}
-                          >[ X ]</button>
+                            tooltip="remove argument"
+                          />
                         </div>
                       )}
                     </For>
-                    <button
-                      class="text-sky-800"
-                      title={`add ${pro ? 'pro' : 'con'} argument`}
+                    <Button
+                      label="+"
                       onClick={() => setStatements(
                         statementIndex(), pro, statement[pro].length, 0
                       )}
-                    >[ + ]</button>
+                      tooltip={`add ${pro ? 'pro' : 'con'} argument`}
+                    />
                   </div>
                 )}
               </For>
@@ -66,13 +67,13 @@ export default function ConfidenceCalculator() {
             </div>
           )}
         </For>
-        <button
-          class="text-sky-800 self-start px-2"
-          title="add statement"
+        <Button
+          label="++"
           onClick={() => setStatements(
             statements.length, [[], []]
           )}
-        >[ ++ ]</button>
+          tooltip="add statement"
+        />
       </div>
     </main>
   )

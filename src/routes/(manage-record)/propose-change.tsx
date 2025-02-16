@@ -10,6 +10,8 @@ import { FormField } from "~/components/FormField";
 import { createStore } from "solid-js/store";
 import { DataRecord } from "~/schema/type";
 import {saveChangeProposal} from "~/api/manage-record/propose-change";
+import { Button } from "~/components/buttons";
+import { Link } from "~/components/Link";
 
 interface ProposeChange {
   tableName: string
@@ -82,16 +84,21 @@ export default function ProposeChange() {
         </div>
       </Show>
       <div class="px-2 pt-2">
-        <button class="text-sky-800" onClick={onSubmit}>
-          [ Submit ]
-        </button>
-        <a
-          class="text-sky-800 mx-2"
-          href={backHref()}
-        >
-          [ Cancel ]
-        </a>
+        <Button
+          label="Submit"
+          onClick={onSubmit}
+        />
+        <span class="inline-block w-2" />
+        <Link
+          route="show-record"
+          params={{
+            tableName: sp.tableName,
+            id: sp.id
+          }}
+          type="button"
+          label="Cancel"
+        />
       </div>
     </main>
-  );
+  )
 }

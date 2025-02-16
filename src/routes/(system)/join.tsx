@@ -5,6 +5,7 @@ import { FormField } from "~/components/FormField"
 import { PageTitle } from "~/components/PageTitle"
 import { join } from "~/api/system/join"
 import { login } from "~/api/shared/session"
+import { Button } from "~/components/buttons";
 
 interface Join {
   code: string
@@ -33,9 +34,10 @@ export default function Join() {
           colName="name"
           {...{diff, setDiff}}
         />
-        <button type="button" class="text-sky-800" onClick={onSubmit}>
-          [ Submit ]
-        </button>
+        <Button
+          label="Submit"
+          onClick={onSubmit}
+        />
       </div>
     </main>
   )

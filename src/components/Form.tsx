@@ -5,11 +5,13 @@ import { schema } from "~/schema/schema";
 import { FormField } from "./FormField";
 import { DataRecord } from "~/schema/type";
 import { insertExtRecord, updateExtRecord } from "~/api/shared/extRecord";
-import { getExtTableName, isEmpty } from "~/util";
+import { getExtTableName, isEmpty, buildUrl } from "~/util";
 import { createStore } from "solid-js/store";
 import { getPermission } from "~/getPermission";
 import { getRecords } from "~/client-only/query";
 import { SessionContext } from "~/SessionContext";
+import { Link } from "~/components/Link";
+import { Button } from "~/components/buttons";
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
@@ -25,16 +27,30 @@ export const Form: Component<{
   const [extValue, setExtValue] = createSignal<string>()
   const [showAdvanced, setShowAdvanced] = createSignal(false)
 
-  const exitPath = (tableName: string) => {
+  const exitLink = (tableName: string) => {
     if (props.id) {
-      return `/show-record?tableName=${tableName}&id=${props.id}`
+      return {
+        route: 'show-record',
+        params: { tableName, id: props.id }
+      }
     } else {
       if (searchParams.sourceTable && searchParams.sourceId) {
-        return `/show-record?tableName=${searchParams.sourceTable}&id=${searchParams.sourceId}`
+        return {
+          route: 'show-record',
+          params: { tableName: searchParams.sourceTable, id: searchParams.sourceId }
+        }
       } else {
-        return `/list-records?tableName=${tableName}`
+        return {
+          route: 'list-records',
+          params: { tableName }
+        }
       }
     }
+  }
+
+  const exitPath = (tableName: string) => {
+    const { route, params } = exitLink(tableName)
+    return buildUrl(route, params)
   }
 
   const saveAction = useAction(action(async (
@@ -106,7 +122,7 @@ export const Form: Component<{
   }
 
   return (
-    <form onSubmit={onSubmit} class="px-2 max-w-screen-sm">
+    <div class="px-2 max-w-screen-sm">
       <ExtValueContext.Provider value={setExtValue}>
         <For each={colNames()}>
           {colName => (
@@ -131,27 +147,26 @@ export const Form: Component<{
         />}
       </For>
       <Show when={hasAdvancedFields()}>
-        <button 
-          type="button"
-          class="text-sky-800 mt-4"
-          onClick={() => setShowAdvanced(!showAdvanced())}
-        >
-          [ {showAdvanced() ? 'Hide' : 'Show'} Advanced Fields ]
-        </button>
+        <div class="py-2">
+          <Button
+            label={showAdvanced() ? 'Hide advanced fields' : 'Show advanced fields'}
+            onClick={() => setShowAdvanced(!showAdvanced())}
+          />
+        </div>
       </Show>
       <div class="pt-2">
-        <Show when={!pristine()}>
-          <button type="button" class="text-sky-800 mr-2" onClick={onSubmit}>
-            [ Save ]
-          </button>
-        </Show>
-        <a
-          class="text-sky-800"
-          href={exitPath(props.tableName)}
-        >
-          [ Cancel ]
-        </a>
+        <Button
+          label="Save"
+          onClick={onSubmit}
+          disabled={pristine()}
+        />
+        <span class="inline-block w-2" />
+        <Link
+          {...exitLink(props.tableName)}
+          type="button"
+          label="Cancel"
+        />
       </div>
-    </form>
+    </div>
   )
 }

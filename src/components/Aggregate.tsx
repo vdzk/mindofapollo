@@ -12,11 +12,13 @@ import {
 } from "~/api/components/Aggregate";
 import {listForeignHopRecordsCache} from "~/client-only/query";
 import {deleteForeignHopRecordAction} from "~/client-only/action";
+import { Link } from "~/components/Link";
+import { Button } from "~/components/buttons";
 
 export interface AggregateSection {
   title: string;
   records: () => DataRecord[] | undefined;
-  link: { href: string, title: string }
+  link: { route: string, params: Record<string, any>, title: string }
 }
 
 const FkRecordListItem: Component<{
@@ -44,12 +46,19 @@ const FkRecordListItem: Component<{
 
   return (
     <>
-      <a class="hover:underline"
-        href={`/show-record?tableName=${hrefTableName}&id=${hrefId}`}
-      >
-        {text}
-      </a>
-      <button class="text-sky-800 mx-2" onClick={onDelete}>[ X ]</button>
+      <Link
+        route="show-record"
+        params={{
+          tableName: hrefTableName,
+          id: hrefId
+        }}
+        label={text}
+      />
+      <Button
+        label="X"
+        onClick={onDelete}
+        tooltip="Remove"
+      />
     </>
   )
 }
@@ -122,11 +131,13 @@ export const Aggregate: Component<{
           <div>
             <span class="px-2 font-bold">{section.title}</span>
             <Show when={session?.userSession()?.authenticated}>
-              <a
-                class="text-sky-800"
-                href={section.link.href}
-                title="add / remove"
-              >{section.link.title}</a>
+              <Link
+                route={section.link.route}
+                params={section.link.params}
+                type="button"
+                label={section.link.title}
+                tooltip="add / remove"
+              />
             </Show>
           </div>
           <For each={section.records()}>{(record) => (
@@ -143,14 +154,14 @@ export const Aggregate: Component<{
                   />
                 </Match>
                 <Match when>
-                  <a /*use title column here*/
-                    href={`/show-record`
-                      +`?tableName=${aggregate.table}`
-                      +`&id=${record.id}`}
-                    class="hover:underline"
-                  >
-                    {aggregateTable.preview?.(record) ?? record[titleColName()]}
-                  </a>
+                  <Link
+                    route="show-record"
+                    params={{
+                      tableName: aggregate.table,
+                      id: record.id
+                    }}
+                    label={aggregateTable.preview?.(record) ?? record[titleColName()]}
+                  />
                 </Match>
               </Switch>
             </div>

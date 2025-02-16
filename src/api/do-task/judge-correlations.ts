@@ -1,8 +1,12 @@
 "use server"
 
 import {safeWrap} from "~/api/shared/mutate";
-import {DataRecordWithId} from "~/schema/type";
+import {DataRecordWithId, DataRecord} from "~/schema/type";
 import {sql} from "~/db";
+import { _insertRecordsOneByOne } from "~/api/shared/mutate";
+import { attemptJudgeStatement } from "~/api/shared/attemptJudgeStatement";
+import { startExpl } from "~/server-only/expl";
+import { UserSession } from "~/types";
 
 export const getJudgeCorrelationsData = safeWrap(async (userId) => {
     const sides = Math.random() > 0.5 ? [true, false] : [false, true]
@@ -49,4 +53,10 @@ export const getJudgeCorrelationsData = safeWrap(async (userId) => {
     `
         return {...data, arguments: results}
     }
+})
+
+export const submitCorrelations = safeWrap(async (userSession: UserSession, statementId: number, records: DataRecord[]) => {
+    const explId = await startExpl(null, 'JudgeCorrelations', 1, 'statement', statementId)
+    await _insertRecordsOneByOne('argument_conditional', records, explId)
+    await attemptJudgeStatement(statementId, explId, 'user submitted correlations')
 })

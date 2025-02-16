@@ -8,6 +8,7 @@ import { schema } from "~/schema/schema";
 import { BooleanColumn, DataRecord } from "~/schema/type";
 import { insertRecord } from "~/api/shared/mutate";
 import { attemptAggregateArguments, getWeighArgumentTaskData } from "~/api/do-task/weigh-argument";
+import { Button } from "~/components/buttons";
 
 export default function WeighArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})
@@ -71,9 +72,10 @@ export default function WeighArgument() {
           )}
         </For>
         <div class="pt-2">
-          <button class="text-sky-800" onClick={onSubmit}>
-            [ Submit ]
-          </button>
+          <Button
+            onClick={onSubmit}
+            label="Submit"
+          />
         </div>
       </div>
     </Task>

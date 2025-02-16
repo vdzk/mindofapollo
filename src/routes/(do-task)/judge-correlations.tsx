@@ -7,9 +7,8 @@ import { RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"
 import { schema } from "~/schema/schema"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { insertRecordsOneByOne } from "~/api/shared/mutate"
-import {getJudgeCorrelationsData} from "~/api/do-task/judge-correlations";
-import {attemptJudgeStatement} from "~/api/shared/attemptJudgeStatement";
+import { getJudgeCorrelationsData, submitCorrelations } from "~/api/do-task/judge-correlations"
+import { Button } from "~/components/buttons";
 
 const CorrelationForm: Component<{
   argument: DataRecordWithId
@@ -52,7 +51,7 @@ const CorrelationForm: Component<{
           />
         </Match>
         <Match when={props.index > 0}>
-          <form class="px-2" data-recordId={props.argument.id}>
+          <div class="px-2" data-recordId={props.argument.id}>
             <For each={Object.keys(condCols)}>
               {condColName => <FormField
                 tableName="argument_conditional"
@@ -60,7 +59,7 @@ const CorrelationForm: Component<{
                 {...{diff, setDiff}}
               />}
             </For>
-          </form>
+          </div>
         </Match>
       </Switch>
     </>
@@ -75,9 +74,7 @@ export default function JudgeCorrelations() {
     const records = taskData()!.arguments
       .slice(1) // The first argument is not conditional and is not included
       .map(argument => diffs[argument.id])
-    // TODO: authorize insertion of the correct records
-    await insertRecordsOneByOne('argument_conditional', records)
-    await attemptJudgeStatement(taskData()!.statement.id)
+    await submitCorrelations(taskData()!.statement.id, records)
     refetch()
   }
 
@@ -105,9 +102,10 @@ export default function JudgeCorrelations() {
         />}
       </For>
       <div class="px-2 pt-2">
-        <button type="button" class="text-sky-800" onClick={onSubmit}>
-          [ Submit ]
-        </button>
+        <Button
+          label="Submit"
+          onClick={onSubmit}
+        />
       </div>
     </Task>
   )

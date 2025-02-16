@@ -5,6 +5,8 @@ import { addConfirmation, getConfirnmationStatement } from "~/api/do-task/confir
 import { insertExtRecord } from "~/api/shared/extRecord";
 import { createStore } from "solid-js/store";
 import { DataRecord } from "~/schema/type";
+import { Link } from "~/components/Link";
+import { Button } from "~/components/buttons";
 
 export default function ConfirmOrChallenge() {
   const [diff, setDiff] = createStore<DataRecord>({})
@@ -35,30 +37,26 @@ export default function ConfirmOrChallenge() {
 
   return (
     <Task resource={statement}>
-      <main class="px-2 max-w-md">
-        <div>
-          <a
-            class="hover:underline"
-            href={`/show-record?tableName=statement&id=${statement()!.id}`}
-          >
-            {statement()!.text}
-          </a>
+      <main>
+        <div class="px-2">
+          <Link
+            route="show-record"
+            params={{tableName: "statement", id: statement()!.id}}
+            label={statement()!.text}
+          />
         </div>
         <div>
           <Switch>
             <Match when={!challenge()}>
-              <button
-                class="text-sky-800"
+              <Button
+                label="Confirm"
                 onClick={() => onConfirm(statement()!.id)}
-              >
-                [ Confirm ]
-              </button>
-              <button
-                class="pl-2 text-sky-800"
+              />
+              <span class="inline-block w-2" />
+              <Button
+                label="Challenge"
                 onClick={() => setChallenge(true)}
-              >
-                [ Challenge ]
-              </button>
+              />
             </Match>
             <Match when={challenge()}>
               <FormField
@@ -67,18 +65,15 @@ export default function ConfirmOrChallenge() {
                 label="Argument against"
                 {...{ diff, setDiff }}
               />
-              <button
-                class="text-sky-800"
+              <Button
+                label="Submit"
                 onClick={() => onArgument(statement()!.id)}
-              >
-                [ Submit ]
-              </button>
-              <button
-                class="pl-2 text-sky-800"
+              />
+              <span class="inline-block w-2" />
+              <Button
+                label="Cancel"
                 onClick={() => setChallenge(false)}
-              >
-                [ Cancel ]
-              </button>
+              />
             </Match>
           </Switch>
         </div>

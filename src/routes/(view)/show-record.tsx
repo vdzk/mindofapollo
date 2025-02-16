@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Match, Show, Switch, useContext } from "solid-js";
 import { Actions } from "~/components/Actions";
-import {  RecordDetails } from "~/components/RecordDetails";
+import { RecordDetails } from "~/components/RecordDetails";
 import { schema } from "~/schema/schema";
 import { deleteExtById, getExtRecordById } from "~/api/shared/extRecord";
 import { SessionContext } from "~/SessionContext";
@@ -12,6 +12,8 @@ import { getPermission } from "~/getPermission";
 import { getRecords } from "~/client-only/query";
 import { useSafeParams } from "~/client-only/util";
 import { MasterDetail } from "~/components/MasterDetail";
+import { Link } from "~/components/Link";
+import { Button } from "~/components/buttons";
 
 const _delete = action(async (
   tableName: string,
@@ -48,7 +50,7 @@ export default function ShowRecord() {
     const { sections } = schema.tables[sp().tableName]
     if (sections) {
       for (const key in sections) {
-        options.push({id: key, label: sections[key].label})
+        options.push({ id: key, label: sections[key].label })
       }
     } else {
       options.push({ id: 'allDetails', label: 'details' })
@@ -56,7 +58,7 @@ export default function ShowRecord() {
     options.push({ id: 'actions', label: 'actions' })
     return options
   }
-  
+
   const selectedSection = () => (searchParams.section as string | undefined) ?? sectionOptions()[0].id
 
   return (
@@ -66,24 +68,34 @@ export default function ShowRecord() {
       <MasterDetail
         options={sectionOptions()}
         selectedId={selectedSection()}
-        onChange={(sectionId) => setSearchParams({section: sectionId})}
+        onChange={(sectionId) => setSearchParams({ section: sectionId })}
+        class="px-2"
       >
         <Switch>
           <Match when={selectedSection() === 'actions'}>
             <Actions tableName={sp().tableName} recordId={recordId()} />
-            <div>
-              <a href={`/propose-change?tableName=${sp().tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
-                [ Propose Change ]
-              </a>
+            <div class="px-2 pb-2">
+              <Link
+                route="propose-change"
+                params={{ tableName: sp().tableName, id: recordId() }}
+                type="button"
+                label="Propose Change"
+              />
+            </div>
+            <div class="px-2 flex gap-2">
               <Show when={premU().granted}>
-                <a href={`/edit-record?tableName=${sp().tableName}&id=${recordId()}`} class="mx-2 text-sky-800">
-                  [ Edit ]
-                </a>
+                <Link
+                  route="edit-record"
+                  params={{ tableName: sp().tableName, id: recordId() }}
+                  type="button"
+                  label="Edit"
+                />
               </Show>
               <Show when={premD().granted}>
-                <button class="mx-2 text-sky-800" onClick={onDelete}>
-                  [ Delete ]
-                </button>
+                <Button
+                  label="Delete"
+                  onClick={onDelete}
+                />
               </Show>
             </div>
           </Match>

@@ -4,7 +4,8 @@ import { PageTitle, Subtitle } from "~/components/PageTitle";
 import { RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { getChangeProposal, voteChangeProposal } from "~/api/do-task/vote-change-proposal";
-import { firstCap, humanCase } from "~/util";
+import { humanCase } from "~/util"
+import { Button } from "~/components/buttons"
 
 export default function VoteChangeProposal() {
   const [proposal, { refetch }] = createResource(getChangeProposal)
@@ -49,18 +50,15 @@ export default function VoteChangeProposal() {
       />
       <main class="px-2 max-w-md">
         <div>
-          <button
-            class="text-sky-800"
+          <Button
+            label="In Favour"
             onClick={() => vote(true)}
-          >
-            [ In Favour ]
-          </button>
-          <button
-            class="pl-2 text-sky-800"
+          />
+          <span class="inline-block w-2" />
+          <Button
+            label="Against"
             onClick={() => vote(false)}
-          >
-            [ Against ]
-          </button>
+          />
         </div>
       </main>
     </Task>

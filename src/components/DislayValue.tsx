@@ -6,6 +6,7 @@ import { getPercent, nbsp } from "~/util";
 import { schema } from "~/schema/schema";
 import { getOriginTypes } from "~/api/shared/valueType";
 import { ExplLink } from "./expl/ExplLink";
+import { Link } from "./Link";
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -22,12 +23,14 @@ const FkValue: Component<{
   })
 
   return (
-    <a
-      class="hover:underline"
-      href={`/show-record?tableName=${tableName}&id=${props.id}`}
-    >
-      {record?.()?.[props.column.fk.labelColumn] ?? nbsp}
-    </a>
+    <Link
+      route="show-record"
+      params={{
+        tableName: tableName,
+        id: props.id
+      }}
+      label={record?.()?.[props.column.fk.labelColumn] ?? nbsp}
+    />
   )
 }
 

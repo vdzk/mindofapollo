@@ -4,6 +4,7 @@ import { createSignal, For, useContext } from "solid-js"
 import { listRecords } from "~/api/shared/select"
 import { login } from "~/api/shared/session"
 import { SessionContext } from "~/SessionContext"
+import { Button } from "~/components/buttons"
 
 export default function Login() {
   const session = useContext(SessionContext)
@@ -33,13 +34,12 @@ export default function Login() {
             </For>
           </select>
           <div class="mt-2 text-center">
-            <button
-              class="text-sky-900 disabled:text-gray-500"
+            <Button
+              label="Login"
               onClick={submit}
+              tooltip={!userId() ? "Please select a user" : undefined}
               disabled={!userId()}
-            >
-              [ Login ]
-            </button>
+            />
           </div>
         </div>
       </div>

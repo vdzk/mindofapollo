@@ -95,6 +95,10 @@ export const _insertRecord = async (
   return result[0];
 };
 
+export const _insertRecordsOneByOne = async (tableName: string, records: DataRecord[], explId: number) => {
+  await Promise.all(records.map(record => _insertRecord(tableName, record, explId)))
+}
+
 export const insertRecord = safeWrap(async (
   userSession: UserSession,
   tableName: string,

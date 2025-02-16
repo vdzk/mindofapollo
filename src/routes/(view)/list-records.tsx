@@ -5,10 +5,12 @@ import { action, createAsync, json, useAction } from "@solidjs/router";
 import { schema } from "~/schema/schema";
 import { insertRecord } from "~/api/shared/mutate";
 import { getPermission } from "~/getPermission";
-import {getRecords} from "~/client-only/query";
+import { getRecords } from "~/client-only/query";
 import { SessionContext } from "~/SessionContext";
 import { PageTitle } from "~/components/PageTitle";
 import { useSafeParams } from "~/client-only/util";
+import { Link } from "~/components/Link";
+import { Button } from "~/components/buttons";
 
 export default function ListRecords() {
   const session = useContext(SessionContext)
@@ -34,12 +36,14 @@ export default function ListRecords() {
       <section class="pb-2">
         <For each={records()}>{(record) => (
           <div class="px-2">
-            <a
-              href={`/show-record?tableName=${sp().tableName}&id=${record.id}`}
-              class="hover:underline"
-            >
-              {record[titleColumnName(sp().tableName)] || nbsp}
-            </a>
+            <Link
+              route="show-record"
+              params={{
+                tableName: sp().tableName,
+                id: record.id
+              }}
+              label={record[titleColumnName(sp().tableName)] || nbsp}
+            />
           </div>
         )}</For>
       </section>
@@ -47,20 +51,20 @@ export default function ListRecords() {
         <Show when={premC()?.granted}>
           <Switch>
             <Match when={table().createRecord}>
-              <button
+              <Button
                 onClick={addAction}
-                class="mx-2 text-sky-800"
-              >
-                [ + Add ]
-              </button>
+                label="+ Add"
+                tooltip="Add new record"
+              />
             </Match>
             <Match when>
-              <a
-                href={`/create-record/?tableName=${sp().tableName}`}
-                class="mx-2 text-sky-800"
-              >
-                [ + Add ]
-              </a>
+              <Link
+                route="create-record"
+                params={{ tableName: sp().tableName }}
+                type="button"
+                label="+ Add"
+                tooltip="Add new record"
+              />
             </Match>
           </Switch>
         </Show>

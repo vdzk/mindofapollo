@@ -1,6 +1,7 @@
-import { Component, Match, Switch } from "solid-js"
+import { Component } from "solid-js"
 import { DataLiteral } from "~/schema/type"
 import { btnStyle } from "./buttons"
+import { buildUrl } from "~/util"
 
 export const Link: Component<{
   params?: Record<string, any>
@@ -9,41 +10,13 @@ export const Link: Component<{
   type?: 'button' | 'logo',
   tooltip?: string
 }> = props => {
-  let href = '/' + props.route
-  if (props.params) {
-    href += '?' + Object.entries(props.params)
-      .map(([k, v]) => k + '=' + v)
-      .join('&')
-  }
-  const sharedProps = { href, title: props.tooltip }
-  return (
-    <Switch>
-      <Match when={props.type === 'button'}>
-        <a
-          {...sharedProps}
-          class={btnStyle}
-        >
-          {props.label}
-        </a>
-      </Match>
-      <Match when={props.type === 'logo'}>
-        <a
-          {...sharedProps}
-          class="font-bold"
-        >
-          {props.label}
-        </a>
-      </Match>
-      <Match when>
-        <a
-          {...sharedProps}
-          class="hover:underline"
-        >
-          {props.label}
-        </a>
-      </Match>
-    </Switch>
-  )
+  const href = buildUrl(props.route, props.params)
+  
+  let className = 'hover:underline'
+  if (props.type === 'button') className = btnStyle()
+  if (props.type === 'logo') className = 'font-bold'
+  
+  return <a href={href} title={props.tooltip} class={className}>{props.label}</a>
 }
 
 export const Links: Component<{

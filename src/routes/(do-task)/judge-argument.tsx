@@ -7,6 +7,7 @@ import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { DataRecord } from "~/schema/type";
 import {getJudgeArgument, judgeArgument} from "~/api/do-task/judge-arguments";
+import { Button } from "~/components/buttons";
 
 export default function JudgeArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})
@@ -28,7 +29,7 @@ export default function JudgeArgument() {
         {...{ displayColumn }}
       />
       <PageTitle>Make judgement</PageTitle>
-      <form class="px-2 max-w-screen-sm">
+      <div class="px-2 max-w-screen-sm">
         <For each={Object.keys(formColumns)}>
           { colName => (
             <FormField
@@ -38,11 +39,12 @@ export default function JudgeArgument() {
           )}
         </For>
         <div class="pt-2">
-          <button class="text-sky-800" onClick={onSubmit}>
-            [ Submit ]
-          </button>
+          <Button
+            label="Submit"
+            onClick={onSubmit}
+          />
         </div>
-      </form>
+      </div>
     </Task>
   )
 }

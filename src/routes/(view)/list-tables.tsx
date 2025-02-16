@@ -1,3 +1,4 @@
+import { Link } from "~/components/Link";
 import { Title } from "@solidjs/meta"
 import { For } from "solid-js"
 import { PageTitle } from "~/components/PageTitle"
@@ -20,9 +21,12 @@ export default function ListTables() {
       <div class="px-2 max-w-screen-md flex flex-wrap">
         <For each={tableNames}>
           {(tableName) => (
-            <a href={`/list-records?tableName=${tableName}`} class="mr-1 text-sky-800 min-w-60 block">
-              [ {firstCap(pluralTableName(tableName))} ]
-            </a>
+            <Link
+              route="list-records"
+              params={{ tableName }}
+              label={firstCap(pluralTableName(tableName))}
+              type="button"
+            />
           )}
         </For>
       </div>

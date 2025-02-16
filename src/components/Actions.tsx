@@ -1,8 +1,9 @@
 import { createAsync, useAction } from "@solidjs/router";
 import { Component, createSignal, For, Show, useContext } from "solid-js";
 import { SessionContext } from "~/SessionContext";
-import {getVisibleActionsCache} from "~/client-only/query";
-import {executeTableAction} from "~/client-only/action";
+import { getVisibleActionsCache } from "~/client-only/query";
+import { executeTableAction } from "~/client-only/action";
+import { Button } from "~/components/buttons";
 
 const Action: Component<{
   tableName: string
@@ -23,10 +24,11 @@ const Action: Component<{
         {validationError()}
       </div>
     )}>
-      <div class="px-2 ">
-        <button class="text-sky-800" {...{onClick}}>
-          [ {props.label} ]
-        </button>
+      <div class="px-2">
+        <Button
+          onClick={onClick}
+          label={props.label}
+        />
       </div>
     </Show>
   )

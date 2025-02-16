@@ -125,6 +125,16 @@ export const isEmpty = (obj: Record<string, any>) => Object.keys(obj).length ===
 
 export const getPercent = (x: number) => Math.round(x * 100) + '%'
 
+export const buildUrl = (route: string, params?: Record<string, any>) => {
+  let url = '/' + route
+  if (params) {
+    url += '?' + Object.entries(params)
+      .map(([k, v]) => k + '=' + v)
+      .join('&')
+  }
+  return url
+}
+
 export const pick = <T extends Record<string, any>, K extends keyof T>(
   obj: T,
   keys: K[]
