@@ -1,11 +1,12 @@
 import { Component, Match, Switch } from "solid-js"
 import { DataLiteral } from "~/schema/type"
+import { btnStyle } from "./buttons"
 
 export const Link: Component<{
   params?: Record<string, any>
   label?: DataLiteral
   route: string,
-  type?: 'button',
+  type?: 'button' | 'logo',
   tooltip?: string
 }> = props => {
   let href = '/' + props.route
@@ -20,14 +21,22 @@ export const Link: Component<{
       <Match when={props.type === 'button'}>
         <a
           {...sharedProps}
-          class="text-sky-800"
+          class={btnStyle}
         >
-          [ {props.label} ]
+          {props.label}
+        </a>
+      </Match>
+      <Match when={props.type === 'logo'}>
+        <a
+          {...sharedProps}
+          class="font-bold"
+        >
+          {props.label}
         </a>
       </Match>
       <Match when>
         <a
-          {...sharedProps}  
+          {...sharedProps}
           class="hover:underline"
         >
           {props.label}
@@ -47,14 +56,14 @@ export const Links: Component<{
   type?: 'button'
 }> = props => {
   return (
-    <div>
+    <>
       {props.links.map((link, index) => (
         <>
-          {index > 0 && ' '}
+          {index > 0 && <span class="w-2 inline-block" />}
           <Link {...link} type={props.type} />
         </>
       ))}
-    </div>
+    </>
   )
 }
 

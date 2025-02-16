@@ -6,6 +6,7 @@ import { getRecords } from "~/client-only/query"
 import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
 import { Subtitle } from "~/components/PageTitle"
+import { etv } from "~/util"
 
 const getHomePageStatementsQuery = query(getHomePageStatements, 'getHomePageStatements')
 
@@ -19,6 +20,7 @@ export default function HomePage() {
   const options = () => [featuredOption, ...tagOptions()]
 
   const [selectedId, setSelectedId] = createSignal(featuredOption.id)
+  const [selectedTable, setSelectedTable] = createSignal('statement')
 
   const featured = () => selectedId() === featuredOption.id
   const tagId = () => featured() ? undefined : selectedId()
@@ -29,63 +31,58 @@ export default function HomePage() {
       <Title>Home Page</Title>
       <div class="h-3" />
       <Subtitle>Statements & directives</Subtitle>
-      <MasterDetail
-        options={options()}
-        selectedId={selectedId()}
-        onChange={setSelectedId}
-      >
-        <div class="pt-1 pl-2">
-          <For each={statements()}>
-            {statement => (
-              <div>
-                <Link
-                  label={statement.label}
-                  route="show-record"
-                  params={{
-                    tableName: statement.directive ? 'directive' : 'statement',
-                    id: statement.id
-                  }}
-                />
-              </div>
-            )}
-          </For>
-        </div>
-      </MasterDetail>
-      <div class="px-2 mt-2 pb-6">
-        <Links 
+      <div class="px-2">
+        <MasterDetail
+          options={options()}
+          selectedId={selectedId()}
+          onChange={setSelectedId}
+        >
+          <div class="pt-1 pl-2">
+            <For each={statements()}>
+              {statement => (
+                <div>
+                  <Link
+                    label={statement.label}
+                    route="show-record"
+                    params={{
+                      tableName: statement.directive ? 'directive' : 'statement',
+                      id: statement.id
+                    }}
+                  />
+                </div>
+              )}
+            </For>
+          </div>
+        </MasterDetail>
+      </div>
+      <div class="px-2 mt-3 pb-6">
+        <select onChange={etv(setSelectedTable)} class="mr-2 rounded-md py-0.5 px-0.5 bg-gray-200">
+          <option value="statement" selected={selectedTable() === 'statement'}>
+            Statements
+          </option>
+          <option value="directive" selected={selectedTable() === 'directive'}>
+            Directives
+          </option>
+        </select>
+        <Links
           type="button"
           links={[
             {
-              label: "All statements",
+              label: "Show all",
               route: "list-records",
-              params: { tableName: 'statement' }
+              params: { tableName: selectedTable() }
             },
             {
-              label: "Add a statement",
+              label: "Add new",
               route: "create-record",
-              params: { tableName: 'statement' }
-            }
-          ]}
-        />
-        <Links 
-          type="button"
-          links={[
-            {
-              label: "All directives",
-              route: "list-records",
-              params: { tableName: 'directive' }
-            },
-            {
-              label: "Add a directive",
-              route: "create-record",
-              params: { tableName: 'directive' }
+              params: { tableName: selectedTable() }
             }
           ]}
         />
       </div>
       <Subtitle>Things to do</Subtitle>
       <div class="px-2 pb-6">
-        <Links 
+        <Links
           type="button"
           links={[
             {
@@ -106,7 +103,7 @@ export default function HomePage() {
       </div>
       <Subtitle>Other</Subtitle>
       <div class="px-2">
-        <Links 
+        <Links
           type="button"
           links={[
             {

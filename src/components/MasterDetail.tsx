@@ -10,7 +10,7 @@ export const MasterDetail = <T,>(props: {
 }) => {
   return (
     <div class="flex">
-      <div class="shrink-0">
+      <div class="shrink-0 rounded-md overflow-hidden">
         <For each={props.options}>
           {option => {
             const selected = () => option.id === props.selectedId
@@ -18,8 +18,8 @@ export const MasterDetail = <T,>(props: {
               <div
                 class="px-2 py-1 cursor-pointer"
                 classList={{
-                  'cursor-default bg-transparent hover:bg-transparent': selected(),
-                  'bg-gray-200 hover:bg-yellow-100': !selected()
+                  'cursor-default bg-yellow-600 hover:bg-yellow-600 text-white': selected(),
+                  'bg-yellow-400 hover:bg-yellow-500 text-gray-900': !selected()
                 }}
                 onClick={() => props.onChange(option.id)}
               >
