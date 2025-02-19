@@ -1,7 +1,7 @@
 "use server";
-import { xName } from "~/util";
-import { sql } from "./db";
-import { injectVirtualValues } from "./select";
+import { sql } from "~/server-only/db";
+import { injectVirtualValues } from "~/server-only/select";
+import { xName } from "~/util"
 
 export const listCrossRecords = async (
   b: string,

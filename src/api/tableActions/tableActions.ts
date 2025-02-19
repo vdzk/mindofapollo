@@ -86,7 +86,7 @@ const tableActions: Record<string, Record<string, TableAction>> = {
   }
 }
 
-export const getVisibleActions = async (
+export const listVisibleActions = async (
   tableName: string,
   recordId: number
 ) => {

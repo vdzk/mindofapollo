@@ -1,11 +1,11 @@
 "use server";
-import { getUserSession } from "~/server-only/session";
-import { getPermission } from "~/getPermission";
-import { getVirtualColNames } from "~/util";
-import { _getRecordById } from "./select";
+import { getUserSession } from "~/server-only/session"
+import { getPermission } from "~/getPermission"
+import { getVirtualColNames } from "~/util"
+import { _getRecordById } from "~/server-only/select";
 
 
-export const getRecordById = async (tableName: string, id: number) => {
+export const getOneRecordById = async (tableName: string, id: number) => {
   const userSession = await getUserSession();
   const permission = getPermission(userSession, 'read', tableName, id);
   if (!permission.granted) return;

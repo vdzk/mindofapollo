@@ -30,7 +30,7 @@ const getFirstTextColumn = (tableName: string): string | null => {
   return null;
 }
 
-export const getUserActivity = async (
+export const listUserActivity = async (
   userId: number
 ): Promise<ActivityRecord[]> => {
   const userSession = await getUserSession()

@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta";
 import { RecordPageTitle, Subtitle } from "../../components/PageTitle";
 import { createAsync, useNavigate, useSearchParams } from "@solidjs/router";
-import { getExtRecordById } from "~/api/shared/extRecord";
+import { getOneExtRecordById } from "~/api/shared/extRecord";
 import { humanCase, titleColumnName } from "~/util";
 import { createSignal, For, Show } from "solid-js";
 import { schema } from "~/schema/schema";
@@ -9,7 +9,7 @@ import { Detail } from "~/components/details";
 import { FormField } from "~/components/FormField";
 import { createStore } from "solid-js/store";
 import { DataRecord } from "~/schema/type";
-import {saveChangeProposal} from "~/api/manage-record/propose-change";
+import {submitChangeProposal} from "~/api/manage-record/propose-change";
 import { Button } from "~/components/buttons";
 import { Link } from "~/components/Link";
 
@@ -21,7 +21,7 @@ interface ProposeChange {
 export default function ProposeChange() {
   const [diff, setDiff] = createStore<DataRecord>({})
   const [sp] = useSearchParams() as unknown as [ProposeChange]
-  const record = createAsync(async () => getExtRecordById(sp.tableName, sp.id))
+  const record = createAsync(async () => getOneExtRecordById(sp.tableName, sp.id))
   const titleText = () => '' + (record()?.[titleColumnName(sp.tableName)] ?? '')
   const columns = () => schema.tables[sp.tableName].columns
   const [colName, setColName] = createSignal('')
@@ -32,7 +32,7 @@ export default function ProposeChange() {
     const newValue = diff[colName()]
     const oldValue = record()![colName()]
     const explanation = (diff.change_explanation ?? '') as string
-    await saveChangeProposal(
+    await submitChangeProposal(
       sp.tableName, sp.id, colName(), oldValue, newValue, explanation
     )
     navigate(backHref())

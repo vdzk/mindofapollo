@@ -11,7 +11,7 @@ interface HpStatement {
   directive?: boolean
 }
 
-export const getHomePageStatements = async (
+export const listHomePageStatements = async (
   featured: boolean,
   tagId?: number
 ) => {

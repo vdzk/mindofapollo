@@ -6,7 +6,7 @@ import { getValueTypeTableName } from "~/schema/dataTypes";
 import { startExpl } from "~/server-only/expl";
 import { getUserSession } from "../../server-only/session";
 
-export const saveChangeProposal = async (
+export const submitChangeProposal = async (
   tableName: string,
   id: number,
   colName: string,

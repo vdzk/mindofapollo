@@ -2,7 +2,7 @@
 
 import { sql } from "~/server-only/db"
 
-export const getExpl = async (explId: number) => {
+export const getOneExpl = async (explId: number) => {
   const explResults = await sql`
     SELECT *
     FROM expl

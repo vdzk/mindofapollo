@@ -2,7 +2,7 @@ import { createAsync } from "@solidjs/router";
 import { Component, For, useContext } from "solid-js";
 import { schema } from "~/schema/schema";
 import { ColumnSchema } from "~/schema/type";
-import { getExtRecordById } from "~/api/shared/extRecord";
+import { getOneExtRecordById } from "~/api/shared/extRecord";
 import { getAllKeys, getExtTableName } from "~/util";
 import { Aggregate } from "../components/Aggregate";
 import { Detail, DetailProps } from "./details";
@@ -22,7 +22,7 @@ export const RecordDetails: Component<{
   displayColumn?: ColumnFilter
 }> = props => {
   const session = useContext(SessionContext)
-  const record = createAsync(() => getExtRecordById(props.tableName, props.id))
+  const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
   const extTableName = () => record() ? getExtTableName(props.tableName, record()!) : undefined
   const table = () => schema.tables[props.tableName]
   const permission = () => getPermission(session?.userSession?.(), 'read', props.tableName, props.id)

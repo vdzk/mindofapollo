@@ -5,7 +5,7 @@ import { getDirConcsWithValues } from "../../server-only/getDirConcsWithValues";
 import {xName} from "~/util";
 import { UserSession } from "~/types";
 
-export const getUserDirectives = async (userSession: UserSession) => {
+export const listUserDirectives = async (userSession: UserSession) => {
   const directives = await sql`
     SELECT directive.id, deed.text
     FROM ${sql(xName('person', 'person_category', true))} pxpc

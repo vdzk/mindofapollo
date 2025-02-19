@@ -11,7 +11,7 @@ export interface ChatMessage {
   timestamp: number;
 }
 
-export const getChatMessages = async () => {
+export const listChatMessages = async () => {
   const userSession = await getUserSession();
   if (!userSession?.authenticated) return [];
 
@@ -26,7 +26,7 @@ export const getChatMessages = async () => {
   return messages || [];
 };
 
-export const sendChatMessage = async (text: string) => {
+export const submitChatMessage = async (text: string) => {
   const userSession = await getUserSession();
   if (!userSession?.authenticated) return null;
 

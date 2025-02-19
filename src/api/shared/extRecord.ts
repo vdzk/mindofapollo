@@ -42,7 +42,7 @@ export const updateExtRecord = async (
   ])
 }
 
-export const getExtRecordById = async (tableName: string, id: number) => {
+export const getOneExtRecordById = async (tableName: string, id: number) => {
   const { columns } = schema.tables[tableName]
   const colNames = Object.keys(columns)
   const result = await _getRecordById(tableName, id, colNames)

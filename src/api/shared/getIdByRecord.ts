@@ -1,10 +1,9 @@
 "use server";
-import { DataLiteral } from "~/schema/type";
-import { sql } from "./db";
-import { undefined } from "./select";
+import { DataLiteral } from "~/schema/type"
+import { sql } from "~/server-only/db";
 
 
-export const getIdByRecord = async (tableName: string, record: Record<string, DataLiteral>) => {
+export const getOneIdByRecord = async (tableName: string, record: Record<string, DataLiteral>) => {
   if (Object.keys(record).length === 0) {
     return undefined;
   }

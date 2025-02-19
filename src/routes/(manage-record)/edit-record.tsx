@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { Form } from "../../components/Form";
 import { RecordPageTitle } from "../../components/PageTitle";
 import { createAsync, useSearchParams } from "@solidjs/router";
-import { getExtRecordById } from "~/api/shared/extRecord";
+import { getOneExtRecordById } from "~/api/shared/extRecord";
 import { humanCase, titleColumnName } from "~/util";
 import { Suspense } from "solid-js";
 
@@ -14,7 +14,7 @@ interface EditRecord {
 export default function EditRecord() {
   const [sp] = useSearchParams() as unknown as [EditRecord]
   const recordId = () => parseInt(sp.id)
-  const record = createAsync(async () => getExtRecordById(sp.tableName, recordId()))
+  const record = createAsync(async () => getOneExtRecordById(sp.tableName, recordId()))
   const titleText = () => '' + (record()?.[titleColumnName(sp.tableName)] ?? '')
 
   return (
