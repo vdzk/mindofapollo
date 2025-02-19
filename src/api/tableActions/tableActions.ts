@@ -1,6 +1,6 @@
 "use server"
 
-import { _updateRecord, safeWrap } from "../shared/mutate"
+import { _updateRecord } from "../shared/mutate"
 import { getRecordById } from "../shared/select"
 import { hasArguments, hasUnjudgedArguments } from "~/api/tableActions/statement";
 import { attemptJudgeStatement } from "~/api/shared/attemptJudgeStatement";
@@ -9,7 +9,7 @@ import { ReqArgJudgeExpl } from "~/components/expl/actions/ReqArgJudge";
 import { pickWithExplId } from "~/util";
 import { _getCreatedCriticalStatement } from "./argument";
 import { ReqStatementJudgeExpl } from "~/components/expl/actions/ReqStatementJudge";
-import { UserSession } from "~/types";
+import { getUserSession } from "../shared/session";
 
 
 export type TableAction = (
@@ -86,11 +86,11 @@ const tableActions: Record<string, Record<string, TableAction>> = {
   }
 }
 
-export const getVisibleActions = safeWrap(async (
-  userSession: UserSession,
+export const getVisibleActions = async (
   tableName: string,
   recordId: number
 ) => {
+  const userSession = await getUserSession()
   if (tableActions[tableName]) {
     const promises = Object.entries(tableActions[tableName]).map(
       async ([name, action]) => {
@@ -104,17 +104,17 @@ export const getVisibleActions = safeWrap(async (
   } else {
     return []
   }
-})
+}
 
-export const executeAction = safeWrap(async (
-  userSession: UserSession,
+export const executeAction = async (
   tableName: string,
   actionName: string,
   recordId: number
 ) => {
+  const userSession = await getUserSession()
   const success = await tableActions[tableName][actionName](userSession.userId, recordId, true)
   if (!success) {
     return 'This action is no longer available.'
   }
-})
+}
 

@@ -1,13 +1,12 @@
 "use server";
 
-import { _insertRecord, insertValueType, safeWrap } from "~/api/shared/mutate";
+import { _insertRecord, insertValueType } from "~/api/shared/mutate";
 import { DataLiteral } from "~/schema/type";
 import { getValueTypeTableName } from "~/schema/dataTypes";
 import { startExpl } from "~/server-only/expl";
-import { UserSession } from "~/types";
+import { getUserSession } from "../shared/session";
 
-export const saveChangeProposal = safeWrap(async (
-  userSession: UserSession,
+export const saveChangeProposal = async (
   tableName: string,
   id: number,
   colName: string,
@@ -15,6 +14,7 @@ export const saveChangeProposal = safeWrap(async (
   newValue: DataLiteral,
   explanation: string
 ) => {
+  const userSession = await getUserSession()
   const vttn = getValueTypeTableName(tableName, colName)
   const [{ id: old_value_id }] = await insertValueType(vttn, oldValue)
   const [{ id: new_value_id }] = await insertValueType(vttn, newValue)
@@ -28,4 +28,4 @@ export const saveChangeProposal = safeWrap(async (
     new_value_id,
     change_explanation: explanation
   }, explId)
-})
+}

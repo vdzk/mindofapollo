@@ -1,4 +1,6 @@
-import { onError, sql } from "~/db"
+"use server"
+
+import { sql } from "./db"
 
 export const startExpl = async (
   user_id: number | null,
@@ -12,7 +14,7 @@ export const startExpl = async (
       user_id, action, version, table_name, record_id
     })}
     RETURNING id
-  `.catch(onError)
+  `
   return result![0].id as number
 }
 
@@ -24,7 +26,7 @@ export const setExplRecordId = async (
     UPDATE expl
     SET record_id = ${record_id}
     WHERE id = ${explId}
-  `.catch(onError)
+  `
 }
 
 export const finishExpl = async (

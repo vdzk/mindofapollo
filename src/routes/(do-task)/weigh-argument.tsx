@@ -6,8 +6,8 @@ import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { BooleanColumn, DataRecord } from "~/schema/type";
-import { insertRecord } from "~/api/shared/mutate";
-import { attemptAggregateArguments, getWeighArgumentTaskData } from "~/api/do-task/weigh-argument";
+import { submitArgumentWeight } from "~/api/do-task/weigh-argument";
+import { getWeighArgumentTaskData } from "~/api/do-task/weigh-argument";
 import { Button } from "~/components/buttons";
 
 export default function WeighArgument() {
@@ -20,9 +20,7 @@ export default function WeighArgument() {
   const isFirst = () => taskData()!.weightedArguments.length === 0
 
   const onSubmit = async () => {
-    // TODO: authorazation
-    await insertRecord( "argument_weight", {id: id(), ...diff})
-    await attemptAggregateArguments(taskData()?.argument.statement_id)
+    await submitArgumentWeight(id()!, diff)
     refetch()
   }
 

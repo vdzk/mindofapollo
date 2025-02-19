@@ -1,40 +1,20 @@
 "use server"
 
-import { DataLiteral, DataRecord } from "~/schema/type";
-import { onError, sql } from "../../db";
-import { getUserSession } from "./session";
-import { listRecords } from "./select";
-import { schema } from "~/schema/schema";
-import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
-import { getTypeByOriginId, getTypeByRecordId } from "./valueType";
-import { getPermission } from "~/getPermission";
-import chalk from "chalk";
-import { AddExplId } from "~/components/expl/types";
-import { finishExpl, setExplRecordId, startExpl } from "~/server-only/expl";
-import { addExplIdColNames, addExplIds } from "~/util";
-import { UserSession } from "~/types";
+import { sql } from "../../server-only/db"
+import { DataLiteral, DataRecord } from "~/schema/type"
+import { getUserSession } from "./session"
+import { listRecords } from "./select"
+import { schema } from "~/schema/schema"
+import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
+import { getTypeByOriginId, getTypeByRecordId } from "./valueType"
+import { getPermission } from "~/getPermission"
+import chalk from "chalk"
+import { AddExplId } from "~/components/expl/types"
+import { finishExpl, setExplRecordId, startExpl } from "~/server-only/expl"
+import { addExplIdColNames, addExplIds } from "~/util"
+import { UserSession } from "~/types"
 
 type Tail<T extends any[]> = T extends [any, ...infer U] ? U : never;
-
-// Handle SQL error and userId checking
-export function safeWrap<
-  F extends (userSession: UserSession, ...args: any[]) => any>(
-    fn: F): (
-      ...args: Tail<Parameters<F>>
-    ) => Promise<Awaited<ReturnType<F>> | undefined> {
-  return async function (...args: Tail<Parameters<F>>): Promise<Awaited<ReturnType<F>> | undefined> {
-    const userSession = await getUserSession()
-    if (!userSession) {
-      onError(new Error('Error: no user session'));
-    } else {
-      try {
-        return await fn(userSession, ...args);
-      } catch (error) {
-        onError(error as any);
-      }
-    }
-  };
-}
 
 // TODO: implement efficient bulk version
 export const insertValueType = async (
@@ -99,18 +79,18 @@ export const _insertRecordsOneByOne = async (tableName: string, records: DataRec
   await Promise.all(records.map(record => _insertRecord(tableName, record, explId)))
 }
 
-export const insertRecord = safeWrap(async (
-  userSession: UserSession,
+export const insertRecord = async (
   tableName: string,
   record: DataRecord
 ) => {
+  const userSession = await getUserSession()
   if (!getPermission(userSession, 'create', tableName).granted) return
   await injectValueTypes(tableName, record)
   const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId);
   await setExplRecordId(explId, result.id)
   return [result];
-});
+};
 
 // TODO: implement efficient bulk version
 export const insertRecordsOneByOne = async (
@@ -120,12 +100,12 @@ export const insertRecordsOneByOne = async (
   records.map((record) => insertRecord(tableName, record))
 )
 
-export const updateRecord = safeWrap(async (
-  userSession: UserSession,
+export const updateRecord = async (
   tableName: string,
   id: number,
   record: DataRecord
 ) => {
+  const userSession = await getUserSession()
   const permission = getPermission(userSession, 'update', tableName, id)
   if (!permission.granted) return
   if (permission.colNames) {
@@ -142,7 +122,7 @@ export const updateRecord = safeWrap(async (
   const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, id);
   const diff = await _updateRecord(tableName, id, explId, record)
   await finishExpl(explId, {diff})
-})
+}
 
 export const _updateRecord = async <T extends DataRecord>(
   tableName: string,
@@ -174,11 +154,11 @@ export const _updateRecord = async <T extends DataRecord>(
   return diff
 }
 
-export const deleteById = safeWrap(async (
-  userSession: UserSession,
+export const deleteById = async (
   tableName: string,
   id: number
 ) => {
+  const userSession = await getUserSession()
   if (!getPermission(userSession, 'delete', tableName, id).granted) return
   const result = await sql`
     DELETE FROM ${sql(tableName)}
@@ -186,6 +166,7 @@ export const deleteById = safeWrap(async (
     RETURNING *
   `;
   return result;
-});
-export const multiListRecords = (tableNames: string[]) => Promise.all(tableNames.map(listRecords)).catch(onError);
+};
+
+export const multiListRecords = (tableNames: string[]) => Promise.all(tableNames.map(listRecords));
 

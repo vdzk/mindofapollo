@@ -1,21 +1,21 @@
 "use server";
 
-import {_updateRecord, safeWrap} from "~/api/shared/mutate"
-import {sql} from "~/db"
+import {_updateRecord} from "~/api/shared/mutate"
+import {sql} from "~/server-only/db"
 import {calcStatementConfidence} from "~/compute"
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { JudgeStatementExpl } from "~/components/expl/actions/JudgeStatement";
 import { AddExplId } from "~/components/expl/types";
 import { getRecordById } from "./select";
 import { addExplIdColNames, pickWithExplId } from "~/util";
-import { UserSession } from "~/types";
+import { getUserSession } from "./session";
 
-export const attemptJudgeStatement = safeWrap(async (
-  userSession: UserSession,
+export const attemptJudgeStatement = async (
   statementId: number,
   triggerExplId: number,
   triggerLabel: string
 ) => {
+  const userSession = await getUserSession()
   const colNames = ['pro', 'isolated_confidence', 'conditional_confidence']
   
   const argumentConfidences: AddExplId<{
@@ -28,7 +28,7 @@ export const attemptJudgeStatement = safeWrap(async (
     LEFT JOIN argument_judgement aj ON aj.id = a.id
     LEFT JOIN argument_conditional ac ON ac.id = a.id
     WHERE a.statement_id = ${statementId}
-  `
+      `
   let canJudge = true
   let hasNonConditional = [false, false] // [con, pro]
   const confidences: [number[], number[]] = [[], []]
@@ -78,4 +78,4 @@ export const attemptJudgeStatement = safeWrap(async (
   } else {
     return
   }
-})
+}

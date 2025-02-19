@@ -1,24 +1,24 @@
 "use server";
 
 import { DataRecord } from "~/schema/type"
-import { onError } from "../../db"
-import { deleteById, safeWrap } from "./mutate";
-import { getRecordById, getValueById } from "~/api/shared/select";
-import { _insertRecord, updateRecord } from "./mutate";
+import { onError } from "../../server-only/db"
+import { deleteById } from "./mutate"
+import { getRecordById, getValueById } from "~/api/shared/select"
+import { _insertRecord, updateRecord } from "./mutate"
 import { getExtTableName } from "~/util"
-import { schema } from "~/schema/schema";
-import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
-import { getTypeByRecordId } from "./valueType";
-import { setExplRecordId, startExpl } from "~/server-only/expl";
-import { UserSession } from "~/types";
+import { schema } from "~/schema/schema"
+import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
+import { getTypeByRecordId } from "./valueType"
+import { setExplRecordId, startExpl } from "~/server-only/expl"
+import { getUserSession } from "./session"
 
-export const insertExtRecord = safeWrap(async (
-  userSession: UserSession,
+export const insertExtRecord = async (
   tableName: string,
   record: DataRecord,
   extTableName: string,
   extRecord: DataRecord
 ) => {
+  const userSession = await getUserSession()
   const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)
   if (result) {
@@ -26,7 +26,7 @@ export const insertExtRecord = safeWrap(async (
     await setExplRecordId(explId, result.id)
   }
   return result
-})
+}
 
 export const updateExtRecord = (
   tableName: string,

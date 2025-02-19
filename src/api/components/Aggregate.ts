@@ -1,9 +1,9 @@
 "use server"
 
-import {schema} from "~/schema/schema"
-import {onError, sql} from "~/db"
-import {ForeignKey} from "~/schema/type"
-import {injectVirtualValues} from "~/api/shared/select"
+import { sql } from "~/server-only/db"
+import { schema } from "~/schema/schema"
+import { ForeignKey } from "~/schema/type"
+import { injectVirtualValues } from "~/api/shared/select"
 
 export const listOverlapRecords = (
     tableName: string,
@@ -17,7 +17,7 @@ export const listOverlapRecords = (
     ON ${sql(tableName)}.${sql(sharedColumn)} = ${sql(filterTable)}.${sql(sharedColumn)}
   WHERE ${sql(filterTable)}.id = ${filterId}
   ORDER BY ${sql(tableName)}.id
-`.catch(onError);
+`;
 
 export const listForeignRecords = async (
     tableName: string,
@@ -33,14 +33,14 @@ export const listForeignRecords = async (
       LEFT JOIN ${sql(extendedByTable)} e ON e.id = t.id
       WHERE t.${sql(fkName)} = ${fkId}
       ORDER BY t.id
-    `.catch(onError)
+    `
     } else {
         records = await sql`
       SELECT *
       FROM ${sql(tableName)}
       WHERE ${sql(fkName)} = ${fkId}
       ORDER BY id
-    `.catch(onError)
+    `
     }
     await injectVirtualValues(tableName, records)
     return records
@@ -62,6 +62,6 @@ export const listForeignHopRecords = (
       ON tMain.${sql(hopColName)} = tHop.id
     WHERE tMain.${sql(fkName)} = ${fkId}
     ORDER BY tMain.id
-  `.catch(onError);
+    `
 };
 

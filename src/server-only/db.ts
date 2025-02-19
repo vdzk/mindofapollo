@@ -1,10 +1,8 @@
-"use server"
-
 import chalk from "chalk";
 import postgres from "postgres"
 
 // TODO: move config into .env file
-export const sql = postgres({
+const postgresSql = postgres({
   host: "localhost",
   port: 5432,
   database: "apollo",
@@ -19,11 +17,7 @@ export const sql = postgres({
       serialize: (value: any) => value.toString(),
       parse: (value: string) => parseFloat(value)
     }
-  },
-  // transform: {
-  //   ...postgres.camel,
-  //   undefined: null
-  // }
+  }
 });
 
 export const onError = (error: Error & { [key: string]: any }) => {
@@ -42,3 +36,20 @@ export const onError = (error: Error & { [key: string]: any }) => {
   }
   return undefined
 }
+
+// Wrap sql with a proxy to automatically handle errors
+export const sql = new Proxy(postgresSql, {
+  get(target, prop) {
+    const original = target[prop as keyof typeof target];
+    if (typeof original === 'function') {
+      return async (...args: any[]) => {
+        try {
+          return await (original as Function).call(target, ...args);
+        } catch (error) {
+          return onError(error as Error & { [key: string]: any });
+        }
+      };
+    }
+    return original;
+  }
+});

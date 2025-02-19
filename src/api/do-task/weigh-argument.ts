@@ -1,9 +1,12 @@
 "use server"
 
-import { calcStatementConfidenceAdditively } from "~/compute";
-import { sql } from "../../db";
-import { safeWrap, updateRecord } from "../shared/mutate";
-import { UserSession } from "~/types";
+import { sql } from "../../server-only/db"
+import { _insertRecord, _updateRecord, updateRecord } from "../shared/mutate"
+import { getRecordById } from "../shared/select"
+import { startExpl } from "../../server-only/expl"
+import { getUserSession } from "../shared/session"
+import { DataRecord } from "~/schema/type"
+import { calcStatementConfidenceAdditively } from "~/compute"
 
 const getWeightedArguments = (statementId: number) => sql`
   SELECT *
@@ -13,7 +16,8 @@ const getWeightedArguments = (statementId: number) => sql`
   WHERE argument.statement_id = ${statementId}   
 `
 
-export const getWeighArgumentTaskData = safeWrap(async (userSession: UserSession) => {
+export const getWeighArgumentTaskData = async () => {
+  const userSession = await getUserSession()
   const [argument] = await sql`
     SELECT a.*
     FROM argument a
@@ -30,14 +34,14 @@ export const getWeighArgumentTaskData = safeWrap(async (userSession: UserSession
     LIMIT 1
   `
   if (!argument) return
-  const weightedArguments = await getWeightedArguments(argument.statement_id)
+  const weightedArguments = await getWeightedArguments(argument.statement_id as number)
   return { argument, weightedArguments }
-})
+}
 
-export const attemptAggregateArguments = safeWrap(async (
-  userSession: UserSession,
+export const attemptAggregateArguments = async (
   statementId: number
 ) => {
+  const userSession = await getUserSession()
   const checkResults = await sql`
     SELECT NOT EXISTS (
       SELECT 1
@@ -58,4 +62,22 @@ export const attemptAggregateArguments = safeWrap(async (
     confidence,
     decided: true
   })
-})
+}
+
+export const submitArgumentWeight = async (
+  argumentId: number,
+  weightData: DataRecord
+) => {
+  const argument = await getRecordById('argument', argumentId)
+  if (!argument) return
+
+  const userSession = await getUserSession()
+  const explId = await startExpl(userSession.userId, 'WeighArgument', 1, 'argument', argumentId)
+  await _insertRecord("argument_weight", {id: argumentId, ...weightData}, explId)
+  
+  if (argument.statement_id) {
+    await attemptAggregateArguments(argument.statement_id as number)
+  }
+  
+  return true
+}

@@ -1,13 +1,15 @@
 "use server"
 
 import {getValueTypeTableName} from "~/schema/dataTypes"
-import {safeWrap, updateRecord} from "../shared/mutate"
-import {sql} from "../../db"
+import {updateRecord} from "../shared/mutate"
+import {sql} from "../../server-only/db"
 import {getRecordById} from "../shared/select"
 import {ProposalRecord} from "~/tables/other/change_proposal"
-import { UserSession } from "~/types";
+import { UserSession } from "~/types"
+import { getUserSession } from "../shared/session"
 
-export const getChangeProposal = safeWrap(async (userSession: UserSession) => {
+export const getChangeProposal = async () => {
+  const userSession = await getUserSession()
   const proposals = await sql`
     WITH user_changes AS (
       SELECT id
@@ -41,13 +43,13 @@ export const getChangeProposal = safeWrap(async (userSession: UserSession) => {
     old_value: oldValues[0].value,
     new_value: newValues[0].value,
   }
-})
+}
 
-export const voteChangeProposal = safeWrap(async (
-  userId,
+export const voteChangeProposal = async (
   proposalId: number,
   inFavour: boolean
 ) => {
+  const userSession = await getUserSession()
   const proposal = await getRecordById('change_proposal', proposalId) as ProposalRecord | undefined
   if (!proposal) return
   const votesColName = inFavour ? 'votes_in_favour' : 'votes_against'
@@ -73,4 +75,4 @@ export const voteChangeProposal = safeWrap(async (
       {[proposal.column_name]: newValue}
     )
   }
-})
+}

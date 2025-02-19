@@ -1,12 +1,12 @@
 "use server"
 
-import { sql } from "../../db"
-import {_updateRecord, safeWrap} from "../shared/mutate"
-import { startExpl } from "../../server-only/expl";
-import { UserSession } from "~/types";
+import { sql } from "../../server-only/db"
+import { _updateRecord } from "../shared/mutate"
+import { startExpl } from "../../server-only/expl"
+import { getUserSession } from "../shared/session"
 
-export const getConfirnmationStatement = safeWrap(async (userSession: UserSession) => {
-  "use server"
+export const getConfirnmationStatement = async () => {
+  const userSession = await getUserSession()
   // TODO: use TABLESAMPLE when the table grows enough
   // TODO: exclude statements created by the user
   // TODO: avoid sniping by ...
@@ -35,14 +35,13 @@ export const getConfirnmationStatement = safeWrap(async (userSession: UserSessio
     LIMIT 1
   `
   return results[0]
-})
+}
 
-export const addConfirmation = safeWrap(async (
-  userSession: UserSession,
+export const addConfirmation = async (
   statementId: number
 ) => {
-// TODO: check permissions
-// TODO: check permissions
+  const userSession = await getUserSession()
+  // TODO: check permissions
   const result = await sql`
     INSERT INTO confirmation (id, count)
     VALUES (${statementId}, 1)
@@ -53,10 +52,10 @@ export const addConfirmation = safeWrap(async (
   const record = result[0]
   const count = record.count as number
   // TODO: make this number dynamic, depending on the number of users
-  const requiredConfirmations = 2
-  if (count >= requiredConfirmations) {
+  if (count >= 2) {
     const explId = await startExpl(userSession.userId, 'genericChange', 1, 'statement', statementId);
-    await _updateRecord('statement', statementId, explId, { decided: true, confidence: 1 })
+    await _updateRecord('statement', statementId, explId, {       decided: true,       confidence: 1     })
   }
-})
+  return record
+}
 

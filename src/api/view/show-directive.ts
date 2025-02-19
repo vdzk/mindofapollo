@@ -1,12 +1,11 @@
 "use server"
 
-import { sql } from "../../db";
+import { sql } from "../../server-only/db";
 import { getDirConcsWithValues } from "../shared/getDirConcsWithValues";
-import { safeWrap } from "../shared/mutate";
 import {xName} from "~/util";
 import { UserSession } from "~/types";
 
-export const getUserDirectives = safeWrap(async (userSession: UserSession) => {
+export const getUserDirectives = async (userSession: UserSession) => {
   const directives = await sql`
     SELECT directive.id, deed.text
     FROM ${sql(xName('person', 'person_category', true))} pxpc
@@ -41,4 +40,4 @@ export const getUserDirectives = safeWrap(async (userSession: UserSession) => {
   `
 
   return {directives, dirConcs, dirConcsWithValues, moralGoods, units, moralWeights}
-})
+}

@@ -1,8 +1,8 @@
 "use server"
 
+import { sql } from "~/server-only/db"
 import { getPermission } from "~/getPermission"
 import { getUserSession } from "../shared/session"
-import { onError, sql } from "~/db"
 import { injectVirtualValues } from "../shared/select"
 
 interface HpStatement {
@@ -26,7 +26,7 @@ export const getHomePageStatements = async (
       SELECT *
       FROM statement
       WHERE featured
-    `.catch(onError)
+    `
   } else {
     statements = await sql`
       SELECT s.*
@@ -34,7 +34,7 @@ export const getHomePageStatements = async (
       JOIN statement_x_tag x
         ON x.statement_id = s.id
       WHERE x.tag_id = ${tagId!}
-    `.catch(onError)
+    `
   }
   if (statements) {
     await injectVirtualValues('statement', statements)
@@ -47,7 +47,7 @@ export const getHomePageStatements = async (
       SELECT *
       FROM directive
       WHERE featured
-    `.catch(onError)
+    `
   } else {
     directives = await sql`
       SELECT d.id
@@ -55,7 +55,7 @@ export const getHomePageStatements = async (
       JOIN directive_x_tag x
         ON x.directive_id = d.id
       WHERE x.tag_id = ${tagId!}
-    `.catch(onError)
+    `
   }
   if (directives) {
     await injectVirtualValues('directive', directives)

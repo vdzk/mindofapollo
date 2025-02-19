@@ -1,8 +1,7 @@
 "use server"
 
-import { sql } from "../../db";
+import { sql } from "../../server-only/db";
 import { getUserSession } from "../shared/session";
-import { onError } from "~/db";
 
 export interface ChatMessage {
   id: number;
@@ -22,7 +21,7 @@ export const getChatMessages = async () => {
     JOIN person p ON p.id = m.user_id
     ORDER BY m.timestamp DESC
     LIMIT 100
-  `.catch(onError);
+  `;
 
   return messages || [];
 };
@@ -37,7 +36,7 @@ export const sendChatMessage = async (text: string) => {
     INSERT INTO chat_message (text, user_id, timestamp)
     VALUES (${text}, ${userSession.userId}, ${currentTimestamp})
     RETURNING id, text, user_id, timestamp
-  `.catch(onError);
+  `;
 
   return result?.[0] || null;
 };

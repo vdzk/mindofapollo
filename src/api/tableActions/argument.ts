@@ -1,5 +1,5 @@
 "use server"
-import { sql, onError } from "~/db";
+import { sql } from "~/server-only/db";
 
 export const _getCreatedCriticalStatement = async (
   userId: number,
@@ -13,6 +13,6 @@ export const _getCreatedCriticalStatement = async (
     WHERE cs.argument_id = ${argumentId}
       AND expl.user_id = ${userId}
     LIMIT 1
-  `.catch(onError)
+  `
   return result?.[0]
 }

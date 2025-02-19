@@ -1,9 +1,9 @@
 "use server"
 
-import { sql } from "~/db";
+import { sql } from "~/server-only/db";
 import { schema } from "~/schema/schema";
-import { safeWrap } from "../shared/mutate";
 import { UserSession } from "~/types";
+import { getUserSession } from "../shared/session";
 
 interface ExplRecord {
   id: number;
@@ -30,10 +30,10 @@ const getFirstTextColumn = (tableName: string): string | null => {
   return null;
 }
 
-export const getUserActivity = safeWrap(async (
-  userSession: UserSession,
+export const getUserActivity = async (
   userId: number
 ): Promise<ActivityRecord[]> => {
+  const userSession = await getUserSession()
   const activity = await sql<ExplRecord[]>`
     SELECT *
     FROM expl 
@@ -84,4 +84,4 @@ export const getUserActivity = safeWrap(async (
   }
 
   return activityRecords;
-});
+};

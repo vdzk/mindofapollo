@@ -1,17 +1,18 @@
 "use server"
 
-import {_insertRecord, _updateRecord, safeWrap} from "~/api/shared/mutate";
-import {sql} from "~/db";
+import {_insertRecord, _updateRecord} from "~/api/shared/mutate";
+import {sql} from "~/server-only/db";
 import { DataRecord } from "~/schema/type";
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { getRecordById } from "../shared/select";
 import { pickWithExplId } from "~/util";
 import { JudgeArgumentExpl } from "~/components/expl/actions/JudgeArgument";
 import { UserSession } from "~/types";
+import { getUserSession } from "../shared/session";
 
-export const getJudgeArgument = safeWrap(async (userSession: UserSession) => {
-    // TODO: postpone new entries for a random priod of time to avoid sniping?
-    const result = await sql`
+export const getJudgeArgument = async () => {
+  const userSession = await getUserSession()
+  const result = await sql`
     SELECT argument.id, argument.title, argument.statement_id,
            statement.text as statement_text
     FROM argument
@@ -27,11 +28,11 @@ export const getJudgeArgument = safeWrap(async (userSession: UserSession) => {
     ORDER BY random()
     LIMIT 1
   `
-    return result[0]
-})
+  return result[0]
+}
 
-export const judgeArgument = safeWrap(async (userSession: UserSession, id: number, record: DataRecord) => {
-  // TODO: authorazation
+export const judgeArgument = async (id: number, record: DataRecord) => {
+  const userSession = await getUserSession()
   const argument = await getRecordById('argument', id)
   if (!argument) return
   const statement = await getRecordById('statement', argument.statement_id as number)
@@ -46,4 +47,4 @@ export const judgeArgument = safeWrap(async (userSession: UserSession, id: numbe
     diff
   }
   await finishExpl(explId, data)
-})
+}

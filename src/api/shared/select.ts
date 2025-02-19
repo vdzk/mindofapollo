@@ -1,13 +1,13 @@
 "use server"
 
-import {schema} from "~/schema/schema"
-import {DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries} from "~/schema/type"
-import {onError, sql} from "../../db"
-import {addExplIdColNames, getVirtualColNames, resolveEntries, xName} from "~/util"
-import {Row, RowList} from "postgres"
-import {getVirtualValuesByServerFn} from "./virtualColumns"
-import {getUserId, getUserSession} from "./session"
+import { sql } from "../../server-only/db"
+import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries } from "~/schema/type"
+import { addExplIdColNames, getVirtualColNames, resolveEntries, xName } from "~/util"
+import { Row, RowList } from "postgres"
+import { getVirtualValuesByServerFn } from "./virtualColumns"
+import { getUserId, getUserSession } from "./session"
 import { getPermission } from "~/getPermission"
+import { schema } from "~/schema/schema"
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -77,7 +77,7 @@ export const listRecords = async ( tableName: string ) => {
     SELECT t.*
     FROM ${sql(tableName)} t
     ORDER BY t.id
-  `.catch(onError)
+  `
   await injectVirtualValues(tableName, records)
   return records
 }
@@ -87,7 +87,7 @@ export const _getRecordById = async (tableName: string, id: number, colNames: st
     SELECT ${sql(addExplIdColNames(colNames))}
     FROM ${sql(tableName)}
     WHERE id = ${id}
-  `.catch(onError)
+  `
   if (records) {
     await injectVirtualValues(tableName, records)
     return records[0] as DataRecordWithId
@@ -120,7 +120,7 @@ export const getIdByRecord = async (tableName: string, record: Record<string, Da
     SELECT id
     FROM ${sql(tableName)}
     WHERE ${whereClause}
-  `.catch(onError)
+  `
   return results?.[0]?.id as number
 }
 
@@ -129,7 +129,7 @@ export const getValueById = async (tableName: string, id: number) => {
     SELECT value
     FROM ${sql(tableName)}
     WHERE id = ${id}
-  `.catch(onError)
+  `
   return results?.[0]?.value as DataLiteral
 }
 export const listCrossRecords = async (
@@ -144,7 +144,7 @@ export const listCrossRecords = async (
     JOIN ${sql(xName(a, b, first))} ON ${sql(b + '_id')} = id
     WHERE ${sql(a + '_id')} = ${id}
     ORDER BY id
-  `.catch(onError)
+  `
   if (records) {
     await injectVirtualValues(b, records)
     return records
