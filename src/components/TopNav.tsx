@@ -1,8 +1,8 @@
 import { createAsync, useLocation, useNavigate } from "@solidjs/router";
 import { Component, Match, Show, Switch, useContext } from "solid-js";
-import { logout } from "~/api/shared/session";
+import { logout } from "~/server-only/session";
 import { SessionContext } from "~/SessionContext";
-import { getRecordById } from "~/api/shared/select";
+import { getRecordById } from "~/server-only/getRecordById";
 import { Link } from "./Link";
 import { Button } from "./buttons";
 import { useIsPublicRoute } from "~/client-only/util";

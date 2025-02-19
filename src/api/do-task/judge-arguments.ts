@@ -1,16 +1,15 @@
 "use server"
 
-import {_insertRecord, _updateRecord} from "~/api/shared/mutate";
+import {_insertRecord, _updateRecord} from "~/server-only/mutate";
 import {sql} from "~/server-only/db";
 import { DataRecord } from "~/schema/type";
 import { finishExpl, startExpl } from "~/server-only/expl";
-import { getRecordById } from "../shared/select";
+import { _getRecordById } from "../../server-only/select";
 import { pickWithExplId } from "~/util";
 import { JudgeArgumentExpl } from "~/components/expl/actions/JudgeArgument";
-import { UserSession } from "~/types";
-import { getUserSession } from "../shared/session";
+import { getUserSession } from "../../server-only/session";
 
-export const getJudgeArgument = async () => {
+export const getTaskJudgeArgument = async () => {
   const userSession = await getUserSession()
   const result = await sql`
     SELECT argument.id, argument.title, argument.statement_id,
@@ -31,11 +30,11 @@ export const getJudgeArgument = async () => {
   return result[0]
 }
 
-export const judgeArgument = async (id: number, record: DataRecord) => {
+export const submitTaskJudgeArgument = async (id: number, record: DataRecord) => {
   const userSession = await getUserSession()
-  const argument = await getRecordById('argument', id)
+  const argument = await _getRecordById('argument', id, ['id', 'title', 'statement_id'])
   if (!argument) return
-  const statement = await getRecordById('statement', argument.statement_id as number)
+  const statement = await _getRecordById('statement', argument.statement_id as number, ['text'])
   if (!statement) return
   const explId = await startExpl(userSession.userId, 'JudgeArgument', 1, 'argument', id)
   await _insertRecord("argument_judgement", {id, ...record}, explId)

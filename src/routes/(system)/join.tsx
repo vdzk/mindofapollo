@@ -4,8 +4,8 @@ import { createStore } from "solid-js/store"
 import { FormField } from "~/components/FormField"
 import { PageTitle } from "~/components/PageTitle"
 import { join } from "~/api/system/join"
-import { login } from "~/api/shared/session"
-import { Button } from "~/components/buttons";
+import { Button } from "~/components/buttons"
+import { login } from "~/api/system/login"
 
 interface Join {
   code: string

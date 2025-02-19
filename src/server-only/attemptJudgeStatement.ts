@@ -1,12 +1,12 @@
 "use server";
 
-import {_updateRecord} from "~/api/shared/mutate"
+import {_updateRecord} from "~/server-only/mutate"
 import {sql} from "~/server-only/db"
 import {calcStatementConfidence} from "~/compute"
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { JudgeStatementExpl } from "~/components/expl/actions/JudgeStatement";
 import { AddExplId } from "~/components/expl/types";
-import { getRecordById } from "./select";
+import { getRecordById } from "./getRecordById";
 import { addExplIdColNames, pickWithExplId } from "~/util";
 import { getUserSession } from "./session";
 

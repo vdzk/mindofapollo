@@ -4,7 +4,7 @@ import { ForeignKey } from "~/schema/type";
 import { ExtValueContext } from "./Form";
 import { OnChangeFormat } from "./FormField";
 import {getRecords} from "~/client-only/query";
-import { getIdByRecord } from "~/api/shared/select";
+import { getIdByRecord } from "~/server-only/getIdByRecord";
 
 
 export const FkInput: Component<{

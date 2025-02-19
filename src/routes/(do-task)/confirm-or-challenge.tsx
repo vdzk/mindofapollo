@@ -1,7 +1,7 @@
 import { Match, Switch, createResource, createSignal } from "solid-js";
 import { FormField } from "~/components/FormField";
 import { Task } from "~/components/Task";
-import { addConfirmation, getConfirnmationStatement } from "~/api/do-task/confirm-or-challenge";
+import { submitTaskConfirmOrChallenge, getTaskConfirmOrChallenge } from "~/api/do-task/confirm-or-challenge";
 import { insertExtRecord } from "~/api/shared/extRecord";
 import { createStore } from "solid-js/store";
 import { DataRecord } from "~/schema/type";
@@ -10,13 +10,13 @@ import { Button } from "~/components/buttons";
 
 export default function ConfirmOrChallenge() {
   const [diff, setDiff] = createStore<DataRecord>({})
-  const [statement, { refetch }] = createResource(getConfirnmationStatement)
+  const [statement, { refetch }] = createResource(getTaskConfirmOrChallenge)
 
   const [challenge, setChallenge] = createSignal(false)
 
   // TODO: refactor using solid-js actions
   const onConfirm = async (statementId: number) => {
-    await addConfirmation(statementId)
+    await submitTaskConfirmOrChallenge(statementId)
     refetch()
   }
 

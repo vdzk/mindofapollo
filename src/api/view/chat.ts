@@ -1,7 +1,7 @@
 "use server"
 
 import { sql } from "../../server-only/db";
-import { getUserSession } from "../shared/session";
+import { getUserSession } from "../../server-only/session";
 
 export interface ChatMessage {
   id: number;

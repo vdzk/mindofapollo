@@ -1,10 +1,10 @@
 "use server";
 
-import { _insertRecord, insertValueType } from "~/api/shared/mutate";
+import { _insertRecord, insertValueType } from "~/server-only/mutate";
 import { DataLiteral } from "~/schema/type";
 import { getValueTypeTableName } from "~/schema/dataTypes";
 import { startExpl } from "~/server-only/expl";
-import { getUserSession } from "../shared/session";
+import { getUserSession } from "../../server-only/session";
 
 export const saveChangeProposal = async (
   tableName: string,

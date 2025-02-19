@@ -1,35 +1,35 @@
-import { Title } from "@solidjs/meta";
-import { createAsync, useAction, useSearchParams } from "@solidjs/router";
-import { For, createSignal } from "solid-js";
-import { RecordPageTitle } from "~/components/PageTitle";
-import {getRecordById} from "~/api/shared/select";
-import { etv, firstCap, pluralTableName, titleColumnName } from "~/util";
-import {getRecords, listCrossRecordsCache} from "~/client-only/query";
-import {deleteCrossRecordAction, insertCrossRecordAction} from "~/client-only/action";
-import { useSafeParams } from "~/client-only/util";
-import { Link } from "~/components/Link";
-import { Button } from "~/components/buttons";
+import { Title } from "@solidjs/meta"
+import { createAsync, useAction } from "@solidjs/router"
+import { For, createSignal } from "solid-js"
+import { RecordPageTitle } from "~/components/PageTitle"
+import { etv, firstCap, pluralTableName, titleColumnName } from "~/util"
+import {getRecords, listCrossRecordsCache} from "~/client-only/query"
+import {deleteCrossRecordAction, insertCrossRecordAction} from "~/client-only/action"
+import { useSafeParams } from "~/client-only/util"
+import { Link } from "~/components/Link"
+import { Button } from "~/components/buttons"
+import { DataRecordWithId } from "~/schema/type"
+import { getRecordById } from "~/server-only/getRecordById"
 
 interface EditCrossRefParams {
   a: string
   b: string
   id: string
-  first?: 'true'
+  first: string
 }
 
 export default function EditCrossRef() {
-  const sp = useSafeParams<EditCrossRefParams>(['a', 'b', 'id'])
+  const sp = useSafeParams<EditCrossRefParams>(['a', 'b', 'id', 'first'])
   const first = sp().first === 'true'
   const id = () => parseInt(sp().id)
   const [selectedId, setSelectedId] = createSignal<string>('')
 
-  const aRecord = createAsync(() => getRecordById(sp().a, id()))
+  const aRecord = createAsync(() => getRecordById(sp().a, id(), [titleColumnName(sp().a)]))
   const linkedRecords = createAsync(() => listCrossRecordsCache( sp().b, sp().a, id(), first ))
-  const allRrcords = createAsync(() => getRecords(sp().b))
-
+  const allRrcords = createAsync<DataRecordWithId[]>(() => getRecords(sp().b))
 
   const linkedRecordIds = () => linkedRecords()?.map(lr => lr.id)
-  const unlinkedRecords = () => allRrcords()?.filter(r => !linkedRecordIds()?.includes(r.id))
+  const unlinkedRecords = () => allRrcords()?.filter((r: DataRecordWithId) => !linkedRecordIds()?.includes(r.id))
 
   const insertCrossRecordRun = useAction(insertCrossRecordAction)
 

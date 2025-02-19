@@ -1,11 +1,11 @@
 "use server"
 
 import { sql } from "../../server-only/db"
-import { _updateRecord } from "../shared/mutate"
+import { _updateRecord } from "../../server-only/mutate"
 import { startExpl } from "../../server-only/expl"
-import { getUserSession } from "../shared/session"
+import { getUserSession } from "../../server-only/session"
 
-export const getConfirnmationStatement = async () => {
+export const getTaskConfirmOrChallenge = async () => {
   const userSession = await getUserSession()
   // TODO: use TABLESAMPLE when the table grows enough
   // TODO: exclude statements created by the user
@@ -37,7 +37,7 @@ export const getConfirnmationStatement = async () => {
   return results[0]
 }
 
-export const addConfirmation = async (
+export const submitTaskConfirmOrChallenge = async (
   statementId: number
 ) => {
   const userSession = await getUserSession()

@@ -1,14 +1,14 @@
 "use server"
 
 import {getValueTypeTableName} from "~/schema/dataTypes"
-import {updateRecord} from "../shared/mutate"
 import {sql} from "../../server-only/db"
-import {getRecordById} from "../shared/select"
+import {_getRecordById} from "../../server-only/select"
 import {ProposalRecord} from "~/tables/other/change_proposal"
-import { UserSession } from "~/types"
-import { getUserSession } from "../shared/session"
+import { getUserSession } from "../../server-only/session"
+import { _updateRecord } from "../../server-only/mutate";
+import { startExpl, finishExpl } from "../../server-only/expl";
 
-export const getChangeProposal = async () => {
+export const getTaskVoteChangeProposal = async () => {
   const userSession = await getUserSession()
   const proposals = await sql`
     WITH user_changes AS (
@@ -45,19 +45,24 @@ export const getChangeProposal = async () => {
   }
 }
 
-export const voteChangeProposal = async (
+export const submitTaskVoteChangeProposal = async (
   proposalId: number,
   inFavour: boolean
 ) => {
   const userSession = await getUserSession()
-  const proposal = await getRecordById('change_proposal', proposalId) as ProposalRecord | undefined
+  const proposal = await _getRecordById('change_proposal', proposalId, ['id', 'table_name', 'column_name', 'old_value_id', 'new_value_id', 'target_id', 'votes_in_favour', 'votes_against', 'decided', 'approved']) as ProposalRecord | undefined
   if (!proposal) return
   const votesColName = inFavour ? 'votes_in_favour' : 'votes_against'
-  await updateRecord('change_proposal', proposalId, {
+
+  // Update change_proposal record using _updateRecord
+  const explId1 = await startExpl(userSession.userId, 'genericChange', 1, 'change_proposal', proposalId);
+  const diff1 = await _updateRecord('change_proposal', proposalId, explId1, {
     [votesColName]: proposal[votesColName] + 1,
     decided: true,
     approved: inFavour
-  })
+  });
+  await finishExpl(explId1, { diff: diff1 });
+
   if (inFavour) {
     // Retrieve the new value
     const valueTypeTableName = getValueTypeTableName(proposal.table_name, proposal.column_name)
@@ -68,11 +73,11 @@ export const voteChangeProposal = async (
     `
     const newValue = results[0].value
 
-    // execute the proposal
-    await updateRecord(
-      proposal.table_name,
-      proposal.target_id,
-      {[proposal.column_name]: newValue}
-    )
+    // Execute the proposal update using _updateRecord
+    const explId2 = await startExpl(userSession.userId, 'genericChange', 1, proposal.table_name, proposal.target_id);
+    const diff2 = await _updateRecord(proposal.table_name, proposal.target_id, explId2, {
+      [proposal.column_name]: newValue
+    });
+    await finishExpl(explId2, { diff: diff2 });
   }
 }

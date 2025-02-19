@@ -1,16 +1,15 @@
 "use server";
 
 import { DataRecord } from "~/schema/type"
-import { onError } from "../../server-only/db"
-import { deleteById } from "./mutate"
-import { getRecordById, getValueById } from "~/api/shared/select"
-import { _insertRecord, updateRecord } from "./mutate"
+import { _deleteById, _updateRecord } from "../../server-only/mutate"
+import { _getRecordById, getValueById } from "~/server-only/select"
+import { _insertRecord } from "../../server-only/mutate"
 import { getExtTableName } from "~/util"
 import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
-import { getTypeByRecordId } from "./valueType"
+import { getTypeByRecordId } from "../../server-only/valueType"
 import { setExplRecordId, startExpl } from "~/server-only/expl"
-import { getUserSession } from "./session"
+import { getUserSession } from "../../server-only/session"
 
 export const insertExtRecord = async (
   tableName: string,
@@ -28,22 +27,27 @@ export const insertExtRecord = async (
   return result
 }
 
-export const updateExtRecord = (
+export const updateExtRecord = async (
   tableName: string,
   id: number,
   record: DataRecord,
   extTableName: string,
   extRecord: DataRecord
-) => Promise.all([
-  updateRecord(tableName, id, record),
-  updateRecord(extTableName, id, extRecord),
-]).catch(onError)
+) => {
+  const userSession = await getUserSession()
+  const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, id)
+  return Promise.all([
+    _updateRecord(tableName, id, explId, record),
+    _updateRecord(extTableName, id, explId, extRecord),
+  ])
+}
 
 export const getExtRecordById = async (tableName: string, id: number) => {
-  const result = await getRecordById(tableName, id)
+  const { columns } = schema.tables[tableName]
+  const colNames = Object.keys(columns)
+  const result = await _getRecordById(tableName, id, colNames)
   if (!result) return
 
-  const { columns } = schema.tables[tableName]
   for (const colName in columns) {
     const column = columns[colName]
     if (column.type === 'value_type_id') {
@@ -57,7 +61,7 @@ export const getExtRecordById = async (tableName: string, id: number) => {
 
   const extTableName = getExtTableName(tableName, result)
   if (extTableName) {
-    const extResult = await getRecordById(extTableName, id)
+    const extResult = await _getRecordById(extTableName, id, Object.keys(schema.tables[extTableName].columns))
     return {...result, ...extResult}
   } else {
     return result
@@ -65,11 +69,11 @@ export const getExtRecordById = async (tableName: string, id: number) => {
 }
 
 export const deleteExtById = async (tableName: string, id: number) => {
-  const result = await getRecordById(tableName, id)
+  const result = await _getRecordById(tableName, id, ['id'])
   if (!result) return
   const extTableName = getExtTableName(tableName, result)
-  await deleteById(tableName, id)
+  await _deleteById(tableName, id)
   if (extTableName) {
-    await deleteById(extTableName, id)
+    await _deleteById(extTableName, id)
   }
 }

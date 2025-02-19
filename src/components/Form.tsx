@@ -1,6 +1,5 @@
 import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
 import { Component, createContext, createEffect, createSignal, For, Setter, Show, useContext } from "solid-js";
-import { insertRecord, updateRecord } from "~/api/shared/mutate";
 import { schema } from "~/schema/schema";
 import { FormField } from "./FormField";
 import { DataRecord } from "~/schema/type";
@@ -12,6 +11,8 @@ import { getRecords } from "~/client-only/query";
 import { SessionContext } from "~/SessionContext";
 import { Link } from "~/components/Link";
 import { Button } from "~/components/buttons";
+import { updateRecord } from "~/api/shared/updateRecord";
+import { insertRecord } from "~/api/shared/insertRecord";
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 

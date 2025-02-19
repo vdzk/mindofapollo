@@ -6,17 +6,17 @@ import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { DataRecord } from "~/schema/type";
-import {getJudgeArgument, judgeArgument} from "~/api/do-task/judge-arguments";
+import { getTaskJudgeArgument, submitTaskJudgeArgument } from "~/api/do-task/judge-arguments";
 import { Button } from "~/components/buttons";
 
 export default function JudgeArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})
-  const [argument, { refetch }] = createResource(getJudgeArgument)
+  const [argument, { refetch }] = createResource(getTaskJudgeArgument)
   const displayColumn: ColumnFilter = (colName, column, visible) => visible && colName !== 'judgement_requested'
   const formColumns = schema.tables.argument_judgement.columns
 
   const onSubmit = async () => {
-    await judgeArgument(argument()!.id, diff)
+    await submitTaskJudgeArgument(argument()!.id, diff)
     refetch()
   }
 

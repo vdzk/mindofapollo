@@ -1,7 +1,7 @@
 "use server"
 
 import { sql } from "../../server-only/db";
-import { getDirConcsWithValues } from "../shared/getDirConcsWithValues";
+import { getDirConcsWithValues } from "../../server-only/getDirConcsWithValues";
 import {xName} from "~/util";
 import { UserSession } from "~/types";
 

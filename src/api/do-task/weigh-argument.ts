@@ -1,10 +1,9 @@
 "use server"
 
 import { sql } from "../../server-only/db"
-import { _insertRecord, _updateRecord, updateRecord } from "../shared/mutate"
-import { getRecordById } from "../shared/select"
-import { startExpl } from "../../server-only/expl"
-import { getUserSession } from "../shared/session"
+import { _insertRecord, _updateRecord, _getRecordById } from "../../server-only/mutate"
+import { startExpl, finishExpl } from "../../server-only/expl"
+import { getUserSession } from "../../server-only/session"
 import { DataRecord } from "~/schema/type"
 import { calcStatementConfidenceAdditively } from "~/compute"
 
@@ -16,7 +15,7 @@ const getWeightedArguments = (statementId: number) => sql`
   WHERE argument.statement_id = ${statementId}   
 `
 
-export const getWeighArgumentTaskData = async () => {
+export const getTaskWeighArgument = async () => {
   const userSession = await getUserSession()
   const [argument] = await sql`
     SELECT a.*
@@ -38,7 +37,7 @@ export const getWeighArgumentTaskData = async () => {
   return { argument, weightedArguments }
 }
 
-export const attemptAggregateArguments = async (
+const attemptAggregateArguments = async (
   statementId: number
 ) => {
   const userSession = await getUserSession()
@@ -57,18 +56,20 @@ export const attemptAggregateArguments = async (
   if (!checkResults[0].all_arguments_have_weights) return
   const weightedArguments = await getWeightedArguments(statementId)
   const confidence = calcStatementConfidenceAdditively(weightedArguments as any)
-  await updateRecord("statement", statementId, {
+  const explId = await startExpl(userSession.userId, 'genericChange', 1, 'statement', statementId)
+  const diff = await _updateRecord('statement', statementId, explId, {
     judgement_requested: false,
     confidence,
     decided: true
   })
+  await finishExpl(explId, { diff })
 }
 
-export const submitArgumentWeight = async (
+export const submitTaskWeighArgument = async (
   argumentId: number,
   weightData: DataRecord
 ) => {
-  const argument = await getRecordById('argument', argumentId)
+  const argument = await _getRecordById('argument', argumentId, ['statement_id'])
   if (!argument) return
 
   const userSession = await getUserSession()

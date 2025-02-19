@@ -2,7 +2,7 @@
 
 import {sql} from "~/server-only/db";
 import {xName} from "~/util";
-import { getUserSession } from "../shared/session";
+import { getUserSession } from "../../server-only/session";
 
 export interface CrossRecordMutateProps {
   a: string

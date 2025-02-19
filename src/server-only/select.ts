@@ -1,12 +1,10 @@
 "use server"
 
-import { sql } from "../../server-only/db"
+import { sql } from "./db"
 import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries } from "~/schema/type"
-import { addExplIdColNames, getVirtualColNames, resolveEntries, xName } from "~/util"
+import { addExplIdColNames, getVirtualColNames, resolveEntries } from "~/util"
 import { Row, RowList } from "postgres"
 import { getVirtualValuesByServerFn } from "./virtualColumns"
-import { getUserId, getUserSession } from "./session"
-import { getPermission } from "~/getPermission"
 import { schema } from "~/schema/schema"
 
 export const getVirtualValuesByQueries = async (
@@ -66,22 +64,6 @@ export const injectVirtualValues = async (
   }
 }
 
-export const listRecords = async ( tableName: string ) => {
-  const userId = await getUserId()
-  const { personal } = schema.tables[tableName]
-  if (personal && !userId) {
-    return []
-  }
-
-  const records = await sql`
-    SELECT t.*
-    FROM ${sql(tableName)} t
-    ORDER BY t.id
-  `
-  await injectVirtualValues(tableName, records)
-  return records
-}
-
 export const _getRecordById = async (tableName: string, id: number, colNames: string[]) => {
   const records = await sql`
     SELECT ${sql(addExplIdColNames(colNames))}
@@ -94,36 +76,6 @@ export const _getRecordById = async (tableName: string, id: number, colNames: st
   }
 }
 
-export const getRecordById = async (tableName: string, id: number) => {
-  const userSession = await getUserSession()
-  const permission = getPermission(userSession, 'read', tableName, id)
-  if (!permission.granted) return
-  const colNames = permission.colNames ?? getVirtualColNames(tableName).non
-  return _getRecordById(tableName, id, colNames)
-}
-
-export const getIdByRecord = async (tableName: string, record: Record<string, DataLiteral>) => {
-  if (Object.keys(record).length === 0) {
-    return undefined;
-  }
-  
-  const conditions = Object.entries(record).map(
-    ([key, value]) => sql`${sql(key)} = ${value}`
-  );
-  
-  const whereClause = conditions.reduce(
-    (acc, condition, idx) => 
-      idx === 0 ? condition : sql`${acc} AND ${condition}`
-  );
-
-  const results = await sql`
-    SELECT id
-    FROM ${sql(tableName)}
-    WHERE ${whereClause}
-  `
-  return results?.[0]?.id as number
-}
-
 export const getValueById = async (tableName: string, id: number) => {
   const results = await sql`
     SELECT value
@@ -132,21 +84,4 @@ export const getValueById = async (tableName: string, id: number) => {
   `
   return results?.[0]?.value as DataLiteral
 }
-export const listCrossRecords = async (
-    b: string,
-    a: string,
-    id: number,
-    first: boolean
-) => {
-  const records = await sql`
-    SELECT ${sql(b)}.*
-    FROM ${sql(b)}
-    JOIN ${sql(xName(a, b, first))} ON ${sql(b + '_id')} = id
-    WHERE ${sql(a + '_id')} = ${id}
-    ORDER BY id
-  `
-  if (records) {
-    await injectVirtualValues(b, records)
-    return records
-  }
-}
+

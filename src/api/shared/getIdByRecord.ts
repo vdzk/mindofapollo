@@ -1,0 +1,26 @@
+"use server";
+import { DataLiteral } from "~/schema/type";
+import { sql } from "./db";
+import { undefined } from "./select";
+
+
+export const getIdByRecord = async (tableName: string, record: Record<string, DataLiteral>) => {
+  if (Object.keys(record).length === 0) {
+    return undefined;
+  }
+
+  const conditions = Object.entries(record).map(
+    ([key, value]) => sql`${sql(key)} = ${value}`
+  );
+
+  const whereClause = conditions.reduce(
+    (acc, condition, idx) => idx === 0 ? condition : sql`${acc} AND ${condition}`
+  );
+
+  const results = await sql`
+    SELECT id
+    FROM ${sql(tableName)}
+    WHERE ${whereClause}
+  `;
+  return results?.[0]?.id as number;
+};

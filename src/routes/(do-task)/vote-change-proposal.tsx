@@ -3,15 +3,15 @@ import { Detail } from "~/components/details";
 import { PageTitle, Subtitle } from "~/components/PageTitle";
 import { RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
-import { getChangeProposal, voteChangeProposal } from "~/api/do-task/vote-change-proposal";
+import { getTaskVoteChangeProposal, submitTaskVoteChangeProposal } from "~/api/do-task/vote-change-proposal";
 import { humanCase } from "~/util"
 import { Button } from "~/components/buttons"
 
 export default function VoteChangeProposal() {
-  const [proposal, { refetch }] = createResource(getChangeProposal)
+  const [proposal, { refetch }] = createResource(getTaskVoteChangeProposal)
 
   const vote = async (inFavour: boolean) => {
-    await voteChangeProposal(proposal()!.id, inFavour)
+    await submitTaskVoteChangeProposal(proposal()!.id, inFavour)
     refetch()
   }
 

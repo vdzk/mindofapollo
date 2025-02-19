@@ -3,7 +3,7 @@
 import { sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { ForeignKey } from "~/schema/type"
-import { injectVirtualValues } from "~/api/shared/select"
+import { injectVirtualValues } from "~/server-only/select"
 
 export const listOverlapRecords = (
     tableName: string,

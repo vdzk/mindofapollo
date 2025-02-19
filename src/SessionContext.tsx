@@ -1,5 +1,5 @@
 import { createContext, createEffect, createResource, ParentComponent, Resource, Setter } from "solid-js"
-import { getUserSession } from "./api/shared/session"
+import { getUserSession } from "./server-only/session"
 import { useNavigate } from "@solidjs/router"
 import { useIsPublicRoute } from "./client-only/util"
 import { UserSession } from "./types"

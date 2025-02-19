@@ -1,10 +1,10 @@
 import { Component, Match, Show, Switch } from "solid-js";
 import { BooleanColumn, DataRecord, ForeignKey } from "~/schema/type";
 import { createAsync } from "@solidjs/router";
-import { getRecordById } from "~/api/shared/select";
+import { getRecordById } from "~/server-only/getRecordById";
 import { getPercent, nbsp } from "~/util";
 import { schema } from "~/schema/schema";
-import { getOriginTypes } from "~/api/shared/valueType";
+import { getOriginTypes } from "~/api/shared/getOriginTypes";
 import { ExplLink } from "./expl/ExplLink";
 import { Link } from "./Link";
 

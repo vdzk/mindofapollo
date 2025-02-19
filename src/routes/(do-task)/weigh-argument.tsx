@@ -6,13 +6,13 @@ import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
 import { Task } from "~/components/Task";
 import { schema } from "~/schema/schema";
 import { BooleanColumn, DataRecord } from "~/schema/type";
-import { submitArgumentWeight } from "~/api/do-task/weigh-argument";
-import { getWeighArgumentTaskData } from "~/api/do-task/weigh-argument";
+import { submitTaskWeighArgument } from "~/api/do-task/weigh-argument";
+import { getTaskWeighArgument } from "~/api/do-task/weigh-argument";
 import { Button } from "~/components/buttons";
 
 export default function WeighArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})
-  const [taskData, { refetch }] = createResource(getWeighArgumentTaskData)
+  const [taskData, { refetch }] = createResource(getTaskWeighArgument)
   const displayColumn: ColumnFilter = (colName, column, visible) => visible && colName !== 'judgement_requested'
   const formColumns = schema.tables.argument_weight.columns
   const id = () => taskData()?.argument.id
@@ -20,7 +20,7 @@ export default function WeighArgument() {
   const isFirst = () => taskData()!.weightedArguments.length === 0
 
   const onSubmit = async () => {
-    await submitArgumentWeight(id()!, diff)
+    await submitTaskWeighArgument(id()!, diff)
     refetch()
   }
 

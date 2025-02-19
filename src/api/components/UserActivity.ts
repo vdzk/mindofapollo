@@ -3,7 +3,7 @@
 import { sql } from "~/server-only/db";
 import { schema } from "~/schema/schema";
 import { UserSession } from "~/types";
-import { getUserSession } from "../shared/session";
+import { getUserSession } from "../../server-only/session";
 
 interface ExplRecord {
   id: number;

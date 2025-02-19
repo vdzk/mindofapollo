@@ -2,8 +2,8 @@
 
 import { sql } from "~/server-only/db"
 import { getPermission } from "~/getPermission"
-import { getUserSession } from "../shared/session"
-import { injectVirtualValues } from "../shared/select"
+import { getUserSession } from "../../server-only/session"
+import { injectVirtualValues } from "../../server-only/select"
 
 interface HpStatement {
   id: number,

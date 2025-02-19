@@ -1,15 +1,15 @@
 "use server"
 
-import { _updateRecord } from "../shared/mutate"
-import { getRecordById } from "../shared/select"
-import { hasArguments, hasUnjudgedArguments } from "~/api/tableActions/statement";
-import { attemptJudgeStatement } from "~/api/shared/attemptJudgeStatement";
+import { _updateRecord } from "../../server-only/mutate"
+import { _getRecordById } from "~/server-only/select"
+import { attemptJudgeStatement } from "~/server-only/attemptJudgeStatement";
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { ReqArgJudgeExpl } from "~/components/expl/actions/ReqArgJudge";
 import { pickWithExplId } from "~/util";
-import { _getCreatedCriticalStatement } from "./argument";
 import { ReqStatementJudgeExpl } from "~/components/expl/actions/ReqStatementJudge";
-import { getUserSession } from "../shared/session";
+import { getUserSession } from "../../server-only/session";
+import { _getCreatedCriticalStatement } from "~/server-only/argument";
+import { hasArguments, hasUnjudgedArguments } from "~/server-only/statement";
 
 
 export type TableAction = (
@@ -22,11 +22,11 @@ const tableActions: Record<string, Record<string, TableAction>> = {
   argument: {
     requestJudgement: async (userId, recordId, execute) => {
       //TODO: if there was not activity for a period of time, qualify any signed in user to make the request
-      const argument = await getRecordById('argument', recordId)
+      const argument = await _getRecordById('argument', recordId, ['judgement_requested', 'statement_id', 'title'])
       if (!argument || argument.judgement_requested) return
-      const statement = await getRecordById('statement', argument.statement_id as number)
+      const statement = await _getRecordById('statement', argument.statement_id as number, ['argument_aggregation_type_id'])
       if (!statement) return
-      const aggType = await getRecordById('argument_aggregation_type', statement.argument_aggregation_type_id as number)
+      const aggType = await _getRecordById('argument_aggregation_type', statement.argument_aggregation_type_id as number, ['name'])
       if (!aggType || aggType.name !== 'evidential') return
       const critical_statement = await _getCreatedCriticalStatement(userId, recordId)
       if (!critical_statement) return
@@ -47,7 +47,7 @@ const tableActions: Record<string, Record<string, TableAction>> = {
   },
   statement: {
     requestJudgement: async (userId, recordId, execute) => {
-      const record = await getRecordById('statement', recordId)
+      const record = await _getRecordById('statement', recordId, ['id', 'text', 'argument_aggregation_type_id'])
       if (record && !record.judgement_requested
         && await hasArguments(recordId)
         && !(await hasUnjudgedArguments(recordId))
@@ -74,7 +74,7 @@ const tableActions: Record<string, Record<string, TableAction>> = {
       }
     },
     requestAdditiveJudgement: async (userId, recordId, execute) => {
-      const record = await getRecordById('statement', recordId)
+      const record = await _getRecordById('statement', recordId, ['judgement_requested', 'argument_aggregation_type_id', 'id', 'text'])
       if (!record?.judgement_requested && record?.argument_aggregation_type_id === 'additive') {
         if (!execute) return 'Request judgement'
         const explId = await startExpl(userId, 'ReqAdditiveJudge', 1, 'statement', recordId)

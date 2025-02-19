@@ -7,7 +7,7 @@ import { RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"
 import { schema } from "~/schema/schema"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { getJudgeCorrelationsData, submitCorrelations } from "~/api/do-task/judge-correlations"
+import { getTaskJudgeCorrelations, submitTaskJudgeCorrelations } from "~/api/do-task/judge-correlations"
 import { Button } from "~/components/buttons";
 
 const CorrelationForm: Component<{
@@ -68,13 +68,13 @@ const CorrelationForm: Component<{
 
 export default function JudgeCorrelations() {
   const [diffs, setDiffs] = createStore<Record<number, DataRecord>>({})
-  const [taskData, { refetch }] = createResource(getJudgeCorrelationsData)
+  const [taskData, { refetch }] = createResource(getTaskJudgeCorrelations)
 
   const onSubmit = async () => {
     const records = taskData()!.arguments
       .slice(1) // The first argument is not conditional and is not included
       .map(argument => diffs[argument.id])
-    await submitCorrelations(taskData()!.statement.id, records)
+    await submitTaskJudgeCorrelations(taskData()!.statement.id, records)
     refetch()
   }
 

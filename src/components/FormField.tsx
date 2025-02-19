@@ -4,7 +4,7 @@ import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, OptionColumn, TextC
 import { FkInput } from "./FkInput";
 import { ColumnLabel } from "./ColumnLabel";
 import { createAsync, useSearchParams } from "@solidjs/router"
-import { getOriginTypes } from "~/api/shared/valueType"
+import { getOriginTypes } from "~/api/shared/getOriginTypes";
 import { SetStoreFunction } from "solid-js/store"
 import { etv } from "~/util"
 import { TextInput } from "./TextInput";
