@@ -1,10 +1,10 @@
-import { Title } from "@solidjs/meta";
-import { Form } from "../../components/Form";
-import { RecordPageTitle } from "../../components/PageTitle";
-import { createAsync, useSearchParams } from "@solidjs/router";
-import { getOneExtRecordById } from "~/api/shared/extRecord";
-import { humanCase, titleColumnName } from "~/util";
-import { Suspense } from "solid-js";
+import { Title } from "@solidjs/meta"
+import { Form } from "../../components/Form"
+import { RecordPageTitle } from "../../components/PageTitle"
+import { createAsync, useSearchParams } from "@solidjs/router"
+import { humanCase, titleColumnName } from "~/util"
+import { Suspense } from "solid-js"
+import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 
 interface EditRecord {
   tableName: string

@@ -3,12 +3,12 @@
 import {_updateRecord} from "~/server-only/mutate"
 import {sql} from "~/server-only/db"
 import {calcStatementConfidence} from "~/compute"
-import { finishExpl, startExpl } from "~/server-only/expl";
-import { JudgeStatementExpl } from "~/components/expl/actions/JudgeStatement";
-import { AddExplId } from "~/components/expl/types";
-import { getRecordById } from "./getRecordById";
-import { addExplIdColNames, pickWithExplId } from "~/util";
-import { getUserSession } from "./session";
+import { finishExpl, startExpl } from "~/server-only/expl"
+import { JudgeStatementExpl } from "~/components/expl/actions/JudgeStatement"
+import { AddExplId } from "~/components/expl/types"
+import { addExplIdColNames, pickWithExplId } from "~/util"
+import { getUserSession } from "./session"
+import { _getRecordById } from "./select";
 
 export const attemptJudgeStatement = async (
   statementId: number,
@@ -64,7 +64,7 @@ export const attemptJudgeStatement = async (
     const diff = await _updateRecord(
       'statement', statementId, explId, newFragment
     )
-    const statement = await getRecordById('statement', statementId)
+    const statement = await _getRecordById('statement', statementId, ['text'])
     const data: JudgeStatementExpl = {
       triggerExplId,
       triggerLabel,

@@ -2,8 +2,8 @@ import { Title } from "@solidjs/meta"
 import { createAsync, useNavigate } from "@solidjs/router"
 import { createSignal, For, useContext } from "solid-js"
 import { SessionContext } from "~/SessionContext"
-import { listRecords } from "~/api/shared/listRecords"
-import { login } from "~/api/system/login"
+import { login } from "~/api/execute/login"
+import { listRecords } from "~/api/list/records"
 import { Button } from "~/components/buttons"
 
 export default function Login() {

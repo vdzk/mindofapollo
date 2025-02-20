@@ -3,10 +3,11 @@ import { PageTitle } from "~/components/PageTitle"
 import { createSignal, For, Show, onMount, createResource } from "solid-js"
 import { Button } from "~/components/buttons"
 import { TextInput } from "~/components/TextInput"
-import { getChatMessages, submitChatMessage } from "~/api/view/chat"
+import { submitChatMessage } from "~/api/submit/chatMessage"
+import { listChatMessages } from "~/api/list/chatMessages"
 
 export default function Chat() {
-  const [messages, { refetch }] = createResource(getChatMessages)
+  const [messages, { refetch }] = createResource(listChatMessages)
   const [newMessage, setNewMessage] = createSignal("")
   const [sending, setSending] = createSignal(false)
 

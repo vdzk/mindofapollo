@@ -2,8 +2,8 @@ import { Title } from "@solidjs/meta"
 import { createAsync } from "@solidjs/router"
 import { For, Match, Show, Suspense, Switch } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { getRecordById } from "~/server-only/getRecordById"
-import { getExpl } from "~/api/view/expl"
+import { getOneExpl } from "~/api/getOne/expl"
+import { getOneRecordById } from "~/api/getOne/recordById"
 import { useSafeParams } from "~/client-only/util"
 import { Detail, DetailDiff } from "~/components/details"
 import { actions } from "~/components/expl/actions/actions"
@@ -15,8 +15,8 @@ import { firstCap, humanCase } from "~/util"
 
 export default function Expl() {
   const sp = useSafeParams<{ id: number }>(['id'])
-  const expl = createAsync(() => getExpl(sp().id))
-  const user = createAsync(async () => expl() && expl()!.user_id ? getRecordById('person', expl()!.user_id) : undefined)
+  const expl = createAsync(() => getOneExpl(sp().id))
+  const user = createAsync(async () => expl() && expl()!.user_id ? getOneRecordById('person', expl()!.user_id) : undefined)
   const title = () => `Explanation #${sp().id}`
   const diffColNames = () => expl() ? Object.keys(expl()!.data.diff.after) : []
   const component = () => actions[expl()!.action]

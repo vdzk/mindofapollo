@@ -1,16 +1,16 @@
-import { For, Match, Show, Switch, useContext } from "solid-js";
-import { Title } from "@solidjs/meta";
-import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util";
-import { action, createAsync, json, useAction } from "@solidjs/router";
-import { schema } from "~/schema/schema";
-import { insertRecord } from "~/server-only/insertRecord";
-import { getPermission } from "~/getPermission";
-import { getRecords } from "~/client-only/query";
-import { SessionContext } from "~/SessionContext";
-import { PageTitle } from "~/components/PageTitle";
-import { useSafeParams } from "~/client-only/util";
-import { Link } from "~/components/Link";
-import { Button } from "~/components/buttons";
+import { For, Match, Show, Switch, useContext } from "solid-js"
+import { Title } from "@solidjs/meta"
+import { firstCap, nbsp, pluralTableName, titleColumnName } from "~/util"
+import { action, createAsync, json, useAction } from "@solidjs/router"
+import { schema } from "~/schema/schema"
+import { getPermission } from "~/getPermission"
+import { getRecords } from "~/client-only/query"
+import { SessionContext } from "~/SessionContext"
+import { PageTitle } from "~/components/PageTitle"
+import { useSafeParams } from "~/client-only/util"
+import { Link } from "~/components/Link"
+import { Button } from "~/components/buttons"
+import { insertRecord } from "~/api/insert/record"
 
 export default function ListRecords() {
   const session = useContext(SessionContext)

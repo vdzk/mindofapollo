@@ -1,21 +1,22 @@
-import { Title } from "@solidjs/meta";
-import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Match, Show, Switch, useContext } from "solid-js";
-import { Dynamic } from "solid-js/web";
-import { Actions } from "~/components/Actions";
-import { RecordDetails } from "~/components/RecordDetails";
-import { schema } from "~/schema/schema";
-import { deleteExtById, getOneExtRecordById } from "~/api/shared/extRecord";
-import { SessionContext } from "~/SessionContext";
-import { titleColumnName } from "~/util";
-import { RecordPageTitle } from "../../components/PageTitle";
-import { getPermission } from "~/getPermission";
-import { getRecords } from "~/client-only/query";
-import { useSafeParams } from "~/client-only/util";
-import { MasterDetail } from "~/components/MasterDetail";
-import { Link } from "~/components/Link";
-import { Button } from "~/components/buttons";
-import { componentsByName } from "~/components/componentsByName";
+import { Title } from "@solidjs/meta"
+import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
+import { Match, Show, Switch, useContext } from "solid-js"
+import { Dynamic } from "solid-js/web"
+import { Actions } from "~/components/Actions"
+import { RecordDetails } from "~/components/RecordDetails"
+import { schema } from "~/schema/schema"
+import { SessionContext } from "~/SessionContext"
+import { titleColumnName } from "~/util"
+import { RecordPageTitle } from "../../components/PageTitle"
+import { getPermission } from "~/getPermission"
+import { getRecords } from "~/client-only/query"
+import { useSafeParams } from "~/client-only/util"
+import { MasterDetail } from "~/components/MasterDetail"
+import { Link } from "~/components/Link"
+import { Button } from "~/components/buttons"
+import { componentsByName } from "~/components/componentsByName"
+import { deleteExtById } from "~/api/delete/extById"
+import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 
 const _delete = action(async (
   tableName: string,

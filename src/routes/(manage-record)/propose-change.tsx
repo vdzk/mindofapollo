@@ -1,17 +1,17 @@
-import { Title } from "@solidjs/meta";
-import { RecordPageTitle, Subtitle } from "../../components/PageTitle";
-import { createAsync, useNavigate, useSearchParams } from "@solidjs/router";
-import { getOneExtRecordById } from "~/api/shared/extRecord";
-import { humanCase, titleColumnName } from "~/util";
-import { createSignal, For, Show } from "solid-js";
-import { schema } from "~/schema/schema";
-import { Detail } from "~/components/details";
-import { FormField } from "~/components/FormField";
-import { createStore } from "solid-js/store";
-import { DataRecord } from "~/schema/type";
-import {submitChangeProposal} from "~/api/manage-record/propose-change";
-import { Button } from "~/components/buttons";
-import { Link } from "~/components/Link";
+import { Title } from "@solidjs/meta"
+import { RecordPageTitle, Subtitle } from "../../components/PageTitle"
+import { createAsync, useNavigate, useSearchParams } from "@solidjs/router"
+import { humanCase, titleColumnName } from "~/util"
+import { createSignal, For, Show } from "solid-js"
+import { schema } from "~/schema/schema"
+import { Detail } from "~/components/details"
+import { FormField } from "~/components/FormField"
+import { DataRecord } from "~/schema/type"
+import { Button } from "~/components/buttons"
+import { Link } from "~/components/Link"
+import { createStore } from "solid-js/store"
+import { getOneExtRecordById } from "~/api/getOne/extRecordById"
+import { submitChangeProposal } from "~/api/submit/changeProposal"
 
 interface ProposeChange {
   tableName: string

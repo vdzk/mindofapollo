@@ -1,6 +1,7 @@
 "use server"
-import {sql} from "~/server-only/db";
-import { getUserSession } from "../../server-only/session";
+
+import {sql} from "~/server-only/db"
+import { getUserSession } from "./session"
 
 export const hasArguments = async (statementId: number) => {
   const userSession = await getUserSession()

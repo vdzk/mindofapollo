@@ -1,18 +1,19 @@
-import { action, redirect, useAction, useSearchParams } from "@solidjs/router";
-import { Component, createContext, createEffect, createSignal, For, Setter, Show, useContext } from "solid-js";
-import { schema } from "~/schema/schema";
-import { FormField } from "./FormField";
-import { DataRecord } from "~/schema/type";
-import { insertExtRecord, updateExtRecord } from "~/api/shared/extRecord";
-import { getExtTableName, isEmpty, buildUrl } from "~/util";
-import { createStore } from "solid-js/store";
-import { getPermission } from "~/getPermission";
-import { getRecords } from "~/client-only/query";
-import { SessionContext } from "~/SessionContext";
-import { Link } from "~/components/Link";
-import { Button } from "~/components/buttons";
-import { updateRecord } from "~/api/shared/updateRecord";
-import { insertRecord } from "~/api/shared/insertRecord";
+import { action, redirect, useAction, useSearchParams } from "@solidjs/router"
+import { Component, createContext, createEffect, createSignal, For, Setter, Show, useContext } from "solid-js"
+import { schema } from "~/schema/schema"
+import { FormField } from "./FormField"
+import { DataRecord } from "~/schema/type"
+import { getExtTableName, isEmpty, buildUrl } from "~/util"
+import { createStore } from "solid-js/store"
+import { getPermission } from "~/getPermission"
+import { getRecords } from "~/client-only/query"
+import { SessionContext } from "~/SessionContext"
+import { Link } from "~/components/Link"
+import { Button } from "~/components/buttons"
+import { updateExtRecord } from "~/api/update/extRecord"
+import { updateRecord } from "~/api/update/record"
+import { insertExtRecord } from "~/api/insert/extRecord"
+import { insertRecord } from "~/api/insert/record"
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 

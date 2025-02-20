@@ -1,11 +1,12 @@
-import { createResource } from "solid-js";
-import { Detail } from "~/components/details";
-import { PageTitle, Subtitle } from "~/components/PageTitle";
-import { RecordDetails } from "~/components/RecordDetails";
-import { Task } from "~/components/Task";
-import { getTaskVoteChangeProposal, submitTaskVoteChangeProposal } from "~/api/do-task/vote-change-proposal";
+import { createResource } from "solid-js"
+import { Detail } from "~/components/details"
+import { PageTitle, Subtitle } from "~/components/PageTitle"
+import { RecordDetails } from "~/components/RecordDetails"
+import { Task } from "~/components/Task"
 import { humanCase } from "~/util"
 import { Button } from "~/components/buttons"
+import { getTaskVoteChangeProposal } from "~/api/getTask/voteChangeProposal"
+import { submitTaskVoteChangeProposal } from "~/api/submitTask/voteChangeProposal"
 
 export default function VoteChangeProposal() {
   const [proposal, { refetch }] = createResource(getTaskVoteChangeProposal)

@@ -3,13 +3,14 @@ import { createAsync, useAction } from "@solidjs/router"
 import { For, createSignal } from "solid-js"
 import { RecordPageTitle } from "~/components/PageTitle"
 import { etv, firstCap, pluralTableName, titleColumnName } from "~/util"
-import {getRecords, listCrossRecordsCache} from "~/client-only/query"
+import { listCrossRecordsCache} from "~/client-only/query"
 import {deleteCrossRecordAction, insertCrossRecordAction} from "~/client-only/action"
 import { useSafeParams } from "~/client-only/util"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
 import { DataRecordWithId } from "~/schema/type"
-import { getRecordById } from "~/server-only/getRecordById"
+import { getOneRecordById } from "~/api/getOne/recordById"
+import { listRecords } from "~/api/list/records"
 
 interface EditCrossRefParams {
   a: string
@@ -24,12 +25,12 @@ export default function EditCrossRef() {
   const id = () => parseInt(sp().id)
   const [selectedId, setSelectedId] = createSignal<string>('')
 
-  const aRecord = createAsync(() => getRecordById(sp().a, id(), [titleColumnName(sp().a)]))
+  const aRecord = createAsync(() => getOneRecordById(sp().a, id()))
   const linkedRecords = createAsync(() => listCrossRecordsCache( sp().b, sp().a, id(), first ))
-  const allRrcords = createAsync<DataRecordWithId[]>(() => getRecords(sp().b))
+  const allRrcords = createAsync(() => listRecords(sp().b))
 
   const linkedRecordIds = () => linkedRecords()?.map(lr => lr.id)
-  const unlinkedRecords = () => allRrcords()?.filter((r: DataRecordWithId) => !linkedRecordIds()?.includes(r.id))
+  const unlinkedRecords = () => allRrcords()?.filter(r => !linkedRecordIds()?.includes(r.id))
 
   const insertCrossRecordRun = useAction(insertCrossRecordAction)
 

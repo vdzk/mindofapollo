@@ -1,12 +1,12 @@
-import { Component, Match, Show, Switch } from "solid-js";
-import { BooleanColumn, DataRecord, ForeignKey } from "~/schema/type";
-import { createAsync } from "@solidjs/router";
-import { getRecordById } from "~/server-only/getRecordById";
-import { getPercent, nbsp } from "~/util";
-import { schema } from "~/schema/schema";
-import { getOriginTypes } from "~/api/shared/getOriginTypes";
-import { ExplLink } from "./expl/ExplLink";
+import { Component, Match, Show, Switch } from "solid-js"
+import { BooleanColumn, DataRecord, ForeignKey } from "~/schema/type"
+import { createAsync } from "@solidjs/router"
+import { getPercent, nbsp } from "~/util"
+import { schema } from "~/schema/schema"
+import { ExplLink } from "./expl/ExplLink"
 import { Link } from "./Link";
+import { getOneRecordById } from "~/api/getOne/recordById"
+import { listOriginTypes } from "~/api/list/originTypes"
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -18,7 +18,7 @@ const FkValue: Component<{
       // TODO: figure out why this happens
       return Promise.resolve(undefined)
     } else {
-      return getRecordById(tableName, props.id)
+      return getOneRecordById(tableName, props.id)
     }
   })
 
@@ -47,7 +47,7 @@ export const DisplayValue: Component<DisplayValue> = props => {
 
   const originTypes = createAsync(async () => {
     if (column().type === 'value_type_id') {
-      return getOriginTypes(props.tableName, props.colName)
+      return listOriginTypes(props.tableName, props.colName)
     }
   })
   const columnType = () => {

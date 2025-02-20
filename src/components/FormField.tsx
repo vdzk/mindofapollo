@@ -1,13 +1,13 @@
-import { Component, createEffect, For, Match, Show, Switch } from "solid-js";
-import { schema } from "~/schema/schema";
-import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, OptionColumn, TextColumn } from "~/schema/type";
-import { FkInput } from "./FkInput";
-import { ColumnLabel } from "./ColumnLabel";
+import { Component, createEffect, For, Match, Show, Switch } from "solid-js"
+import { schema } from "~/schema/schema"
+import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, OptionColumn, TextColumn } from "~/schema/type"
+import { FkInput } from "./FkInput"
+import { ColumnLabel } from "./ColumnLabel"
 import { createAsync, useSearchParams } from "@solidjs/router"
-import { getOriginTypes } from "~/api/shared/getOriginTypes";
 import { SetStoreFunction } from "solid-js/store"
 import { etv } from "~/util"
-import { TextInput } from "./TextInput";
+import { TextInput } from "./TextInput"
+import { listOriginTypes } from "~/api/list/originTypes"
 
 const getCurrent = (colName: string, diff: DataRecord, record?: DataRecord) =>
   diff[colName] ?? record?.[colName]
@@ -39,7 +39,7 @@ export const FormField: Component<{
 
   const originTypes = createAsync(async () => {
     if (column().type === 'value_type_id') {
-      return getOriginTypes(props.tableName, props.colName)
+      return listOriginTypes(props.tableName, props.colName)
     }
   })
   const columnType = () => {

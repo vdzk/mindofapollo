@@ -1,20 +1,18 @@
-import { createAsync, useAction } from "@solidjs/router";
-import { Component, For, Match, Show, Switch, useContext } from "solid-js";
-import { schema } from "~/schema/schema";
-import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type";
-import { listCrossRecords } from "~/server-only/listCrossRecords";
-import { listRecords } from "~/server-only/listRecords";
-import { titleColumnName } from "~/util";
-import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators";
-import { SessionContext } from "~/SessionContext";
-import {
-  listForeignRecords,
-  listOverlapRecords
-} from "~/api/components/Aggregate";
-import {listForeignHopRecordsCache} from "~/client-only/query";
-import {deleteForeignHopRecordAction} from "~/client-only/action";
-import { Link } from "~/components/Link";
-import { Button } from "~/components/buttons";
+import { createAsync, useAction } from "@solidjs/router"
+import { Component, For, Match, Show, Switch, useContext } from "solid-js"
+import { schema } from "~/schema/schema"
+import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type"
+import { titleColumnName } from "~/util"
+import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators"
+import { SessionContext } from "~/SessionContext"
+import {listForeignHopRecordsCache} from "~/client-only/query"
+import {deleteForeignHopRecordAction} from "~/client-only/action"
+import { Link } from "~/components/Link"
+import { Button } from "~/components/buttons"
+import { listForeignRecords } from "~/api/list/foreignRecords"
+import { listCrossRecords } from "~/api/list/crossRecords"
+import { listOverlapRecords } from "~/api/list/overlapRecords"
+import { listRecords } from "~/api/list/records"
 
 export interface AggregateSection {
   title: string;

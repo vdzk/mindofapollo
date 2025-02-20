@@ -1,12 +1,13 @@
-import { Match, Switch, createResource, createSignal } from "solid-js";
-import { FormField } from "~/components/FormField";
-import { Task } from "~/components/Task";
-import { submitTaskConfirmOrChallenge, getTaskConfirmOrChallenge } from "~/api/do-task/confirm-or-challenge";
-import { insertExtRecord } from "~/api/shared/extRecord";
-import { createStore } from "solid-js/store";
-import { DataRecord } from "~/schema/type";
-import { Link } from "~/components/Link";
-import { Button } from "~/components/buttons";
+import { Match, Switch, createResource, createSignal } from "solid-js"
+import { FormField } from "~/components/FormField"
+import { Task } from "~/components/Task"
+import { createStore } from "solid-js/store"
+import { DataRecord } from "~/schema/type"
+import { Link } from "~/components/Link"
+import { Button } from "~/components/buttons"
+import { getTaskConfirmOrChallenge } from "~/api/getTask/confirmOrChallenge"
+import { submitTaskConfirmOrChallenge } from "~/api/submitTask/confirmOrChallenge"
+import { insertExtRecord } from "~/api/insert/extRecord"
 
 export default function ConfirmOrChallenge() {
   const [diff, setDiff] = createStore<DataRecord>({})

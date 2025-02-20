@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams } from "@solidjs/router"
 import { createStore } from "solid-js/store"
 import { FormField } from "~/components/FormField"
 import { PageTitle } from "~/components/PageTitle"
-import { join } from "~/api/system/join"
+import { join } from "~/api/execute/join"
 import { Button } from "~/components/buttons"
-import { login } from "~/api/system/login"
+import { login } from "~/api/execute/login"
 
 interface Join {
   code: string

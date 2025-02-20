@@ -7,8 +7,9 @@ import { RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"
 import { schema } from "~/schema/schema"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { getTaskJudgeCorrelations, submitTaskJudgeCorrelations } from "~/api/do-task/judge-correlations"
 import { Button } from "~/components/buttons";
+import { getTaskJudgeCorrelations } from "~/api/getTask/judgeCorrelations"
+import { submitTaskJudgeCorrelations } from "~/api/submitTask/judgeCorrelations"
 
 const CorrelationForm: Component<{
   argument: DataRecordWithId

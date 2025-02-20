@@ -1,13 +1,13 @@
-import { createAsync } from "@solidjs/router";
-import { Component, For, useContext } from "solid-js";
-import { schema } from "~/schema/schema";
-import { ColumnSchema } from "~/schema/type";
-import { getOneExtRecordById } from "~/api/shared/extRecord";
-import { getAllKeys, getExtTableName } from "~/util";
-import { Aggregate } from "../components/Aggregate";
-import { Detail, DetailProps } from "./details";
-import { getPermission } from "~/getPermission";
-import { SessionContext } from "~/SessionContext";
+import { createAsync } from "@solidjs/router"
+import { Component, For, useContext } from "solid-js"
+import { schema } from "~/schema/schema"
+import { ColumnSchema } from "~/schema/type"
+import { getAllKeys, getExtTableName } from "~/util"
+import { Aggregate } from "../components/Aggregate"
+import { Detail, DetailProps } from "./details"
+import { getPermission } from "~/getPermission"
+import { SessionContext } from "~/SessionContext"
+import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 
 export type ColumnFilter = (
   colName: string,

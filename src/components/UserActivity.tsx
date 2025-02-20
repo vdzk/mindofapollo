@@ -1,7 +1,7 @@
 import { Component, For } from "solid-js"
 import { createAsync } from "@solidjs/router"
 import { Link } from "./Link"
-import { getUserActivity } from "~/api/components/UserActivity"
+import { listUserActivity } from "~/api/list/userActivity"
 
 interface ActivityRecord {
   id: number;
@@ -25,7 +25,7 @@ const getActivityLabel = (activity: ActivityRecord) => {
 }
 
 export const UserActivity: Component<{id: number}> = props => {
-    const activities = createAsync(() => getUserActivity(props.id))
+    const activities = createAsync(() => listUserActivity(props.id))
 
   return (
     <div class="px-2">

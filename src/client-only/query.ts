@@ -1,8 +1,8 @@
-import {query} from "@solidjs/router";
-import {listForeignHopRecords} from "~/api/components/Aggregate";
-import { listCrossRecords } from "~/server-only/listCrossRecords";
-import { listRecords } from "~/server-only/listRecords";
-import {listVisibleActions} from "~/api/tableActions/tableActions";
+import {query} from "@solidjs/router"
+import { listCrossRecords } from "~/api/list/crossRecords"
+import { listForeignHopRecords } from "~/api/list/foreignHopRecords"
+import { listRecords } from "~/api/list/records"
+import { listVisibleActions } from "~/api/list/visibleActions"
 
 export const listForeignHopRecordsCache = query(listForeignHopRecords, 'listForeignHopRecords')
 export const listCrossRecordsCache = query(listCrossRecords, 'listCrossRecords')

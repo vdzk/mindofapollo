@@ -1,13 +1,14 @@
-import { createResource, For } from "solid-js";
-import { createStore } from "solid-js/store";
-import { FormField } from "~/components/FormField";
-import { PageTitle } from "~/components/PageTitle";
-import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
-import { Task } from "~/components/Task";
-import { schema } from "~/schema/schema";
-import { DataRecord } from "~/schema/type";
-import { getTaskJudgeArgument, submitTaskJudgeArgument } from "~/api/do-task/judge-arguments";
-import { Button } from "~/components/buttons";
+import { createResource, For } from "solid-js"
+import { createStore } from "solid-js/store"
+import { FormField } from "~/components/FormField"
+import { PageTitle } from "~/components/PageTitle"
+import { ColumnFilter, RecordDetails } from "~/components/RecordDetails"
+import { Task } from "~/components/Task"
+import { schema } from "~/schema/schema"
+import { DataRecord } from "~/schema/type"
+import { Button } from "~/components/buttons"
+import { getTaskJudgeArgument } from "~/api/getTask/judgeArgument"
+import { submitTaskJudgeArgument } from "~/api/submitTask/judgeArgument"
 
 export default function JudgeArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})

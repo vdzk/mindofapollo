@@ -1,11 +1,11 @@
-import { createAsync, useLocation, useNavigate } from "@solidjs/router";
-import { Component, Match, Show, Switch, useContext } from "solid-js";
-import { logout } from "~/server-only/session";
-import { SessionContext } from "~/SessionContext";
-import { getRecordById } from "~/server-only/getRecordById";
-import { Link } from "./Link";
-import { Button } from "./buttons";
-import { useIsPublicRoute } from "~/client-only/util";
+import { createAsync, useLocation, useNavigate } from "@solidjs/router"
+import { Component, Match, Show, Switch, useContext } from "solid-js"
+import { logout } from "~/server-only/session"
+import { SessionContext } from "~/SessionContext"
+import { Link } from "./Link"
+import { Button } from "./buttons"
+import { useIsPublicRoute } from "~/client-only/util"
+import { getOneRecordById } from "~/api/getOne/recordById"
 
 export const TopNav: Component = () => {
   const location = useLocation()
@@ -13,7 +13,7 @@ export const TopNav: Component = () => {
   const navigate = useNavigate()
   const isPublicRoute = useIsPublicRoute()
   const user = createAsync(async () => session?.userSession()
-    ? getRecordById('person', session!.userSession()!.userId)
+    ? getOneRecordById('person', session!.userSession()!.userId)
     : undefined
   )
 

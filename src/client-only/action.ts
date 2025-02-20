@@ -1,8 +1,10 @@
-import {action, json} from "@solidjs/router";
-import { deleteById } from "~/api/shared/deleteById";
-import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache} from "~/client-only/query";
-import {CrossRecordMutateProps, deleteCrossRecord, insertCrossRecord} from "~/api/manage-record/edit-cross-ref";
-import {executeAction} from "~/api/tableActions/tableActions";
+import {action, json} from "@solidjs/router"
+import { deleteById } from "~/api/delete/byId"
+import { deleteCrossRecord } from "~/api/delete/crossRecord"
+import { executeAction } from "~/api/execute/action"
+import { CrossRecordMutateProps, insertCrossRecord } from "~/api/insert/crossRecord"
+import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache} from "~/client-only/query"
+
 
 export const deleteForeignHopRecordAction = action(async (
   tableName: string,

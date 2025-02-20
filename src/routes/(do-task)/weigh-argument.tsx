@@ -1,14 +1,14 @@
-import { createResource, For, Show } from "solid-js";
-import { createStore } from "solid-js/store";
-import { FormField } from "~/components/FormField";
-import { Subtitle } from "~/components/PageTitle";
-import { ColumnFilter, RecordDetails } from "~/components/RecordDetails";
-import { Task } from "~/components/Task";
-import { schema } from "~/schema/schema";
-import { BooleanColumn, DataRecord } from "~/schema/type";
-import { submitTaskWeighArgument } from "~/api/do-task/weigh-argument";
-import { getTaskWeighArgument } from "~/api/do-task/weigh-argument";
-import { Button } from "~/components/buttons";
+import { createResource, For, Show } from "solid-js"
+import { createStore } from "solid-js/store"
+import { FormField } from "~/components/FormField"
+import { Subtitle } from "~/components/PageTitle"
+import { ColumnFilter, RecordDetails } from "~/components/RecordDetails"
+import { Task } from "~/components/Task"
+import { schema } from "~/schema/schema"
+import { BooleanColumn, DataRecord } from "~/schema/type"
+import { Button } from "~/components/buttons"
+import { getTaskWeighArgument } from "~/api/getTask/weighArgument"
+import { submitTaskWeighArgument } from "~/api/submitTask/weighArgument"
 
 export default function WeighArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})

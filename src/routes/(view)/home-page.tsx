@@ -1,21 +1,21 @@
 import { Title } from "@solidjs/meta"
 import { createAsync, query } from "@solidjs/router"
 import { createSignal, For } from "solid-js"
-import { getHomePageStatements } from "~/api/view/home-page"
+import { listHomePageStatements } from "~/api/list/homePageStatements"
 import { getRecords } from "~/client-only/query"
 import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
 import { Subtitle } from "~/components/PageTitle"
 import { etv } from "~/util"
 
-const getHomePageStatementsQuery = query(getHomePageStatements, 'getHomePageStatements')
+const getHomePageStatementsQuery = query(listHomePageStatements, 'getHomePageStatements')
 
 export default function HomePage() {
   const tags = createAsync(() => getRecords('tag'))
 
   const featuredOption = { id: -1, label: 'featured' }
   const tagOptions = () => tags()?.map(
-    tag => ({ id: tag.id, label: tag.name })
+    tag => ({ id: tag.id, label: tag.name as string })
   ) ?? []
   const options = () => [featuredOption, ...tagOptions()]
 
