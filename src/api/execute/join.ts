@@ -1,9 +1,8 @@
-"use server"
-
 import { AuthorizationCategory } from "~/types"
 import { sql } from "../../server-only/db"
 
 export const join = async (name: string, code: string) => {
+  "use server"
   const invites = await sql`
     SELECT *
     FROM invite

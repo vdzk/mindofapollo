@@ -1,9 +1,8 @@
-"use server"
-
 import { sql } from "~/server-only/db"
 import { getWeightedArguments } from "../../server-only/getWeightedArguments"
 
 export const getTaskWeighArgument = async () => {
+  "use server"
   const [argument] = await sql`
     SELECT a.*
     FROM argument a

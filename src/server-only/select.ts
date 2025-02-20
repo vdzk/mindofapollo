@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "./db"
 import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries } from "~/schema/type"
 import { addExplIdColNames, getVirtualColNames, resolveEntries } from "~/util"

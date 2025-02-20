@@ -1,10 +1,9 @@
-"use server";
-
 import { _deleteById } from "../../server-only/mutate"
 import { _getRecordById } from "../../server-only/select"
 import { getExtTableName } from "~/util"
 
 export const deleteExtById = async (tableName: string, id: number) => {
+  "use server";
   const result = await _getRecordById(tableName, id, ['id'])
   if (!result) return
   const extTableName = getExtTableName(tableName, result)

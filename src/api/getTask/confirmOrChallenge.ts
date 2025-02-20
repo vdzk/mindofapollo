@@ -1,9 +1,8 @@
-"use server"
-
 import { sql } from "~/server-only/db"
 import { getUserSession } from "~/server-only/session"
 
 export const getTaskConfirmOrChallenge = async () => {
+  "use server"
   const userSession = await getUserSession()
   // TODO: use TABLESAMPLE when the table grows enough
   // TODO: exclude statements created by the user

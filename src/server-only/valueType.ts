@@ -1,5 +1,3 @@
-"use server"
-
 import { schema } from "~/schema/schema"
 import { ValueTypeIdColumn } from "~/schema/type"
 import { sql } from "./db"

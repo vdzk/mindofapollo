@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "./db"
 
 export const startExpl = async (

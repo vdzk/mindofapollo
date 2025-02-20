@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "~/server-only/db"
 import { getPermission } from "~/getPermission"
 import { getUserSession } from "../../server-only/session"
@@ -15,6 +13,7 @@ export const listHomePageStatements = async (
   featured: boolean,
   tagId?: number
 ) => {
+  "use server"
   const userSession = await getUserSession()
   if (!getPermission(userSession, 'read', 'statement').granted) return
   if (!getPermission(userSession, 'read', 'directive').granted) return

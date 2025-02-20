@@ -1,4 +1,3 @@
-"use server"
 import { useSession } from "vinxi/http";
 import { UserSession } from "~/types";
 

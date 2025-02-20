@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "./db"
 import { DataLiteral, DataRecord } from "~/schema/type"
 import { schema } from "~/schema/schema"

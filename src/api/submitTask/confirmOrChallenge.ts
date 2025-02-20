@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "~/server-only/db"
 import { _updateRecord } from "~/server-only/mutate"
 import { startExpl } from "~/server-only/expl"
@@ -8,6 +6,7 @@ import { getUserSession } from "~/server-only/session"
 export const submitTaskConfirmOrChallenge = async (
   statementId: number
 ) => {
+  "use server"
   const userSession = await getUserSession()
   // TODO: check permissions
   const result = await sql`

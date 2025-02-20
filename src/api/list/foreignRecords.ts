@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { injectVirtualValues } from "~/server-only/select"
@@ -9,6 +7,7 @@ export const listForeignRecords = async (
     fkName: string,
     fkId: number
 ) => {
+    "use server"
     const {extendedByTable} = schema.tables[tableName]
     let records
     if (extendedByTable) {

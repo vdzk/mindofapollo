@@ -1,11 +1,10 @@
-"use server"
-
 import { sql } from "../../server-only/db"
 import { getDirConcsWithValues } from "../../server-only/getDirConcsWithValues"
 import {xName} from "~/util";
 import { getUserSession } from "~/server-only/session"
 
 export const listUserDirectives = async () => {
+  "use server"
   const userSession = await getUserSession()
   const directives = await sql`
     SELECT directive.id, deed.text

@@ -1,5 +1,3 @@
-"use server";
-
 import {_updateRecord} from "~/server-only/mutate"
 import {sql} from "~/server-only/db"
 import {calcStatementConfidence} from "~/compute"

@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "~/server-only/db";
 import { injectVirtualValues } from "~/server-only/select";
 import { xName } from "~/util"
@@ -10,6 +8,7 @@ export const listCrossRecords = async (
   id: number,
   first: boolean
 ) => {
+  "use server"
   const records = await sql`
     SELECT ${sql(b)}.*
     FROM ${sql(b)}

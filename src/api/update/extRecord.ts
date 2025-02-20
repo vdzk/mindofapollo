@@ -1,5 +1,3 @@
-"use server";
-
 import { DataRecord } from "~/schema/type"
 import { _updateRecord } from "../../server-only/mutate"
 import { startExpl } from "~/server-only/expl"
@@ -12,6 +10,7 @@ export const updateExtRecord = async (
   extTableName: string,
   extRecord: DataRecord
 ) => {
+  "use server"
   const userSession = await getUserSession()
   const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, id)
   return Promise.all([

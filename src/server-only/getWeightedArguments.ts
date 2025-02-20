@@ -1,4 +1,3 @@
-"use server";
 import { sql } from "~/server-only/db";
 
 

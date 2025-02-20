@@ -1,12 +1,11 @@
-"use server";
 import { getUserSession } from "~/server-only/session";
 import { tableActions } from "~/server-only/tableActions";
-
 
 export const listVisibleActions = async (
   tableName: string,
   recordId: number
 ) => {
+  "use server";
   const userSession = await getUserSession();
   if (tableActions[tableName]) {
     const promises = Object.entries(tableActions[tableName]).map(

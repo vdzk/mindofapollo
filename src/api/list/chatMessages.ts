@@ -1,12 +1,10 @@
-"use server";
 import { sql } from "~/server-only/db";
 import { getUserSession } from "~/server-only/session";
 
-
 export const listChatMessages = async () => {
+  "use server";
   const userSession = await getUserSession();
   if (!userSession?.authenticated) return [];
-
   const messages = await sql`
     SELECT m.id, m.text, m.user_id, m.timestamp, p.name as sender_name
     FROM chat_message m
@@ -14,6 +12,5 @@ export const listChatMessages = async () => {
     ORDER BY m.timestamp DESC
     LIMIT 100
   `;
-
   return messages || [];
 };

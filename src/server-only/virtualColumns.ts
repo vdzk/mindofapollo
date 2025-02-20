@@ -1,5 +1,3 @@
-"use server"
-
 import { resolveEntries } from "~/util"
 import { getDirConcsWithValues } from "./getDirConcsWithValues"
 

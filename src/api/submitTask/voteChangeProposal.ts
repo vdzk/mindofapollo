@@ -1,5 +1,3 @@
-"use server"
-
 import {sql} from "~/server-only/db"
 import {_getRecordById} from "~/server-only/select"
 import { getUserSession } from "~/server-only/session"
@@ -12,6 +10,7 @@ export const submitTaskVoteChangeProposal = async (
   proposalId: number,
   inFavour: boolean
 ) => {
+  "use server"
   const userSession = await getUserSession()
   const proposal = await _getRecordById('change_proposal', proposalId, ['id', 'table_name', 'column_name', 'old_value_id', 'new_value_id', 'target_id', 'votes_in_favour', 'votes_against', 'decided', 'approved']) as ProposalRecord | undefined
   if (!proposal) return

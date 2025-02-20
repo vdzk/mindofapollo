@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { ForeignKey } from "~/schema/type"
@@ -10,6 +8,7 @@ export const listForeignHopRecords = (
     fkId: number,
     hopColName: string
 ) => {
+    "use server"
     const extColumn = schema.tables[tableName].columns[hopColName] as ForeignKey;
 
     // tMain.id overrides tHop.id

@@ -1,5 +1,3 @@
-"use server";
-
 import { _getRecordById, getValueById } from "../../server-only/select"
 import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
@@ -7,6 +5,7 @@ import { getTypeByRecordId } from "../../server-only/valueType"
 import { getExtTableName } from "~/util"
 
 export const getOneExtRecordById = async (tableName: string, id: number) => {
+  "use server"
   const { columns } = schema.tables[tableName]
   const colNames = Object.keys(columns)
   const result = await _getRecordById(tableName, id, colNames)

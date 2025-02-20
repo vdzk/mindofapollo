@@ -1,5 +1,3 @@
-"use server"
-
 import {sql} from "~/server-only/db";
 import {xName} from "~/util";
 import { getUserSession } from "~/server-only/session";
@@ -8,6 +6,7 @@ import { CrossRecordMutateProps } from "../insert/crossRecord";
 export const deleteCrossRecord = async (
   params: CrossRecordMutateProps
 ) => {
+  "use server"
   const userSession = await getUserSession()
   const tableName = xName(params.a, params.b, params.first)
   const result = await sql`

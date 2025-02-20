@@ -1,10 +1,9 @@
-"use server"
-
 import {DataRecordWithId} from "~/schema/type"
 import {sql} from "~/server-only/db"
 import { getUserSession } from "~/server-only/session"
 
 export const getTaskJudgeCorrelations = async () => {
+    "use server"
     const sides = Math.random() > 0.5 ? [true, false] : [false, true]
     let data: { pro: boolean, statement: DataRecordWithId } | undefined
     for (const pro of sides) {

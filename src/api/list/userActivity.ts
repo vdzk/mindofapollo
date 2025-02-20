@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "~/server-only/db";
 import { schema } from "~/schema/schema";
 import { UserSession } from "~/types";
@@ -33,6 +31,7 @@ const getFirstTextColumn = (tableName: string): string | null => {
 export const listUserActivity = async (
   userId: number
 ): Promise<ActivityRecord[]> => {
+  "use server"
   const userSession = await getUserSession()
   const activity = await sql<ExplRecord[]>`
     SELECT *

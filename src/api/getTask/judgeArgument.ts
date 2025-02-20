@@ -1,9 +1,8 @@
-"use server"
-
 import {sql} from "~/server-only/db"
 import { getUserSession } from "~/server-only/session"
 
 export const getTaskJudgeArgument = async () => {
+  "use server"
   const userSession = await getUserSession()
   const result = await sql`
     SELECT argument.id, argument.title, argument.statement_id,

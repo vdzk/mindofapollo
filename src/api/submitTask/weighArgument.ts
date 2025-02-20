@@ -1,5 +1,3 @@
-"use server"
-
 import { sql } from "~/server-only/db"
 import { _insertRecord, _updateRecord } from "~/server-only/mutate"
 import { startExpl, finishExpl } from "~/server-only/expl"
@@ -41,6 +39,7 @@ export const submitTaskWeighArgument = async (
   argumentId: number,
   weightData: DataRecord
 ) => {
+  "use server"
   const argument = await _getRecordById('argument', argumentId, ['statement_id'])
   if (!argument) return
 

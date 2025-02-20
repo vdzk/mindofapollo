@@ -1,5 +1,3 @@
-"use server"
-
 import {sql} from "~/server-only/db";
 import {xName} from "~/util";
 import { getUserSession } from "../../server-only/session";
@@ -7,6 +5,7 @@ import { getUserSession } from "../../server-only/session";
 export const insertCrossRecord = async (
   props: CrossRecordMutateProps
 ) => {
+  "use server"
   const userSession = await getUserSession()
   const tableName = xName(props.a, props.b, props.first);
   const result = await sql`
@@ -22,6 +21,7 @@ export const insertCrossRecord = async (
   `
   return result;
 }
+
 export interface CrossRecordMutateProps {
   a: string
   b: string

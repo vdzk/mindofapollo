@@ -1,5 +1,3 @@
-"use server"
-
 import { _updateRecord } from "./mutate"
 import { _getRecordById } from "~/server-only/select"
 import { attemptJudgeStatement } from "~/server-only/attemptJudgeStatement";

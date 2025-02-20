@@ -1,11 +1,10 @@
-"use server"
-
 import {getValueTypeTableName} from "~/schema/dataTypes"
 import {sql} from "~/server-only/db"
 import {ProposalRecord} from "~/tables/other/change_proposal"
 import { getUserSession } from "~/server-only/session"
 
 export const getTaskVoteChangeProposal = async () => {
+  "use server"
   const userSession = await getUserSession()
   const proposals = await sql`
     WITH user_changes AS (

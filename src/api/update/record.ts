@@ -1,5 +1,3 @@
-"use server"
-
 import { DataRecord } from "~/schema/type"
 import { getUserSession } from "../../server-only/session"
 import { getPermission } from "~/getPermission"
@@ -12,6 +10,7 @@ export const updateRecord = async (
   id: number,
   record: DataRecord
 ) => {
+  "use server"
   const userSession = await getUserSession()
   const permission = getPermission(userSession, 'update', tableName, id)
   if (!permission.granted) return

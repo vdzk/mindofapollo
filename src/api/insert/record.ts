@@ -1,5 +1,3 @@
-"use server"
-
 import { getUserSession } from "~/server-only/session"
 import { getPermission } from "~/getPermission"
 import { DataRecord } from "~/schema/type"
@@ -10,6 +8,7 @@ export const insertRecord = async (
   tableName: string,
   record: DataRecord
 ) => {
+  "use server"
   const userSession = await getUserSession();
   if (!getPermission(userSession, 'create', tableName).granted) return;
   await injectValueTypes(tableName, record);
