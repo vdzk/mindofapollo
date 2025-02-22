@@ -1,6 +1,7 @@
 import { sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { injectVirtualValues } from "~/server-only/select"
+import { DataRecordWithId } from "~/schema/type";
 
 export const listForeignRecords = async (
     tableName: string,
@@ -27,5 +28,5 @@ export const listForeignRecords = async (
     `
     }
     await injectVirtualValues(tableName, records)
-    return records
+    return records as unknown as DataRecordWithId[]
 };

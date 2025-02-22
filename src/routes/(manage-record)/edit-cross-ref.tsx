@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { createAsync, useAction } from "@solidjs/router"
-import { For, createSignal } from "solid-js"
+import { For, Show, createSignal } from "solid-js"
 import { RecordPageTitle } from "~/components/PageTitle"
 import { etv, firstCap, pluralTableName, titleColumnName } from "~/util"
 import { listCrossRecordsCache} from "~/client-only/query"
@@ -11,6 +11,8 @@ import { Button } from "~/components/buttons"
 import { DataRecordWithId } from "~/schema/type"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRecords } from "~/api/list/records"
+import { useBelongsTo } from "~/client-only/useBelongsTo"
+import { whoCanDeleteCrossRecord } from "~/api/delete/crossRecord"
 
 interface EditCrossRefParams {
   a: string
@@ -21,12 +23,12 @@ interface EditCrossRefParams {
 
 export default function EditCrossRef() {
   const sp = useSafeParams<EditCrossRefParams>(['a', 'b', 'id', 'first'])
-  const first = sp().first === 'true'
+  const first = () => sp().first === 'true'
   const id = () => parseInt(sp().id)
   const [selectedId, setSelectedId] = createSignal<string>('')
 
   const aRecord = createAsync(() => getOneRecordById(sp().a, id()))
-  const linkedRecords = createAsync(() => listCrossRecordsCache( sp().b, sp().a, id(), first ))
+  const linkedRecords = createAsync(() => listCrossRecordsCache( sp().b, sp().a, id(), first() ))
   const allRrcords = createAsync(() => listRecords(sp().b))
 
   const linkedRecordIds = () => linkedRecords()?.map(lr => lr.id)
@@ -40,16 +42,18 @@ export default function EditCrossRef() {
     insertCrossRecordRun({
       a: sp().a,
       b: sp().b,
-      first,
+      first: first(),
       a_id: id(),
       b_id: parseInt(selectedId())
     })
   }
 
+  const canDeleteCrossRecord = () => useBelongsTo(whoCanDeleteCrossRecord(
+    first() ? sp().a : sp().b))
   const deleteCrossRecordRun = useAction(deleteCrossRecordAction)
 
   const onDelete = (linkedId: number) => {
-    deleteCrossRecordRun({a: sp().a, b: sp().b, first, a_id: id(), b_id: linkedId})
+    deleteCrossRecordRun({a: sp().a, b: sp().b, first: first(), a_id: id(), b_id: linkedId})
   }
 
   const bColName = titleColumnName(sp().b)
@@ -70,11 +74,13 @@ export default function EditCrossRef() {
                 label={lr[bColName]}
               />
               <span class="inline-block w-2" />
-              <Button
-                label="X"
-                onClick={() => onDelete(lr.id)}
-                tooltip="Remove"
-              />
+              <Show when={canDeleteCrossRecord()}>
+                <Button
+                  label="X"
+                  onClick={() => onDelete(lr.id)}
+                  tooltip="Remove"
+                />
+              </Show>
             </div>
           )}
         </For>

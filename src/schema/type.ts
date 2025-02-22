@@ -73,13 +73,17 @@ export interface ForeignKey {
     labelColumn: string
     extensionTables?: string[] // Choose extension table by appending the array element corresponding to the referenced id to the table name
     getLabel?: (record: DataRecord) => string // Generate label from the foreign record,
-    defaultValueLabel?: string // the FK value should be set to id corresponding to this label by default
+    defaultName?: string // the FK value should be set to id corresponding to this name by default
     optional?: boolean  // Foreign key can be NULL
   }
   getVisibility?: (record: DataRecord) => boolean
 }
 
-export type ColumnSchema = SimpleColumn | BooleanColumn | TextColumn | ForeignKey | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal
+export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
+  readOnly?: true
+  private?: true,
+  unique?: true
+}
 
 export interface OneToNSchema {
   type: '1-n'
@@ -105,7 +109,7 @@ interface Section {
 
 export interface TableSchema {
   plural?: string,
-  personal?: boolean, //only show the records created by the current user
+  private?: true,
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
   preview?: (record: DataRecord) => string, // Text to represent the whole record

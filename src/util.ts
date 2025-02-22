@@ -53,6 +53,11 @@ export const pluralTableName = (tableName: string) => {
   return schema.tables[tableName].plural ?? humanCase(tableName) + ' items'
 }
 
+export const hasOwnFields = (tableName: string) => Object.values(
+  schema.tables[tableName].columns
+).some(column => !['fk', 'virtual'].includes(column.type))
+
+
 export const etv = (fn: (val: string, name: string) => void) =>
   (event: { target: { value: string, name: string } }) =>
     fn(event.target.value, event.target.name)

@@ -54,6 +54,7 @@ const createTable = (tableName: string) => {
       colDefs.push(
         colName + ' ' + pgType
         + (column.getVisibility ? '' : ' NOT NULL')
+        + (column.unique ? ' UNIQUE' : '')
         + (defaultValue !== undefined ? ' DEFAULT ' + defaultValue : '')
       )
     }

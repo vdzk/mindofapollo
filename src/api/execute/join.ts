@@ -1,5 +1,7 @@
-import { AuthorizationCategory } from "~/types"
+import { AuthRole } from "~/types"
 import { sql } from "../../server-only/db"
+
+// TODO: extablish a chain of invites via expl records
 
 export const join = async (name: string, code: string) => {
   "use server"
@@ -13,22 +15,22 @@ export const join = async (name: string, code: string) => {
   if (invites?.[0]) {
     const invite = invites[0]
 
-    const authCategoryName: AuthorizationCategory = 'invited'
-    const authCategories = await sql`
+    const authRoleName: AuthRole = 'invited'
+    const authRoles = await sql`
       SELECT id 
-      FROM authorization_category 
-      WHERE name = ${authCategoryName} 
+      FROM auth_role 
+      WHERE name = ${authRoleName} 
       LIMIT 1
     `
-    const authCategory = authCategories?.[0]
+    const authRole = authRoles?.[0]
 
-    if (authCategory) {
+    if (authRole) {
       const persons = await sql`
         INSERT INTO person ${sql({
           name,
           email: '',
           password: '',
-          authorization_category_id: authCategory.id
+          auth_role_id: authRole.id
         })}
         RETURNING *
       `

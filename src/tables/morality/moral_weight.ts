@@ -3,7 +3,7 @@ import { sqlStr } from "~/util-no-circle";
 
 export const moral_weight: TableSchema = {
   plural: 'moral weights',
-  // personal: true,
+  private: true,
   columns: {
     label: {
       type: 'virtual',
@@ -24,12 +24,12 @@ export const moral_weight: TableSchema = {
         ]
       ))
     },
-    person_id: {
+    owner_id: {
       type: 'fk',
       fk: {
         table: 'person',
         labelColumn: 'name'
-      }
+      },
     },
     moral_good_id: {
       type: 'fk',

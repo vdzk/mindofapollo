@@ -1,22 +1,24 @@
 import { Title } from "@solidjs/meta"
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
-import { Match, Show, Switch, useContext } from "solid-js"
+import { Match, Show, Switch } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { Actions } from "~/components/Actions"
 import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
-import { SessionContext } from "~/SessionContext"
 import { titleColumnName } from "~/util"
 import { RecordPageTitle } from "../../components/PageTitle"
-import { getPermission } from "~/getPermission"
 import { getRecords } from "~/client-only/query"
 import { useSafeParams } from "~/client-only/util"
 import { MasterDetail } from "~/components/MasterDetail"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
 import { componentsByName } from "~/components/componentsByName"
-import { deleteExtById } from "~/api/delete/extById"
+import { deleteExtById, whoCanDeleteExtById } from "~/api/delete/extById"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
+import { useOfSelf } from "~/client-only/useOfSelf"
+import { useBelongsTo } from "~/client-only/useBelongsTo"
+import { whoCanExecuteAction } from "~/api/execute/action"
+import { whoCanUpdateRecord } from "~/api/update/record"
 
 const _delete = action(async (
   tableName: string,
@@ -38,15 +40,22 @@ interface ShowRecord {
 export default function ShowRecord() {
   const [searchParams, setSearchParams] = useSearchParams()
   const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
-  const session = useContext(SessionContext)
   const recordId = () => parseInt(sp().id)
   const record = createAsync(() => getOneExtRecordById(sp().tableName, recordId()))
   const titleColName = () => titleColumnName(sp().tableName)
   const deleteAction = useAction(_delete)
   const onDelete = () => deleteAction(sp().tableName, recordId())
   const titleText = () => (record()?.[titleColName()] ?? '') as string
-  const premU = () => getPermission(session?.userSession?.(), 'update', sp().tableName, recordId())
-  const premD = () => getPermission(session?.userSession?.(), 'delete', sp().tableName, recordId())
+
+  const canUpdateRecord = () => useBelongsTo(whoCanUpdateRecord(
+    sp().tableName,
+    useOfSelf(sp().tableName, record())
+  ))
+  const canDeleteExtById = () => useBelongsTo(whoCanDeleteExtById(
+    sp().tableName,
+    useOfSelf(sp().tableName, record())
+  ))
+  const canExecuteAction = () => useBelongsTo(whoCanExecuteAction())
 
   const sectionOptions = () => {
     const options = []
@@ -58,7 +67,9 @@ export default function ShowRecord() {
     } else {
       options.push({ id: 'allDetails', label: 'details' })
     }
-    options.push({ id: 'actions', label: 'actions' })
+    if (canExecuteAction()) {
+      options.push({ id: 'actions', label: 'actions' })
+    }
     return options
   }
 
@@ -91,7 +102,7 @@ export default function ShowRecord() {
               />
             </div>
             <div class="px-2 flex gap-2">
-              <Show when={premU().granted}>
+              <Show when={canUpdateRecord()}>
                 <Link
                   route="edit-record"
                   params={{ tableName: sp().tableName, id: recordId() }}
@@ -99,7 +110,7 @@ export default function ShowRecord() {
                   label="Edit"
                 />
               </Show>
-              <Show when={premD().granted}>
+              <Show when={canDeleteExtById()}>
                 <Button
                   label="Delete"
                   onClick={onDelete}

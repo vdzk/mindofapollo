@@ -1,22 +1,25 @@
 import { createAsync, useAction } from "@solidjs/router"
 import { Component, For, Match, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
-import { AggregateSchema, DataRecord, ForeignKey, OneToNSchema } from "~/schema/type"
+import { AggregateSchema, DataRecordWithId, ForeignKey, OneToNSchema } from "~/schema/type"
 import { titleColumnName } from "~/util"
 import { crossList, simpleList, splitBoolean, splitFk } from "./aggregators"
 import { SessionContext } from "~/SessionContext"
-import {listForeignHopRecordsCache} from "~/client-only/query"
-import {deleteForeignHopRecordAction} from "~/client-only/action"
+import { listForeignHopRecordsCache } from "~/client-only/query"
+import { deleteForeignHopRecordAction } from "~/client-only/action"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
 import { listForeignRecords } from "~/api/list/foreignRecords"
 import { listCrossRecords } from "~/api/list/crossRecords"
 import { listOverlapRecords } from "~/api/list/overlapRecords"
 import { listRecords } from "~/api/list/records"
+import { whoCanDeleteById } from "~/api/delete/byId"
+import { useBelongsTo } from "~/client-only/useBelongsTo"
+import { useOfSelf } from "~/client-only/useOfSelf"
 
 export interface AggregateSection {
   title: string;
-  records: () => DataRecord[] | undefined;
+  records: () => DataRecordWithId[] | undefined;
   link: { route: string, params: Record<string, any>, title: string }
 }
 
@@ -25,13 +28,17 @@ const FkRecordListItem: Component<{
   aggregate: OneToNSchema,
   titleColumnName: string,
   titleColumn: ForeignKey,
-  record: DataRecord,
+  record: DataRecordWithId,
   id: number
 }> = props => {
+  const canDeleteById = () => useBelongsTo(whoCanDeleteById(
+    props.aggregate.table,
+    useOfSelf(props.aggregate.table, props.record)
+  ))
   const deleteAction = useAction(deleteForeignHopRecordAction);
   const onDelete = () => deleteAction(
     props.aggregate.table, props.aggregate.column, props.id,
-    props.titleColumnName, props.record.id as number
+    props.titleColumnName, props.record.id
   )
   const { fk } = props.titleColumn
   const text = fk.getLabel?.(props.record) ?? props.record[fk.labelColumn]
@@ -53,11 +60,13 @@ const FkRecordListItem: Component<{
         }}
         label={text}
       />
-      <Button
-        label="X"
-        onClick={onDelete}
-        tooltip="Remove"
-      />
+      <Show when={canDeleteById()}>
+        <Button
+          label="X"
+          onClick={onDelete}
+          tooltip="Remove"
+        />
+      </Show>
     </>
   )
 }
@@ -114,7 +123,7 @@ export const Aggregate: Component<{
             return listRecords(splitColumn.fk.table)
           }
         })
-        sections = () => splitFk({...aggregatorProps, splitRecords})
+        sections = () => splitFk({ ...aggregatorProps, splitRecords })
       }
     } else {
       sections = () => simpleList(aggregatorProps)

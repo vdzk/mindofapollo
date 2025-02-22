@@ -5,7 +5,8 @@ export const argument_aggregation_type: TableSchema = {
   columns: {
     name: {
       type: 'varchar',
-      preview: true
+      preview: true,
+      unique: true
     },
     description: {
       type: 'text'

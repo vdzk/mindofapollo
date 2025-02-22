@@ -36,7 +36,7 @@ export const listUserDirectives = async () => {
   const moralWeights = await sql`
     SELECT moral_weight.moral_good_id, moral_weight.weight
     FROM moral_weight
-    WHERE moral_weight.person_id = ${userSession.userId}
+    WHERE moral_weight.owner_id = ${userSession.userId}
   `
 
   return {directives, dirConcs, dirConcsWithValues, moralGoods, units, moralWeights}

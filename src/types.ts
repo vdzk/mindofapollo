@@ -3,10 +3,10 @@ export type Option<TId> = {
   label: string; // Descriptive label for the option
 }
 
-export type AuthorizationCategory = 'admin' | 'invited'
+export type AuthRole = 'admin' | 'invited'
 
 export interface UserSession {
   authenticated?: boolean
   userId: number
-  authorizationCategory: AuthorizationCategory
+  authRole: AuthRole
 }

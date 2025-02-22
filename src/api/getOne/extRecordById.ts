@@ -3,11 +3,21 @@ import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
 import { getTypeByRecordId } from "../../server-only/valueType"
 import { getExtTableName } from "~/util"
+import { whoCanGetOneRecordById } from "./recordById"
+import { belongsTo, getAuthRole } from "~/server-only/session"
+import { ofSelf } from "~/server-only/ofSelf"
+import { getReadableColNames } from "~/permissions"
+
+export const whoCanGetOneExtRecordById = (tableName: string, ofSelf: boolean) => whoCanGetOneRecordById(tableName, ofSelf)
 
 export const getOneExtRecordById = async (tableName: string, id: number) => {
   "use server"
+  if (! await belongsTo(whoCanGetOneExtRecordById(
+    tableName, await ofSelf(tableName, id)
+  ))) return
   const { columns } = schema.tables[tableName]
-  const colNames = Object.keys(columns)
+  const authRole = await getAuthRole()
+  const colNames = getReadableColNames(tableName, authRole)
   const result = await _getRecordById(tableName, id, colNames)
   if (!result) return
 
@@ -24,7 +34,8 @@ export const getOneExtRecordById = async (tableName: string, id: number) => {
 
   const extTableName = getExtTableName(tableName, result)
   if (extTableName) {
-    const extResult = await _getRecordById(extTableName, id, Object.keys(schema.tables[extTableName].columns))
+    const extColNames = getReadableColNames(extTableName, authRole)
+    const extResult = await _getRecordById(extTableName, id, extColNames)
     return {...result, ...extResult}
   } else {
     return result

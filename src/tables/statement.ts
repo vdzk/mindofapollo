@@ -12,7 +12,7 @@ export const statement: TableSchema = {
       fk: {
         table: 'argument_aggregation_type',
         labelColumn: 'name',
-        defaultValueLabel: 'evidential',
+        defaultName: 'evidential',
         optional: true
       }
     },
@@ -20,22 +20,26 @@ export const statement: TableSchema = {
       type: 'boolean',
       defaultValue: false,
       label: 'status',
-      optionLabels: ['Undecided', 'Decided']
+      optionLabels: ['Undecided', 'Decided'],
+      readOnly: true
     },
     confidence: {
       type: 'proportion',
       getVisibility: record => record.decided as boolean,
-      defaultValue: 0.5
+      defaultValue: 0.5,
+      readOnly: true
     },
     judgement_requested: {
       type: 'boolean',
       defaultValue: false,
       label: 'judgement',
-      optionLabels: ['Not requested', 'requested']
+      optionLabels: ['Not requested', 'requested'],
+      readOnly: true
     },
     featured: {
       type: 'boolean',
-      defaultValue: false
+      defaultValue: false,
+      readOnly: true
     },
     label: {
       type: 'virtual',

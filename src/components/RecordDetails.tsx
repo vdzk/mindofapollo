@@ -5,9 +5,9 @@ import { ColumnSchema } from "~/schema/type"
 import { getAllKeys, getExtTableName } from "~/util"
 import { Aggregate } from "../components/Aggregate"
 import { Detail, DetailProps } from "./details"
-import { getPermission } from "~/getPermission"
 import { SessionContext } from "~/SessionContext"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
+import { getReadableColNames } from "~/permissions"
 
 export type ColumnFilter = (
   colName: string,
@@ -25,7 +25,6 @@ export const RecordDetails: Component<{
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
   const extTableName = () => record() ? getExtTableName(props.tableName, record()!) : undefined
   const table = () => schema.tables[props.tableName]
-  const permission = () => getPermission(session?.userSession?.(), 'read', props.tableName, props.id)
 
   // TODO: check how to optimise this if necesary
   const fieldsInSection = (tableName: string) => {
@@ -59,8 +58,8 @@ export const RecordDetails: Component<{
   }
 
   const columnFilter = ({ tableName, colName, record }: DetailProps) => {
-    const perm = permission()
-    if (perm.colNames && !perm.colNames.includes(colName)) return false
+    const readableColNames = getReadableColNames(tableName, session?.userSession?.()?.authRole)
+    if (!readableColNames.includes(colName)) return false
     if (!fieldsInSection(tableName).includes(colName)) return false
 
     const column = schema.tables[tableName].columns[colName]

@@ -30,13 +30,15 @@ import { person_category } from "~/tables/morality/person_category"
 import { presuasion_critique } from "~/tables/morality/persuasion_critique"
 import { unit } from "~/tables/morality/unit"
 import { invite } from "~/tables/other/invite"
-import { authorization_category } from "~/tables/other/authorization_category"
+import { auth_role } from "~/tables/other/auth_role"
 import { argument_explanation } from "~/tables/argument/explanation"
 import { chat_message } from "~/tables/other/chat_message"
 
+// NOTE: table name 'person' and column names 'id', 'name', 'owner_id' have special meanings
+
 export const schema: AppDataSchema = {
   tables: {
-    authorization_category,
+    auth_role,
     person,
     tag,
     argument_aggregation_type,

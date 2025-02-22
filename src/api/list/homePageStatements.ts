@@ -1,5 +1,4 @@
 import { sql } from "~/server-only/db"
-import { getPermission } from "~/getPermission"
 import { getUserSession } from "../../server-only/session"
 import { injectVirtualValues } from "../../server-only/select"
 
@@ -15,8 +14,6 @@ export const listHomePageStatements = async (
 ) => {
   "use server"
   const userSession = await getUserSession()
-  if (!getPermission(userSession, 'read', 'statement').granted) return
-  if (!getPermission(userSession, 'read', 'directive').granted) return
   let results: HpStatement[] = []
 
   let statements

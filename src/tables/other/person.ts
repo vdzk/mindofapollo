@@ -12,10 +12,10 @@ export const person: TableSchema = {
     password: {
       type: 'varchar'
     },
-    authorization_category_id: {
+    auth_role_id: {
       type: 'fk',
       fk: {
-        table: 'authorization_category',
+        table: 'auth_role',
         labelColumn: 'name'
       }
     } 
@@ -29,14 +29,14 @@ export const person: TableSchema = {
     moral_weights: {
       type: '1-n',
       table: 'moral_weight',
-      column: 'person_id'
+      column: 'owner_id'
     }
   },
   sections: {
     details: {
       label: 'Details',
       fields: [
-        'name', 'email', 'password', 'authorization_category_id',
+        'name', 'email', 'password', 'auth_role_id',
         'person_categories', 'moral_weights'
       ]
     },

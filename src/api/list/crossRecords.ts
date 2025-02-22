@@ -1,3 +1,4 @@
+import { DataRecordWithId } from "~/schema/type";
 import { sql } from "~/server-only/db";
 import { injectVirtualValues } from "~/server-only/select";
 import { xName } from "~/util"
@@ -15,9 +16,9 @@ export const listCrossRecords = async (
     JOIN ${sql(xName(a, b, first))} ON ${sql(b + '_id')} = id
     WHERE ${sql(a + '_id')} = ${id}
     ORDER BY id
-  `;
+  `
   if (records) {
-    await injectVirtualValues(b, records);
-    return records;
+    await injectVirtualValues(b, records)
+    return records as unknown as DataRecordWithId[]
   }
 };

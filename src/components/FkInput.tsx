@@ -3,8 +3,8 @@ import { Component, createEffect, For, useContext } from "solid-js"
 import { ForeignKey } from "~/schema/type"
 import { ExtValueContext } from "./Form"
 import { OnChangeFormat } from "./FormField"
-import {getRecords} from "~/client-only/query"
-import { getOneIdByRecord } from "~/api/getOne/idByRecord"
+import { getRecords } from "~/client-only/query"
+import { getOneIdByName } from "~/api/getOne/idByName"
 
 
 export const FkInput: Component<{
@@ -47,11 +47,8 @@ export const FkInput: Component<{
 
   const defaultValue = createAsync(async () => {
     const { fk } = props.column
-    if (fk.defaultValueLabel) {
-      return getOneIdByRecord(
-        fk.table,
-        {[fk.labelColumn]: fk.defaultValueLabel}
-      )
+    if (fk.defaultName) {
+      return await getOneIdByName( fk.table, fk.defaultName )
     }
     return undefined  
   })

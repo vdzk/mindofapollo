@@ -1,19 +1,20 @@
 import { sql } from "~/server-only/db"
-import { schema } from "~/schema/schema"
+import { DataRecordWithId } from "~/schema/type"
 
-export const listOverlapRecords = (
-    tableName: string,
-    sharedColumn: string,
-    filterTable: string,
-    filterId: number
+export const listOverlapRecords = async (
+  tableName: string,
+  sharedColumn: string,
+  filterTable: string,
+  filterId: number
 ) => {
-    "use server"
-    return sql`
-      SELECT ${sql(tableName)}.*
-      FROM ${sql(tableName)}
-      JOIN ${sql(filterTable)}
-        ON ${sql(tableName)}.${sql(sharedColumn)} = ${sql(filterTable)}.${sql(sharedColumn)}
-      WHERE ${sql(filterTable)}.id = ${filterId}
-      ORDER BY ${sql(tableName)}.id
-    `;
+  "use server"
+  const results = await sql`
+    SELECT t.*
+    FROM ${sql(tableName)} t
+    JOIN ${sql(filterTable)} ft
+      ON t.${sql(sharedColumn)} = ft.${sql(sharedColumn)}
+    WHERE ft.id = ${filterId}
+    ORDER BY t.id
+  `
+  return results as unknown as DataRecordWithId[]
 }

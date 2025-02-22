@@ -5,7 +5,6 @@ import { FormField } from "./FormField"
 import { DataRecord } from "~/schema/type"
 import { getExtTableName, isEmpty, buildUrl } from "~/util"
 import { createStore } from "solid-js/store"
-import { getPermission } from "~/getPermission"
 import { getRecords } from "~/client-only/query"
 import { SessionContext } from "~/SessionContext"
 import { Link } from "~/components/Link"
@@ -14,6 +13,7 @@ import { updateExtRecord } from "~/api/update/extRecord"
 import { updateRecord } from "~/api/update/record"
 import { insertExtRecord } from "~/api/insert/extRecord"
 import { insertRecord } from "~/api/insert/record"
+import { getWritableColNames } from "~/permissions"
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
@@ -93,13 +93,7 @@ export const Form: Component<{
   }))
 
   const table = () => schema.tables[props.tableName]
-  const permission = () => getPermission(session?.userSession?.(), 'update', props.tableName, props.id)
-  const colNames = () => {
-    if (permission() && permission()?.granted) {
-      return permission()?.colNames ?? Object.keys(table().columns)
-    }
-    return []
-  }
+  const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
 
   const isAdvanced = (colName: string) => table().advanced?.includes(colName)
 

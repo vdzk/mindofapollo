@@ -19,3 +19,14 @@ export const getUserSession = async () => {
   return session.data
 }
 
+export const getAuthRole = async () => {
+  const session = await getSession()
+  return session.data.authRole
+}
+
+export const belongsTo = async (roles: string[]) => {
+  const authRole = await getAuthRole()
+  if (authRole === 'admin') return true
+  return roles.includes(authRole)
+}
+
