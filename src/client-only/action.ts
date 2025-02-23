@@ -1,7 +1,7 @@
 import {action, json} from "@solidjs/router"
 import { deleteById } from "~/api/delete/byId"
 import { deleteCrossRecord } from "~/api/delete/crossRecord"
-import { executeAction } from "~/api/execute/action"
+import { executeAction } from "./tableActions"
 import { CrossRecordMutateProps, insertCrossRecord } from "~/api/insert/crossRecord"
 import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache} from "~/client-only/query"
 

@@ -1,4 +1,4 @@
-import { Component } from "solid-js"
+import { Component, JSXElement } from "solid-js"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { AuthRole } from "~/types"
 
@@ -16,7 +16,15 @@ export interface ExplData {
   actor: UserActor | SystemActor
   action: string
   target: { tableName: string, id: number, label: string }
+  checks?: (string | JSXElement)[]
+  notes?: (string | JSXElement)[]
+  diff?: ExplDiff<DataRecord>
   deletedRecords?: Record<string, DataRecordWithId[]>
+  relevantRecords?: Record<string, DataRecord[]>
+  insertedCrossRecord?: {
+    tableNames: { target: string, cross: string }
+    data: DataRecord
+  }
   deletedCrossRecord?: {
     tableNames: { target: string, cross: string }
     data: DataRecord

@@ -14,7 +14,7 @@ import { PageTitle, Subtitle } from "~/components/PageTitle"
 import { DataRecord } from "~/schema/type"
 import { firstCap, humanCase } from "~/util"
 
-const getActionStr = (expl: ExplData) => `${expl.action} ${humanCase(expl.target.tableName)} "${expl.target.label}"`
+const getActionStr = (expl: ExplData) => `${expl.action} the ${humanCase(expl.target.tableName)} "${expl.target.label}"`
 
 const getSummaryStr = (expl: ExplData) => {
   let actorStr = ''

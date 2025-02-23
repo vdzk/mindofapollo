@@ -62,8 +62,8 @@ export const _insertRecord = async (
   const result = await sql`
     INSERT INTO ${sql(tableName)} ${sql({ ...record, ...explIds })}
     RETURNING *
-  `;
-  return result[0];
+  `
+  return result[0]
 };
 
 // TODO: implement efficient bulk version

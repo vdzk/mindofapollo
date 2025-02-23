@@ -1,3 +1,4 @@
+import { DataRecordWithId } from "~/schema/type";
 import { sql } from "~/server-only/db";
 
 export const _getCreatedCriticalStatement = async (
@@ -5,7 +6,7 @@ export const _getCreatedCriticalStatement = async (
   argumentId: number
 ) => {
   const result = await sql`
-    SELECT cs.id, cs.id_expl_id
+    SELECT cs.*
     FROM critical_statement cs
     JOIN expl
       ON expl.id = cs.id_expl_id
@@ -13,5 +14,5 @@ export const _getCreatedCriticalStatement = async (
       AND expl.user_id = ${userId}
     LIMIT 1
   `
-  return result?.[0]
+  return result?.[0] as DataRecordWithId | undefined
 }

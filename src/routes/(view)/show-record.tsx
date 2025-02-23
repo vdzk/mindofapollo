@@ -17,7 +17,7 @@ import { deleteExtById, whoCanDeleteExtById } from "~/api/delete/extById"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
-import { whoCanExecuteAction } from "~/api/execute/action"
+import { whoCanExecuteAction } from "~/client-only/tableActions"
 import { whoCanUpdateRecord } from "~/api/update/record"
 
 const _delete = action(async (

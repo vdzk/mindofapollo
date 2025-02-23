@@ -2,7 +2,7 @@ import {query} from "@solidjs/router"
 import { listCrossRecords } from "~/api/list/crossRecords"
 import { listForeignHopRecords } from "~/api/list/foreignHopRecords"
 import { listRecords } from "~/api/list/records"
-import { listVisibleActions } from "~/api/list/visibleActions"
+import { listVisibleActions } from "./tableActions"
 
 export const listForeignHopRecordsCache = query(listForeignHopRecords, 'listForeignHopRecords')
 export const listCrossRecordsCache = query(listCrossRecords, 'listCrossRecords')
