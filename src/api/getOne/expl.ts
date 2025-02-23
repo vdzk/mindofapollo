@@ -1,4 +1,5 @@
 import { sql } from "~/server-only/db";
+import { ExplRecord } from "~/server-only/expl";
 
 export const getOneExpl = async (explId: number) => {
   "use server"
@@ -7,5 +8,5 @@ export const getOneExpl = async (explId: number) => {
     FROM expl
     WHERE id = ${explId}
   `
-  return explResults?.[0]
+  return explResults?.[0] as ExplRecord
 }

@@ -22,13 +22,11 @@ const getAccessibleColNames = (
   .map(([colName]) => colName)
 
 export const getReadableColNames = (tableName: string, authRole?: AuthRole) => getAccessibleColNames(
-  tableName,
-  authRole,
+  tableName, authRole,
   column => !!column.private
 )
 
 export const getWritableColNames = (tableName: string, authRole?: AuthRole) => getAccessibleColNames(
-  tableName,
-  authRole,
+  tableName, authRole,
   column => !!(column.private || column.readOnly)
 )

@@ -17,7 +17,7 @@ export type TableAction = (
 
 export const tableActions: Record<string, Record<string, TableAction>> = {
   argument: {
-    requestJudgement: async (userId, recordId, execute) => {
+    askToJudgeArgument: async (userId, recordId, execute) => {
       //TODO: if there was not activity for a period of time, qualify any signed in user to make the request
       const argument = await _getRecordById('argument', recordId, ['judgement_requested', 'statement_id', 'title'])
       if (!argument || argument.judgement_requested) return
@@ -43,7 +43,7 @@ export const tableActions: Record<string, Record<string, TableAction>> = {
     }
   },
   statement: {
-    requestJudgement: async (userId, recordId, execute) => {
+    askToJudgeEvidentialStatement: async (userId, recordId, execute) => {
       const record = await _getRecordById('statement', recordId, ['id', 'text', 'argument_aggregation_type_id'])
       if (record && !record.judgement_requested
         && await hasArguments(recordId)
@@ -70,9 +70,12 @@ export const tableActions: Record<string, Record<string, TableAction>> = {
         return true
       }
     },
-    requestAdditiveJudgement: async (userId, recordId, execute) => {
+    askToJudgeAdditiveStatement: async (userId, recordId, execute) => {
       const record = await _getRecordById('statement', recordId, ['judgement_requested', 'argument_aggregation_type_id', 'id', 'text'])
-      if (!record?.judgement_requested && record?.argument_aggregation_type_id === 'additive') {
+      if (!record) return
+      if (!record?.judgement_requested) {
+        const aggType = await _getRecordById('argument_aggregation_type', record.argument_aggregation_type_id as number, ['name'])
+        if (!aggType || aggType.name !== 'additive') return
         if (!execute) return 'Request judgement'
         const explId = await startExpl(userId, 'ReqAdditiveJudge', 1, 'statement', recordId)
         const diff = await _updateRecord('statement', recordId, userId, { judgement_requested: true })

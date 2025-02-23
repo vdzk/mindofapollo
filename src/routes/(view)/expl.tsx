@@ -8,10 +8,23 @@ import { useSafeParams } from "~/client-only/util"
 import { Detail, DetailDiff } from "~/components/details"
 import { actions } from "~/components/expl/actions/actions"
 import { ExplLink } from "~/components/expl/ExplLink"
+import { ExplData } from "~/components/expl/types"
 import { Link } from "~/components/Link"
 import { PageTitle, Subtitle } from "~/components/PageTitle"
 import { DataRecord } from "~/schema/type"
 import { firstCap, humanCase } from "~/util"
+
+const getActionStr = (expl: ExplData) => `${expl.action} ${humanCase(expl.target.tableName)} "${expl.target.label}"`
+
+const getSummaryStr = (expl: ExplData) => {
+  let actorStr = ''
+  if (expl.actor.type === 'user') {
+    actorStr = expl.actor.user.name
+  } else if (expl.actor.type === 'system') {
+    actorStr = 'System'
+  }
+  return `${actorStr} ${getActionStr(expl)}.`
+}
 
 export default function Expl() {
   const sp = useSafeParams<{ id: number }>(['id'])

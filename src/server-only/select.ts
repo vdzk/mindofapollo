@@ -62,9 +62,19 @@ export const injectVirtualValues = async (
   }
 }
 
-export const _getRecordById = async (tableName: string, id: number, colNames: string[]) => {
+export const _getRecordById = async (tableName: string, id: number, colNames?: string[], withExplIds = true) => {
+  let colNamesSql
+  if (colNames) {
+    if (withExplIds) {
+      colNamesSql = sql(addExplIdColNames(colNames))
+    } else {
+      colNamesSql = sql(colNames)
+    }
+  } else {
+    colNamesSql = sql('*')
+  }
   const records = await sql`
-    SELECT ${sql(addExplIdColNames(colNames))}
+    SELECT ${colNamesSql}
     FROM ${sql(tableName)}
     WHERE id = ${id}
   `

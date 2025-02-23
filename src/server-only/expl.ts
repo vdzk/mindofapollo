@@ -1,5 +1,16 @@
 import { sql } from "./db"
 
+export interface ExplRecord<T> {
+  id: number
+  timestamp: Date
+  user_id: number | null
+  action: string
+  version: number
+  table_name: string | null
+  record_id: number | null
+  data: T
+}
+
 export const startExpl = async (
   user_id: number | null,
   action: string,

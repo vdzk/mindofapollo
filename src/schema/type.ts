@@ -80,8 +80,8 @@ export interface ForeignKey {
 }
 
 export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
-  readOnly?: true
-  private?: true,
+  readOnly?: true // ordinarily, this field should not be edited directly
+  private?: true, // ordinarily, this field should be hidden from non-owners
   unique?: true
 }
 
