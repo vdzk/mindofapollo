@@ -1,6 +1,6 @@
 import { sql } from "~/server-only/db";
 import { xName } from "~/util";
-import { belongsTo, getUserId } from "~/server-only/session";
+import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session";
 import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData } from "../insert/crossRecord";
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { ExplData } from "~/components/expl/types";
@@ -38,4 +38,9 @@ export const deleteCrossRecord = async (params: CrossRecordMutateProps) => {
   return result;
 }
 
-export const explDeleteCrossRecord = (data: CrossRecordData): ExplData => createCrossRecordExplData(data, 'removed')
+export const explDeleteCrossRecord = (data: CrossRecordData): ExplData => 
+  createCrossRecordExplData(
+    data,
+    (crossStr) => `removed ${crossStr} from`,
+    'deletedCrossRecord'
+  )

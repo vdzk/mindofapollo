@@ -4,7 +4,7 @@ import { AuthRole } from "~/types";
 
 export const login = async (userId: number) => {
   "use server"
-  const person = await _getRecordById('person', userId, ['auth_role_id']);
+  const person = await _getRecordById('person', userId, ['name', 'auth_role_id'], false);
   if (!person) return;
   const authRole = await _getRecordById(
     'auth_role',
@@ -16,6 +16,7 @@ export const login = async (userId: number) => {
   await session.update({
     authenticated: true,
     userId,
+    userName: person.name as string,
     authRole: authRole.name as AuthRole
   });
   return session.data;

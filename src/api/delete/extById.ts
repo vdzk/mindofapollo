@@ -2,7 +2,7 @@ import { _deleteById } from "../../server-only/mutate"
 import { _getRecordById } from "../../server-only/select"
 import { getExtTableName, titleColumnName } from "~/util"
 import { whoCanDeleteById } from "./byId"
-import { belongsTo, getUserId } from "~/server-only/session"
+import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session"
 import { ofSelf } from "~/server-only/ofSelf"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
@@ -30,7 +30,7 @@ export const deleteExtById = async (tableName: string, id: number) => {
     await _deleteById(extTableName, id)
   }
 
-  const user = await _getRecordById('person', userId, ['id', 'name', 'auth_role'], false) as UserActor['user']
+  const user = await getUserActorUser()
   const targetLabel = record[titleColumnName(tableName)] as string
   const data: DeleteExtByIdData = { 
     tableName, 

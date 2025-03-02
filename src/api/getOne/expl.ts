@@ -8,5 +8,5 @@ export const getOneExpl = async (explId: number) => {
     FROM expl
     WHERE id = ${explId}
   `
-  return explResults?.[0] as ExplRecord
+  return explResults?.[0] as ExplRecord<any>
 }

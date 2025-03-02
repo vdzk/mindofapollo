@@ -1,5 +1,5 @@
 import { sql } from "./db"
-import { DataLiteral, DataRecord } from "~/schema/type"
+import { DataLiteral, DataRecord, DataRecordWithId } from "~/schema/type"
 import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType"
@@ -63,12 +63,13 @@ export const _insertRecord = async (
     INSERT INTO ${sql(tableName)} ${sql({ ...record, ...explIds })}
     RETURNING *
   `
-  return result[0]
+  return result[0] as DataRecordWithId
 };
 
 // TODO: implement efficient bulk version
 export const _insertRecordsOneByOne = async (tableName: string, records: DataRecord[], explId: number) => {
-  await Promise.all(records.map(record => _insertRecord(tableName, record, explId)))
+  const inserted = await Promise.all(records.map(record => _insertRecord(tableName, record, explId)))
+  return inserted
 }
 
 export const _updateRecord = async <T extends DataRecord>(

@@ -47,7 +47,7 @@ export const join = async (name: string, code: string) => {
   const data: JoinExplData = {
     person: {
       id: person.id,
-      name: person.name
+      name: person.name as string
     },
     inviter
   }

@@ -1,5 +1,5 @@
-import { Component, Match, Show, Switch } from "solid-js"
-import { BooleanColumn, DataRecord, ForeignKey } from "~/schema/type"
+import { Component, Match, Show, Suspense, Switch } from "solid-js"
+import { BooleanColumn, DataRecord, ForeignKey, SimpleColumn } from "~/schema/type"
 import { createAsync } from "@solidjs/router"
 import { getPercent, nbsp } from "~/util"
 import { schema } from "~/schema/schema"
@@ -23,14 +23,16 @@ const FkValue: Component<{
   })
 
   return (
-    <Link
-      route="show-record"
-      params={{
-        tableName: tableName,
-        id: props.id
-      }}
-      label={record?.()?.[props.column.fk.labelColumn] ?? nbsp}
-    />
+    <Suspense fallback={nbsp}>
+      <Link
+        route="show-record"
+        params={{
+          tableName: tableName,
+          id: props.id
+        }}
+        label={record?.()?.[props.column.fk.labelColumn] ?? `(ID: ${props.id})`}
+      />
+    </Suspense>
   )
 }
 
@@ -42,7 +44,9 @@ export interface DisplayValue {
 }
 
 export const DisplayValue: Component<DisplayValue> = props => {
-  const column = () => schema.tables[props.tableName].columns[props.colName]
+  const column = () => props.colName === 'id'
+    ? {type: 'integer'} as SimpleColumn
+    : schema.tables[props.tableName].columns[props.colName]
   const value = () => props.record[props.colName]
 
   const originTypes = createAsync(async () => {

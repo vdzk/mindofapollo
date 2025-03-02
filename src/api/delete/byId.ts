@@ -1,4 +1,4 @@
-import { belongsTo, getUserId } from "~/server-only/session"
+import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session"
 import { isPersonal } from "~/permissions"
 import { ofSelf } from "~/server-only/ofSelf"
 import { _deleteById } from "~/server-only/mutate"
@@ -33,7 +33,7 @@ export const deleteById = async (
   const explId = await startExpl(userId, 'deleteById', 1, tableName, id)
   await _deleteById(tableName, id)
 
-  const user = await _getRecordById('person', userId, ['id', 'name', 'auth_role'], false) as UserActor['user']
+  const user = await getUserActorUser()
   const targetLabel = record[titleColumnName(tableName)] as string
   const data: DeleteExtByIdData = { tableName, id, targetLabel, user, record }
   await finishExpl(explId, data)

@@ -1,45 +1,114 @@
 import {sql} from "~/server-only/db"
 import {_getRecordById} from "~/server-only/select"
-import { getUserSession } from "~/server-only/session"
+import { getUserActorUser, getUserId } from "~/server-only/session"
 import { _updateRecord } from "~/server-only/mutate"
 import { startExpl, finishExpl } from "~/server-only/expl"
 import {ProposalRecord} from "~/tables/other/change_proposal"
 import {getValueTypeTableName} from "~/schema/dataTypes"
+import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
+import { DataRecord, DataRecordWithId } from "~/schema/type"
+import { titleColumnName } from "~/util"
 
 export const submitTaskVoteChangeProposal = async (
   proposalId: number,
   inFavour: boolean
 ) => {
   "use server"
-  const userSession = await getUserSession()
+  const userId = await getUserId()
   const proposal = await _getRecordById('change_proposal', proposalId, ['id', 'table_name', 'column_name', 'old_value_id', 'new_value_id', 'target_id', 'votes_in_favour', 'votes_against', 'decided', 'approved']) as ProposalRecord | undefined
   if (!proposal) return
   const votesColName = inFavour ? 'votes_in_favour' : 'votes_against'
 
-  // Update change_proposal record using _updateRecord
-  const explId1 = await startExpl(userSession.userId, 'genericChange', 1, 'change_proposal', proposalId);
-  const diff1 = await _updateRecord('change_proposal', proposalId, explId1, {
+  const explId = await startExpl(userId, 'submitTaskVoteChangeProposal', 1, 'change_proposal', proposalId)
+  const diff = await _updateRecord('change_proposal', proposalId, explId, {
     [votesColName]: proposal[votesColName] + 1,
     decided: true,
     approved: inFavour
   });
-  await finishExpl(explId1, { diff: diff1 });
+  const user = await getUserActorUser()
+  
+  const targetRecord = await _getRecordById(proposal.table_name, proposal.target_id)
+  if (!targetRecord) return
+  const targetLabel = targetRecord[titleColumnName(proposal.table_name)] as string
+  const data: ExplVoteData = { user, proposal, diff, targetLabel, targetRecord }
+  await finishExpl(explId, data);
 
   if (inFavour) {
-    // Retrieve the new value
-    const valueTypeTableName = getValueTypeTableName(proposal.table_name, proposal.column_name)
-    const results = await sql`
-      SELECT *
-      FROM ${sql(valueTypeTableName)}
-      WHERE id = ${proposal.new_value_id}
-    `
-    const newValue = results[0].value
+    const trigger = { explId, label: `user voted in favour` }
+    await executeProposalChange(proposal, trigger, targetRecord, targetLabel)
+  }
+}
 
-    // Execute the proposal update using _updateRecord
-    const explId2 = await startExpl(userSession.userId, 'genericChange', 1, proposal.table_name, proposal.target_id);
-    const diff2 = await _updateRecord(proposal.table_name, proposal.target_id, explId2, {
-      [proposal.column_name]: newValue
-    });
-    await finishExpl(explId2, { diff: diff2 });
+interface ExplVoteData {
+  user: UserActor['user']
+  proposal: ProposalRecord
+  targetLabel: string
+  diff: ExplDiff<DataRecord>
+  targetRecord: DataRecordWithId
+}
+
+export const explSubmitTaskVoteChangeProposal = (data: ExplVoteData): ExplData => {
+  return {
+    actor: { type: 'user', user: data.user },
+    action: `voted on a proposal to change ${data.proposal.column_name} of`,
+    target: {
+      tableName: data.proposal.table_name,
+      id: data.proposal.target_id,
+      label: data.targetLabel
+    },
+    updatedRecords: {
+      change_proposal: [{ ...data.diff, id: data.proposal.id }]
+    },
+    relevantRecords: {
+      change_proposal: [data.proposal as unknown as DataRecord]
+    }
+  }
+}
+
+const executeProposalChange = async (
+  proposal: ProposalRecord,
+  trigger: ExplData['trigger'],
+  targetRecord: DataRecordWithId,
+  targetLabel: string
+) => {
+  const valueTypeTableName = getValueTypeTableName(proposal.table_name, proposal.column_name)
+  const results = await sql`
+    SELECT *
+    FROM ${sql(valueTypeTableName)}
+    WHERE id = ${proposal.new_value_id}
+  `
+  const newValue = results[0].value
+
+  const explId = await startExpl(null, 'executeProposalChange', 1, proposal.table_name, proposal.target_id);
+  const diff = await _updateRecord(proposal.table_name, proposal.target_id, explId, {
+    [proposal.column_name]: newValue
+  });
+  
+  const data: ExplExecuteData = { proposal, diff, trigger, targetRecord, targetLabel }
+  await finishExpl(explId, data);
+}
+
+interface ExplExecuteData {
+  proposal: ProposalRecord
+  diff: ExplDiff<DataRecord>
+  trigger: ExplData['trigger']
+  targetRecord: DataRecordWithId
+  targetLabel: string
+}
+
+export const explExecuteProposalChange = (data: ExplExecuteData): ExplData => {
+  return {
+    actor: { type: 'system' },
+    action: `executed proposal to change ${data.proposal.column_name} of`,
+    target: {
+      tableName: data.proposal.table_name,
+      id: data.proposal.target_id,
+      label: data.targetLabel
+    },
+    diff: data.diff,
+    trigger: data.trigger,
+    relevantRecords: {
+      [data.proposal.table_name]: [data.targetRecord]
+    }
   }
 }

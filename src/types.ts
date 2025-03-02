@@ -7,6 +7,7 @@ export type AuthRole = 'admin' | 'invited'
 
 export interface UserSession {
   authenticated?: boolean
+  userName: string
   userId: number
   authRole: AuthRole
 }

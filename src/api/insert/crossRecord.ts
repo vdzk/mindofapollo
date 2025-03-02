@@ -1,5 +1,5 @@
 import {humanCase, titleColumnName, xName} from "~/util"
-import { getUserId } from "../../server-only/session"
+import { getUserId, getUserActorUser } from "~/server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
@@ -39,7 +39,7 @@ export const prepareCrossRecordData = async (
   userId: number,
   record: DataRecord
 ): Promise<CrossRecordData> => {
-  const user = await _getRecordById('person', userId, ['id', 'name', 'auth_role'], false) as UserActor['user']
+  const user = await getUserActorUser()
   const recordA = (await _getRecordById(props.a, props.a_id))!
   const recordB = (await _getRecordById(props.b, props.b_id))!
 
@@ -84,21 +84,33 @@ export interface CrossRecordData {
   record: DataRecord
 }
 
-export const createCrossRecordExplData = (data: CrossRecordData, action: string): ExplData => ({
-  actor: { type: 'user', user: data.user },
-  action: `${action} ${humanCase(data.cross.tableName)} "${data.cross.label}" ${action === 'added' ? 'to' : 'from'}`,
-  target: {
-    tableName: data.target.tableName,
-    id: data.target.id,
-    label: data.target.label
-  },
-  [`${action === 'added' ? 'inserted' : 'deleted'}CrossRecord`]: {
-    tableNames: {
-      target: data.target.tableName,
-      cross: data.cross.tableName
+export const createCrossRecordExplData = (
+  data: CrossRecordData, 
+  actionFn: (crossStr: string) => string,
+  recordActionProp: string
+): ExplData => {
+  const crossStr = `${humanCase(data.cross.tableName)} "${data.cross.label}"`
+  return {
+    actor: { type: 'user', user: data.user },
+    action: actionFn(crossStr),
+    target: {
+      tableName: data.target.tableName,
+      id: data.target.id,
+      label: data.target.label
     },
-    data: data.record
+    [recordActionProp]: {
+      tableNames: {
+        target: data.target.tableName,
+        cross: data.cross.tableName
+      },
+      data: data.record
+    }
   }
-})
+}
 
-export const explInsertCrossRecord = (data: CrossRecordData): ExplData => createCrossRecordExplData(data, 'added')
+export const explInsertCrossRecord = (data: CrossRecordData): ExplData => 
+  createCrossRecordExplData(
+    data, 
+    (crossStr) => `added ${crossStr} to`,
+    'insertedCrossRecord'
+  )

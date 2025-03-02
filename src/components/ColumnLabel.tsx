@@ -1,6 +1,5 @@
 import { Component } from "solid-js"
 import { schema } from "~/schema/schema"
-import { ForeignKey } from "~/schema/type"
 import { humanCase } from "~/util"
 
 export const ColumnLabel: Component<{
@@ -8,15 +7,19 @@ export const ColumnLabel: Component<{
   colName: string
   label?: string
 }> = (props) => {
-  const column = () => schema.tables[props.tableName].columns[props.colName]
-  const labelText = props.label
-    ?? column().label
-    ?? (column().type === 'fk' ? (column() as ForeignKey).fk.table : undefined)
-    ?? props.colName
+  const labelText = () => {
+    if (props.label) return props.label
+    if (props.colName === 'id') return 'ID'
+    const column = schema.tables[props.tableName].columns[props.colName]
+    if (!column) return props.colName
+    if (column.label) return column.label
+    if (column.type === 'fk') return column.fk.table
+    return props.colName
+  }
 
   return (
     <div class="font-bold first-letter:uppercase" >
-      {humanCase(labelText)}
+      {humanCase(labelText())}
     </div>
   )
 }

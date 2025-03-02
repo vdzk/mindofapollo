@@ -4,7 +4,7 @@ import { finishExpl, startExpl } from "~/server-only/expl"
 import { _getCreatedCriticalStatement } from "~/server-only/argument"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { DataRecordWithId } from "~/schema/type"
-import { getUserId } from "~/server-only/session"
+import { getUserId, getUserActorUser } from "~/server-only/session"
 import { ExplLink } from "~/components/expl/ExplLink"
 
 export const askToJudgeArgument = async (
@@ -22,7 +22,8 @@ export const askToJudgeArgument = async (
   const criticalStatement = await _getCreatedCriticalStatement(userId, recordId)
   if (!criticalStatement) return
   if (!execute) return 'Request judgement'
-  const user = await _getRecordById('person', userId, ['id', 'name', 'auth_role'], false) as UserActor['user']
+  
+  const user = await getUserActorUser()
   const explId = await startExpl(userId, 'askToJudgeArgument', 1, 'statement', recordId)
   const diff = await _updateRecord('argument', recordId, explId, { judgement_requested: true })
   const data: ExplSaveData = {

@@ -1,7 +1,7 @@
 import { _updateRecord } from "~/server-only/mutate"
 import { _getRecordById } from "~/server-only/select"
 import { finishExpl, startExpl } from "~/server-only/expl"
-import { getUserId } from "~/server-only/session"
+import { getUserId, getUserActorUser } from "~/server-only/session"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { DataRecordWithId } from "~/schema/type"
 
@@ -17,7 +17,7 @@ export const askToJudgeAdditiveStatement = async (
   if (!aggType || aggType.name !== 'additive') return
   if (!execute) return 'Request judgement'
   
-  const user = await _getRecordById('person', userId, ['id', 'name', 'auth_role'], false) as UserActor['user']
+  const user = await getUserActorUser()
   const explId = await startExpl(userId, 'askToJudgeAdditiveStatement', 1, 'statement', recordId)
   const diff = await _updateRecord('statement', recordId, explId, { judgement_requested: true })
   const data: ExplSaveData = { user, statement, diff }

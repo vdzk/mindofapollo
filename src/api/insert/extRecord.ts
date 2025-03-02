@@ -1,7 +1,10 @@
-import { DataRecord } from "~/schema/type"
+import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { _insertRecord } from "../../server-only/mutate"
-import { setExplRecordId, startExpl } from "~/server-only/expl"
-import { getUserSession } from "../../server-only/session"
+import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
+import { getUserId, getUserActorUser } from "../../server-only/session"
+import { ExplData, UserActor } from "~/components/expl/types"
+import { titleColumnName } from "~/util"
+import { _getRecordById } from "~/server-only/select"
 
 export const insertExtRecord = async (
   tableName: string,
@@ -10,12 +13,46 @@ export const insertExtRecord = async (
   extRecord: DataRecord
 ) => {
   "use server";
-  const userSession = await getUserSession()
-  const explId = await startExpl(userSession.userId, 'genericChange', 1, tableName, null);
+  const userId = await getUserId()
+  const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)
   if (result) {
-    await _insertRecord(extTableName, {id: result.id, ...extRecord}, explId)
+    const extResult = await _insertRecord(extTableName, {id: result.id, ...extRecord}, explId)
     await setExplRecordId(explId, result.id)
+
+    const user = await getUserActorUser()
+    const data: InsertExtRecordData = {
+      tableName,
+      extTableName,
+      record: result,
+      extRecord: extResult!,
+      user,
+      targetLabel: result[titleColumnName(tableName)] as string
+    }
+    await finishExpl(explId, data)
   }
   return result
 }
+
+export interface InsertExtRecordData {
+  tableName: string
+  extTableName: string
+  record: DataRecordWithId
+  extRecord: DataRecordWithId
+  user: UserActor['user']
+  targetLabel: string
+}
+
+export const explInsertExtRecord = (data: InsertExtRecordData): ExplData => ({
+  actor: { type: 'user', user: data.user },
+  action: 'created',
+  target: {
+    tableName: data.tableName,
+    id: data.record.id,
+    label: data.targetLabel
+  },
+  insertedRecords: {
+    [data.tableName]: [data.record],
+    [data.extTableName]: [data.extRecord]
+  }
+})

@@ -1,113 +1,17 @@
-import { Title } from "@solidjs/meta"
 import { createAsync } from "@solidjs/router"
-import { For, Match, Show, Suspense, Switch } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { Show } from "solid-js"
 import { getOneExpl } from "~/api/getOne/expl"
-import { getOneRecordById } from "~/api/getOne/recordById"
 import { useSafeParams } from "~/client-only/util"
-import { Detail, DetailDiff } from "~/components/details"
-import { actions } from "~/components/expl/actions/actions"
-import { ExplLink } from "~/components/expl/ExplLink"
-import { ExplData } from "~/components/expl/types"
-import { Link } from "~/components/Link"
-import { PageTitle, Subtitle } from "~/components/PageTitle"
-import { DataRecord } from "~/schema/type"
-import { firstCap, humanCase } from "~/util"
+import { Expl } from "~/components/expl/Expl"
+import { ExplRecord } from "~/server-only/expl"
 
-const getActionStr = (expl: ExplData) => `${expl.action} the ${humanCase(expl.target.tableName)} "${expl.target.label}"`
-
-const getSummaryStr = (expl: ExplData) => {
-  let actorStr = ''
-  if (expl.actor.type === 'user') {
-    actorStr = expl.actor.user.name
-  } else if (expl.actor.type === 'system') {
-    actorStr = 'System'
-  }
-  return `${actorStr} ${getActionStr(expl)}.`
-}
-
-export default function Expl() {
+export default function ExplRoute() {
   const sp = useSafeParams<{ id: number }>(['id'])
-  const expl = createAsync(() => getOneExpl(sp().id))
-  const user = createAsync(async () => expl() && expl()!.user_id ? getOneRecordById('person', expl()!.user_id) : undefined)
-  const title = () => `Explanation #${sp().id}`
-  const diffColNames = () => expl() ? Object.keys(expl()!.data.diff.after) : []
-  const component = () => actions[expl()!.action]
+  const expl = createAsync<ExplRecord<any>>(() => getOneExpl(sp().id))
 
   return (
-    <main class="max-w-screen-md">
-      <Title>{title()}</Title>
-      <PageTitle>{title()}</PageTitle>
-      <Show when={expl()}>
-        <Dynamic
-          component={component()}
-          {...expl()}
-          {...expl()!.data}
-        />
-        <div class="px-2">
-          <Show when={!component()}>
-            Action: {expl()!.action}
-          </Show>
-        </div>
-
-        <Subtitle>Details</Subtitle>
-        <div class="px-2">
-          <Show when={expl()!.data?.triggerLabel}>
-            <div>
-              Trigger: {expl()!.data?.triggerLabel}
-              <ExplLink explId={expl()!.data?.triggerExplId} />
-            </div>
-          </Show>
-          User:{' '}
-          <Switch>
-            <Match when={expl()!.user_id}>
-              <Suspense>
-                <Show when={user()}>
-                  <Link
-                    label={user()!.name}
-                    route="show-record"
-                    params={{ tableName: 'person', id: expl()!.user_id }}
-                  />
-                </Show>
-              </Suspense>
-            </Match>
-            <Match when={expl()!.user_id === null}>
-              system
-            </Match>
-          </Switch>
-          <br/>
-          Timestamp: {expl()!.timestamp.toISOString().split('.')[0].replace('T', ' ')}
-        </div>
-        <Show when={expl()!.data?.insert}>
-          <Subtitle>Inserts</Subtitle>
-          <For each={Object.entries(expl()!.data?.insert)}>
-            {([tableName, record]) => (
-              <>
-                <div class="font-bold mt-2 px-2">
-                  {firstCap(humanCase(tableName))}
-                  </div>
-                <For each={Object.keys(record as DataRecord)}>
-                  {colName => <Detail
-                    tableName={tableName}
-                    colName={colName}
-                    record={record as DataRecord}
-                  />}
-                </For>
-              </>
-            )}
-          </For>
-        </Show>
-        <Show when={expl()!.data?.diff}>
-          <Subtitle>Updates</Subtitle>
-          <For each={diffColNames()}>
-            {colName => <DetailDiff
-              tableName={expl()!.table_name}
-              colName={colName}
-              diff={expl()!.data?.diff}
-            />}
-          </For>
-        </Show>
-      </Show>
-    </main>
+    <Show when={expl()}>
+      <Expl explRecord={expl()!} />
+    </Show>
   )
 }

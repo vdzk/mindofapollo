@@ -13,7 +13,6 @@ export const listHomePageStatements = async (
   tagId?: number
 ) => {
   "use server"
-  const userSession = await getUserSession()
   let results: HpStatement[] = []
 
   let statements

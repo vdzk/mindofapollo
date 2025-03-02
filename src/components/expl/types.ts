@@ -13,18 +13,23 @@ export type UserActor = { type: 'user',
 type SystemActor = { type: 'system' }
 
 export interface ExplData {
+  trigger?: { explId: number, label: string }
   actor: UserActor | SystemActor
   action: string
   target: { tableName: string, id: number, label: string }
+  userExpl?: string,
+  customSections?: Record<string, {label: string, component: Component<any>}>,
   checks?: (string | JSXElement)[]
   notes?: (string | JSXElement)[]
-  diff?: ExplDiff<DataRecord>
-  deletedRecords?: Record<string, DataRecordWithId[]>
   relevantRecords?: Record<string, DataRecord[]>
+  insertedRecords?: Record<string, DataRecordWithId[]>
   insertedCrossRecord?: {
     tableNames: { target: string, cross: string }
     data: DataRecord
   }
+  diff?: ExplDiff<DataRecord>
+  updatedRecords?: Record<string, (ExplDiff<DataRecord> & { id: number })[]>
+  deletedRecords?: Record<string, DataRecordWithId[]>
   deletedCrossRecord?: {
     tableNames: { target: string, cross: string }
     data: DataRecord

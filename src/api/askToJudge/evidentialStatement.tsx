@@ -3,7 +3,7 @@ import { _getRecordById } from "~/server-only/select"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { hasArguments, hasUnjudgedArguments } from "~/server-only/statement"
 import { attemptJudgeStatement } from "~/server-only/attemptJudgeStatement"
-import { getUserId } from "~/server-only/session"
+import { getUserId, getUserActorUser } from "~/server-only/session"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { DataRecordWithId } from "~/schema/type"
 import { ExplLink } from "~/components/expl/ExplLink"
@@ -14,8 +14,9 @@ export const askToJudgeEvidentialStatement = async (
 ) => {
   "use server"
   const userId = await getUserId()
-  const user = await _getRecordById('person', userId, ['id', 'name', 'auth_role'], false) as UserActor['user']
+  const user = await getUserActorUser()
   const statement = await _getRecordById('statement', recordId, ['id', 'text', 'argument_aggregation_type_id'])
+
   if (statement && !statement.judgement_requested
     && await hasArguments(recordId)
     && !(await hasUnjudgedArguments(recordId))

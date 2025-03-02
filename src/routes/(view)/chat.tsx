@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { PageTitle } from "~/components/PageTitle"
-import { createSignal, For, Show, onMount, createResource } from "solid-js"
+import { createSignal, For, Show, onMount, createResource, createEffect, on } from "solid-js"
 import { Button } from "~/components/buttons"
 import { TextInput } from "~/components/TextInput"
 import { submitChatMessage } from "~/api/submit/chatMessage"
@@ -10,6 +10,36 @@ export default function Chat() {
   const [messages, { refetch }] = createResource(listChatMessages)
   const [newMessage, setNewMessage] = createSignal("")
   const [sending, setSending] = createSignal(false)
+  const [wasAtBottom, setWasAtBottom] = createSignal(true)
+  let messageContainer: HTMLDivElement | undefined
+
+  const isScrolledToBottom = () => {
+    if (!messageContainer) return true
+    const { scrollHeight, scrollTop, clientHeight } = messageContainer
+    return Math.abs(scrollHeight - scrollTop - clientHeight) < 10
+  }
+
+  const scrollToBottom = () => {
+    messageContainer?.scrollTo({
+      top: messageContainer.scrollHeight,
+      behavior: "smooth"
+    })
+  }
+
+  // Track scroll position before messages update
+  createEffect(on(() => messages.loading, (isLoading) => {
+    if (isLoading) {
+      setWasAtBottom(isScrolledToBottom())
+    }
+  }))
+
+  // Auto-scroll when new messages arrive if we were at bottom
+  createEffect(() => {
+    messages()
+    if (wasAtBottom()) {
+      scrollToBottom()
+    }
+  })
 
   const sendMessage = async () => {
     if (!newMessage().trim() || sending()) return
@@ -19,6 +49,7 @@ export default function Chat() {
       await submitChatMessage(newMessage())
       setNewMessage("")
       refetch()
+      scrollToBottom()
     } finally {
       setSending(false)
     }
@@ -46,7 +77,7 @@ export default function Chat() {
       
       <div class="px-2 max-w-2xl mx-auto">
         <div class="bg-white rounded-lg shadow h-[60vh] flex flex-col">
-          <div class="flex-1 overflow-y-auto p-4">
+          <div class="flex-1 overflow-y-auto p-4" ref={messageContainer}>
             <Show when={messages()} fallback={<div class="text-center">Loading...</div>}>
               <Show when={messages()!.length > 0} fallback={
                 <div class="text-gray-500 text-center mt-4">No messages yet</div>

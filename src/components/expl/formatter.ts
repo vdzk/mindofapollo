@@ -1,12 +1,21 @@
-import { explAskToJudgeAdditiveStatement } from "~/api/askToJudge/additiveStatement";
-import { ExplData } from "./types";
-import { explAskToJudgeArgument } from "~/api/askToJudge/argument";
-import { explAskToJudgeEvidentialStatement } from "~/api/askToJudge/evidentialStatement";
-import { explDeleteById } from "~/api/delete/byId";
-import { explDeleteCrossRecord } from "~/api/delete/crossRecord";
-import { explDeleteExtById } from "~/api/delete/extById";
-import { explJoin } from "~/api/execute/join";
-import { explInsertCrossRecord } from "~/api/insert/crossRecord";
+import { explAskToJudgeAdditiveStatement } from "~/api/askToJudge/additiveStatement"
+import { ExplData } from "./types"
+import { explAskToJudgeArgument } from "~/api/askToJudge/argument"
+import { explAskToJudgeEvidentialStatement } from "~/api/askToJudge/evidentialStatement"
+import { explDeleteById } from "~/api/delete/byId"
+import { explDeleteCrossRecord } from "~/api/delete/crossRecord"
+import { explDeleteExtById } from "~/api/delete/extById"
+import { explJoin } from "~/api/execute/join"
+import { explInsertCrossRecord } from "~/api/insert/crossRecord"
+import { explInsertExtRecord } from "~/api/insert/extRecord"
+import { explExecuteProposalChange, explSubmitTaskVoteChangeProposal } from "~/api/submitTask/voteChangeProposal"
+import { explAttemptJudgeStatement } from "~/server-only/attemptJudgeStatement"
+import { explInsertRecord } from "~/api/insert/record"
+import { explSubmitChangeProposal } from "~/api/submit/changeProposal"
+import { explSubmitTaskConfirmOrChallenge } from "~/api/submitTask/confirmOrChallenge"
+import { explSubmitTaskJudgeArgument } from "~/api/submitTask/judgeArgument"
+import { explSubmitTaskJudgeCorrelations } from "~/api/submitTask/judgeCorrelations"
+import { explAttemptAggregateArguments, explSubmitTaskWeighArgument } from "~/api/submitTask/weighArgument"
 
 export const formatters: Record<string, (data: any) => ExplData> = {
   explAskToJudgeAdditiveStatement,
@@ -16,5 +25,16 @@ export const formatters: Record<string, (data: any) => ExplData> = {
   explDeleteCrossRecord,
   explDeleteExtById,
   explJoin,
-  explInsertCrossRecord
+  explInsertCrossRecord,
+  explInsertExtRecord,
+  explInsertRecord,
+  explSubmitChangeProposal,
+  explSubmitTaskConfirmOrChallenge,
+  explSubmitTaskJudgeArgument,
+  explSubmitTaskJudgeCorrelations,
+  explSubmitTaskVoteChangeProposal,
+  explExecuteProposalChange,
+  explSubmitTaskWeighArgument,
+  explAttemptAggregateArguments,
+  explAttemptJudgeStatement
 }
