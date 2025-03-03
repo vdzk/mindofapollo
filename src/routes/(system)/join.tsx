@@ -17,6 +17,10 @@ export default function Join() {
   const [diff, setDiff] = createStore({ name: '' })
   const onSubmit = async () => {
     const userId = await join(diff.name, sp.code)
+    if (!userId) {
+      console.error('join failed')
+      return
+    }
     await login(userId)
     // TODO: avoid redirect to home screen
     navigate("/home-page");

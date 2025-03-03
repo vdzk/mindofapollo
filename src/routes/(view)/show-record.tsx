@@ -17,9 +17,8 @@ import { deleteExtById, whoCanDeleteExtById } from "~/api/delete/extById"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
-import { whoCanExecuteAction } from "~/client-only/tableActions"
 import { whoCanUpdateRecord } from "~/api/update/record"
-
+console.log('show-record.tsx')
 const _delete = action(async (
   tableName: string,
   id: number
@@ -38,6 +37,8 @@ interface ShowRecord {
 }
 
 export default function ShowRecord() {
+  console.log('ShowRecord')
+  
   const [searchParams, setSearchParams] = useSearchParams()
   const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
   const recordId = () => parseInt(sp().id)
@@ -55,7 +56,6 @@ export default function ShowRecord() {
     sp().tableName,
     useOfSelf(sp().tableName, record())
   ))
-  const canExecuteAction = () => useBelongsTo(whoCanExecuteAction())
 
   const sectionOptions = () => {
     const options = []
@@ -67,9 +67,7 @@ export default function ShowRecord() {
     } else {
       options.push({ id: 'allDetails', label: 'details' })
     }
-    if (canExecuteAction()) {
-      options.push({ id: 'actions', label: 'actions' })
-    }
+    options.push({ id: 'actions', label: 'actions' })
     return options
   }
 

@@ -1,8 +1,8 @@
 import { createContext, createEffect, createResource, ParentComponent, Resource, Setter } from "solid-js"
-import { getUserSession } from "./server-only/session"
 import { useNavigate } from "@solidjs/router"
 import { useIsPublicRoute } from "./client-only/util"
 import { UserSession } from "./types"
+import { getOneUserSession } from "./api/getOne/userSession";
 
 export const SessionContext = createContext<{
   userSession: Resource<UserSession | undefined>
@@ -13,7 +13,7 @@ export const SessionContext = createContext<{
 export const SessionContextProvider: ParentComponent = (props) => {
   const isPublicRoute = useIsPublicRoute()
   const navigate = useNavigate()
-  const [userSession, { mutate, refetch }] = createResource(getUserSession)
+  const [userSession, { mutate, refetch }] = createResource(getOneUserSession)
 
   const session = {userSession, refetch, mutate}
 
@@ -24,7 +24,6 @@ export const SessionContextProvider: ParentComponent = (props) => {
       }
     }
   })
-
   return (
     <SessionContext.Provider value={session}>
       {props.children}

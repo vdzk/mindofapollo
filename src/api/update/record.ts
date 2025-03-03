@@ -2,7 +2,6 @@ import { DataRecord } from "~/schema/type"
 import { belongsTo, getUserSession } from "../../server-only/session"
 import { _updateRecord, injectValueTypes } from "~/server-only/mutate"
 import { finishExpl, startExpl } from "~/server-only/expl"
-import chalk from "chalk"
 import { getWritableColNames, isPrivate } from "~/permissions"
 import { ofSelf } from "~/server-only/ofSelf"
 import { hasOwnFields } from "~/util"
@@ -10,6 +9,7 @@ import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/util"
 import { getUserActorUser } from "../../server-only/session"
 import { _getRecordById } from "~/server-only/select"
+import { printError } from "../../server-only/db"
 
 export const whoCanUpdateRecord = (tableName: string, ofSelf: boolean) => {
   if (!hasOwnFields(tableName)) {
@@ -37,7 +37,7 @@ export const updateRecord = async (
     .find(colName => !writableColNames.includes(colName))
   if (forbiddenColumn) {
     console.trace()
-    console.log(chalk.red('ERROR'), { forbiddenColumn })
+    printError('Forbidden column', { forbiddenColumn })
     return
   }
   await injectValueTypes(tableName, record, id)

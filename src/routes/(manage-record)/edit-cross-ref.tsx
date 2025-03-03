@@ -8,7 +8,6 @@ import {deleteCrossRecordAction, insertCrossRecordAction} from "~/client-only/ac
 import { useSafeParams } from "~/client-only/util"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
-import { DataRecordWithId } from "~/schema/type"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRecords } from "~/api/list/records"
 import { useBelongsTo } from "~/client-only/useBelongsTo"

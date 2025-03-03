@@ -1,14 +1,13 @@
 import { createAsync, useLocation, useNavigate } from "@solidjs/router"
 import { Component, Match, Show, Switch, useContext } from "solid-js"
-import { logout } from "~/server-only/session"
-import { SessionContext } from "~/SessionContext"
 import { Link } from "./Link"
-import { Button } from "./buttons"
 import { useIsPublicRoute } from "~/client-only/util"
+import { doLogout } from "~/api/execute/logout"
 import { getOneRecordById } from "~/api/getOne/recordById"
+import { SessionContext } from "~/SessionContext"
+import { Button } from "./buttons"
 
 export const TopNav: Component = () => {
-  const location = useLocation()
   const session = useContext(SessionContext)
   const navigate = useNavigate()
   const isPublicRoute = useIsPublicRoute()
@@ -18,11 +17,10 @@ export const TopNav: Component = () => {
   )
 
   const onLogout = async () => {
-    await logout()
+    await doLogout()
     session!.refetch()
     navigate('/')
   }
-
   return (
     <Show when={!isPublicRoute()}>
       <nav class="border-b flex justify-between">

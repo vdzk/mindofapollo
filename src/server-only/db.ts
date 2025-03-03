@@ -20,6 +20,8 @@ const postgresSql = postgres({
   }
 });
 
+export const printError = (...data: any[]) => console.log(chalk.red('ERROR'), ...data)
+
 export const onError = (error: Error & { [key: string]: any }) => {
   if (error.name === 'PostgresError') {
     console.log()
@@ -27,10 +29,10 @@ export const onError = (error: Error & { [key: string]: any }) => {
     if (error.parameters && error.parameters.length > 0) {
       console.log(error.parameters)
     }
-    console.log(chalk.red('ERROR'), error.message)
+    printError(error.message)
   } else if (error.code === 'UNDEFINED_VALUE') {
     console.log(error)
-    console.log(chalk.red('ERROR'), error.message)
+    printError(error.message)
   } else {
     console.error(error)
   }
