@@ -33,10 +33,24 @@ export const submitTaskVoteChangeProposal = async (
   const data: ExplVoteData = { user, proposal, diff, targetLabel, targetRecord }
   await finishExpl(explId, data);
 
-  if (inFavour) {
-    const trigger = { explId, label: `user voted in favour` }
-    await executeProposalChange(proposal, trigger, targetRecord, targetLabel)
-  }
+  if (!inFavour) return
+  // Excute proposed change
+  const trigger = { explId, label: `user voted in favour` }
+  const valueTypeTableName = getValueTypeTableName(proposal.table_name, proposal.column_name)
+  const results = await sql`
+    SELECT *
+    FROM ${sql(valueTypeTableName)}
+    WHERE id = ${proposal.new_value_id}
+  `
+  const newValue = results[0].value
+
+  const explId2 = await startExpl(null, 'executeProposalChange', 1, proposal.table_name, proposal.target_id);
+  const diff2 = await _updateRecord(proposal.table_name, proposal.target_id, explId, {
+    [proposal.column_name]: newValue
+  });
+  
+  const data2: ExplExecuteData = { proposal, diff: diff2, trigger, targetRecord, targetLabel }
+  await finishExpl(explId2, data2);
 }
 
 interface ExplVoteData {
@@ -63,29 +77,6 @@ export const explSubmitTaskVoteChangeProposal = (data: ExplVoteData): ExplData =
       change_proposal: [data.proposal as unknown as DataRecord]
     }
   }
-}
-
-const executeProposalChange = async (
-  proposal: ProposalRecord,
-  trigger: ExplData['trigger'],
-  targetRecord: DataRecordWithId,
-  targetLabel: string
-) => {
-  const valueTypeTableName = getValueTypeTableName(proposal.table_name, proposal.column_name)
-  const results = await sql`
-    SELECT *
-    FROM ${sql(valueTypeTableName)}
-    WHERE id = ${proposal.new_value_id}
-  `
-  const newValue = results[0].value
-
-  const explId = await startExpl(null, 'executeProposalChange', 1, proposal.table_name, proposal.target_id);
-  const diff = await _updateRecord(proposal.table_name, proposal.target_id, explId, {
-    [proposal.column_name]: newValue
-  });
-  
-  const data: ExplExecuteData = { proposal, diff, trigger, targetRecord, targetLabel }
-  await finishExpl(explId, data);
 }
 
 interface ExplExecuteData {

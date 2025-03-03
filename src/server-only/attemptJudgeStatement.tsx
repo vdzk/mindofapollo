@@ -16,6 +16,7 @@ export const attemptJudgeStatement = async (
   triggerExplId: number,
   triggerLabel: string
 ) => {
+  "use server" // this is a hack to prevent vinxi issues. It's not supposed to be called from the client
   const colNames = ['pro', 'isolated_confidence', 'conditional_confidence']
 
   const argumentConfidences: AddExplId<{

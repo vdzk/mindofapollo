@@ -71,7 +71,7 @@ export const _getRecordById = async (tableName: string, id: number, colNames?: s
       colNamesSql = sql(colNames)
     }
   } else {
-    colNamesSql = sql('*')
+    colNamesSql = sql`*`
   }
   const records = await sql`
     SELECT ${colNamesSql}

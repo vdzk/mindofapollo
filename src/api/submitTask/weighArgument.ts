@@ -30,10 +30,35 @@ export const submitTaskWeighArgument = async (
     user
   })
   
-  if (argument.statement_id) {
-    await attemptAggregateArguments(statement)
-  }
-  
+  // Attempt to aggregate arguments
+  const checkResults = await sql`
+    SELECT NOT EXISTS (
+      SELECT 1
+      FROM argument a
+      WHERE a.statement_id = ${statement.id}
+        AND NOT EXISTS (
+          SELECT 1
+          FROM argument_weight aw
+          WHERE aw.id = a.id
+        )
+  ) AS all_arguments_have_weights
+  `
+  if (!checkResults[0].all_arguments_have_weights) return
+  const weightedArguments = await getWeightedArguments(statement.id)
+  if (!weightedArguments) return
+  const confidence = calcStatementConfidenceAdditively(weightedArguments as any)
+  const explId2 = await startExpl(userSession.userId, 'attemptAggregateArguments', 1, 'statement', statement.id)
+  const diff = await _updateRecord('statement', statement.id, explId, {
+    judgement_requested: false,
+    confidence,
+    decided: true
+  })
+  await finishExpl(explId2, {
+    statement,
+    weightedArguments: weightedArguments as unknown as DataRecord[],
+    diff
+  })
+
   return true
 }
 
@@ -62,39 +87,6 @@ export const explSubmitTaskWeighArgument = (data: ExplWeighArgumentData): ExplDa
       statement: [data.statement]
     }
   }
-}
-
-const attemptAggregateArguments = async (
-  statement: DataRecordWithId
-) => {
-  const userSession = await getUserSession()
-  const checkResults = await sql`
-    SELECT NOT EXISTS (
-      SELECT 1
-      FROM argument a
-      WHERE a.statement_id = ${statement.id}
-        AND NOT EXISTS (
-          SELECT 1
-          FROM argument_weight aw
-          WHERE aw.id = a.id
-        )
-  ) AS all_arguments_have_weights
-  `
-  if (!checkResults[0].all_arguments_have_weights) return
-  const weightedArguments = await getWeightedArguments(statement.id)
-  if (!weightedArguments) return
-  const confidence = calcStatementConfidenceAdditively(weightedArguments as any)
-  const explId = await startExpl(userSession.userId, 'attemptAggregateArguments', 1, 'statement', statement.id)
-  const diff = await _updateRecord('statement', statement.id, explId, {
-    judgement_requested: false,
-    confidence,
-    decided: true
-  })
-  await finishExpl(explId, {
-    statement,
-    weightedArguments: weightedArguments as unknown as DataRecord[],
-    diff
-  })
 }
 
 interface ExplAggregateArgumentsData {

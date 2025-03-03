@@ -16,6 +16,8 @@ import { explSubmitTaskConfirmOrChallenge } from "~/api/submitTask/confirmOrChal
 import { explSubmitTaskJudgeArgument } from "~/api/submitTask/judgeArgument"
 import { explSubmitTaskJudgeCorrelations } from "~/api/submitTask/judgeCorrelations"
 import { explAttemptAggregateArguments, explSubmitTaskWeighArgument } from "~/api/submitTask/weighArgument"
+import { explUpdateExtRecord } from "~/api/update/extRecord"
+import { explUpdateRecord } from "~/api/update/record"
 
 export const formatters: Record<string, (data: any) => ExplData> = {
   explAskToJudgeAdditiveStatement,
@@ -35,6 +37,8 @@ export const formatters: Record<string, (data: any) => ExplData> = {
   explSubmitTaskVoteChangeProposal,
   explExecuteProposalChange,
   explSubmitTaskWeighArgument,
+  explUpdateExtRecord,
+  explUpdateRecord,
   explAttemptAggregateArguments,
   explAttemptJudgeStatement
 }

@@ -14,7 +14,7 @@ export const insertExtRecord = async (
 ) => {
   "use server";
   const userId = await getUserId()
-  const explId = await startExpl(userId, 'genericChange', 1, tableName, null);
+  const explId = await startExpl(userId, 'insertExtRecord', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)
   if (result) {
     const extResult = await _insertRecord(extTableName, {id: result.id, ...extRecord}, explId)

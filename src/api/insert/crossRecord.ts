@@ -27,7 +27,10 @@ export const insertCrossRecord = async (props: CrossRecordMutateProps) => {
   const result = [await _insertRecord(tableName, record, explId)]
 
   if (result[0]) {
-    const data = await prepareCrossRecordData(props, userId, result[0])
+    const user = await getUserActorUser()
+    const recordA = (await _getRecordById(props.a, props.a_id))!
+    const recordB = (await _getRecordById(props.b, props.b_id))!
+    const data = await prepareCrossRecordData(props, user, recordA, recordB, result[0])
     await finishExpl(explId, data)
   }
 
@@ -36,12 +39,11 @@ export const insertCrossRecord = async (props: CrossRecordMutateProps) => {
 
 export const prepareCrossRecordData = async (
   props: CrossRecordMutateProps,
-  userId: number,
+  user: UserActor['user'],
+  recordA: DataRecord,
+  recordB: DataRecord,
   record: DataRecord
 ): Promise<CrossRecordData> => {
-  const user = await getUserActorUser()
-  const recordA = (await _getRecordById(props.a, props.a_id))!
-  const recordB = (await _getRecordById(props.b, props.b_id))!
 
   const { target, cross } = props.first
     ? {

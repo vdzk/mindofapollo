@@ -4,6 +4,7 @@ import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session";
 import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData } from "../insert/crossRecord";
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { ExplData } from "~/components/expl/types";
+import { _getRecordById } from "~/server-only/select";
 
 export const whoCanDeleteCrossRecord = (tableName: string) => {
   if (tableName === 'person') {
@@ -31,7 +32,10 @@ export const deleteCrossRecord = async (params: CrossRecordMutateProps) => {
   `
 
   if (result[0]) {
-    const data = await prepareCrossRecordData(params, userId, result[0])
+    const user = await getUserActorUser()
+    const recordA = (await _getRecordById(params.a, params.a_id))!
+    const recordB = (await _getRecordById(params.b, params.b_id))!
+    const data = await prepareCrossRecordData(params, user, recordA, recordB, result[0])
     await finishExpl(explId, data)
   }
 

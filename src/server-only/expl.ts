@@ -44,7 +44,7 @@ export const finishExpl = async (
 ) => {
   await sql`
     UPDATE expl
-    SET data = ${sql.json(data)}
+    SET data = ${data as any}
     WHERE id = ${explId}
   `
 }

@@ -27,7 +27,7 @@ export const insertRecord = async (
   if (owner_id && owner_id !== userId && authRole !== 'admin') return
     
   await injectValueTypes(tableName, record);
-  const explId = await startExpl(userId, 'genericChange', 1, tableName, null)
+  const explId = await startExpl(userId, 'insertRecord', 1, tableName, null)
   const result = await _insertRecord(tableName, record, explId);
   await setExplRecordId(explId, result.id)
 

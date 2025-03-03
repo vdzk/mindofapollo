@@ -1,4 +1,4 @@
-import { Component, createMemo, createSignal, Switch, Match } from "solid-js"
+import { Component, createMemo, createSignal, Switch, Match, createEffect } from "solid-js"
 import { ExplRecord } from "~/server-only/expl"
 import { formatters } from "./formatter"
 import { firstCap, humanCase } from "~/util"
@@ -22,10 +22,10 @@ const getSummaryStr = (expl: ExplData) => {
 }
 
 const useExplData = (explRecord: ExplRecord<any>) => {
-  const acton = () => explRecord.action
-  const formatter = () => formatters['expl' + firstCap(acton())]
-  const data = createMemo(() => formatter()(explRecord.data))
-  return data
+  const { action, data } = explRecord
+  const formatter = formatters['expl' + firstCap(action)]
+  const explData = createMemo(() => formatter(data))
+  return explData
 }
 
 export const getExplActionStr = (explRecord: ExplRecord<any>) =>
@@ -70,14 +70,15 @@ export const Expl: Component<{ explRecord: ExplRecord<any> }> = (props) => {
   }
   
   return (
-    <main class="max-w-screen-md">
+    <main>
       <Title>{title()}</Title>
       <PageTitle>{title()}</PageTitle>
-      <div>Time: {timeStr()}</div>
+      <div class="px-2 relative -top-4">Time: {timeStr()}</div>
       <MasterDetail
         options={options()}
         selectedId={selected().id}
         onChange={setSelectedId}
+        class="pl-2"
       >
         <Switch>
           <Match when={selected().source === 'builtin'}>

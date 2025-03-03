@@ -41,7 +41,7 @@ export const updateRecord = async (
     return
   }
   await injectValueTypes(tableName, record, id)
-  const explId = await startExpl(userId, 'updateRecord', 1, tableName, id);
+  const explId = await startExpl(userId, 'updateRecord', 1, tableName, id)
   const diff = await _updateRecord(tableName, id, explId, record)
   const user = await getUserActorUser()
   const originalRecord = await _getRecordById(tableName, id)
@@ -53,7 +53,7 @@ export const updateRecord = async (
     id,
     targetLabel: originalRecord[titleColumnName(tableName)] as string
   }
-  await finishExpl(explId, explUpdateRecord(data))
+  await finishExpl(explId, data)
   return diff
 }
 

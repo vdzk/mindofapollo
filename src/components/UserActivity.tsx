@@ -5,7 +5,7 @@ import { listUserActivity } from "~/api/list/userActivity"
 import { getExplActionStr } from "./expl/Expl";
 
 export const UserActivity: Component<{id: number}> = props => {
-    const activity = createAsync(() => listUserActivity(props.id))
+  const activity = createAsync(() => listUserActivity(props.id))
 
   return (
     <div class="px-2">

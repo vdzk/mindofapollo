@@ -1,20 +1,12 @@
 import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session"
-import { isPersonal } from "~/permissions"
 import { ofSelf } from "~/server-only/ofSelf"
 import { _deleteById } from "~/server-only/mutate"
-import { UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
 import { titleColumnName } from "~/util"
-import { DeleteExtByIdData, explDeleteExtById } from "./extById"
+import { DeleteExtByIdData, explDeleteExtById, whoCanDeleteExtById } from "./extById"
 
-export const whoCanDeleteById = (tableName: string, ofSelf: boolean) => {
-  if (tableName === 'person' || (isPersonal(tableName) && !ofSelf)) {
-    return []
-  } else {
-    return ['invited']
-  }
-}
+export const whoCanDeleteById = whoCanDeleteExtById
 
 export const deleteById = async (
   tableName: string,

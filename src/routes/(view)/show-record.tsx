@@ -1,3 +1,4 @@
+
 import { Title } from "@solidjs/meta"
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
 import { Match, Show, Switch } from "solid-js"
@@ -18,7 +19,7 @@ import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { whoCanUpdateRecord } from "~/api/update/record"
-console.log('show-record.tsx')
+
 const _delete = action(async (
   tableName: string,
   id: number
@@ -36,9 +37,7 @@ interface ShowRecord {
   id: string
 }
 
-export default function ShowRecord() {
-  console.log('ShowRecord')
-  
+export default function ShowRecord() {  
   const [searchParams, setSearchParams] = useSearchParams()
   const sp = useSafeParams<ShowRecord>(['tableName', 'id'])
   const recordId = () => parseInt(sp().id)
