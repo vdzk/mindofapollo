@@ -1,13 +1,11 @@
 import { createAsync } from "@solidjs/router"
-import { Component, For, useContext } from "solid-js"
+import { Component, For } from "solid-js"
 import { schema } from "~/schema/schema"
 import { ColumnSchema } from "~/schema/type"
 import { getAllKeys, getExtTableName } from "~/util"
 import { Aggregate } from "../components/Aggregate"
 import { Detail, DetailProps } from "./details"
-import { SessionContext } from "~/SessionContext"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
-import { getReadableColNames } from "~/permissions"
 
 export type ColumnFilter = (
   colName: string,
@@ -21,7 +19,6 @@ export const RecordDetails: Component<{
   selectedSection?: string
   displayColumn?: ColumnFilter
 }> = props => {
-  const session = useContext(SessionContext)
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
   const extTableName = () => record() ? getExtTableName(props.tableName, record()!) : undefined
   const table = () => schema.tables[props.tableName]
@@ -58,8 +55,6 @@ export const RecordDetails: Component<{
   }
 
   const columnFilter = ({ tableName, colName, record }: DetailProps) => {
-    const readableColNames = getReadableColNames(tableName, session?.userSession?.()?.authRole)
-    if (!readableColNames.includes(colName)) return false
     if (!fieldsInSection(tableName).includes(colName)) return false
 
     const column = schema.tables[tableName].columns[colName]

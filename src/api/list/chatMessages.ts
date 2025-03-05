@@ -1,4 +1,4 @@
-import { sql } from "~/server-only/db";
+import { onError, sql } from "~/server-only/db";
 import { getUserSession } from "~/server-only/session";
 
 export const listChatMessages = async () => {
@@ -11,6 +11,6 @@ export const listChatMessages = async () => {
     JOIN person p ON p.id = m.user_id
     ORDER BY m.timestamp DESC
     LIMIT 100
-  `;
+  `.catch(onError);
   return messages || [];
 };

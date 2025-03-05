@@ -3,15 +3,15 @@ import { genCode, getUrl } from "~/util";
 
 export const invite: TableSchema = {
   plural: 'invites',
+  private: true,
   columns: {
     code: {
       type: 'varchar',
-      private: true
+      readOnly: true
     },
     link: {
       type: 'virtual',
-      getLocal: record => getUrl(`/join?code=${record.code}`),
-      private: true
+      getLocal: record => getUrl(`/join?code=${record.code}`)
     },
     owner_id: {
       type: 'fk',

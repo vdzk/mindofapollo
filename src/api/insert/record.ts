@@ -4,6 +4,8 @@ import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
 import { _insertRecord, injectValueTypes } from "~/server-only/mutate"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/util"
+import { isPersonal } from "~/permissions"
+import { _getRecordById } from "~/server-only/select"
 
 export const whoCanInsertRecord = (tableName: string) => {
   if (tableName === 'person') {
@@ -20,27 +22,28 @@ export const insertRecord = async (
   "use server"
   if (! await belongsTo(whoCanInsertRecord(tableName))) return
   const userId = await getUserId()
-  const authRole = await getAuthRole()
 
-  // Prevent inserting records of others
-  const { owner_id } = record
-  if (owner_id && owner_id !== userId && authRole !== 'admin') return
+  if (isPersonal(tableName)) {
+    record.owner_id = userId
+  }
     
   await injectValueTypes(tableName, record);
   const explId = await startExpl(userId, 'insertRecord', 1, tableName, null)
-  const result = await _insertRecord(tableName, record, explId);
-  await setExplRecordId(explId, result.id)
+  const result = await _insertRecord(tableName, record, explId)
+  const statement = await _getRecordById(tableName, result.id)
+  if (!statement) return false
+  await setExplRecordId(explId, statement.id)
 
   const user = await getUserActorUser()
   const data: InsertRecordData = {
     tableName,
-    record: result,
+    record: statement,
     user,
-    targetLabel: result[titleColumnName(tableName)] as string
+    targetLabel: statement[titleColumnName(tableName)] as string
   }
   await finishExpl(explId, data)
 
-  return [result]
+  return [statement]
 }
 
 export interface InsertRecordData {

@@ -33,6 +33,7 @@ import { invite } from "~/tables/other/invite"
 import { auth_role } from "~/tables/other/auth_role"
 import { argument_explanation } from "~/tables/argument/explanation"
 import { chat_message } from "~/tables/other/chat_message"
+import { person_secret } from "~/tables/other/person_secret"
 
 // NOTE: table name 'person' and column names 'id', 'name', 'owner_id' have special meanings
 
@@ -71,6 +72,7 @@ export const schema: AppDataSchema = {
     moral_weight,
     presuasion_critique,
     invite,
-    chat_message
+    chat_message,
+    person_secret
   }
 }

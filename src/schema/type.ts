@@ -81,7 +81,6 @@ export interface ForeignKey {
 
 export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
   readOnly?: true // ordinarily, this field should not be edited directly
-  private?: true, // ordinarily, this field should be hidden from non-owners
   unique?: true
 }
 
@@ -103,6 +102,7 @@ export type AggregateSchema = OneToNSchema | NToNSchema
 
 interface Section {
   label: string
+  private?: true,
   fields?: string[]
   component?: string
 }

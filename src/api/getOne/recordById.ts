@@ -1,5 +1,5 @@
-import { belongsTo, getAuthRole } from "~/server-only/session"
-import { getReadableColNames, isPrivate } from "~/permissions";
+import { belongsTo } from "~/server-only/session"
+import { isPrivate } from "~/permissions";
 import { _getRecordById } from "~/server-only/select";
 import { ofSelf } from "~/server-only/ofSelf";
 
@@ -13,9 +13,7 @@ export const whoCanGetOneRecordById = (tableName: string, ofSelf: boolean) => {
 
 export const getOneRecordById = async (tableName: string, id: number) => {
   "use server"
-  if (! await belongsTo(whoCanGetOneRecordById(
-    tableName, await ofSelf(tableName, id)
-  ))) return
-  const colNames = getReadableColNames(tableName, await getAuthRole())
-  return _getRecordById(tableName, id, colNames)
+  const _ofSelf = await ofSelf(tableName, id)
+  if (! await belongsTo(whoCanGetOneRecordById(tableName, _ofSelf))) return
+  return _getRecordById(tableName, id)
 };

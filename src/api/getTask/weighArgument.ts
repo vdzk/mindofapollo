@@ -1,4 +1,4 @@
-import { sql } from "~/server-only/db"
+import { onError, sql } from "~/server-only/db"
 import { getWeightedArguments } from "../../server-only/getWeightedArguments"
 
 export const getTaskWeighArgument = async () => {
@@ -17,7 +17,7 @@ export const getTaskWeighArgument = async () => {
       )
     ORDER BY RANDOM()
     LIMIT 1
-  `
+  `.catch(onError)
   if (!argument) return
   const weightedArguments = await getWeightedArguments(argument.statement_id as number)
   return { argument, weightedArguments }

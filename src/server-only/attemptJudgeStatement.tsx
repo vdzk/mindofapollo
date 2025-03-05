@@ -1,14 +1,15 @@
 import { _updateRecord } from "~/server-only/mutate"
-import { sql } from "~/server-only/db"
+import { onError, sql } from "~/server-only/db"
 import { calcStatementConfidence } from "~/compute"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { AddExplId, ExplData } from "~/components/expl/types"
-import { addExplIdColNames, firstCap, getPercent, pickWithExplId } from "~/util"
+import { addExplIdColNames, getPercent } from "~/util"
 import { _getRecordById } from "./select";
 import { DataRecordWithId } from "~/schema/type"
 import { Link } from "~/components/Link"
 import { Component, For } from "solid-js"
 import { ExplLink } from "~/components/expl/ExplLink"
+import { Subtitle } from "~/components/PageTitle"
 
 
 export const attemptJudgeStatement = async (
@@ -29,7 +30,7 @@ export const attemptJudgeStatement = async (
     LEFT JOIN argument_judgement aj ON aj.id = a.id
     LEFT JOIN argument_conditional ac ON ac.id = a.id
     WHERE a.statement_id = ${statementId}
-      `
+      `.catch(onError) as any[]
   let canJudge = true
   let hasNonConditional = [false, false] // [con, pro]
   const confidences: [number[], number[]] = [[], []]
@@ -65,15 +66,23 @@ export const attemptJudgeStatement = async (
     const diff = await _updateRecord(
       'statement', statementId, explId, newFragment
     )
-    const statement = await _getRecordById('statement', statementId, ['text'])
+    const statement = await _getRecordById('statement', statementId, ['id', 'text'])
     if (!statement) return
+
+    const statementArguments = await sql`
+      SELECT *
+      FROM argument
+      WHERE statement_id = ${statementId}
+    `.catch(onError) as DataRecordWithId[]
+
     const data: ExplJudgeStatementData = {
       triggerExplId,
       triggerLabel,
       statement,
       argumentConfidences,
       confidences,
-      diff
+      diff,
+      statementArguments
     }
     await finishExpl(explId, data)
     return explId
@@ -93,6 +102,7 @@ interface ExplJudgeStatementData {
   }>[]
   confidences: [number[], number[]]
   diff: ExplData['diff']
+  statementArguments: DataRecordWithId[]
 }
 
 export const explAttemptJudgeStatement = (data: ExplJudgeStatementData): ExplData => {
@@ -110,8 +120,8 @@ export const explAttemptJudgeStatement = (data: ExplJudgeStatementData): ExplDat
     },
     diff: data.diff,
     relevantRecords: {
-      argument: data.argumentConfidences,
-      statement: [data.statement]
+      statement: [data.statement],
+      argument: data.statementArguments
     },
     customSections: {
       derivation: {
@@ -122,62 +132,73 @@ export const explAttemptJudgeStatement = (data: ExplJudgeStatementData): ExplDat
     checks: [
       'All of the arguments have been judged.',
       'For each side, the confidence of each subsequent argument was judged conditionally on all preceding arguments'
-    ],
-    notes: [
-      <>
-        The system applied the statement confidence formula to the confidences above. You can test it out in the{' '}
-        <Link label="confidence calculator" route="confidence-calculator" />.
-      </>
     ]
   }
 }
 
-const Derivation: Component<ExplJudgeStatementData> = (data) => {
+const Derivation: Component<ExplJudgeStatementData> = data => {
   const sideArgs = (pro: boolean) => data.argumentConfidences.filter(arg => arg.pro === pro)
   return (
     <main>
+      <Subtitle>Argument confidences</Subtitle>
       <For each={[{ label: 'Pro', pro: true }, { label: 'Con', pro: false }]}>
-        {({ label, pro }) => (
-          <div class="px-2">
-            <h3>{label}</h3>
-            <ul>
-              <For each={sideArgs(pro)}>
-                {arg => (
-                  <li>
-                    <For each={['isolated', 'conditional'] as const}>
-                      {type => {
-                        const value = arg[`${type}_confidence`]
-                        const explId = arg[`${type}_confidence_expl_id`]
-                        return (
-                          value !== null && (
-                            <div>
-                              {firstCap(type)} confidence: {value}{' '}
-                              <ExplLink {...{ explId }} />
-                            </div>
-                          )
-                        )
-                      }}
-                    </For>
-                  </li>
-                )}
-              </For>
-            </ul>
-          </div>
-        )}
+        {({ label, pro }) => {
+          const args = sideArgs(pro);
+          return (
+            <div class="px-2">
+              <h3 class="font-bold">{label}</h3>
+              {args.length === 0 ? (
+                <div>n/a</div>
+              ) : (
+                <ul class="list-disc pl-6">
+                  <For each={args}>
+                    {arg => (
+                      <li>
+                        <For each={['isolated', 'conditional'] as const}>
+                          {type => {
+                            const value = arg[`${type}_confidence`]
+                            const explId = arg[`${type}_confidence_expl_id`]
+                            return (
+                              value !== null && (
+                                <span class="inline-block pr-2">
+                                  {type}: {getPercent(value)}{' '}
+                                  <ExplLink {...{ explId }} />
+                                </span>
+                              )
+                            )
+                          }}
+                        </For>
+                      </li>
+                    )}
+                  </For>
+                </ul>
+              )}
+            </div>
+          )
+        }}
       </For>
 
-
+      <Subtitle>Final confidences</Subtitle>
       <div class="px-2">
-        Final confidences of the arguments
         <ul>
           <For each={[{ label: 'Pro', pro: 1 }, { label: 'Con', pro: 0 }]}>
             {({ label, pro }) => (
               <li>
-                {label}: {data.confidences[pro].map(getPercent).join(', ')}
+                {label}: {data.confidences[pro].length === 0 ? "n/a" : data.confidences[pro].map(getPercent).join(', ')}
               </li>
             )}
           </For>
         </ul>
+      </div>
+
+      <Subtitle>Result</Subtitle>
+      <div class="px-2 max-w-screen-sm">
+        The system applied the statement confidence formula to the confidences above.
+        <br/>You can test it out in the{' '}
+        <Link label="confidence calculator" route="confidence-calculator" />.
+      </div>
+      <div class="px-2 font-bold pt-2">
+        {getPercent(data.diff!.after.confidence as number)}
       </div>
     </main>
   )

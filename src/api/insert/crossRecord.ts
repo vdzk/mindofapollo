@@ -1,10 +1,10 @@
-import {humanCase, titleColumnName, xName} from "~/util"
+import {humanCase, titleColumnName, xName, addExplIds} from "~/util"
 import { getUserId, getUserActorUser } from "~/server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
 import { DataRecord } from "~/schema/type"
-import { _insertRecord } from "~/server-only/mutate"
+import { onError, sql } from "~/server-only/db"
 
 export interface CrossRecordMutateProps {
   a: string
@@ -14,23 +14,30 @@ export interface CrossRecordMutateProps {
   b_id: number
 }
 
-export const insertCrossRecord = async (props: CrossRecordMutateProps) => {
+export const insertCrossRecord = async (params: CrossRecordMutateProps) => {
   "use server"
   const userId = await getUserId()
-  const tableName = xName(props.a, props.b, props.first)
+  const tableName = xName(params.a, params.b, params.first)
 
-  const explId = await startExpl(userId, 'insertCrossRecord', 1, tableName, props.a_id)
+  const firstTableName = params.first ? params.a : params.b
+  const firstId = params.first ? params.a_id : params.b_id
+
+  const explId = await startExpl(userId, 'insertCrossRecord', 1, firstTableName, firstId)
   const record = {
-    [`${props.a}_id`]: props.a_id,
-    [`${props.b}_id`]: props.b_id
+    [`${params.a}_id`]: params.a_id,
+    [`${params.b}_id`]: params.b_id
   }
-  const result = [await _insertRecord(tableName, record, explId)]
+
+  const result = await sql`
+    INSERT INTO ${sql(tableName)} ${sql(addExplIds(record, explId))}
+    RETURNING *
+  `.catch(onError)
 
   if (result[0]) {
     const user = await getUserActorUser()
-    const recordA = (await _getRecordById(props.a, props.a_id))!
-    const recordB = (await _getRecordById(props.b, props.b_id))!
-    const data = await prepareCrossRecordData(props, user, recordA, recordB, result[0])
+    const recordA = (await _getRecordById(params.a, params.a_id))!
+    const recordB = (await _getRecordById(params.b, params.b_id))!
+    const data = await prepareCrossRecordData(params, user, recordA, recordB, result[0])
     await finishExpl(explId, data)
   }
 
@@ -101,10 +108,8 @@ export const createCrossRecordExplData = (
       label: data.target.label
     },
     [recordActionProp]: {
-      tableNames: {
-        target: data.target.tableName,
-        cross: data.cross.tableName
-      },
+      target: data.target,
+      cross: data.cross,
       data: data.record
     }
   }

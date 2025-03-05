@@ -1,24 +1,26 @@
 import {getValueTypeTableName} from "~/schema/dataTypes"
-import {sql} from "~/server-only/db"
+import {onError, sql} from "~/server-only/db"
 import {ProposalRecord} from "~/tables/other/change_proposal"
-import { getUserSession } from "~/server-only/session"
+import { getUserId } from "~/server-only/session"
 
 export const getTaskVoteChangeProposal = async () => {
   "use server"
-  const userSession = await getUserSession()
+  const userId = await getUserId()
   const proposals = await sql`
-    WITH user_changes AS (
-      SELECT id
-      FROM change_proposal_h
-      WHERE op_user_id = ${userSession.userId} AND data_op IN ('INSERT', 'UPDATE')
-    )
     SELECT *
     FROM change_proposal
     WHERE decided = false
-      AND id NOT IN (SELECT id FROM user_changes)
+    AND NOT EXISTS (
+      SELECT 1
+      FROM expl
+      WHERE user_id = ${userId}
+      AND table_name = change_proposal.table_name
+      AND record_id = change_proposal.target_id
+      AND (action = 'submitTaskVoteChangeProposal' OR action = 'submitChangeProposal')
+    )
     ORDER BY RANDOM()
     LIMIT 1
-  `
+  `.catch(onError)
   const proposal = proposals[0] as ProposalRecord | undefined
 
   if (!proposal) return
@@ -28,12 +30,12 @@ export const getTaskVoteChangeProposal = async () => {
     SELECT *
     FROM ${sql(valueTypeTableName)}
     WHERE id = ${proposal.old_value_id}
-  `
+  `.catch(onError)
   const newValues = await sql`
     SELECT *
     FROM ${sql(valueTypeTableName)}
     WHERE id = ${proposal.new_value_id}
-  `
+  `.catch(onError)
   return {
     ...proposal,
     old_value: oldValues[0].value,

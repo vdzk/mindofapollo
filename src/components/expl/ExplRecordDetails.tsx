@@ -5,7 +5,8 @@ import { Detail } from "../details"
 
 export const ExplRecordDetails: Component<{
   tableName: string,
-  record: DataRecord
+  record: DataRecord,
+  showExplLink?: boolean
 }> = (props) => {
   const colNames = () => ['id', ...Object.keys(schema.tables[props.tableName].columns)].filter(colName => colName in props.record)
   return (
@@ -14,6 +15,7 @@ export const ExplRecordDetails: Component<{
         tableName={props.tableName}
         colName={colName}
         record={props.record}
+        showExplLink={props.showExplLink}
       />}
     </For>
   )

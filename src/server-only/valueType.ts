@@ -1,6 +1,6 @@
 import { schema } from "~/schema/schema"
 import { ValueTypeIdColumn } from "~/schema/type"
-import { sql } from "./db"
+import { onError, sql } from "./db"
 
 export const getTypeByOriginId = async (
   tableName: string,
@@ -8,7 +8,7 @@ export const getTypeByOriginId = async (
   originId: number
 ) => {
   const query = (schema.tables[tableName].columns[colName] as ValueTypeIdColumn).getTypeByOriginIdQuery
-  const results = await sql.unsafe(query, [originId])
+  const results = await sql.unsafe(query, [originId]).catch(onError)
   return results?.[0]?.value_type
 }
 
@@ -18,6 +18,6 @@ export const getTypeByRecordId = async (
   recordId: number
 ) => {
   const query = (schema.tables[tableName].columns[colName] as ValueTypeIdColumn).getTypeByRecordIdQuery
-  const results = await sql.unsafe(query, [recordId])
+  const results = await sql.unsafe(query, [recordId]).catch(onError)
   return results?.[0]?.value_type
 }

@@ -23,7 +23,7 @@ export const submitChangeProposal = async (
   const vttn = getValueTypeTableName(tableName, colName)
   const [{ id: old_value_id }] = await insertValueType(vttn, oldValue)
   const [{ id: new_value_id }] = await insertValueType(vttn, newValue)
-  const explId = await startExpl(userId, 'submitChangeProposal', 1, 'change_proposal', null);
+  const explId = await startExpl(userId, 'submitChangeProposal', 1, tableName, id);
   await _insertRecord('change_proposal', {
     table_name: tableName,
     target_id: id,

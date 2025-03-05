@@ -1,4 +1,4 @@
-import { sql } from "./db"
+import { onError, sql } from "./db"
 import { DataLiteral, DataRecord, DataRecordWithId } from "~/schema/type"
 import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
@@ -16,7 +16,7 @@ export const insertValueType = async (
     INSERT INTO ${sql(tableName)} (value)
     VALUES (${value})
     RETURNING *
-  `
+  `.catch(onError)
   return result
 }
 
@@ -54,7 +54,6 @@ export const _insertRecord = async (
       colName !== 'id' && column.type !== 'virtual')
     .map(([colName]) => colName)
   ]
-
   const explIds = Object.fromEntries(
     allColNames.map(colName => [`${colName}_expl_id`, explId])
   )
@@ -62,7 +61,7 @@ export const _insertRecord = async (
   const result = await sql`
     INSERT INTO ${sql(tableName)} ${sql({ ...record, ...explIds })}
     RETURNING *
-  `
+  `.catch(onError)
   return result[0] as DataRecordWithId
 };
 
@@ -85,7 +84,7 @@ export const _updateRecord = async <T extends DataRecord>(
     SELECT ${sql(colNamesWithExplId)}
     FROM ${sql(tableName)}
     WHERE id = ${id}
-  `
+  `.catch(onError)
 
   await sql`
     UPDATE ${sql(tableName)}
@@ -94,7 +93,7 @@ export const _updateRecord = async <T extends DataRecord>(
     colNamesWithExplId
   )}
     WHERE id = ${id}
-  `
+  `.catch(onError)
   const diff = {
     before: oldFragments[0] as AddExplId<T>,
     after: newFragment
@@ -110,6 +109,6 @@ export const _deleteById = async (
     DELETE FROM ${sql(tableName)}
     WHERE id = ${id}
     RETURNING *
-  `;
-  return result;
+  `.catch(onError)
+  return result
 }

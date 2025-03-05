@@ -12,7 +12,7 @@ export const askToJudgeAdditiveStatement = async (
   "use server"
   const userId = await getUserId()
   const statement = await _getRecordById('statement', recordId, ['judgement_requested', 'argument_aggregation_type_id', 'id', 'text'])
-  if (!statement || !statement?.judgement_requested) return
+  if (!statement || statement?.judgement_requested) return
   const aggType = await _getRecordById('argument_aggregation_type', statement.argument_aggregation_type_id as number, ['name'])
   if (!aggType || aggType.name !== 'additive') return
   if (!execute) return 'Request judgement'

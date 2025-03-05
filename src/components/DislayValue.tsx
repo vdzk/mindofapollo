@@ -7,20 +7,14 @@ import { ExplLink } from "./expl/ExplLink"
 import { Link } from "./Link";
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listOriginTypes } from "~/api/list/originTypes"
+import { isPersonal } from "~/permissions"
 
 const FkValue: Component<{
   column: ForeignKey,
   id: number
 }> = (props) => {
   const tableName = props.column.fk.table
-  const record = createAsync(() => {
-    if (props.id === undefined) {
-      // TODO: figure out why this happens
-      return Promise.resolve(undefined)
-    } else {
-      return getOneRecordById(tableName, props.id)
-    }
-  })
+  const record = createAsync(() => getOneRecordById(tableName, props.id))
 
   return (
     <Suspense fallback={nbsp}>
@@ -41,11 +35,12 @@ export interface DisplayValue {
   colName: string
   label?: string
   record: DataRecord
+  showExplLink?: boolean
 }
 
 export const DisplayValue: Component<DisplayValue> = props => {
   const column = () => props.colName === 'id'
-    ? {type: 'integer'} as SimpleColumn
+    ? { type: 'integer' } as SimpleColumn
     : schema.tables[props.tableName].columns[props.colName]
   const value = () => props.record[props.colName]
 
@@ -73,10 +68,12 @@ export const DisplayValue: Component<DisplayValue> = props => {
     <>
       <Switch>
         <Match when={columnType() === 'fk'}>
-          <FkValue
-            column={column() as ForeignKey}
-            id={value() as number}
-          />
+          <Show when={value()} fallback={nbsp}>
+            <FkValue
+              column={column() as ForeignKey}
+              id={value() as number}
+            />
+          </Show>
         </Match>
         <Match when={columnType() === 'boolean'}>
           <Switch>
@@ -93,11 +90,18 @@ export const DisplayValue: Component<DisplayValue> = props => {
         </Match>
         <Match when>
           <span class="whitespace-pre-line">
-            {value() || nbsp}
+            <Switch>
+              <Match when={value() === ''}>
+                {nbsp}
+              </Match>
+              <Match when>
+                {value() ?? nbsp}
+              </Match>
+            </Switch>
           </span>
         </Match>
       </Switch>
-      <Show when={explId()}>
+      <Show when={explId() && !isPersonal(props.tableName) && props.showExplLink !== false}>
         {' '}
         <ExplLink explId={explId() as number} />
       </Show>

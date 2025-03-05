@@ -71,7 +71,7 @@ export const arrayToObjects = (arrayOfArrays: any[][], keys: string[]) => {
   });
 }
 
-export const getVirtualColNames = (tableName: string) => {
+export const getVirtualColNames = (tableName: string, colNames?: string[]) => {
   const all = []
   const queries = []
   const serverFn = []
@@ -79,6 +79,7 @@ export const getVirtualColNames = (tableName: string) => {
   const non = ['id']
   const { columns } = schema.tables[tableName]
   for (const colName in columns) {
+    if (colNames && !colNames.includes(colName)) continue
     const column = columns[colName]
     if (column.type === 'virtual') {
       all.push(colName)

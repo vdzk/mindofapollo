@@ -1,4 +1,4 @@
-import { sql } from "~/server-only/db"
+import { onError, sql } from "~/server-only/db"
 import { DataRecordWithId } from "~/schema/type"
 
 export const listOverlapRecords = async (
@@ -15,6 +15,6 @@ export const listOverlapRecords = async (
       ON t.${sql(sharedColumn)} = ft.${sql(sharedColumn)}
     WHERE ft.id = ${filterId}
     ORDER BY t.id
-  `
+  `.catch(onError)
   return results as unknown as DataRecordWithId[]
 }

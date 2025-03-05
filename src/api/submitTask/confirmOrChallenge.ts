@@ -70,7 +70,7 @@ export const explSubmitTaskConfirmOrChallenge = (data: ConfirmOrChallengeData): 
     label: data.statement.text as string
   },
   diff: data.statementDiff,
-  insertedRecords: {
+  insertedRecords: data.confirmationDiff ? undefined : {
     confirmation: [data.confirmation]
   },
   updatedRecords: data.confirmationDiff ? {

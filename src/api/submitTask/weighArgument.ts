@@ -1,4 +1,4 @@
-import { sql } from "~/server-only/db"
+import { onError, sql } from "~/server-only/db"
 import { _insertRecord, _updateRecord } from "~/server-only/mutate"
 import { startExpl, finishExpl } from "~/server-only/expl"
 import { getUserSession, getUserActorUser } from "~/server-only/session"
@@ -13,7 +13,7 @@ export const submitTaskWeighArgument = async (
   weightData: DataRecord
 ) => {
   "use server"
-  const argument = await _getRecordById('argument', argumentId, ['id', 'statement_id'])
+  const argument = await _getRecordById('argument', argumentId, ['id', 'statement_id', 'title'])
   if (!argument) return
   const statement = await _getRecordById('statement', argument.statement_id as number, ['id', 'text'])
   if (!statement) return
@@ -42,13 +42,13 @@ export const submitTaskWeighArgument = async (
           WHERE aw.id = a.id
         )
   ) AS all_arguments_have_weights
-  `
+  `.catch(onError)
   if (!checkResults[0].all_arguments_have_weights) return
   const weightedArguments = await getWeightedArguments(statement.id)
   if (!weightedArguments) return
   const confidence = calcStatementConfidenceAdditively(weightedArguments as any)
-  const explId2 = await startExpl(userSession.userId, 'attemptAggregateArguments', 1, 'statement', statement.id)
-  const diff = await _updateRecord('statement', statement.id, explId, {
+  const explId2 = await startExpl(null, 'attemptAggregateArguments', 1, 'statement', statement.id)
+  const diff = await _updateRecord('statement', statement.id, explId2, {
     judgement_requested: false,
     confidence,
     decided: true
@@ -73,7 +73,7 @@ interface ExplWeighArgumentData {
 export const explSubmitTaskWeighArgument = (data: ExplWeighArgumentData): ExplData => {
   return {
     actor: { type: 'user', user: data.user },
-    action: 'weighed argument',
+    action: 'weighed',
     target: {
       tableName: 'argument',
       id: data.argument.id,

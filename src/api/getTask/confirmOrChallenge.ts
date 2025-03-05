@@ -1,9 +1,9 @@
-import { sql } from "~/server-only/db"
-import { getUserSession } from "~/server-only/session"
+import { onError, sql } from "~/server-only/db"
+import { getUserId } from "~/server-only/session"
 
 export const getTaskConfirmOrChallenge = async () => {
   "use server"
-  const userSession = await getUserSession()
+  const userId = await getUserId()
   // TODO: use TABLESAMPLE when the table grows enough
   // TODO: exclude statements created by the user
   // TODO: avoid sniping by ...
@@ -20,16 +20,18 @@ export const getTaskConfirmOrChallenge = async () => {
     LEFT JOIN argument
       ON statement.id = argument.statement_id
       AND argument.pro = false
-    LEFT JOIN confirmation_h
-      ON statement.id = confirmation_h.id
-      AND confirmation_h.op_user_id = ${userSession.userId}
+    LEFT JOIN expl
+      ON statement.id = expl.record_id
+      AND expl.table_name = 'statement'
+      AND expl.user_id = ${userId}
+      AND expl.action = 'submitTaskConfirmOrChallenge'
     WHERE NOT decided 
       -- exclude statements with con arguments
       AND argument.statement_id IS NULL
       -- exclude statements that the user has already confirmed
-      AND confirmation_h.id IS NULL
+      AND expl.id IS NULL
     ORDER BY random()
     LIMIT 1
-  `
+  `.catch(onError)
   return results[0]
 }

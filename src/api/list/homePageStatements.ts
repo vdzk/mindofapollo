@@ -1,4 +1,4 @@
-import { sql } from "~/server-only/db"
+import { onError, sql } from "~/server-only/db"
 import { getUserSession } from "../../server-only/session"
 import { injectVirtualValues } from "../../server-only/select"
 
@@ -21,7 +21,7 @@ export const listHomePageStatements = async (
       SELECT *
       FROM statement
       WHERE featured
-    `
+    `.catch(onError)
   } else {
     statements = await sql`
       SELECT s.*
@@ -29,7 +29,7 @@ export const listHomePageStatements = async (
       JOIN statement_x_tag x
         ON x.statement_id = s.id
       WHERE x.tag_id = ${tagId!}
-    `
+    `.catch(onError)
   }
   if (statements) {
     await injectVirtualValues('statement', statements)
@@ -42,7 +42,7 @@ export const listHomePageStatements = async (
       SELECT *
       FROM directive
       WHERE featured
-    `
+    `.catch(onError)
   } else {
     directives = await sql`
       SELECT d.id
@@ -50,7 +50,7 @@ export const listHomePageStatements = async (
       JOIN directive_x_tag x
         ON x.directive_id = d.id
       WHERE x.tag_id = ${tagId!}
-    `
+    `.catch(onError)
   }
   if (directives) {
     await injectVirtualValues('directive', directives)

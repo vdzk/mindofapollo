@@ -13,7 +13,7 @@ const createExplTable = () => [
     table_name text,
     record_id integer,
     data jsonb,
-    timestamp timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
+    timestamp timestamptz NOT NULL
   )`
 ]
 

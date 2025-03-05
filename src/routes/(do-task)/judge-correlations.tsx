@@ -1,4 +1,4 @@
-import { Component, createResource, For, Match, Switch } from "solid-js"
+import { Component, createResource, For, Match, Show, Switch } from "solid-js"
 import { createStore, SetStoreFunction } from "solid-js/store"
 import { Detail } from "~/components/details"
 import { FormField } from "~/components/FormField"
@@ -10,6 +10,7 @@ import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { Button } from "~/components/buttons";
 import { getTaskJudgeCorrelations } from "~/api/getTask/judgeCorrelations"
 import { submitTaskJudgeCorrelations } from "~/api/submitTask/judgeCorrelations"
+import { getExtTableName } from "~/util"
 
 const CorrelationForm: Component<{
   argument: DataRecordWithId
@@ -21,6 +22,7 @@ const CorrelationForm: Component<{
   props.setDiffs(id(), {})
   const [diff, setDiff] = createStore<DataRecord>(props.diffs[id()])
   const condCols = schema.tables.argument_conditional.columns
+  const extTableName = () => getExtTableName('argument', props.argument)
 
   return (
     <>
@@ -29,10 +31,12 @@ const CorrelationForm: Component<{
         tableName="argument"
         colName="title"
         record={props.argument} />
-      <RecordDetails
-        tableName={['argument', props.argument.argument_type_id].join('_')}
-        id={props.argument.id}
-        displayColumn={colName => colName !== 'id'} />
+      <Show when={extTableName()}>
+        <RecordDetails
+          tableName={extTableName()!}
+          id={props.argument.id}
+          displayColumn={colName => colName !== 'id'} />
+      </Show>
       <Detail
         tableName="argument_judgement"
         colName="isolated_confidence"
@@ -74,7 +78,7 @@ export default function JudgeCorrelations() {
   const onSubmit = async () => {
     const records = taskData()!.arguments
       .slice(1) // The first argument is not conditional and is not included
-      .map(argument => diffs[argument.id])
+      .map(argument => ({...diffs[argument.id], id: argument.id}))
     await submitTaskJudgeCorrelations(taskData()!.statement.id, records)
     refetch()
   }

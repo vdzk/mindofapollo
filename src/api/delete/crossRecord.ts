@@ -1,4 +1,4 @@
-import { sql } from "~/server-only/db";
+import { onError, sql } from "~/server-only/db";
 import { xName } from "~/util";
 import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session";
 import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData } from "../insert/crossRecord";
@@ -23,13 +23,16 @@ export const deleteCrossRecord = async (params: CrossRecordMutateProps) => {
   const userId = await getUserId()
   const tableName = xName(params.a, params.b, params.first)
 
-  const explId = await startExpl(userId, 'deleteCrossRecord', 1, tableName, params.a_id)
+  const firstTableName = params.first ? params.a : params.b
+  const firstId = params.first ? params.a_id : params.b_id
+
+  const explId = await startExpl(userId, 'deleteCrossRecord', 1, firstTableName, firstId)
   const result = await sql`
     DELETE FROM ${sql(tableName)}
     WHERE ${sql(params.a + '_id')} = ${params.a_id}
       AND ${sql(params.b + '_id')} = ${params.b_id}
     RETURNING *
-  `
+  `.catch(onError)
 
   if (result[0]) {
     const user = await getUserActorUser()

@@ -1,4 +1,4 @@
-import { sql } from "../../server-only/db"
+import { onError, sql } from "../../server-only/db"
 import { getDirConcsWithValues } from "../../server-only/getDirConcsWithValues"
 import {xName} from "~/util";
 import { getUserSession } from "~/server-only/session"
@@ -16,28 +16,28 @@ export const listUserDirectives = async () => {
     JOIN deed
       ON deed.id = directive.deed_id
     WHERE pxpc.person_id = ${userSession.userId}
-  `
+  `.catch(onError)
   const dirConcs = await sql`
     SELECT dc.directive_id, dc.id, dc.moral_good_id, dc.value_id
     FROM directive_consequence dc
     WHERE dc.directive_id IN ${sql(directives.map(x => x.id))}
-  `
+  `.catch(onError)
   const dirConcsWithValues = await getDirConcsWithValues(dirConcs.map(x => x.id))
   const moralGoods = await sql`
     SELECT moral_good.id, moral_good.name, moral_good.unit_id
     FROM moral_good
     WHERE moral_good.id IN ${sql(dirConcs.map(x => x.moral_good_id))}
-  `
+  `.catch(onError)
   const units = await sql`
     SELECT *
     FROM unit
     WHERE unit.id IN ${sql(moralGoods.map(x => x.unit_id))}
-  `
+  `.catch(onError)
   const moralWeights = await sql`
     SELECT moral_weight.moral_good_id, moral_weight.weight
     FROM moral_weight
     WHERE moral_weight.owner_id = ${userSession.userId}
-  `
+  `.catch(onError)
 
   return {directives, dirConcs, dirConcsWithValues, moralGoods, units, moralWeights}
 }

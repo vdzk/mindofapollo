@@ -49,15 +49,17 @@ export default function ConfirmOrChallenge() {
         <div>
           <Switch>
             <Match when={!challenge()}>
-              <Button
-                label="Confirm"
-                onClick={() => onConfirm(statement()!.id)}
-              />
-              <span class="inline-block w-2" />
-              <Button
-                label="Challenge"
-                onClick={() => setChallenge(true)}
-              />
+              <div class="px-2">
+                <Button
+                  label="Confirm"
+                  onClick={() => onConfirm(statement()!.id)}
+                />
+                <span class="inline-block w-2" />
+                <Button
+                  label="Challenge"
+                  onClick={() => setChallenge(true)}
+                />
+              </div>
             </Match>
             <Match when={challenge()}>
               <FormField

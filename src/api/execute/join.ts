@@ -1,5 +1,5 @@
 import { AuthRole } from "~/types"
-import { sql } from "../../server-only/db"
+import { onError, sql } from "../../server-only/db"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, setExplRecordId, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
@@ -13,7 +13,7 @@ export const join = async (name: string, code: string) => {
     WHERE code = ${code}
       AND person_id IS NULL
     LIMIT 1
-  `
+  `.catch(onError)
   if (!invites?.[0]) return
   const invite = invites[0]
 
@@ -23,7 +23,7 @@ export const join = async (name: string, code: string) => {
     FROM auth_role 
     WHERE name = ${authRoleName} 
     LIMIT 1
-  `
+  `.catch(onError)
   if (!authRoles?.[0]) return
   const authRole = authRoles[0]
 
@@ -31,8 +31,6 @@ export const join = async (name: string, code: string) => {
 
   const person = await _insertRecord('person', {
     name,
-    email: '',
-    password: '',
     auth_role_id: authRole.id
   }, explId)
   if (!person) return
@@ -42,14 +40,24 @@ export const join = async (name: string, code: string) => {
     person_id: person.id
   })
 
-  const inviter = await _getRecordById('person', invite.owner_id, ['id', 'name', 'auth_role'], false) as UserActor['user']
+  const inviterRecord = await _getRecordById('person', invite.owner_id, ['id', 'name', 'auth_role_id'], false)
+
+  if (!inviterRecord) return
+
+  const inviterAuthRole = await _getRecordById('auth_role', inviterRecord.auth_role_id as number, ['name'], false)
+
+  if (!inviterAuthRole) return
   
   const data: JoinExplData = {
     person: {
       id: person.id,
       name: person.name as string
     },
-    inviter
+    inviter: {
+      id: inviterRecord.id as number,
+      name: inviterRecord.name as string,
+      auth_role: inviterAuthRole.name as AuthRole
+    }
   }
   await finishExpl(explId, data)
 

@@ -1,13 +1,14 @@
-import { Component, createMemo, createSignal, Switch, Match, createEffect } from "solid-js"
+import { Component, createMemo, Switch, Match } from "solid-js"
 import { ExplRecord } from "~/server-only/expl"
 import { formatters } from "./formatter"
 import { firstCap, humanCase } from "~/util"
 import { ExplData } from "./types"
 import { Title } from "@solidjs/meta"
-import { PageTitle } from "../PageTitle"
+import { AbovePageTitle, PageTitle } from "../PageTitle"
 import { MasterDetail } from "../MasterDetail"
 import { Dynamic } from "solid-js/web"
 import { sections } from "./sections/sections"
+import { useSearchParams } from "@solidjs/router"
 
 const getActionStr = (expl: ExplData) => `${expl.action} the ${humanCase(expl.target.tableName)} "${expl.target.label}"`
 
@@ -18,21 +19,20 @@ const getSummaryStr = (expl: ExplData) => {
   } else if (expl.actor.type === 'system') {
     actorStr = 'System'
   }
-  return `${actorStr} ${getActionStr(expl)}.`
+  return `${actorStr} ${getActionStr(expl)}`
 }
 
-const useExplData = (explRecord: ExplRecord<any>) => {
-  const { action, data } = explRecord
-  const formatter = formatters['expl' + firstCap(action)]
-  const explData = createMemo(() => formatter(data))
-  return explData
+const getExplData = (explRecord: ExplRecord<any>) => {
+  const formatter = formatters['expl' + firstCap(explRecord.action)]
+  return formatter(explRecord.data)
 }
 
 export const getExplActionStr = (explRecord: ExplRecord<any>) =>
-  getActionStr(useExplData(explRecord.data)())
+  getActionStr(getExplData(explRecord))
 
 export const Expl: Component<{ explRecord: ExplRecord<any> }> = (props) => {
-  const data = useExplData(props.explRecord)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const data = createMemo(() => getExplData(props.explRecord))
   const title = () => getSummaryStr(data())
   const timeStr = () => props.explRecord.timestamp.toISOString().split('.')[0].replace('T', ' ')
 
@@ -62,22 +62,25 @@ export const Expl: Component<{ explRecord: ExplRecord<any> }> = (props) => {
       return builtInOptions
     }
   })
-  
-  const [selected, setSelected] = createSignal(options()[0])
-  const setSelectedId = (id: string) => {
-    const option = options().find(opt => opt.id === id)
-    if (option) setSelected(option)
-  }
+
+  const selected = createMemo(() => {
+    const selectedId = searchParams.section as string | undefined
+    if (selectedId) {
+      return options().find(opt => opt.id === selectedId) ?? options()[0]
+    }
+    return options()[0]
+  })
   
   return (
     <main>
       <Title>{title()}</Title>
+      <AbovePageTitle label="Explanation:" />
       <PageTitle>{title()}</PageTitle>
       <div class="px-2 relative -top-4">Time: {timeStr()}</div>
       <MasterDetail
         options={options()}
         selectedId={selected().id}
-        onChange={setSelectedId}
+        onChange={(sectionId) => setSearchParams({ section: sectionId })}
         class="pl-2"
       >
         <Switch>
@@ -90,7 +93,7 @@ export const Expl: Component<{ explRecord: ExplRecord<any> }> = (props) => {
           <Match when={selected().source === 'custom'}>
             <Dynamic 
               component={data().customSections?.[selected().id].component} 
-              {...props.explRecord} 
+              {...props.explRecord.data} 
             />
           </Match>
         </Switch>

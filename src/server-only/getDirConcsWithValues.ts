@@ -1,5 +1,5 @@
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes";
-import { sql } from "./db";
+import { onError, sql } from "./db";
 
 export const getDirConcsWithValues = async (ids: number[]) => {
   const records = await sql`
@@ -12,7 +12,7 @@ export const getDirConcsWithValues = async (ids: number[]) => {
         JOIN unit
           ON unit.id = moral_good.unit_id
         WHERE directive_consequence.id IN ${sql(ids)}
-      `
+      `.catch(onError)
   const colRecordIds: Record<string, number[]> = {}
   for (const record of records) {
     const colType = record.column_type
@@ -30,8 +30,8 @@ export const getDirConcsWithValues = async (ids: number[]) => {
             JOIN ${sql(vttn)} v
               ON v.id = dc.value_id
             WHERE dc.id IN ${sql(colRecordIds[colType])}
-          `
+          `.catch(onError)
     })
   )).flat().map(record => [record.id, record.value]))
-  return {records, values}
+  return { records, values }
 }

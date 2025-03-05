@@ -9,6 +9,7 @@ export interface DetailProps {
   colName: string
   label?: string
   record: DataRecord
+  showExplLink?: boolean
 }
 
 export const Detail: Component<DetailProps> = props => {
@@ -29,7 +30,7 @@ export const DetailDiff: Component<{
     <div class="px-2 pb-2">
       <ColumnLabel {...props} />
       <DisplayValue {...props} record={props.diff.before} />
-      →
+      {' → '}
       <DisplayValue {...props} record={props.diff.after} />
     </div>
   )

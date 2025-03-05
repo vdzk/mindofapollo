@@ -21,6 +21,7 @@ export default function WeighArgument() {
 
   const onSubmit = async () => {
     await submitTaskWeighArgument(id()!, diff)
+    setDiff({})
     refetch()
   }
 

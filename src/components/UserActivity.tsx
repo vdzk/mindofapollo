@@ -1,4 +1,4 @@
-import { Component, For } from "solid-js"
+import { Component, For, Match, Switch } from "solid-js"
 import { createAsync } from "@solidjs/router"
 import { Link } from "./Link"
 import { listUserActivity } from "~/api/list/userActivity"
@@ -12,11 +12,18 @@ export const UserActivity: Component<{id: number}> = props => {
       <For each={activity()}>
         {(explRecord) => (
           <div>
-            <Link
-              route="expl"
-              params={{ id: explRecord.id }}
-              label={getExplActionStr(explRecord)}
-            />
+            <Switch>
+              <Match when={explRecord.data}>
+                <Link
+                  route="expl"
+                  params={{ id: explRecord.id }}
+                  label={getExplActionStr(explRecord)}
+                />
+              </Match>
+              <Match when>
+                <div>{explRecord.action}</div>
+              </Match>
+            </Switch>
           </div>
         )}
       </For>

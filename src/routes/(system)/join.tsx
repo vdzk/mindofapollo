@@ -6,12 +6,15 @@ import { PageTitle } from "~/components/PageTitle"
 import { join } from "~/api/execute/join"
 import { Button } from "~/components/buttons"
 import { login } from "~/api/execute/login"
+import { SessionContext } from "~/SessionContext"
+import { useContext } from "solid-js"
 
 interface Join {
   code: string
 }
 
 export default function Join() {
+  const session = useContext(SessionContext)
   const navigate = useNavigate()
   const [sp] = useSearchParams() as unknown as [Join]
   const [diff, setDiff] = createStore({ name: '' })
@@ -22,8 +25,8 @@ export default function Join() {
       return
     }
     await login(userId)
-    // TODO: avoid redirect to home screen
-    navigate("/home-page");
+    session?.refetch()
+    navigate('/home-page')
   }
 
   return (

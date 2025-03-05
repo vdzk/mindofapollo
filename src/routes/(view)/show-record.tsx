@@ -1,7 +1,7 @@
 
 import { Title } from "@solidjs/meta"
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
-import { Match, Show, Switch } from "solid-js"
+import { Match, Show, Switch, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { Actions } from "~/components/Actions"
 import { RecordDetails } from "~/components/RecordDetails"
@@ -19,6 +19,7 @@ import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { whoCanUpdateRecord } from "~/api/update/record"
+import { SessionContext } from "~/SessionContext"
 
 const _delete = action(async (
   tableName: string,
@@ -46,6 +47,8 @@ export default function ShowRecord() {
   const deleteAction = useAction(_delete)
   const onDelete = () => deleteAction(sp().tableName, recordId())
   const titleText = () => (record()?.[titleColName()] ?? '') as string
+  const session = useContext(SessionContext)
+  const isSelf = () => recordId() === session?.userSession?.()?.userId
 
   const canUpdateRecord = () => useBelongsTo(whoCanUpdateRecord(
     sp().tableName,
@@ -60,8 +63,9 @@ export default function ShowRecord() {
     const options = []
     const { sections } = schema.tables[sp().tableName]
     if (sections) {
-      for (const key in sections) {
-        options.push({ id: key, label: sections[key].label })
+      for (const [key, section] of Object.entries(sections)) {
+        if (section.private && !isSelf()) continue
+        options.push({ id: key, label: section.label })
       }
     } else {
       options.push({ id: 'allDetails', label: 'details' })

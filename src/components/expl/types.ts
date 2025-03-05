@@ -1,4 +1,5 @@
 import { Component, JSXElement } from "solid-js"
+import { CrossRecordData } from "~/api/insert/crossRecord"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { AuthRole } from "~/types"
 
@@ -24,14 +25,16 @@ export interface ExplData {
   relevantRecords?: Record<string, DataRecord[]>
   insertedRecords?: Record<string, DataRecordWithId[]>
   insertedCrossRecord?: {
-    tableNames: { target: string, cross: string }
+    target: CrossRecordData['target']
+    cross: CrossRecordData['cross']
     data: DataRecord
   }
   diff?: ExplDiff<DataRecord>
   updatedRecords?: Record<string, (ExplDiff<DataRecord> & { id: number })[]>
   deletedRecords?: Record<string, DataRecordWithId[]>
   deletedCrossRecord?: {
-    tableNames: { target: string, cross: string }
+    target: CrossRecordData['target']
+    cross: CrossRecordData['cross']
     data: DataRecord
   }
 }

@@ -1,4 +1,4 @@
-import { sql } from "./db"
+import { onError, sql } from "./db"
 
 export interface ExplRecord<T> {
   id: number
@@ -20,10 +20,11 @@ export const startExpl = async (
 ) => {
   const result = await sql`
     INSERT INTO expl ${sql({
-      user_id, action, version, table_name, record_id
+      user_id, action, version, table_name, record_id, 
+      timestamp: sql`CURRENT_TIMESTAMP` as any
     })}
     RETURNING id
-  `
+  `.catch(onError)
   return result![0].id as number
 }
 
@@ -35,7 +36,7 @@ export const setExplRecordId = async (
     UPDATE expl
     SET record_id = ${record_id}
     WHERE id = ${explId}
-  `
+  `.catch(onError)
 }
 
 export const finishExpl = async (
@@ -46,5 +47,5 @@ export const finishExpl = async (
     UPDATE expl
     SET data = ${data as any}
     WHERE id = ${explId}
-  `
+  `.catch(onError)
 }

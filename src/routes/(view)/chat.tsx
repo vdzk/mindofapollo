@@ -5,6 +5,7 @@ import { Button } from "~/components/buttons"
 import { TextInput } from "~/components/TextInput"
 import { submitChatMessage } from "~/api/submit/chatMessage"
 import { listChatMessages } from "~/api/list/chatMessages"
+import { Link } from "~/components/Link"
 
 export default function Chat() {
   const [messages, { refetch }] = createResource(listChatMessages)
@@ -71,27 +72,33 @@ export default function Chat() {
   }
 
   return (
-    <main>
+    <main class="flex h-[calc(100vh-2rem)]">
       <Title>Chat</Title>
       <PageTitle>Chat</PageTitle>
       
-      <div class="px-2 max-w-2xl mx-auto">
-        <div class="bg-white rounded-lg shadow h-[60vh] flex flex-col">
-          <div class="flex-1 overflow-y-auto p-4" ref={messageContainer}>
+      <div class="px-2 flex-1 flex flex-col max-w-2xl mx-auto w-full">
+        <div class="bg-white flex flex-col flex-1 border-x h-full">
+          <div class="flex-1 overflow-y-auto p-4 h-full" ref={messageContainer}>
             <Show when={messages()} fallback={<div class="text-center">Loading...</div>}>
               <Show when={messages()!.length > 0} fallback={
                 <div class="text-gray-500 text-center mt-4">No messages yet</div>
               }>
                 <For each={[...messages()!].reverse()}>
                   {(message) => (
-                    <div class="mb-4">
-                      <div class="font-bold">{message.sender_name}</div>
-                      <div class="bg-gray-100 rounded-lg p-2 inline-block">
+                    <div class="mb-2" title={new Date(message.timestamp * 1000).toLocaleString()}>
+                      <span class="font-bold mr-2">
+                        <Link 
+                          route="show-record" 
+                          params={{ 
+                            tableName: 'person', 
+                            id: message.user_id 
+                          }} 
+                          label={message.sender_name}
+                        />:
+                      </span>
+                      <span class="bg-gray-100 rounded-lg py-1 px-2 inline-block">
                         {message.text}
-                      </div>
-                      <div class="text-xs text-gray-500">
-                        {new Date(message.timestamp * 1000).toLocaleTimeString()}
-                      </div>
+                      </span>
                     </div>
                   )}
                 </For>

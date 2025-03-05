@@ -101,12 +101,14 @@ export default function EditCrossRef() {
           tooltip="Add new record"
         />
       </div>
-      <Link
-        route="show-record"
-        params={{tableName: sp().a, id: sp().id}}
-        type="button"
-        label="Back"
+      <div class="px-2">
+        <Link
+          route="show-record"
+          params={{tableName: sp().a, id: sp().id}}
+          type="button"
+          label="Back"
       />
+      </div>
     </main>
   )
 }

@@ -6,9 +6,9 @@ import { ExplCrossRecord } from "../ExplCrossRecord"
 export const Created: Component<ExplData> = (props) => {
   return (
     <>
-      <RecordByTable records={props.insertedRecords || {}} />
+      <RecordByTable records={props.insertedRecords || {}} showExplLink={false} />
       <Show when={props.insertedCrossRecord}>
-        <ExplCrossRecord {...props.insertedCrossRecord!}/>
+        <ExplCrossRecord {...props.insertedCrossRecord!} />
       </Show>
     </>
   )

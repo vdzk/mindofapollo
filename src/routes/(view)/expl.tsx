@@ -10,7 +10,7 @@ export default function ExplRoute() {
   const expl = createAsync<ExplRecord<any>>(() => getOneExpl(sp().id))
 
   return (
-    <Show when={expl()}>
+    <Show when={expl()?.data}>
       <Expl explRecord={expl()!} />
     </Show>
   )

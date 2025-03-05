@@ -1,8 +1,26 @@
+import { sqlStr } from "~/util-no-circle";
 import { DataRecord, TableSchema } from "../../schema/type";
 
 export const critical_statement: TableSchema = {
   plural: 'critical statements',
   columns: {
+    label: {
+      type: 'virtual',
+      queries: {
+        critical_statement: sqlStr`
+          SELECT cs.id, statement.text
+          FROM critical_statement AS cs
+          JOIN statement ON cs.statement_id = statement.id
+          WHERE cs.id = ANY($1::integer[])
+        `
+      },
+      get: (ids, results) => {
+        const labels = Object.fromEntries(results.critical_statement.map(
+          (record: DataRecord) => [record.id, record.text]
+        ))
+        return labels
+      }
+    },
     argument_id: {
       type: 'fk',
       fk: {
@@ -20,7 +38,6 @@ export const critical_statement: TableSchema = {
     },
     statement_id: {
       type: 'fk',
-      preview: true,
       fk: {
         table: 'statement',
         labelColumn: 'text',

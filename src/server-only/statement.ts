@@ -1,14 +1,13 @@
-import {sql} from "~/server-only/db"
+import {onError, sql} from "~/server-only/db"
 import { getUserSession } from "./session"
 
 export const hasArguments = async (statementId: number) => {
-  const userSession = await getUserSession()
   const result = await sql`
     SELECT id
     FROM argument
     WHERE statement_id = ${statementId}
     LIMIT 1
-  `
+  `.catch(onError)
   return result.length > 0
 }
 
@@ -24,6 +23,6 @@ export const hasUnjudgedArguments = async (statementId: number) => {
         WHERE argument_judgement.id = argument.id
       ))
     LIMIT 1
-  `
+  `.catch(onError)
   return result.length > 0
 }

@@ -13,12 +13,15 @@ export const Subtitle: ParentComponent = (props) => {
   )
 }
 
+export const AbovePageTitle: ParentComponent<{label: string}> =
+  (props) => <div class="relative top-5 pl-2.5">{props.label}</div>
+
 export const RecordPageTitle: Component<{
   tableName: string,
   text: string
 }> = props => (
   <div>
-    <div class="relative top-5 pl-2.5">{firstCap(humanCase(props.tableName))}:</div>
+    <AbovePageTitle label={firstCap(humanCase(props.tableName)) + ':'} />
     <PageTitle>
       {props.text}
     </PageTitle>

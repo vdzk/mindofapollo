@@ -1,4 +1,4 @@
-import { sql } from "./db"
+import { onError, sql } from "./db"
 import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries } from "~/schema/type"
 import { addExplIdColNames, getVirtualColNames, resolveEntries } from "~/util"
 import { Row, RowList } from "postgres"
@@ -43,9 +43,10 @@ export const getVirtualValuesByLocal = (
 
 export const injectVirtualValues = async (
   tableName: string,
-  records?: DataRecordWithId[] | RowList<Row[]>
+  records?: DataRecordWithId[] | RowList<Row[]>,
+  colNames?: string[]
 ) => {
-  const virtualColNames = getVirtualColNames(tableName)
+  const virtualColNames = getVirtualColNames(tableName, colNames)
 
   if (virtualColNames.all.length > 0 && records && records.length > 0) {
     const ids = records.map(record => record.id as number)
@@ -62,7 +63,12 @@ export const injectVirtualValues = async (
   }
 }
 
-export const _getRecordById = async (tableName: string, id: number, colNames?: string[], withExplIds = true) => {
+export const _getRecordById = async (
+  tableName: string,
+  id: number,
+  colNames?: string[],
+  withExplIds = true
+) => {
   let colNamesSql
   if (colNames) {
     if (withExplIds) {
@@ -77,9 +83,9 @@ export const _getRecordById = async (tableName: string, id: number, colNames?: s
     SELECT ${colNamesSql}
     FROM ${sql(tableName)}
     WHERE id = ${id}
-  `
+  `.catch(onError)
   if (records) {
-    await injectVirtualValues(tableName, records)
+    await injectVirtualValues(tableName, records, colNames)
     return records[0] as DataRecordWithId
   }
 }
@@ -89,7 +95,7 @@ export const getValueById = async (tableName: string, id: number) => {
     SELECT value
     FROM ${sql(tableName)}
     WHERE id = ${id}
-  `
+  `.catch(onError)
   return results?.[0]?.value as DataLiteral
 }
 

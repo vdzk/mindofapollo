@@ -52,7 +52,10 @@ export default function ProposeChange() {
           onChange={event => setColName(event.currentTarget.value)}
         >
           <option></option>
-          <For each={Object.entries(columns())}>
+          <For each={
+            Object.entries(columns())
+              .filter(([_, column]) => column.type !== 'virtual')
+          }>
             {([colName, column]) => (
               <option value={colName} >
                 {humanCase(column.label ?? colName)}

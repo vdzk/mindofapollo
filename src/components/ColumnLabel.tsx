@@ -6,6 +6,7 @@ export const ColumnLabel: Component<{
   tableName: string
   colName: string
   label?: string
+  suffix?: string
 }> = (props) => {
   const labelText = () => {
     if (props.label) return props.label
@@ -19,7 +20,7 @@ export const ColumnLabel: Component<{
 
   return (
     <div class="font-bold first-letter:uppercase" >
-      {humanCase(labelText())}
+      {humanCase(labelText())}{props.suffix}
     </div>
   )
 }

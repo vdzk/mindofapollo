@@ -3,36 +3,34 @@ import { ExplData } from "../types"
 import { firstCap, humanCase } from "~/util"
 import { DetailDiff } from "~/components/details"
 import { Link } from "~/components/Link"
+import { Subtitle } from "~/components/PageTitle"
 
 export const Updated: Component<ExplData> = (props) => {
   return (
     <>
       <Show when={props.diff}>
-        <div class="px-2">
-          <For each={Object.keys(props.diff!.after)}>
-            {colName => <DetailDiff
-              tableName={props.target.tableName}
-              colName={colName}
-              diff={props.diff!}
-            />}
-          </For>
-        </div>
+        <For each={Object.keys(props.diff!.after)}>
+          {colName => <DetailDiff
+            tableName={props.target.tableName}
+            colName={colName}
+            diff={props.diff!}
+          />}
+        </For>
       </Show>
       <Show when={props.updatedRecords && Object.keys(props.updatedRecords).length > 0}>
         <div>
           <For each={Object.entries(props.updatedRecords || {})}>
             {([tableName, diffRecords]) => (
               <>
-                <div class="font-bold mt-2 px-2">
-                  {firstCap(humanCase(tableName))}
-                </div>
+                <Subtitle>
+                  Table: {firstCap(humanCase(tableName))}
+                </Subtitle>
                 <For each={diffRecords}>
                   {(diffRecord) => (
-                    <div class="ml-4 my-2 p-2 border border-gray-200 rounded">
-                      <div class="font-bold">
-                        Record ID: {diffRecord.id}
+                    <>
+                      <div class="px-2 pb-2 font-bold">
                         <Link 
-                          label="View"
+                          label={`Record ID: ${diffRecord.id}`}
                           route="show-record"
                           params={{ tableName, id: diffRecord.id }}
                         />
@@ -44,7 +42,7 @@ export const Updated: Component<ExplData> = (props) => {
                           diff={diffRecord}
                         />}
                       </For>
-                    </div>
+                    </>
                   )}
                 </For>
               </>

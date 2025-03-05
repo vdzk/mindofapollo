@@ -6,12 +6,6 @@ export const person: TableSchema = {
     name: {
       type: 'varchar'
     },
-    email: {
-      type: 'varchar'
-    },
-    password: {
-      type: 'varchar'
-    },
     auth_role_id: {
       type: 'fk',
       fk: {
@@ -30,15 +24,25 @@ export const person: TableSchema = {
       type: '1-n',
       table: 'moral_weight',
       column: 'owner_id'
-    }
+    },
+    person_secrets: {
+      type: '1-n',
+      table: 'person_secret',
+      column: 'id'
+    },
   },
   sections: {
     details: {
       label: 'Details',
       fields: [
-        'name', 'email', 'password', 'auth_role_id',
+        'name', 'auth_role_id',
         'person_categories', 'moral_weights'
       ]
+    },
+    secrets: {
+      label: 'Secrets',
+      private: true,
+      fields: ['person_secrets']
     },
     activity: {
       label: 'Activity',

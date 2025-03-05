@@ -5,9 +5,11 @@ import { startExpl, finishExpl } from "~/server-only/expl"
 import { getUserId, getUserActorUser } from "~/server-only/session"
 import { _getRecordById } from "~/server-only/select"
 import { ExplData, UserActor } from "~/components/expl/types"
+import { sql, onError } from "~/server-only/db"
 
 export const submitTaskJudgeCorrelations = async (statementId: number, records: DataRecord[]) => {
   "use server"
+  // TODO: ensure that statement and argument ids matches the ones that were in the user's task
   const userId = await getUserId()
   const explId = await startExpl(userId, 'submitTaskJudgeCorrelations', 1, 'statement', statementId)
   const argumentConditionals = await _insertRecordsOneByOne('argument_conditional', records, explId)
@@ -15,11 +17,19 @@ export const submitTaskJudgeCorrelations = async (statementId: number, records: 
   
   const statement = await _getRecordById('statement', statementId, ['id', 'text'])
   if (!statement) return
+  
+  const statementArguments = await sql`
+    SELECT *
+    FROM argument
+    WHERE statement_id = ${statementId}
+  `.catch(onError) as DataRecordWithId[]
+  
   const user = await getUserActorUser()
   const data: ExplSaveData = {
     user,
     statement,
-    argumentConditionals
+    argumentConditionals,
+    statementArguments
   }
   await finishExpl(explId, data)
 }
@@ -28,12 +38,13 @@ interface ExplSaveData {
   user: UserActor['user']
   statement: DataRecordWithId
   argumentConditionals: DataRecordWithId[]
+  statementArguments: DataRecordWithId[]
 }
 
 export const explSubmitTaskJudgeCorrelations = (data: ExplSaveData): ExplData => {
   return {
     actor: { type: 'user', user: data.user },
-    action: 'judged correlations for',
+    action: 'judged argument correlations for',
     target: {
       tableName: 'statement',
       id: data.statement.id,
@@ -43,7 +54,8 @@ export const explSubmitTaskJudgeCorrelations = (data: ExplSaveData): ExplData =>
       argument_conditional: data.argumentConditionals
     },
     relevantRecords: {
-      statement: [data.statement]
+      statement: [data.statement],
+      argument: data.statementArguments
     }
   }
 }

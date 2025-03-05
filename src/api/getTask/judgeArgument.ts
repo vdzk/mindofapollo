@@ -1,4 +1,4 @@
-import {sql} from "~/server-only/db"
+import {onError, sql} from "~/server-only/db"
 import { getUserSession } from "~/server-only/session"
 
 export const getTaskJudgeArgument = async () => {
@@ -19,6 +19,6 @@ export const getTaskJudgeArgument = async () => {
       AND expl.user_id != ${userSession.userId}
     ORDER BY random()
     LIMIT 1
-  `
+  `.catch(onError)
   return result[0]
 }
