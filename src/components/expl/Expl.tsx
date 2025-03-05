@@ -30,6 +30,9 @@ const getExplData = (explRecord: ExplRecord<any>) => {
 export const getExplActionStr = (explRecord: ExplRecord<any>) =>
   getActionStr(getExplData(explRecord))
 
+export const getExplSummaryStr = (explRecord: ExplRecord<any>) =>
+  getSummaryStr(getExplData(explRecord))
+
 export const Expl: Component<{ explRecord: ExplRecord<any> }> = (props) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const data = createMemo(() => getExplData(props.explRecord))

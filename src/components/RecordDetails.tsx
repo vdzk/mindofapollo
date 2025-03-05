@@ -26,7 +26,7 @@ export const RecordDetails: Component<{
   // TODO: check how to optimise this if necesary
   const fieldsInSection = (tableName: string) => {
     const { columns, aggregates, sections } = schema.tables[tableName]
-    if (!sections || !props.selectedSection || props.selectedSection === 'allDetails') {
+    if (!sections || !props.selectedSection || props.selectedSection === 'allDetails' || !sections[props.selectedSection]) {
       return getAllKeys([columns, aggregates])
     } else {
       const { fields } = sections[props.selectedSection]

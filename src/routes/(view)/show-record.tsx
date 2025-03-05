@@ -1,4 +1,3 @@
-
 import { Title } from "@solidjs/meta"
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
 import { Match, Show, Switch, useContext } from "solid-js"
@@ -20,6 +19,7 @@ import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { whoCanUpdateRecord } from "~/api/update/record"
 import { SessionContext } from "~/SessionContext"
+import { RecordHistory } from "~/components/RecordHistory"
 
 const _delete = action(async (
   tableName: string,
@@ -70,6 +70,7 @@ export default function ShowRecord() {
     } else {
       options.push({ id: 'allDetails', label: 'details' })
     }
+    options.push({ id: 'history', label: 'History' })
     options.push({ id: 'actions', label: 'actions' })
     return options
   }
@@ -118,6 +119,9 @@ export default function ShowRecord() {
                 />
               </Show>
             </div>
+          </Match>
+          <Match when={selectedSection() === 'history'}>
+            <RecordHistory tableName={sp().tableName} id={recordId()} />
           </Match>
           <Match when={getCurrentComponent()}>
             <Dynamic component={getCurrentComponent()} id={recordId()} />
