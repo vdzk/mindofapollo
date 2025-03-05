@@ -1,3 +1,4 @@
+import { personalTableNames } from "~/permissions"
 import { onError, sql } from "~/server-only/db"
 import { ExplRecord } from "~/server-only/expl"
 
@@ -6,6 +7,7 @@ export const listRecordHistory = async (
   recordId: number
 ) => {
   "use server"
+  if (personalTableNames.includes(tableName)) return []
   const history = await sql<ExplRecord<any>[]>`
     SELECT *
     FROM expl 

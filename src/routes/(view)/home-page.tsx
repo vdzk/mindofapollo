@@ -119,6 +119,10 @@ export default function HomePage() {
               label: "Sandboxes",
               route: "list-sandboxes",
               params: { tableName: 'directive' }
+            },
+            {
+              label: "Recent activity",
+              route: "recent-activity"
             }
           ]}
         />
