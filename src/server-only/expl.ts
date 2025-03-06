@@ -1,4 +1,5 @@
 import { onError, sql } from "./db"
+import { updateNotifications } from "./notifications"
 
 export interface ExplRecord<T> {
   id: number
@@ -20,9 +21,9 @@ export const startExpl = async (
 ) => {
   const result = await sql`
     INSERT INTO expl ${sql({
-      user_id, action, version, table_name, record_id, 
-      timestamp: sql`CURRENT_TIMESTAMP` as any
-    })}
+    user_id, action, version, table_name, record_id,
+    timestamp: sql`CURRENT_TIMESTAMP` as any
+  })}
     RETURNING id
   `.catch(onError)
   return result![0].id as number
@@ -43,9 +44,11 @@ export const finishExpl = async (
   explId: number,
   data: Record<string, any>
 ) => {
-  await sql`
+  const [explRecord] = await sql<ExplRecord<any>[]>`
     UPDATE expl
     SET data = ${data as any}
     WHERE id = ${explId}
+    RETURNING *
   `.catch(onError)
+  updateNotifications(explRecord)
 }

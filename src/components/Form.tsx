@@ -107,7 +107,8 @@ export const Form: Component<{
 
   createEffect(() => !props.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
   const pristine = () => Object.entries(diff).every(
-    ([key, value]) => (key === 'id') || value === undefined)
+    ([key, value]) => (key === 'id') || value === undefined) && 
+    Object.values(diffExt).every(value => value === undefined)
 
   const onSubmit = async () => {
     const extension = extTableName() && !isEmpty(diffExt) ? {

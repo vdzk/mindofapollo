@@ -74,14 +74,13 @@ export const FormField: Component<{
       />
       <Switch>
         <Match when={columnType() === 'text'}>
-          <textarea
-            name={props.colName}
-            class="border w-full px-0.5"
-            rows={(column() as TextColumn).lines}
-            {...{ onChange }}
-          >
-            {value()}
-          </textarea>
+          <TextInput
+            value={value()}
+            onChange={onChange}
+            tableName={props.tableName}
+            colName={props.colName}
+            lines={(column() as TextColumn).lines ?? 2}
+          />
         </Match>
         <Match when={columnType() === 'boolean'}>
           <Switch>

@@ -20,6 +20,7 @@ import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { whoCanUpdateRecord } from "~/api/update/record"
 import { SessionContext } from "~/SessionContext"
 import { RecordHistory } from "~/components/RecordHistory"
+import { personalTableNames } from "~/permissions"
 
 const _delete = action(async (
   tableName: string,
@@ -70,7 +71,9 @@ export default function ShowRecord() {
     } else {
       options.push({ id: 'allDetails', label: 'details' })
     }
-    options.push({ id: 'history', label: 'History' })
+    if (!personalTableNames.includes(sp().tableName)) {
+      options.push({ id: 'history', label: 'History' })
+    }
     options.push({ id: 'actions', label: 'actions' })
     return options
   }

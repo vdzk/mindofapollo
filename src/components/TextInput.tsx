@@ -11,34 +11,45 @@ export interface TextInputProps {
   placeholder?: string;
   disabled?: boolean;
   onKeyDown?: (e: KeyboardEvent) => void;
+  lines?: number;
 }
 
 export const TextInput: Component<TextInputProps> = (props) => {
   const column = () => schema.tables[props.tableName].columns[props.colName];
-  const isReadonly = () => column().type === 'virtual';
-  const displayValue = () => (props.value ?? '') + '';
-  const onInput = debounce(props.onChange, 500);
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      props.onChange({ target: { value: displayValue(), name: props.colName } });
-    }
-  };
+  const isReadonly = () => column().type === 'virtual'
+  const displayValue = () => (props.value ?? '') + ''
+  const onInput = debounce(props.onChange, 500)
 
   return (
-    <input
-      name={props.colName}
-      value={displayValue()}
-      type="text"
-      class="border rounded pl-1 w-full"
-      autocomplete="off"
-      readonly={isReadonly()}
-      onChange={props.onChange}
-      onInput={onInput}
-      onKeyDown={props.onKeyDown}
-      placeholder={props.placeholder}
-      disabled={props.disabled}
-    />
+    props.lines ? (
+      <textarea
+        name={props.colName}
+        class="border pl-1 w-full px-0.5"
+        autocomplete="off"
+        readonly={isReadonly()}
+        onChange={props.onChange}
+        onInput={onInput}
+        onKeyDown={props.onKeyDown}
+        placeholder={props.placeholder}
+        disabled={props.disabled}
+        rows={props.lines}
+      >
+        {displayValue()}
+      </textarea>
+    ) : (
+      <input
+        name={props.colName}
+        value={displayValue()}
+        type="text"
+        class="border rounded pl-1 w-full"
+        autocomplete="off"
+        readonly={isReadonly()}
+        onChange={props.onChange}
+        onInput={onInput}
+        onKeyDown={props.onKeyDown}
+        placeholder={props.placeholder}
+        disabled={props.disabled}
+      />
+    )
   );
 };

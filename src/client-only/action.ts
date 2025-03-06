@@ -3,7 +3,10 @@ import { deleteById } from "~/api/delete/byId"
 import { deleteCrossRecord } from "~/api/delete/crossRecord"
 import { executeAction } from "./tableActions"
 import { CrossRecordMutateProps, insertCrossRecord } from "~/api/insert/crossRecord"
-import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache} from "~/client-only/query"
+import { setSubscription } from "~/api/set/subscription"
+import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache, getUserSubscriptionsCache} from "~/client-only/query"
+import { updateSubscriptionLastOpened } from "~/api/set/subscriptionLastOpened"
+import { revalidate } from "@solidjs/router"
 
 
 export const deleteForeignHopRecordAction = action(async (
@@ -72,5 +75,34 @@ export const executeTableAction = action(
         }
       )
     }
+  }
+)
+
+export const setSubscriptionAction = action(
+  async (id: number, subscribe: boolean) => {
+    await setSubscription(id, subscribe)
+    return json(
+      'ok',
+      {
+        revalidate: [
+          getUserSubscriptionsCache.keyFor(),
+          'getHomePageStatements'
+        ]
+      }
+    )
+  }
+)
+
+export const updateSubscriptionLastOpenedAction = action(
+  async (statementId: number) => {
+    await updateSubscriptionLastOpened(statementId)
+    return json(
+      'ok',
+      {
+        revalidate: [
+          getUserSubscriptionsCache.keyFor()
+        ]
+      }
+    )
   }
 )

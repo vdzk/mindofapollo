@@ -1,11 +1,12 @@
 import { customDataTypes, pgType2valueTypeTableName } from "~/schema/dataTypes"
 import { schema } from "~/schema/schema"
 import { CustomDataType } from "~/schema/type"
+import { sqlStr } from "~/util-no-circle"
 
 const createEnums = () => []
 
 const createExplTable = () => [
-  `CREATE TABLE expl (
+  sqlStr`CREATE TABLE expl (
     id serial PRIMARY KEY,
     user_id integer,
     action text NOT NULL,
@@ -14,7 +15,9 @@ const createExplTable = () => [
     record_id integer,
     data jsonb,
     timestamp timestamptz NOT NULL
-  )`
+  )`,
+  sqlStr`CREATE INDEX expl_timestamp_idx ON expl (timestamp)`,
+  sqlStr`CREATE INDEX expl_id_idx ON expl (id)`
 ]
 
 const createTable = (tableName: string) => {
@@ -123,6 +126,21 @@ const createValueTypeTables = () => Object.entries(pgType2valueTypeTableName)
     )`
   ))
 
+const createNotificationTables = () => [
+  sqlStr`CREATE TABLE subscription (
+    person_id integer NOT NULL,
+    statement_id integer NOT NULL,
+    subscribed boolean NOT NULL,
+    last_opened timestamptz,
+    PRIMARY KEY (person_id, statement_id)
+  )`,
+  sqlStr`CREATE TABLE root_statement_update (
+    statement_id integer NOT NULL,
+    expl_id integer NOT NULL REFERENCES expl(id)
+  )`,
+  sqlStr`CREATE INDEX root_statement_update_statement_id_idx ON root_statement_update (statement_id)`
+]
+
 const createDbSchema = () => {
   const statements = [] as string[]
   statements.push(...createEnums())
@@ -133,8 +151,9 @@ const createDbSchema = () => {
       ...createIndexes(tableName)
     )
   }
-    statements.push(...createCrossTables())
+  statements.push(...createCrossTables())
   statements.push(...createValueTypeTables())
+  statements.push(...createNotificationTables())
   return statements.join(';\n')
 }
 

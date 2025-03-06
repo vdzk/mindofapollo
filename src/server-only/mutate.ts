@@ -78,6 +78,7 @@ export const _updateRecord = async <T extends DataRecord>(
   newFragment: T
 ) => {
   const colNames = Object.keys(newFragment)
+  if (colNames.length === 0) return { before: {}, after: {} }
   const colNamesWithExplId = addExplIdColNames(colNames)
 
   const oldFragments = await sql`

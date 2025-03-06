@@ -21,10 +21,11 @@ export const Button: Component<{
   onClick: () => void
   tooltip?: string
   disabled?: boolean
+  class?: string
 }> = props => {
   return (
     <button
-      class={btnStyle({ disabled: props.disabled })}
+      class={`${btnStyle({ disabled: props.disabled })} ${props.class || ''}`}
       onClick={props.onClick}
       title={props.tooltip}
       type="button"
