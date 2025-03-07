@@ -1,8 +1,8 @@
-import { action, redirect, useAction, useSearchParams } from "@solidjs/router"
-import { Component, createContext, createEffect, createSignal, For, Setter, Show, useContext } from "solid-js"
+import { action, redirect, useAction, useSearchParams, revalidate } from "@solidjs/router"
+import { Component, createContext, createEffect, createSignal, For, Match, Setter, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
-import { DataRecord } from "~/schema/type"
+import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { getExtTableName, isEmpty, buildUrl } from "~/util"
 import { createStore } from "solid-js/store"
 import { getRecords } from "~/client-only/query"
@@ -14,11 +14,16 @@ import { updateRecord } from "~/api/update/record"
 import { insertExtRecord } from "~/api/insert/extRecord"
 import { insertRecord } from "~/api/insert/record"
 import { getWritableColNames } from "~/permissions"
+import { LinkData } from "~/types"
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
+export type FormExitHandler = (savedId?: number) => void
+export type ExitSettings = { linkData: LinkData } | { onExit: FormExitHandler }
+
 export const Form: Component<{
   tableName: string
+  exitSettings: ExitSettings
   id?: number
   record?: DataRecord
 }> = (props) => {
@@ -29,31 +34,16 @@ export const Form: Component<{
   const [extValue, setExtValue] = createSignal<string>()
   const [showAdvanced, setShowAdvanced] = createSignal(false)
 
-  const exitLink = (tableName: string) => {
-    if (props.id) {
-      return {
-        route: 'show-record',
-        params: { tableName, id: props.id }
-      }
-    } else {
-      if (searchParams.sourceTable && searchParams.sourceId) {
-        return {
-          route: 'show-record',
-          params: { tableName: searchParams.sourceTable, id: searchParams.sourceId }
-        }
-      } else {
-        return {
-          route: 'list-records',
-          params: { tableName }
-        }
-      }
-    }
+  const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
+    return 'onExit' in exit
   }
 
-  const exitPath = (tableName: string) => {
-    const { route, params } = exitLink(tableName)
-    return buildUrl(route, params)
-  }
+  const getExitUrl = () => hasExitHandler(props.exitSettings)
+    ? ''
+    : buildUrl(
+      props.exitSettings.linkData.route,
+      props.exitSettings.linkData.params
+    )
 
   const saveAction = useAction(action(async (
     tableName: string,
@@ -71,24 +61,40 @@ export const Form: Component<{
       } else {
         await updateRecord(tableName, props.id, record)
       }
-      throw redirect(
-        exitPath(tableName),
-        {
-          revalidate: [
-            getRecords.keyFor(tableName), // TODO: this doesn't seem to be doing anything
-            'getRecords' + tableName + props.id
-          ]
-        }
-      )
+      if (hasExitHandler(props.exitSettings)) {
+        revalidate([
+          getRecords.keyFor(tableName),
+          'getRecords' + tableName + props.id
+        ])
+        props.exitSettings.onExit(props.id)
+        return
+      } else {
+        throw redirect(
+          getExitUrl(),
+          {
+            revalidate: [
+              getRecords.keyFor(tableName),
+              'getRecords' + tableName + props.id
+            ]
+          }
+        )
+      }
     } else {
+      let savedRecord: DataRecordWithId | undefined
       if (extension) {
-        await insertExtRecord(
+        savedRecord = await insertExtRecord(
           tableName, record, extension.tableName, extension.record
         )
       } else {
-        await insertRecord(tableName, record)
+        savedRecord = await insertRecord(tableName, record)
       }
-      throw redirect(exitPath(tableName))
+      if (hasExitHandler(props.exitSettings)) {
+        revalidate([getRecords.keyFor(tableName)])
+        props.exitSettings.onExit(savedRecord?.id)
+        return
+      } else {
+        throw redirect(getExitUrl())
+      }
     }
   }))
 
@@ -116,6 +122,12 @@ export const Form: Component<{
       record: diffExt
     } : undefined
     saveAction(props.tableName, diff, extension)
+  }
+
+  const handleCancel = () => {
+    if (hasExitHandler(props.exitSettings)) {
+      props.exitSettings.onExit()
+    }
   }
 
   return (
@@ -158,11 +170,21 @@ export const Form: Component<{
           disabled={pristine()}
         />
         <span class="inline-block w-2" />
-        <Link
-          {...exitLink(props.tableName)}
-          type="button"
-          label="Cancel"
-        />
+        <Switch>
+          <Match when={hasExitHandler(props.exitSettings)}>
+            <Button
+              label="Cancel"
+              onClick={handleCancel}
+            />
+          </Match>
+          <Match when={!hasExitHandler(props.exitSettings)}>
+            <Link
+              {...(props.exitSettings as { linkData: LinkData }).linkData}
+              type="button"
+              label="Cancel"
+            />
+          </Match>
+        </Switch>
       </div>
     </div>
   )

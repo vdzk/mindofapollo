@@ -30,20 +30,20 @@ export const insertRecord = async (
   await injectValueTypes(tableName, record);
   const explId = await startExpl(userId, 'insertRecord', 1, tableName, null)
   const result = await _insertRecord(tableName, record, explId)
-  const statement = await _getRecordById(tableName, result.id)
-  if (!statement) return false
-  await setExplRecordId(explId, statement.id)
+  const savedRecord = await _getRecordById(tableName, result.id)
+  if (!savedRecord) return
+  await setExplRecordId(explId, savedRecord.id)
 
   const user = await getUserActorUser()
   const data: InsertRecordData = {
     tableName,
-    record: statement,
+    record: savedRecord,
     user,
-    targetLabel: statement[titleColumnName(tableName)] as string
+    targetLabel: savedRecord[titleColumnName(tableName)] as string
   }
   await finishExpl(explId, data)
 
-  return [statement]
+  return savedRecord
 }
 
 export interface InsertRecordData {

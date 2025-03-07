@@ -11,3 +11,7 @@ export interface UserSession {
   userId: number
   authRole: AuthRole
 }
+export interface LinkData {
+  route: string
+  params: Record<string, string>
+}

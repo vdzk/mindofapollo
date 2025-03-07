@@ -5,6 +5,7 @@ import { createAsync, useSearchParams } from "@solidjs/router"
 import { humanCase, titleColumnName } from "~/util"
 import { Suspense } from "solid-js"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
+import { LinkData } from "~/types"
 
 interface EditRecord {
   tableName: string
@@ -17,12 +18,24 @@ export default function EditRecord() {
   const record = createAsync(async () => getOneExtRecordById(sp.tableName, recordId()))
   const titleText = () => '' + (record()?.[titleColumnName(sp.tableName)] ?? '')
 
+  const exitLink = (): LinkData => {
+    return {
+      route: 'show-record',
+      params: { tableName: sp.tableName, id: sp.id }
+    }
+  }
+
   return (
     <main>
       <Suspense fallback={`loading ${humanCase(sp.tableName)}...`}>
         <Title>{titleText()}</Title>
         <RecordPageTitle tableName={sp.tableName} text={titleText()} />
-        <Form id={recordId()} tableName={sp.tableName} record={record()} />
+        <Form
+          id={recordId()}
+          tableName={sp.tableName}
+          record={record()}
+          exitSettings={{ linkData: exitLink() }}
+        />
       </Suspense>
     </main>
   );
