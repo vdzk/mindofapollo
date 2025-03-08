@@ -100,7 +100,7 @@ export const FkInput: Component<{
     return records()!.map(record => ({
       id: record.id,
       label: record[props.column.fk.labelColumn] as string
-    }))
+    })).sort((a, b) => a.label.localeCompare(b.label));
   })
 
   return (
@@ -181,13 +181,13 @@ export const FkInput: Component<{
                   ...or select existing
                 </Show>
               </option>
-              <For each={records()}>
-                {record => (
+              <For each={dropdownOptions()}>
+                {option => (
                   <option
-                    value={record.id}
-                    selected={record.id === props.value}
+                    value={option.id}
+                    selected={option.id === props.value}
                   >
-                    {record[props.column.fk.labelColumn]}
+                    {option.label}
                   </option>
                 )}
               </For>

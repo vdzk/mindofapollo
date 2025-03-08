@@ -36,6 +36,8 @@ import { chat_message } from "~/tables/other/chat_message"
 import { person_secret } from "~/tables/other/person_secret"
 import { argument_epistemic } from "~/tables/argument/epistemic"
 import { argument_comparison } from "~/tables/argument/comparison"
+import { argument_deduction } from "~/tables/argument/deduction";
+import { argument_example } from "~/tables/argument/example";
 
 // NOTE: table name 'person' and column names 'id', 'name', 'owner_id' have special meanings
 
@@ -77,6 +79,8 @@ export const schema: AppDataSchema = {
     presuasion_critique,
     invite,
     chat_message,
-    person_secret
+    person_secret,
+    argument_deduction,
+    argument_example
   }
 }
