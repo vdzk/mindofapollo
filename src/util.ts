@@ -169,3 +169,5 @@ export const addExplIds = (record: Record<string, any>, explId: number) => {
   }
   return result
 }
+
+export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))

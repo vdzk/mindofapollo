@@ -7,7 +7,7 @@ import { getRecords } from "~/client-only/query"
 import { getOneIdByName } from "~/api/getOne/idByName"
 import { Button } from "./buttons"
 import { Subtitle } from "./PageTitle"
-import { humanCase } from "~/util"
+import { humanCase, sleep } from "~/util"
 
 
 export const FkInput: Component<{
@@ -22,6 +22,7 @@ export const FkInput: Component<{
   const records = createAsync(() => getRecords(props.column.fk.table))
   const [isPreset, setIsPreset] = createSignal(false)
   const [showForm, setShowForm] = createSignal(false)
+  const [pauseCreateNew, setPauseCreateNew] = createSignal(false)
 
   const setExtValue = useContext(ExtValueContext)!
   const format = (value: string) => {
@@ -73,43 +74,35 @@ export const FkInput: Component<{
   const disabled = () => (!props.isNew && !!props.column.fk.extensionTables) || isPreset()
 
   const onFormExit = async (savedId?: number) => {
-    console.log('onFormExit', savedId)
+    setPauseCreateNew(true)
     setShowForm(false)
     if (savedId) {
       await revalidate(getRecords.keyFor(props.column.fk.table))
       setValue('' + savedId)
     }
+    await sleep(0)  // fix for "Create new" button auto-pressing after form exit
+    setPauseCreateNew(false)
   }
-
-  createEffect(() => {
-    if (props.colName === 'statement_id') {
-      console.log({
-        colName: props.colName,
-        showForm: showForm()
-      })
-    }
-  })
 
   return (
     <>
       <Show when={!isPreset()}>
-        <Show when={!showForm()}>
+        <Show when={!showForm() && !pauseCreateNew()}>
           <div class="pb-1">
             <Button
               label="Create new"
-              onClick={() => {
-                console.log('Clicked create new')
-                setShowForm(true)
-              }}
+              onClick={() => setShowForm(true)}
             />
           </div>
         </Show>
         <Show when={showForm()}>
-          <Subtitle>New {humanCase(props.column.fk.table)}</Subtitle>
-          <Form
-            tableName={props.column.fk.table}
-            exitSettings={{onExit: onFormExit}}
-          />
+          <div class="pb-4 bg-orange-100 rounded-md my-2 p-2">
+            <Subtitle>New {humanCase(props.column.fk.table)}</Subtitle>
+            <Form
+              tableName={props.column.fk.table}
+              exitSettings={{onExit: onFormExit}}
+            />
+          </div>
         </Show>
       </Show>
       <select
