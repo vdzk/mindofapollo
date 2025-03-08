@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, For } from "solid-js"
+import { Component, For, Show } from "solid-js"
 import { schema } from "~/schema/schema"
 import { ColumnSchema } from "~/schema/type"
 import { getAllKeys, getExtTableName } from "~/util"
@@ -17,7 +17,9 @@ export const RecordDetails: Component<{
   tableName: string
   id: number
   selectedSection?: string
-  displayColumn?: ColumnFilter
+  displayColumn?: ColumnFilter,
+  showAggregates?: boolean
+  showExplLinks?: boolean
 }> = props => {
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
   const extTableName = () => record() ? getExtTableName(props.tableName, record()!) : undefined
@@ -74,23 +76,25 @@ export const RecordDetails: Component<{
   return (
     <>
       <For each={details()}>
-        {detail => <Detail {...detail} />}
+        {detail => <Detail {...detail} showExplLink={props.showExplLinks} />}
       </For>
-      <For each={aggregatesNames()} >
-        {aggregateName => <Aggregate
-          tableName={props.tableName}
-          id={props.id}
-          aggregateName={aggregateName}
-        />}
-      </For>
-      {/* TODO: check that it works */}
-      <For each={extAggregatesNames()} >
-        {aggregateName => <Aggregate
-          tableName={extTableName() as string}
-          id={props.id}
-          aggregateName={aggregateName}
-        />}
-      </For>
+      <Show when={props.showAggregates !== false}>
+        <For each={aggregatesNames()} >
+          {aggregateName => <Aggregate
+            tableName={props.tableName}
+            id={props.id}
+            aggregateName={aggregateName}
+          />}
+        </For>
+        {/* TODO: check that it works */}
+        <For each={extAggregatesNames()} >
+          {aggregateName => <Aggregate
+            tableName={extTableName() as string}
+            id={props.id}
+            aggregateName={aggregateName}
+          />}
+        </For>
+      </Show>
     </>
   );
 }

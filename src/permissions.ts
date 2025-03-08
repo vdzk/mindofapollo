@@ -1,11 +1,22 @@
 import { schema } from "./schema/schema";
-import { ColumnSchema } from "./schema/type";
+import { ColumnSchema, ForeignKey } from "./schema/type";
 import { AuthRole } from "./types";
 
 export const isPersonal = (tableName: string) => !!schema.tables[tableName].columns.owner_id
 export const personalTableNames = Object.keys(schema.tables)
   .filter(tableName => isPersonal(tableName))
 export const isPrivate = (tableName: string) => !!schema.tables[tableName].private
+
+export const tablesThatExtendByName = Object.entries(schema.tables)
+  .flatMap(([_, table]) => 
+    Object.values(table.columns)
+      .filter(column => 
+        column.type === 'fk' && 
+        column.fk?.extensionTables
+      )
+      .map(column => (column as ForeignKey).fk.table)
+  )
+  .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
 
 const getAccessibleColNames = (
   tableName: string,

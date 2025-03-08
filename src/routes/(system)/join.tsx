@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta"
 import { useNavigate, useSearchParams } from "@solidjs/router"
 import { createStore } from "solid-js/store"
-import { FormField } from "~/components/FormField"
+import { FormField } from "~/components/form/FormField"
 import { PageTitle } from "~/components/PageTitle"
 import { join } from "~/api/execute/join"
 import { Button } from "~/components/buttons"

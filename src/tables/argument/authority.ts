@@ -11,11 +11,10 @@ export const argument_authority: TableSchema = {
       type: 'text'
     },
     source_title: {
-      label: 'source',
       type: 'link_title'
     },
     source_url: {
-      label: 'source',
+      label: 'source URL',
       type: 'link_url'
     }
   }

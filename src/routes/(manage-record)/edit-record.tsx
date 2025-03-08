@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta"
-import { Form } from "../../components/Form"
+import { Form } from "../../components/form/Form"
 import { RecordPageTitle } from "../../components/PageTitle"
 import { createAsync, useSearchParams } from "@solidjs/router"
 import { humanCase, titleColumnName } from "~/util"
@@ -26,7 +26,7 @@ export default function EditRecord() {
   }
 
   return (
-    <main>
+    <main class="pb-2">
       <Suspense fallback={`loading ${humanCase(sp.tableName)}...`}>
         <Title>{titleText()}</Title>
         <RecordPageTitle tableName={sp.tableName} text={titleText()} />

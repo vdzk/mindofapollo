@@ -5,6 +5,9 @@ import { getUserId, getUserActorUser } from "../../server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/util"
 import { _getRecordById } from "~/server-only/select"
+import { whoCanInsertRecord } from "./record"
+
+export const whoCanInsertExtRecord = whoCanInsertRecord
 
 export const insertExtRecord = async (
   tableName: string,

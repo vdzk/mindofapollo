@@ -1,14 +1,14 @@
-import { belongsTo, getAuthRole, getUserId, getUserActorUser } from "~/server-only/session"
+import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
 import { _insertRecord, injectValueTypes } from "~/server-only/mutate"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/util"
-import { isPersonal } from "~/permissions"
+import { isPersonal, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
 
 export const whoCanInsertRecord = (tableName: string) => {
-  if (tableName === 'person') {
+  if (tableName === 'person' || tablesThatExtendByName.includes(tableName)) {
     return []
   } else {
     return ['invited']

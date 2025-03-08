@@ -2,7 +2,7 @@ import { Component, createEffect, For, Match, Show, Switch } from "solid-js"
 import { schema } from "~/schema/schema"
 import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, OptionColumn, TextColumn } from "~/schema/type"
 import { FkInput } from "./FkInput"
-import { ColumnLabel } from "./ColumnLabel"
+import { ColumnLabel } from "../ColumnLabel"
 import { createAsync, useSearchParams } from "@solidjs/router"
 import { SetStoreFunction } from "solid-js/store"
 import { etv } from "~/util"
@@ -63,15 +63,17 @@ export const FormField: Component<{
   if (columnType() === 'virtual' && isNew()) return null
 
   return (
-    <label 
+    <div 
       class="block pb-2"
       classList={{ "hidden": props.hidden }}
     >
-      <ColumnLabel
-        tableName={props.tableName}
-        colName={props.colName}
-        label={props.label}
-      />
+      <label>
+        <ColumnLabel
+          tableName={props.tableName}
+          colName={props.colName}
+          label={props.label}
+        />
+      </label>
       <Switch>
         <Match when={columnType() === 'text'}>
           <TextInput
@@ -159,6 +161,6 @@ export const FormField: Component<{
           />
         </Match>
       </Switch>
-    </label>
+    </div>
   )
 }

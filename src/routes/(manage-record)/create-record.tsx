@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta"
-import { Form } from "../../components/Form"
+import { Form } from "../../components/form/Form"
 import { PageTitle } from "../../components/PageTitle"
 import { humanCase } from "~/util"
 import { useSafeParams } from "~/client-only/util"
@@ -29,7 +29,7 @@ export default function CreateRecord() {
   }
 
   return (
-    <main>
+    <main class="pb-2">
       <Title>{title()}</Title>
       <PageTitle>{title()}</PageTitle>
       <Form

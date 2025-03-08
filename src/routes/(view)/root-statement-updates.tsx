@@ -8,6 +8,7 @@ import { PageTitle } from "~/components/PageTitle"
 import { setSubscriptionAction, updateSubscriptionLastOpenedAction } from "~/client-only/action"
 import { useSafeParams } from "~/client-only/util"
 import { createEffect } from "solid-js"
+import { Link } from "~/components/Link"
 
 interface RootStatementUpdateParams {
   id: string;
@@ -40,9 +41,16 @@ export default function RootStatementUpdates() {
       <PageTitle>{title()}</PageTitle>
       
       <div class="px-2 mb-4">
+        <Link
+          label="Visit"
+          route="show-record"
+          params={{ tableName: 'statement', id: statementId() }}
+          type="button"
+        />
         <Button
           label="Unsubscribe"
           onClick={() => setSubscriptionAction(statementId(), false)}
+          class="ml-2"
         />
       </div>
       

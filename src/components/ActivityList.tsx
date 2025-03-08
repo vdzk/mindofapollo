@@ -9,7 +9,7 @@ export const formatDate = (date: Date) => {
 }
 
 // Extended type to include optional isNew property
-type ExplRecordWithOptionalIsNew<T> = ExplRecord<T> & { isNew?: boolean }
+type ExplRecordWithOptionalIsNew<T> = ExplRecord<T> & { is_new?: boolean }
 
 // Group activity by date
 export const groupActivityByDate = (activity: ExplRecordWithOptionalIsNew<any>[]) => {
@@ -50,9 +50,9 @@ export function ActivityList(props: {
                         {explRecord.timestamp.toISOString().split('.')[0].split('T')[1]}
                       </div>
                       <Show when={explRecord.data}>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-start gap-2">
                           {explRecord.is_new && (
-                            <span class="inline-block w-2 h-2 bg-blue-500 rounded-full" title="New update"></span>
+                            <span class="inline-block w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" title="New update"></span>
                           )}
                           <Link
                             route="expl"

@@ -19,6 +19,25 @@ export const Link: Component<{
   return <a href={href} title={props.tooltip} class={className}>{props.label}</a>
 }
 
+export const ExternalLink: Component<{
+  href: string
+  label?: string
+  className?: string
+}> = props => {
+  const displayText = props.label || props.href?.replace(/^(https?:\/\/)?(www\.)?/, '')
+  
+  return (
+    <a
+      href={props.href}
+      target="_blank"
+      rel="noreferrer"
+      class={props.className || "text-sky-800"}
+    >
+      {displayText}
+    </a>
+  )
+}
+
 export const Links: Component<{
   links: Array<{
     params?: Record<string, any>
@@ -39,4 +58,6 @@ export const Links: Component<{
     </>
   )
 }
+
+
 

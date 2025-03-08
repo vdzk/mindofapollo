@@ -5,7 +5,8 @@ export const statement: TableSchema = {
   plural: 'statements',
   columns: {
     text: {
-      type: 'varchar'
+      type: 'text',
+      lines: 2
     },
     argument_aggregation_type_id: {
       type: 'fk',

@@ -25,7 +25,7 @@ export const argument: TableSchema = {
       fk: {
         table: 'argument_type',
         labelColumn: 'name',
-        extensionTables: ['','authority', 'analogy', 'other', 'explanation']
+        extensionTables: ['','authority', 'analogy', 'other', 'explanation', 'epistemic']
       }
     },
     judgement_requested: {

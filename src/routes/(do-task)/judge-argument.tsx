@@ -1,6 +1,6 @@
 import { createResource, For } from "solid-js"
 import { createStore } from "solid-js/store"
-import { FormField } from "~/components/FormField"
+import { FormField } from "~/components/form/FormField"
 import { PageTitle } from "~/components/PageTitle"
 import { ColumnFilter, RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"

@@ -1,5 +1,5 @@
 import { For, Show, useContext } from "solid-js";
-import { Form } from "~/components/Form";
+import { Form } from "~/components/form/Form";
 import { createAsync, useSearchParams } from "@solidjs/router";
 import { SessionContext } from "~/SessionContext";
 import { schema } from "~/schema/schema";

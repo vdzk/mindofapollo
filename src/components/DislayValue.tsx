@@ -4,7 +4,7 @@ import { createAsync } from "@solidjs/router"
 import { getPercent, nbsp } from "~/util"
 import { schema } from "~/schema/schema"
 import { ExplLink } from "./expl/ExplLink"
-import { Link } from "./Link";
+import { ExternalLink, Link } from "./Link";
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listOriginTypes } from "~/api/list/originTypes"
 import { isPersonal } from "~/permissions"
@@ -87,6 +87,9 @@ export const DisplayValue: Component<DisplayValue> = props => {
         </Match>
         <Match when={columnType() === 'proportion'}>
           {value() ? getPercent(value() as number) : nbsp}
+        </Match>
+        <Match when={columnType() === 'link_url'}>
+          <ExternalLink href={value() as string} />
         </Match>
         <Match when>
           <span class="whitespace-pre-line">

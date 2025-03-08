@@ -15,6 +15,7 @@ import { insertExtRecord } from "~/api/insert/extRecord"
 import { insertRecord } from "~/api/insert/record"
 import { getWritableColNames } from "~/permissions"
 import { LinkData } from "~/types"
+import { isComplete } from "./isComplete"
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
@@ -115,6 +116,15 @@ export const Form: Component<{
   const pristine = () => Object.entries(diff).every(
     ([key, value]) => (key === 'id') || value === undefined) && 
     Object.values(diffExt).every(value => value === undefined)
+  const complete = () => isComplete(
+    props.tableName, 
+    diff, 
+    diffExt, 
+    colNames(),
+    extTableName(),
+    extColNames(),
+    props.record
+  )
 
   const onSubmit = async () => {
     const extension = extTableName() && !isEmpty(diffExt) ? {
@@ -131,7 +141,7 @@ export const Form: Component<{
   }
 
   return (
-    <div class="px-2 max-w-screen-sm">
+    <div class="px-2 max-w-screen-sm pb-2">
       <ExtValueContext.Provider value={setExtValue}>
         <For each={colNames()}>
           {colName => (
@@ -167,7 +177,7 @@ export const Form: Component<{
         <Button
           label="Save"
           onClick={onSubmit}
-          disabled={pristine()}
+          disabled={pristine() || !complete()}
         />
         <span class="inline-block w-2" />
         <Switch>

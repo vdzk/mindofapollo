@@ -1,7 +1,7 @@
 import { Component, createResource, For, Match, Show, Switch } from "solid-js"
 import { createStore, SetStoreFunction } from "solid-js/store"
 import { Detail } from "~/components/details"
-import { FormField } from "~/components/FormField"
+import { FormField } from "~/components/form/FormField"
 import { PageTitle, Subtitle } from "~/components/PageTitle"
 import { RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"

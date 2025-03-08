@@ -15,7 +15,8 @@ export const research_note: TableSchema = {
       preview: true
     },
     text: {
-      type: 'text'
+      type: 'text',
+      lines: 10
     }
   }
 }
