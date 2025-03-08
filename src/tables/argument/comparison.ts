@@ -1,11 +1,10 @@
 import { TableSchema } from "../../schema/type";
 
-export const argument_epistemic: TableSchema = {
+export const argument_comparison: TableSchema = {
   extendsTable: 'argument',
   columns: {
     text: {
-      type: 'text',
-      lines: 10
+      type: 'text'
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, createSignal, For, Show, createMemo, onMount, onCleanup, JSX } from "solid-js"
+import { Component, createSignal, For, Show, createMemo, onMount, onCleanup } from "solid-js"
 import { Option } from "~/types"
 
 interface LongSelectProps {

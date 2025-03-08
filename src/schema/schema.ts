@@ -35,6 +35,7 @@ import { argument_explanation } from "~/tables/argument/explanation"
 import { chat_message } from "~/tables/other/chat_message"
 import { person_secret } from "~/tables/other/person_secret"
 import { argument_epistemic } from "~/tables/argument/epistemic"
+import { argument_comparison } from "~/tables/argument/comparison"
 
 // NOTE: table name 'person' and column names 'id', 'name', 'owner_id' have special meanings
 
@@ -52,6 +53,7 @@ export const schema: AppDataSchema = {
     argument_authority,
     argument_explanation,
     argument_epistemic,
+    argument_comparison,
     argument_other,
     critical_statement,
     research_note,
