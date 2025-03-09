@@ -13,7 +13,7 @@ export default function RecentActivity() {
     <main>
       <Title>Recent Activity</Title>
       <PageTitle>Recent Activity</PageTitle>
-      <ActivityList activity={activity()} />
+      <ActivityList activity={activity()} goToRecord />
     </main>
   )
 }

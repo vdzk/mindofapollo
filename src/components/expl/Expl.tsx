@@ -10,19 +10,22 @@ import { Dynamic } from "solid-js/web"
 import { sections } from "./sections/sections"
 import { useSearchParams } from "@solidjs/router"
 
-const getActionStr = (expl: ExplData) => `${expl.action} the ${humanCase(expl.target.tableName)} "${expl.target.label}"`
+export const getActionStr = (expl: ExplData) => `${expl.action} the ${humanCase(expl.target.tableName)} "${expl.target.label}"`
 
-const getSummaryStr = (expl: ExplData) => {
-  let actorStr = ''
+export const getActorStr = (expl: ExplData) => {
   if (expl.actor.type === 'user') {
-    actorStr = expl.actor.user.name
+    return expl.actor.user.name
   } else if (expl.actor.type === 'system') {
-    actorStr = 'System'
+    return 'System'
   }
-  return `${actorStr} ${getActionStr(expl)}`
+  return ''
 }
 
-const getExplData = (explRecord: ExplRecord<any>) => {
+const getSummaryStr = (expl: ExplData) => {
+  return `${getActorStr(expl)} ${getActionStr(expl)}`
+}
+
+export const getExplData = (explRecord: ExplRecord<any>) => {
   const formatter = formatters['expl' + firstCap(explRecord.action)]
   return formatter(explRecord.data)
 }

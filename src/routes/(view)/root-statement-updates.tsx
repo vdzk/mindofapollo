@@ -54,7 +54,7 @@ export default function RootStatementUpdates() {
         />
       </div>
       
-      <ActivityList activity={updates()} />
+      <ActivityList activity={updates()} goToRecord />
     </main>
   )
 }

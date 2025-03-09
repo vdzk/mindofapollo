@@ -170,4 +170,9 @@ export const addExplIds = (record: Record<string, any>, explId: number) => {
   return result
 }
 
+// Format date for display as "YYYY-MM-DD"
+export const formatDate = (date: Date) => {
+  return date.toISOString().split('T')[0];
+}
+
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
