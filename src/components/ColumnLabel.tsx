@@ -1,6 +1,6 @@
 import { Component } from "solid-js"
 import { schema } from "~/schema/schema"
-import { humanCase } from "~/util"
+import { humanCase } from "~/utils/string"
 
 export const ColumnLabel: Component<{
   tableName: string

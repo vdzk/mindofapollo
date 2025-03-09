@@ -5,7 +5,7 @@ import { ExplRecord } from "~/server-only/expl"
 import { Link } from "~/components/Link"
 import { getActionStr, getExplData } from "~/components/expl/Expl"
 import { ExplLink } from "~/components/expl/ExplLink"
-import { formatDate } from "~/util"
+import { formatDate } from "~/utils/string"
 
 // Group activity by date only
 const groupActivityByDateOnly = (activity: ExplRecord<any>[]) => {

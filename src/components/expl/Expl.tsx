@@ -1,7 +1,7 @@
 import { Component, createMemo, Switch, Match } from "solid-js"
 import { ExplRecord } from "~/server-only/expl"
 import { formatters } from "./formatter"
-import { firstCap, humanCase } from "~/util"
+import { firstCap, humanCase } from "~/utils/string"
 import { ExplData } from "./types"
 import { Title } from "@solidjs/meta"
 import { AbovePageTitle, PageTitle } from "../PageTitle"

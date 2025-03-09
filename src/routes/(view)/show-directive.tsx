@@ -2,7 +2,7 @@ import { createAsync } from "@solidjs/router"
 import { For, Suspense } from "solid-js"
 import { listUserDirectives } from "~/api/list/userDirectives"
 import { PageTitle } from "~/components/PageTitle"
-import { indexBy } from "~/util"
+import { indexBy } from "~/utils/shape"
 
 export default function ShowDirective() {
   const data = createAsync(listUserDirectives)

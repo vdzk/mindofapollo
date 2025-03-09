@@ -1,5 +1,5 @@
 import { Component, ParentComponent } from "solid-js";
-import { firstCap, humanCase } from "~/util";
+import { firstCap, humanCase } from "~/utils/string";
 
 export const PageTitle: ParentComponent = (props) => {
   return (

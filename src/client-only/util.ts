@@ -18,3 +18,5 @@ export const useSafeParams = <T,>(paramNames: string[]) => {
   })
   return safeSearchParams as Accessor<T>
 }
+
+export const etv = (fn: (val: string, name: string) => void) => (event: { target: { value: string; name: string; }; }) => fn(event.target.value, event.target.name);

@@ -3,7 +3,7 @@ import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
 import { _insertRecord, injectValueTypes } from "~/server-only/mutate"
 import { ExplData, UserActor } from "~/components/expl/types"
-import { titleColumnName } from "~/util"
+import { titleColumnName } from "~/utils/schema"
 import { isPersonal, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
 

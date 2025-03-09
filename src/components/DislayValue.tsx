@@ -1,7 +1,8 @@
 import { Component, Match, Show, Suspense, Switch } from "solid-js"
 import { BooleanColumn, DataRecord, ForeignKey, SimpleColumn } from "~/schema/type"
 import { createAsync } from "@solidjs/router"
-import { getPercent, nbsp } from "~/util"
+import { getPercent } from "~/utils/string"
+import { nbsp } from "~/utils/string"
 import { schema } from "~/schema/schema"
 import { ExplLink } from "./expl/ExplLink"
 import { ExternalLink, Link } from "./Link";

@@ -4,7 +4,7 @@ import { getHomePageStatementsCache, getRecords } from "~/client-only/query"
 import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
 import { Subtitle } from "~/components/PageTitle"
-import { etv } from "~/util"
+import { etv } from "~/client-only/util"
 import { setSubscriptionAction } from "~/client-only/action"
 import { Button } from "~/components/buttons"
 

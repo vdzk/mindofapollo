@@ -3,7 +3,7 @@ import { ofSelf } from "~/server-only/ofSelf"
 import { _deleteById } from "~/server-only/mutate"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
-import { titleColumnName } from "~/util"
+import { titleColumnName } from "~/utils/schema"
 import { DeleteExtByIdData, explDeleteExtById, whoCanDeleteExtById } from "./extById"
 
 export const whoCanDeleteById = whoCanDeleteExtById

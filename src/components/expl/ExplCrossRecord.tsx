@@ -1,5 +1,5 @@
 import { For, Show, Component } from "solid-js"
-import { firstCap, humanCase } from "~/util"
+import { firstCap, humanCase } from "~/utils/string"
 import { ExplLink } from "./ExplLink"
 import { Subtitle } from "../PageTitle"
 import { Link } from "../Link"

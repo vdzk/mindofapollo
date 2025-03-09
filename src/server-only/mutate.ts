@@ -4,7 +4,8 @@ import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType"
 import { AddExplId } from "~/components/expl/types"
-import { addExplIdColNames, addExplIds } from "~/util"
+import { addExplIdColNames } from "~/utils/expl"
+import { addExplIds } from "~/utils/expl"
 
 
 // TODO: implement efficient bulk version

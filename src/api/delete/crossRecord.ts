@@ -1,5 +1,5 @@
 import { onError, sql } from "~/server-only/db";
-import { xName } from "~/util";
+import { xName } from "~/utils/schema";
 import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session";
 import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData } from "../insert/crossRecord";
 import { finishExpl, startExpl } from "~/server-only/expl";

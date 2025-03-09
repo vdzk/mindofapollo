@@ -1,4 +1,4 @@
-import { getPercent } from "~/util";
+import { getPercent } from "~/utils/string";
 import { TableSchema } from "../schema/type";
 
 export const statement: TableSchema = {

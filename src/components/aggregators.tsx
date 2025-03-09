@@ -1,5 +1,7 @@
 import { AggregateSchema, BooleanColumn, DataRecord, DataRecordWithId, ForeignKey, NToNSchema, OneToNSchema, TableSchema } from "~/schema/type";
-import { firstCap, pluralTableName, titleColumnName } from "~/util";
+import { firstCap } from "~/utils/string";
+import { pluralTableName } from "~/utils/schema";
+import { titleColumnName } from "~/utils/schema";
 import { AggregateSection } from "./Aggregate"
 
 export type Aggregator = (props: {

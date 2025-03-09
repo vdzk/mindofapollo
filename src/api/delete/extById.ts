@@ -1,6 +1,7 @@
 import { _deleteById } from "../../server-only/mutate"
 import { _getRecordById } from "../../server-only/select"
-import { getExtTableName, titleColumnName } from "~/util"
+import { getExtTableName } from "~/utils/schema"
+import { titleColumnName } from "~/utils/schema"
 import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session"
 import { ofSelf } from "~/server-only/ofSelf"
 import { ExplData, UserActor } from "~/components/expl/types"

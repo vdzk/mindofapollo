@@ -1,4 +1,4 @@
-import { resolveEntries } from "~/util"
+import { resolveEntries } from "~/utils/async"
 import { getDirConcsWithValues } from "./getDirConcsWithValues"
 
 const virtualColumns: Record<string, Record<string,

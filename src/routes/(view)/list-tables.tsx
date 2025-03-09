@@ -3,7 +3,9 @@ import { Title } from "@solidjs/meta"
 import { For } from "solid-js"
 import { PageTitle } from "~/components/PageTitle"
 import { schema } from "~/schema/schema"
-import { firstCap, pluralTableName, titleColumnName } from "~/util"
+import { firstCap } from "~/utils/string";
+import { pluralTableName } from "~/utils/schema";
+import { titleColumnName } from "~/utils/schema";
 
 // Group tables by their category based on folder structure
 const tableCategories = {

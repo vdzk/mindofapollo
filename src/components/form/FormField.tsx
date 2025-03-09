@@ -5,7 +5,7 @@ import { FkInput } from "./FkInput"
 import { ColumnLabel } from "../ColumnLabel"
 import { createAsync, useSearchParams } from "@solidjs/router"
 import { SetStoreFunction } from "solid-js/store"
-import { etv } from "~/util"
+import { etv } from "~/client-only/util"
 import { TextInput } from "./TextInput"
 import { listOriginTypes } from "~/api/list/originTypes"
 

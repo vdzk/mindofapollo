@@ -3,7 +3,7 @@ import { _insertRecord } from "../../server-only/mutate"
 import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
 import { getUserId, getUserActorUser } from "../../server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
-import { titleColumnName } from "~/util"
+import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
 import { whoCanInsertRecord } from "./record"
 

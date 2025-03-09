@@ -2,7 +2,7 @@ import { Show, Component } from "solid-js"
 import { ExplData, UserActor } from "../types"
 import { Link } from "~/components/Link"
 import { ExplLink } from "../ExplLink"
-import { humanCase } from "~/util"
+import { humanCase } from "~/utils/string"
 
 export const ExplDetails: Component<ExplData> = (props) => {
   return (

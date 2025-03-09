@@ -5,7 +5,7 @@ import { startExpl, finishExpl } from "~/server-only/expl";
 import { getUserId, getUserActorUser } from "~/server-only/session";
 import { ExplData, UserActor } from "~/components/expl/types";
 import { _getRecordById } from "~/server-only/select";
-import { titleColumnName } from "~/util";
+import { titleColumnName } from "~/utils/schema";
 
 export const submitChangeProposal = async (
   tableName: string,

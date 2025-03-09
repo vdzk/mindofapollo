@@ -7,7 +7,7 @@ import {ProposalRecord} from "~/tables/other/change_proposal"
 import {getValueTypeTableName} from "~/schema/dataTypes"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { titleColumnName } from "~/util"
+import { titleColumnName } from "~/utils/schema"
 
 export const submitTaskVoteChangeProposal = async (
   proposalId: number,

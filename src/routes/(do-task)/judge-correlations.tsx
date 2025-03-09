@@ -10,7 +10,7 @@ import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { Button } from "~/components/buttons";
 import { getTaskJudgeCorrelations } from "~/api/getTask/judgeCorrelations"
 import { submitTaskJudgeCorrelations } from "~/api/submitTask/judgeCorrelations"
-import { getExtTableName } from "~/util"
+import { getExtTableName } from "~/utils/schema"
 
 const CorrelationForm: Component<{
   argument: DataRecordWithId

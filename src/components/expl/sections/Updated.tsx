@@ -1,6 +1,6 @@
 import { For, Show, Component } from "solid-js"
 import { ExplData } from "../types"
-import { firstCap, humanCase } from "~/util"
+import { firstCap, humanCase } from "~/utils/string"
 import { DetailDiff } from "~/components/details"
 import { Link } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"

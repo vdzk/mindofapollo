@@ -1,5 +1,5 @@
 import { TableSchema } from "~/schema/type";
-import { genCode, getUrl } from "~/util";
+import { genCode, getUrl } from "~/utils/string";
 
 export const invite: TableSchema = {
   plural: 'invites',

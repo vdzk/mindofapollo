@@ -3,7 +3,7 @@ import { For } from "solid-js";
 import { createStore } from "solid-js/store";
 import { PageTitle } from "~/components/PageTitle";
 import { calcStatementConfidence } from "~/compute";
-import { etv } from "~/util";
+import { etv } from "~/client-only/util";
 import { Button } from "~/components/buttons";
 
 export default function ConfidenceCalculator() {

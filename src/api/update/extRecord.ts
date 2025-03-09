@@ -3,7 +3,7 @@ import { _updateRecord } from "../../server-only/mutate"
 import { startExpl, finishExpl } from "~/server-only/expl"
 import { getUserSession, getUserActorUser } from "../../server-only/session"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
-import { titleColumnName } from "~/util"
+import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
 
 export const updateExtRecord = async (

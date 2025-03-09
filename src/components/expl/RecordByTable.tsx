@@ -1,6 +1,6 @@
 import { Component, For, Show } from "solid-js"
 import { DataRecord } from "~/schema/type"
-import { firstCap, humanCase } from "~/util"
+import { firstCap, humanCase } from "~/utils/string"
 import { ExplRecordDetails } from "./ExplRecordDetails"
 import { Subtitle } from "../PageTitle"
 

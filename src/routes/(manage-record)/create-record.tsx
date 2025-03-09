@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta"
 import { Form } from "../../components/form/Form"
 import { PageTitle } from "../../components/PageTitle"
-import { humanCase } from "~/util"
+import { humanCase } from "~/utils/string"
 import { useSafeParams } from "~/client-only/util"
 import { useSearchParams } from "@solidjs/router"
 import { LinkData } from "~/types"

@@ -1,6 +1,6 @@
 import { For, JSX } from "solid-js"
 import { Option } from "~/types"
-import { firstCap } from "~/util"
+import { firstCap } from "~/utils/string"
 
 export const MasterDetail = <T,>(props: {
   options: Option<T>[]

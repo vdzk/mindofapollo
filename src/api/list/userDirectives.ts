@@ -1,6 +1,6 @@
 import { onError, sql } from "../../server-only/db"
 import { getDirConcsWithValues } from "../../server-only/getDirConcsWithValues"
-import {xName} from "~/util";
+import { xName } from "~/utils/schema";
 import { getUserSession } from "~/server-only/session"
 
 export const listUserDirectives = async () => {
