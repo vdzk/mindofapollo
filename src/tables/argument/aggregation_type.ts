@@ -4,7 +4,11 @@ export const argument_aggregation_type: TableSchema = {
   plural: 'argument aggregation types',
   columns: {
     name: {
-      type: 'varchar',
+      type: 'option',
+      options: [
+        'evidential',
+        'additive'
+      ],
       preview: true,
       unique: true
     },

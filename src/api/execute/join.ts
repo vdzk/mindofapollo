@@ -4,8 +4,9 @@ import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, setExplRecordId, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
 import { _insertRecord, _updateRecord } from "~/server-only/mutate"
+import { Language } from "~/translation"
 
-export const join = async (name: string, code: string) => {
+export const join = async (name: string, language: Language, code: string) => {
   "use server"
   const invites = await sql`
     SELECT id, owner_id
@@ -31,7 +32,8 @@ export const join = async (name: string, code: string) => {
 
   const person = await _insertRecord('person', {
     name,
-    auth_role_id: authRole.id
+    auth_role_id: authRole.id,
+    language
   }, explId)
   if (!person) return
   await setExplRecordId(explId, person.id)

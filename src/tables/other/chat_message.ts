@@ -1,6 +1,8 @@
 import { TableSchema } from "~/schema/type";
 
 export const chat_message: TableSchema = {
+  translate: false,
+  expl: false,
   columns: {
     text: {
       type: 'text'

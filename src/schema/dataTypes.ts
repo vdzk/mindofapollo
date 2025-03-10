@@ -8,7 +8,9 @@ export const customDataTypes: Record<CustomDataType | 'fk', string> = {
   link_url: 'varchar',
   link_title: 'varchar',
   option: 'varchar',
-  value_type_id: 'integer'
+  value_type_id: 'integer',
+  table_name: 'varchar',
+  column_name: 'varchar',
 }
 
 export const sanitizeTableName = (str: string) => str

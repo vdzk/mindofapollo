@@ -4,6 +4,11 @@ import { TableSchema } from "../schema/type";
 export const statement: TableSchema = {
   plural: 'statements',
   columns: {
+    label: {
+      type: 'virtual',
+      getLocal: (record) => `(${record.decided ? getPercent(record.confidence as number) : '?'}) ${record.text}`,
+      preview: true
+    },
     text: {
       type: 'text',
       lines: 2
@@ -41,11 +46,6 @@ export const statement: TableSchema = {
       type: 'boolean',
       defaultValue: false,
       readOnly: true
-    },
-    label: {
-      type: 'virtual',
-      getLocal: (record) => `(${record.decided ? getPercent(record.confidence as number) : '?'}) ${record.text}`,
-      preview: true
     }
   },
   aggregates: {

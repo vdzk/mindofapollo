@@ -1,5 +1,5 @@
 import { schema } from "~/schema/schema"
-import { DataRecord } from "~/schema/type"
+import { ColumnSchema, DataRecord } from "~/schema/type"
 import { humanCase } from "./string"
 
 
@@ -77,4 +77,19 @@ export const getVirtualColNames = (tableName: string, colNames?: string[]) => {
 }
 
 export const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] : [b, a]).join('_x_')
+
+// Determines if a column's content should be picked from the translation table
+export const translatable = (tableName: string, columnName: string): boolean => {
+  const table = schema.tables[tableName]
+  const column = table.columns[columnName]
+  
+  // Check if table is private or translation is explicitly disabled
+  if (table.private || table.translate === false) {
+    return false
+  }
+
+  // Check if column type is one of the translatable types
+  const translatableTypes: ColumnSchema['type'][] = ['varchar', 'text', 'link_title']
+  return translatableTypes.includes(column.type)
+}
 

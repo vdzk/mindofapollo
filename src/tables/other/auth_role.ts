@@ -1,10 +1,12 @@
 import { TableSchema } from "~/schema/type";
+import { authRoles } from "~/types";
 
 export const auth_role: TableSchema = {
   plural: 'auth. roles',
   columns: {
     name: {
-      type: 'varchar'
+      type: 'option',
+      options: authRoles
     }
   },
   aggregates: {

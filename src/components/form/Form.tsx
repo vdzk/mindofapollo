@@ -18,6 +18,7 @@ import { insertRecord } from "~/api/insert/record"
 import { getWritableColNames } from "~/permissions"
 import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
+import { login } from "~/api/execute/login"
 
 export const ExtValueContext = createContext<Setter<string | undefined>>()
 
@@ -37,6 +38,7 @@ export const Form: Component<{
   const [extValue, setExtValue] = createSignal<string>()
   const [showAdvanced, setShowAdvanced] = createSignal(false)
 
+  const isSelf = () => props.tableName === 'person' && props.id === session?.userSession?.()?.userId
   const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
     return 'onExit' in exit
   }
@@ -63,6 +65,10 @@ export const Form: Component<{
         )
       } else {
         await updateRecord(tableName, props.id, record)
+      }
+      if (isSelf()) {
+        await login(props.id)
+        await session?.refetch()
       }
       if (hasExitHandler(props.exitSettings)) {
         revalidate([

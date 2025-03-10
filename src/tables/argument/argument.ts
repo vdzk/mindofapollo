@@ -1,5 +1,5 @@
 import { getPercent } from "~/utils/string";
-import { DataRecord, TableSchema } from "../../schema/type";
+import { DataRecord, ForeignKey, TableSchema } from "../../schema/type";
 
 export const argument: TableSchema = {
   plural: 'arguments',

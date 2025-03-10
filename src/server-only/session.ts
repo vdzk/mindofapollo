@@ -25,6 +25,11 @@ export const getAuthRole = async () => {
   return session.data.authRole
 }
 
+export const getUserLanguage = async () => {
+  const session = await getSession()
+  return session.data.language
+}
+
 export const belongsTo = async (roles: string[]) => {
   const authRole = await getAuthRole()
   if (authRole === 'admin') return true

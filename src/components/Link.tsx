@@ -1,11 +1,11 @@
-import { Component } from "solid-js"
+import { Component, JSXElement } from "solid-js"
 import { DataLiteral } from "~/schema/type"
 import { btnStyle } from "./buttons"
 import { buildUrl } from "~/utils/string"
 
 export const Link: Component<{
   params?: Record<string, any>
-  label?: DataLiteral
+  label?: DataLiteral | JSXElement
   route: string,
   type?: 'button' | 'logo',
   tooltip?: string

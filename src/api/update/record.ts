@@ -11,10 +11,16 @@ import { getUserActorUser } from "../../server-only/session"
 import { _getRecordById } from "~/server-only/select"
 import { printError } from "../../server-only/db"
 
-export const whoCanUpdateRecord = (tableName: string, ofSelf: boolean) => {
+export const whoCanUpdateRecord = (
+  tableName: string,
+  ofSelf: boolean,
+  self: boolean
+) => {
   if (!hasOwnFields(tableName)) {
     return []
   } else if (isPrivate(tableName) && !ofSelf) {
+    return []
+  } else if (tableName === 'person' && !self) {
     return []
   } else {
     return ['invited']
@@ -27,11 +33,11 @@ export const updateRecord = async (
   record: DataRecord
 ) => {
   "use server"
+  const {userId, authRole} = await getUserSession()
   if (! await belongsTo(whoCanUpdateRecord(
-    tableName, await ofSelf(tableName, id)
+    tableName, await ofSelf(tableName, id), userId === id
   ))) return
 
-  const {userId, authRole} = await getUserSession()
   const writableColNames = getWritableColNames(tableName, authRole)
   const forbiddenColumn = Object.keys(record)
     .find(colName => !writableColNames.includes(colName))

@@ -53,7 +53,8 @@ export default function ShowRecord() {
 
   const canUpdateRecord = () => useBelongsTo(whoCanUpdateRecord(
     sp().tableName,
-    useOfSelf(sp().tableName, record())
+    useOfSelf(sp().tableName, record()),
+    isSelf()
   ))
   const canDeleteExtById = () => useBelongsTo(whoCanDeleteExtById(
     sp().tableName,

@@ -8,6 +8,7 @@ import { Button } from "~/components/buttons"
 import { login } from "~/api/execute/login"
 import { SessionContext } from "~/SessionContext"
 import { useContext } from "solid-js"
+import { Language } from "~/translation"
 
 interface Join {
   code: string
@@ -17,9 +18,9 @@ export default function Join() {
   const session = useContext(SessionContext)
   const navigate = useNavigate()
   const [sp] = useSearchParams() as unknown as [Join]
-  const [diff, setDiff] = createStore({ name: '' })
+  const [diff, setDiff] = createStore({ name: '', language: 'english' })
   const onSubmit = async () => {
-    const userId = await join(diff.name, sp.code)
+    const userId = await join(diff.name, diff.language as Language, sp.code)
     if (!userId) {
       console.error('join failed')
       return
@@ -39,6 +40,11 @@ export default function Join() {
         <FormField
           tableName="person"
           colName="name"
+          {...{diff, setDiff}}
+        />
+        <FormField
+          tableName="person"
+          colName="language"
           {...{diff, setDiff}}
         />
         <Button

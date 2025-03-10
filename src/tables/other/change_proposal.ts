@@ -17,13 +17,13 @@ export interface ProposalRecord {
 export const change_proposal: TableSchema = {
   columns: {
     table_name: {
-      type: 'varchar'
+      type: 'table_name'
     },
     target_id: {
       type: 'integer'
     },
     column_name: {
-      type: 'varchar',
+      type: 'column_name',
       label: 'field'
     },
     old_value_id: {

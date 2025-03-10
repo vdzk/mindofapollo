@@ -135,7 +135,10 @@ export const FormField: Component<{
               <option></option>
             </Show>
             <For each={(column() as OptionColumn).options}>
-              {option => <option value={option}>{option}</option>}
+              {option => <option
+                value={option}
+                selected={option === value()}
+              >{option}</option>}
             </For>
           </select>
         </Match>

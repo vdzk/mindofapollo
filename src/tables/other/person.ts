@@ -1,4 +1,5 @@
 import { TableSchema } from "~/schema/type";
+import { languages } from "~/translation";
 
 export const person: TableSchema = {
   plural: 'persons',
@@ -11,8 +12,14 @@ export const person: TableSchema = {
       fk: {
         table: 'auth_role',
         labelColumn: 'name'
-      }
-    } 
+      },
+      readOnly: true
+    },
+    language: {
+      type: 'option',
+      options: languages,
+      defaultValue: languages[0]
+    }
   },
   aggregates: {
     person_categories: {
@@ -35,7 +42,7 @@ export const person: TableSchema = {
     details: {
       label: 'Details',
       fields: [
-        'name', 'auth_role_id',
+        'name', 'auth_role_id', 'language',
         'person_categories', 'moral_weights'
       ]
     },

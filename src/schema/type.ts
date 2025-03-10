@@ -1,4 +1,4 @@
-export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id'
+export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id' | 'table_name' | 'column_name'
 export type DataLiteral = string | number | boolean | null
 export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
 export type ColumnType = 'boolean' | 'integer'
@@ -14,7 +14,7 @@ interface SharedColumnProps {
 }
 
 export interface SimpleColumn extends SharedColumnProps {
-  type: 'integer' | 'varchar' | 'proportion' | 'weight' | 'link_url' | 'link_title'
+  type: 'integer' | 'varchar' | 'proportion' | 'weight' | 'link_url' | 'link_title' | 'table_name' | 'column_name'
 }
 
 export interface BooleanColumn extends SharedColumnProps {
@@ -29,7 +29,7 @@ export interface TextColumn extends SharedColumnProps {
 
 export interface OptionColumn extends SharedColumnProps {
   type: 'option',
-  options: string[]
+  options: readonly string[]
 }
 
 // NOTE: A lot of code is requered to implement this column type. Perhaps a simpler approach can be found.
@@ -118,6 +118,8 @@ export interface TableSchema {
   createRecord?: () => DataRecord // Generate new records automatically
   sections?: Record<string, Section>
   advanced?: string[] // Columns that are not shown by default when editing
+  translate?: boolean // Should the records be translated
+  expl?: boolean // Should the record changes be explained
 }
 
 export interface AppDataSchema {
