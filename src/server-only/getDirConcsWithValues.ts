@@ -1,6 +1,6 @@
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
 import { onError, sql } from "./db"
-import { injectTranslations } from "./translation"
+import { injectTranslations } from "./injectTranslations"
 import { ColumnType, DataRecordWithId } from "~/schema/type"
 
 export const getDirConcsWithValues = async (ids: number[]) => {

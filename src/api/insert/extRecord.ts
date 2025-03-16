@@ -19,22 +19,23 @@ export const insertExtRecord = async (
   const userId = await getUserId()
   const explId = await startExpl(userId, 'insertExtRecord', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)
-  if (result) {
-    const extResult = await _insertRecord(extTableName, {id: result.id, ...extRecord}, explId)
-    await setExplRecordId(explId, result.id)
+  const { id } = result
+  const savedRecord = await _getRecordById(tableName, id)
+  if (!savedRecord) return
+  const extResult = await _insertRecord(extTableName, {id, ...extRecord}, explId)
+  await setExplRecordId(explId, id)
 
-    const user = await getUserActorUser()
-    const data: InsertExtRecordData = {
-      tableName,
-      extTableName,
-      record: result,
-      extRecord: extResult!,
-      user,
-      targetLabel: result[titleColumnName(tableName)] as string
-    }
-    await finishExpl(explId, data)
+  const user = await getUserActorUser()
+  const data: InsertExtRecordData = {
+    tableName,
+    extTableName,
+    record: savedRecord,
+    extRecord: extResult!,
+    user,
+    targetLabel: savedRecord[titleColumnName(tableName)] as string
   }
-  return result
+  await finishExpl(explId, data)
+  return savedRecord
 }
 
 export interface InsertExtRecordData {

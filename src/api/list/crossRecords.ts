@@ -1,7 +1,7 @@
 import { DataRecordWithId } from "~/schema/type";
 import { onError, sql } from "~/server-only/db";
 import { injectVirtualValues } from "~/server-only/select";
-import { injectTranslations } from "~/server-only/translation";
+import { injectTranslations } from "~/server-only/injectTranslations";
 import { xName } from "~/utils/schema";
 
 export const listCrossRecords = async (

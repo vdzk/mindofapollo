@@ -1,13 +1,4 @@
-import { DataRecord } from "~/schema/type";
-
-export const arrayToObjects = (arrayOfArrays: any[][], keys: string[]) => {
-  return arrayOfArrays.map(innerArray => {
-    return keys.reduce((obj: Record<string, any>, key, index) => {
-      obj[key] = innerArray[index];
-      return obj;
-    }, {});
-  });
-};
+import { DataRecord } from "~/schema/type"
 
 export const indexBy = (records: DataRecord[], colName: string) => Object.fromEntries(records.map(record => [record[colName], record]))
 

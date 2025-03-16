@@ -1,6 +1,6 @@
 import { WeightedArgument } from "~/compute";
 import { onError, sql } from "~/server-only/db";
-import { injectTranslations } from "./translation";
+import { injectTranslations } from "./injectTranslations";
 import { DataRecordWithId } from "~/schema/type";
 
 export const getWeightedArguments = async (statementId: number): Promise<WeightedArgument[]> => {

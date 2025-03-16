@@ -3,7 +3,7 @@ import { getDirConcsWithValues } from "../../server-only/getDirConcsWithValues"
 import { xName } from "~/utils/schema";
 import { getUserSession } from "~/server-only/session"
 import { DataRecordWithId } from "~/schema/type";
-import { injectTranslations } from "~/server-only/translation";
+import { injectTranslations } from "~/server-only/injectTranslations";
 
 export const listUserDirectives = async () => {
   "use server"

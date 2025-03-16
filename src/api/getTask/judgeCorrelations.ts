@@ -1,6 +1,6 @@
 import { DataRecordWithId } from "~/schema/type"
 import { onError, sql } from "~/server-only/db"
-import { injectTranslations } from "~/server-only/translation"
+import { injectTranslations } from "~/server-only/injectTranslations"
 
 export const getTaskJudgeCorrelations = async () => {
   "use server"

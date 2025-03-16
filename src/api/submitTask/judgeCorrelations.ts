@@ -6,7 +6,7 @@ import { getUserId, getUserActorUser } from "~/server-only/session"
 import { _getRecordById } from "~/server-only/select"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { sql, onError } from "~/server-only/db"
-import { injectTranslations } from "~/server-only/translation"
+import { injectTranslations } from "~/server-only/injectTranslations"
 
 export const submitTaskJudgeCorrelations = async (statementId: number, records: DataRecord[]) => {
   "use server"

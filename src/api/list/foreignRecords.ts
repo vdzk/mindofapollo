@@ -2,7 +2,7 @@ import { onError, sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { injectVirtualValues } from "~/server-only/select"
 import { DataRecordWithId } from "~/schema/type";
-import { injectTranslations } from "~/server-only/translation";
+import { injectTranslations } from "~/server-only/injectTranslations";
 
 export const listForeignRecords = async (
     tableName: string,
@@ -28,8 +28,6 @@ export const listForeignRecords = async (
         ORDER BY id
       `.catch(onError)
     }
-    console.log(tableName)
-    console.log(records)
     await injectTranslations(tableName, records)
     await injectVirtualValues(tableName, records)
     return records as unknown as DataRecordWithId[]

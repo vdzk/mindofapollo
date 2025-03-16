@@ -60,8 +60,6 @@ export const injectTranslations = async (
     FROM translation
     WHERE ${conditions}
   `.catch(onError)
-  console.log('translatedColumns', translatedColumns)
-  console.log('allTranslations', allTranslations)
 
   // Organize translations by table_name, column_name, and record_id
   const trObj: Record<string, Record<string, Record<number, string>>> = {}

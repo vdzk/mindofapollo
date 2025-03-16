@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta"
-import { createAsync, query, useAction } from "@solidjs/router"
+import { createAsync, query, useAction, useLocation } from "@solidjs/router"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRootStatementUpdates } from "~/api/list/rootStatementUpdates"
 import { ActivityList } from "~/components/ActivityList"
@@ -26,6 +26,8 @@ export default function RootStatementUpdates() {
   const updates = createAsync(() => getRootStatementUpdatesQuery({ id: statementId() }))
   const statement = createAsync(() => getOneRecordById('statement', statementId()))
   const updateLastOpened = useAction(updateSubscriptionLastOpenedAction)
+  const setSubscription = useAction(setSubscriptionAction)
+  const unsubscribe = async () => setSubscription(statementId(), false, '/home-page')
 
   createEffect(() => {
     if (updates()) {
@@ -49,7 +51,7 @@ export default function RootStatementUpdates() {
         />
         <Button
           label="Unsubscribe"
-          onClick={() => setSubscriptionAction(statementId(), false)}
+          onClick={unsubscribe}
           class="ml-2"
         />
       </div>

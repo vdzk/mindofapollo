@@ -1,6 +1,6 @@
 import { onError, sql } from "~/server-only/db"
 import { DataRecordWithId } from "~/schema/type"
-import { injectTranslations } from "~/server-only/translation"
+import { injectTranslations } from "~/server-only/injectTranslations"
 
 export const listOverlapRecords = async (
   tableName: string,

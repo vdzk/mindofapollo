@@ -98,6 +98,21 @@ export const translatable = (tableName: string, columnName: string): boolean => 
   return translatableTypes.includes(column.type)
 }
 
+export const splitTranslatable = (tableName: string, record: DataRecord) => {
+  let translationRequired = false
+  const originalText: Record<string, string> = {}
+  const nonTranslatable:DataRecord = {}
+  for (const colName in record) {
+    if (translatable(tableName, colName)) {
+      translationRequired = true
+      originalText[colName] = record[colName] as string
+    } else {
+      nonTranslatable[colName] = record[colName]
+    }
+  }
+  return { translationRequired, originalText, nonTranslatable }
+}
+
 export const getTranslatableColumns = (
   tableName: string,
   colNames?: string[] | null,

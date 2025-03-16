@@ -1,6 +1,6 @@
 import { onError, sql } from "~/server-only/db"
 import { getWeightedArguments } from "../../server-only/getWeightedArguments"
-import { injectTranslations } from "~/server-only/translation"
+import { injectTranslations } from "~/server-only/injectTranslations"
 import { DataRecordWithId } from "~/schema/type"
 
 export const getTaskWeighArgument = async () => {

@@ -1,7 +1,7 @@
 import { onError, sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { DataRecordWithId, ForeignKey } from "~/schema/type"
-import { injectTranslations } from "~/server-only/translation";
+import { injectTranslations } from "~/server-only/injectTranslations";
 
 export const listForeignHopRecords = async (
     tableName: string,

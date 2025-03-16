@@ -2,7 +2,6 @@ import { VqColumn } from "~/server-only/queryVirtualColumn"
 
 export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id' | 'table_name' | 'column_name'
 export type DataLiteral = string | number | boolean | null
-export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
 export type ColumnType = 'boolean' | 'integer'
 
 export interface DataRecord {[column: string]: DataLiteral }

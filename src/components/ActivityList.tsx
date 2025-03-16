@@ -49,9 +49,12 @@ export const groupActivity = (activity: ExplRecordWithOptionalIsNew<any>[]): Gro
   });
 
   return Object.entries(groups).map(([date, hours]) => {
-    return [date, Object.entries(hours).map(([hour, users]) => {
-      return [hour, Object.entries(users)];
-    })];
+    return [date, Object.entries(hours)
+      // Sort hours in descending order (later hours first)
+      .sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
+      .map(([hour, users]) => {
+        return [hour, Object.entries(users)];
+      })];
   });
 };
 

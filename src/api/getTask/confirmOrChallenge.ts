@@ -1,7 +1,7 @@
 import { DataRecordWithId } from "~/schema/type"
 import { onError, sql } from "~/server-only/db"
 import { getUserId } from "~/server-only/session"
-import { injectTranslations } from "~/server-only/translation"
+import { injectTranslations } from "~/server-only/injectTranslations"
 
 export const getTaskConfirmOrChallenge = async () => {
   "use server"

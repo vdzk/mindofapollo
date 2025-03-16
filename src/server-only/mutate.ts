@@ -6,6 +6,9 @@ import { getTypeByOriginId, getTypeByRecordId } from "./valueType"
 import { AddExplId } from "~/components/expl/types"
 import { addExplIdColNames } from "~/utils/expl"
 import { addExplIds } from "~/utils/expl"
+import { splitTranslatable, translatable } from "~/utils/schema"
+import { createTranslations } from "./createTranslations"
+import { _getRecordById } from "./select"
 
 
 // TODO: implement efficient bulk version
@@ -59,11 +62,19 @@ export const _insertRecord = async (
     allColNames.map(colName => [`${colName}_expl_id`, explId])
   )
 
-  const result = await sql`
-    INSERT INTO ${sql(tableName)} ${sql({ ...record, ...explIds })}
+  const { translationRequired, originalText, nonTranslatable } = splitTranslatable(tableName, record)
+
+  const results = await sql`
+    INSERT INTO ${sql(tableName)} ${sql({ ...nonTranslatable, ...explIds })}
     RETURNING *
   `.catch(onError)
-  return result[0] as DataRecordWithId
+  const result = { ...record, ...explIds, id: results[0].id } as DataRecordWithId
+
+
+  if (translationRequired) {
+    await createTranslations(tableName, originalText, result.id)
+  }
+  return result
 };
 
 // TODO: implement efficient bulk version
@@ -83,26 +94,30 @@ export const _updateRecord = async <T extends DataRecord>(
     before: {} as AddExplId<T>,
     after: {} as T
   }
-  const colNamesWithExplId = addExplIdColNames(colNames)
 
-  const oldFragments = await sql`
-    SELECT ${sql(colNamesWithExplId)}
-    FROM ${sql(tableName)}
-    WHERE id = ${id}
-  `.catch(onError)
+  const explIds = Object.fromEntries(
+    colNames.map(colName => [`${colName}_expl_id`, explId])
+  )
+
+  const oldFragments = await _getRecordById(tableName, id, colNames)
+  if (!oldFragments) return
+
+  const { translationRequired, originalText, nonTranslatable } = splitTranslatable(tableName, newFragment)
 
   await sql`
     UPDATE ${sql(tableName)}
-    SET ${sql(
-    addExplIds(newFragment, explId),
-    colNamesWithExplId
-  )}
+    SET ${sql({ ...nonTranslatable, ...explIds })}
     WHERE id = ${id}
   `.catch(onError)
   const diff = {
-    before: oldFragments[0] as AddExplId<T>,
+    before: oldFragments as unknown as AddExplId<T>,
     after: newFragment
   }
+
+  if (translationRequired) {
+    await createTranslations(tableName, originalText, id, true)
+  }
+
   return diff
 }
 
@@ -110,10 +125,13 @@ export const _deleteById = async (
   tableName: string,
   id: number
 ) => {
-  const result = await sql`
+   await sql`
     DELETE FROM ${sql(tableName)}
     WHERE id = ${id}
-    RETURNING *
   `.catch(onError)
-  return result
+  await sql`
+    DELETE FROM translation
+    WHERE table_name = ${tableName}
+      AND record_id = ${id}
+  `.catch(onError)
 }

@@ -1,4 +1,4 @@
-import {action, json} from "@solidjs/router"
+import {action, json, redirect} from "@solidjs/router"
 import { deleteById } from "~/api/delete/byId"
 import { deleteCrossRecord } from "~/api/delete/crossRecord"
 import { executeAction } from "./tableActions"
@@ -78,17 +78,19 @@ export const executeTableAction = action(
 )
 
 export const setSubscriptionAction = action(
-  async (id: number, subscribe: boolean) => {
+  async (id: number, subscribe: boolean, redirectPath?: string) => {
     await setSubscription(id, subscribe)
-    return json(
-      'ok',
-      {
-        revalidate: [
-          getUserSubscriptionsCache.keyFor(),
-          'getHomePageStatements'
-        ]
-      }
-    )
+    const options = {
+      revalidate: [
+        getUserSubscriptionsCache.keyFor(),
+        'getHomePageStatements'
+      ]
+    }
+    if (redirectPath) {
+      throw redirect(redirectPath, options)
+    } else {
+      return json('ok', options)
+    }
   }
 )
 

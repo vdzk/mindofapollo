@@ -2,7 +2,7 @@ import { sqlStr } from "~/util-no-circle"
 import { schema } from "~/schema/schema"
 import { ForeignKey } from "~/schema/type"
 import { sql } from "~/server-only/db"
-import { TranslatedColumn, injectTranslations } from "~/server-only/translation"
+import { TranslatedColumn, injectTranslations } from "~/server-only/injectTranslations"
 import { translatable } from "~/utils/schema"
 
 export type VqColumn = [string] | [string, string | VqColumn[]]

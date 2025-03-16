@@ -6,7 +6,7 @@ import { getTranslatableColumns, getVirtualColNames } from "~/utils/schema"
 import { Row, RowList } from "postgres"
 import { getVirtualValuesByServerFn } from "./virtualColumns"
 import { schema } from "~/schema/schema"
-import { injectTranslations } from "./translation"
+import { injectTranslations } from "./injectTranslations"
 import { queryVirtualColumn, VqColumn } from "./queryVirtualColumn"
 
 export const getVirtualValuesByQueries = async (

@@ -1,7 +1,7 @@
 import { onError, sql } from "~/server-only/db"
 import { getUserId } from "~/server-only/session"
 import { injectVirtualValues } from "../../server-only/select"
-import { injectTranslations } from "../../server-only/translation"
+import { injectTranslations } from "../../server-only/injectTranslations"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 
 interface HpStatement {
