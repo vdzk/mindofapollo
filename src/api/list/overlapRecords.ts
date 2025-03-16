@@ -1,5 +1,6 @@
 import { onError, sql } from "~/server-only/db"
 import { DataRecordWithId } from "~/schema/type"
+import { injectTranslations } from "~/server-only/translation"
 
 export const listOverlapRecords = async (
   tableName: string,
@@ -8,7 +9,7 @@ export const listOverlapRecords = async (
   filterId: number
 ) => {
   "use server"
-  const results = await sql`
+  const results = await sql<DataRecordWithId[]>`
     SELECT t.*
     FROM ${sql(tableName)} t
     WHERE 
@@ -22,5 +23,7 @@ export const listOverlapRecords = async (
       OR t.${sql(sharedColumn)} IS NULL
     ORDER BY t.id
   `.catch(onError)
+  await injectTranslations(tableName, results)
+  
   return results as unknown as DataRecordWithId[]
 }

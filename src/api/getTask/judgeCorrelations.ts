@@ -1,12 +1,13 @@
 import { DataRecordWithId } from "~/schema/type"
 import { onError, sql } from "~/server-only/db"
+import { injectTranslations } from "~/server-only/translation"
 
 export const getTaskJudgeCorrelations = async () => {
   "use server"
   const sides = Math.random() > 0.5 ? [true, false] : [false, true]
   let data: { pro: boolean, statement: DataRecordWithId } | undefined
   for (const pro of sides) {
-    const result = await sql`
+    const result = await sql<DataRecordWithId[]>`
       SELECT s.*
       FROM statement s
       JOIN argument a ON s.id = a.statement_id
@@ -22,15 +23,16 @@ export const getTaskJudgeCorrelations = async () => {
       GROUP BY s.id
       HAVING COUNT(a.id) >= 2
       ORDER BY RANDOM()
-      LIMIT 1;
+      LIMIT 1
     `.catch(onError)
+    await injectTranslations('statement', result)
     if (result.length > 0) {
       data = { statement: result[0] as DataRecordWithId, pro }
       break
     }
   }
   if (data) {
-    const results = await sql`
+    const results = await sql<DataRecordWithId[]>`
       SELECT *
       FROM argument
       JOIN argument_judgement
@@ -38,7 +40,8 @@ export const getTaskJudgeCorrelations = async () => {
       WHERE statement_id = ${data.statement.id}
         AND pro = ${data.pro}
       ORDER BY argument_judgement.isolated_confidence DESC
-    `.catch(onError) as DataRecordWithId[]
+    `.catch(onError)
+    await injectTranslations('argument', results)
     return { ...data, arguments: results }
   }
 }

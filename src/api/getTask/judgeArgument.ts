@@ -1,12 +1,13 @@
+import { DataRecordWithId } from "~/schema/type"
 import {onError, sql} from "~/server-only/db"
 import { getUserSession } from "~/server-only/session"
+import { injectTranslations } from "~/server-only/translation"
 
 export const getTaskJudgeArgument = async () => {
   "use server"
   const userSession = await getUserSession()
-  const result = await sql`
-    SELECT argument.id, argument.title, argument.statement_id,
-           statement.text as statement_text
+  const result = await sql<DataRecordWithId[]>`
+    SELECT argument.id, argument.statement_id
     FROM argument
     JOIN statement ON statement.id = argument.statement_id
     JOIN expl ON expl.id = argument.id_expl_id
@@ -20,5 +21,17 @@ export const getTaskJudgeArgument = async () => {
     ORDER BY random()
     LIMIT 1
   `.catch(onError)
+  
+  await injectTranslations(
+    'argument', result, null, [
+      {
+        tableName: 'statement',
+        recordIdColName: 'statement_id',
+        columnName: 'text',
+        resultColName: 'statement_text'
+      }
+    ]
+  )
+  
   return result[0]
 }

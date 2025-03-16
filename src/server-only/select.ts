@@ -1,11 +1,13 @@
 import { onError, sql } from "./db"
-import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries } from "~/schema/type"
-import { addExplIdColNames } from "~/utils/expl"
+import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries, VqSettings } from "~/schema/type"
+import { getExplIdColNames } from "~/utils/expl"
 import { resolveEntries } from "~/utils/async"
-import { getVirtualColNames } from "~/utils/schema"
+import { getTranslatableColumns, getVirtualColNames } from "~/utils/schema"
 import { Row, RowList } from "postgres"
 import { getVirtualValuesByServerFn } from "./virtualColumns"
 import { schema } from "~/schema/schema"
+import { injectTranslations } from "./translation"
+import { queryVirtualColumn, VqColumn } from "./queryVirtualColumn"
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -18,7 +20,22 @@ export const getVirtualValuesByQueries = async (
   const virtualResults = await resolveEntries(colNames.map(
     colName => [colName, resolveEntries(
       Object.entries(getCol(colName).queries).map(
-        ([queryName, query]) => [queryName, sql.unsafe(query, [ids])]
+        ([queryName, query]) => {
+          let startTable: string
+          let columns: VqColumn[]
+          let whereColumn: string
+          if (Array.isArray(query[0])) {
+            startTable = tableName
+            whereColumn = 'id'
+            columns = query as VqColumn[]
+          } else {
+            const vqSettings = query[0] as VqSettings
+            startTable = vqSettings.startTable
+            whereColumn = vqSettings.fkName
+            columns = query.slice(1) as VqColumn[]
+          }
+          return [queryName, queryVirtualColumn(startTable, columns, ids, whereColumn)]
+        }
       )
     )]
   ))
@@ -65,28 +82,36 @@ export const injectVirtualValues = async (
   }
 }
 
+export const getSelectColNames = (
+  tableName: string,
+  colNames?: string[],
+  withExplIds = true
+) => {
+  const selectColNames = [
+    ...getTranslatableColumns(tableName, colNames, false),
+    ...(withExplIds
+      ? getExplIdColNames(colNames ?? getVirtualColNames(tableName).non)
+      : []
+    )
+  ]
+  if (!selectColNames.includes('id')) selectColNames.push('id')
+  return selectColNames
+}
+
 export const _getRecordById = async (
   tableName: string,
   id: number,
   colNames?: string[],
   withExplIds = true
 ) => {
-  let colNamesSql
-  if (colNames) {
-    if (withExplIds) {
-      colNamesSql = sql(addExplIdColNames(colNames))
-    } else {
-      colNamesSql = sql(colNames)
-    }
-  } else {
-    colNamesSql = sql`*`
-  }
-  const records = await sql`
-    SELECT ${colNamesSql}
+  const records = await sql<DataRecordWithId[]>`
+    SELECT ${sql(getSelectColNames(tableName, colNames, withExplIds))}
     FROM ${sql(tableName)}
     WHERE id = ${id}
   `.catch(onError)
+  
   if (records) {
+    await injectTranslations(tableName, records, colNames)
     await injectVirtualValues(tableName, records, colNames)
     return records[0] as DataRecordWithId
   }

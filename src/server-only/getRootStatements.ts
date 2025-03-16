@@ -46,7 +46,7 @@ export const getRootStatements = async (
     )
     
     -- Get root statements (statements with tags or featured) from the hierarchy
-    SELECT DISTINCT s.id, s.text, s.featured
+    SELECT DISTINCT s.id, s.featured
     FROM hierarchy h
     JOIN statement s ON h.statement_id = s.id
     LEFT JOIN statement_x_tag st ON s.id = st.statement_id

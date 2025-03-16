@@ -1,5 +1,4 @@
-import { TableSchema } from "~/schema/type";
-import { sqlStr } from "~/util-no-circle";
+import { TableSchema } from "~/schema/type"
 
 export const moral_weight: TableSchema = {
   plural: 'moral weights',
@@ -8,15 +7,25 @@ export const moral_weight: TableSchema = {
     label: {
       type: 'virtual',
       queries: {
-        moral_weight: sqlStr`
-          SELECT mw.id, mg.name, mw.weight, unit.name as unit
-          FROM moral_weight mw
-          JOIN moral_good mg
-            ON mg.id = mw.moral_good_id
-          JOIN unit
-            ON unit.id = mg.unit_id
-          WHERE mw.id = ANY($1::integer[])
-        `
+        moral_weight: [
+          ['id'],
+          ['weight'],
+          ['moral_good_id', [
+            ['name'],
+            ['unit_id', [
+              ['name', 'unit']
+            ]]
+          ]]
+        ],
+        // moral_weight: sqlStr`
+        //   SELECT mw.id, mg.name, mw.weight, unit.name as unit
+        //   FROM moral_weight mw
+        //   JOIN moral_good mg
+        //     ON mg.id = mw.moral_good_id
+        //   JOIN unit
+        //     ON unit.id = mg.unit_id
+        //   WHERE mw.id = ANY($1::integer[])
+        // `
       },
       get: (ids, results) => Object.fromEntries(results.moral_weight.map(
         result => [result.id,

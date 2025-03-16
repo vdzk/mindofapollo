@@ -1,5 +1,4 @@
-import { TableSchema } from "~/schema/type";
-import { sqlStr } from "~/util-no-circle";
+import { TableSchema } from "~/schema/type"
 
 export const directive: TableSchema = {
   plural: 'directives',
@@ -7,18 +6,32 @@ export const directive: TableSchema = {
     label: {
       type: 'virtual',
       queries: {
-        deed: sqlStr`
-          SELECT dir.id AS directive_id, d.text
-          FROM deed d
-          JOIN directive dir ON dir.deed_id = d.id
-          WHERE dir.id = ANY($1::integer[])
-        `,
-        scope: sqlStr`
-          SELECT ds.directive_id, pc.name, ds.include
-          FROM directive_scope ds
-          JOIN person_category pc ON ds.person_category_id = pc.id
-          WHERE ds.directive_id = ANY($1::integer[])
-        `
+        deed: [
+          ['id', 'directive_id'],
+          ['deed_id', [
+            ['text']
+          ]]
+        ],
+        // deed: sqlStr`
+        //   SELECT dir.id AS directive_id, d.text
+        //   FROM deed d
+        //   JOIN directive dir ON dir.deed_id = d.id
+        //   WHERE dir.id = ANY($1::integer[])
+        // `,
+        scope: [
+          {startTable: 'directive_scope', fkName: 'directive_id'},
+          ['directive_id'],
+          ['include'],
+          ['person_category_id', [
+            ['name'],
+          ]]
+        ],
+        // scope: sqlStr`
+        //   SELECT ds.directive_id, pc.name, ds.include
+        //   FROM directive_scope ds
+        //   JOIN person_category pc ON ds.person_category_id = pc.id
+        //   WHERE ds.directive_id = ANY($1::integer[])
+        // `
       },
       get: (ids, results) => {
         const directives = Object.fromEntries(ids.map(

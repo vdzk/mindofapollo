@@ -1,12 +1,15 @@
 import { onError, sql } from "~/server-only/db"
-import { getUserId, getUserSession } from "../../server-only/session"
+import { getUserId } from "~/server-only/session"
 import { injectVirtualValues } from "../../server-only/select"
+import { injectTranslations } from "../../server-only/translation"
+import { DataRecord, DataRecordWithId } from "~/schema/type"
 
 interface HpStatement {
-  id: number,
-  label: string,
-  directive?: boolean,
-  subscribed?: boolean | null
+  id: number
+  label: string
+  text?: string
+  directive?: boolean
+  subscribed: boolean | null
 }
 
 export const listHomePageStatements = async (
@@ -17,7 +20,6 @@ export const listHomePageStatements = async (
   let results: HpStatement[] = []
   const userId = await getUserId()
 
-  // TODO: query and revalidate subscriptions via a separate endpoint and merge the subscription indicator in the UI? 
   // Common subscription subquery
   const subscriptionSubquery = sql`(
     SELECT subscribed
@@ -35,13 +37,14 @@ export const listHomePageStatements = async (
       WHERE x.tag_id = ${tagId!}
     `
 
-  const statements = await sql`
+  const statements = await sql<DataRecordWithId[]>`
     SELECT s.*, ${subscriptionSubquery}
     FROM statement s
     ${whereClause}
   `.catch(onError)
 
   if (statements) {
+    await injectTranslations('statement', statements)
     await injectVirtualValues('statement', statements)
     results = statements as unknown as HpStatement[]
   }
@@ -55,16 +58,19 @@ export const listHomePageStatements = async (
       WHERE x.tag_id = ${tagId!}
     `
 
-  const directives = await sql`
+  const directives = await sql<DataRecordWithId[]>`
     SELECT d.*
     FROM directive d
     ${directiveWhereClause}
   `.catch(onError)
 
   if (directives) {
+    await injectTranslations('directive', directives)
     await injectVirtualValues('directive', directives)
-    results = [...results, ...directives.map(({id, label}) => ({
-      id, label, directive: true,
+    results = [...results, ...directives.map(directive => ({
+      id: directive.id,
+      label: directive.label as string,
+      directive: true,
       subscribed: null
     }))]
   }

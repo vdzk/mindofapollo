@@ -1,6 +1,7 @@
 import { DataRecordWithId } from "~/schema/type";
 import { onError, sql } from "~/server-only/db";
 import { injectVirtualValues } from "~/server-only/select";
+import { injectTranslations } from "~/server-only/translation";
 import { xName } from "~/utils/schema";
 
 export const listCrossRecords = async (
@@ -10,7 +11,7 @@ export const listCrossRecords = async (
   first: boolean
 ) => {
   "use server"
-  const records = await sql`
+  const records = await sql<DataRecordWithId[]>`
     SELECT ${sql(b)}.*
     FROM ${sql(b)}
     JOIN ${sql(xName(a, b, first))} ON ${sql(b + '_id')} = id
@@ -18,7 +19,8 @@ export const listCrossRecords = async (
     ORDER BY id
   `.catch(onError)
   if (records) {
+    await injectTranslations(b, records)
     await injectVirtualValues(b, records)
-    return records as unknown as DataRecordWithId[]
+    return records
   }
 };

@@ -6,7 +6,6 @@ import { CrossRecordMutateProps, insertCrossRecord } from "~/api/insert/crossRec
 import { setSubscription } from "~/api/set/subscription"
 import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache, getUserSubscriptionsCache} from "~/client-only/query"
 import { updateSubscriptionLastOpened } from "~/api/set/subscriptionLastOpened"
-import { revalidate } from "@solidjs/router"
 
 
 export const deleteForeignHopRecordAction = action(async (

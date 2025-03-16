@@ -15,9 +15,9 @@ export const askToJudgeEvidentialStatement = async (
   "use server"
   const userId = await getUserId()
   const user = await getUserActorUser()
-  const statement = await _getRecordById('statement', recordId, ['id', 'text', 'argument_aggregation_type_id'])
+  const statement = await _getRecordById('statement', recordId, ['id', 'text', 'argument_aggregation_type_id', 'decided'])
 
-  if (statement && !statement.judgement_requested
+  if (statement && !statement.judgement_requested && !statement.decided
     && await hasArguments(recordId)
     && !(await hasUnjudgedArguments(recordId))
   ) {
@@ -33,7 +33,7 @@ export const askToJudgeEvidentialStatement = async (
       statement,
       judged_expl_id
     }
-
+    
     if (!judged_expl_id) {
       const diff = await _updateRecord('statement', recordId, explId, { judgement_requested: true })
       data.diff = diff

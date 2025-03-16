@@ -1,6 +1,7 @@
 import { onError, sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { DataRecordWithId, ForeignKey } from "~/schema/type"
+import { injectTranslations } from "~/server-only/translation";
 
 export const listForeignHopRecords = async (
     tableName: string,
@@ -12,7 +13,7 @@ export const listForeignHopRecords = async (
     const extColumn = schema.tables[tableName].columns[hopColName] as ForeignKey;
 
     // tMain.id overrides tHop.id
-    const results = await sql`
+    const results = await sql<DataRecordWithId[]>`
       SELECT tHop.*, tMain.*
       FROM ${sql(tableName)} tMain
       JOIN ${sql(extColumn.fk.table)} tHop
@@ -20,5 +21,6 @@ export const listForeignHopRecords = async (
       WHERE tMain.${sql(fkName)} = ${fkId}
       ORDER BY tMain.id
     `.catch(onError)
-    return results as unknown as DataRecordWithId[]
+    await injectTranslations(extColumn.fk.table, results, null, undefined, hopColName)
+    return results
 };

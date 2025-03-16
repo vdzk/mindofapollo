@@ -19,3 +19,5 @@ export interface LinkData {
   route: string
   params: Record<string, string>
 }
+
+export type GenericInputEvent = { target: { value: string; name: string } }

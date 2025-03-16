@@ -2,7 +2,6 @@ import { schema } from "~/schema/schema"
 import { ColumnSchema, DataRecord } from "~/schema/type"
 import { humanCase } from "./string"
 
-
 export const titleColumnName = (tableName: string) => {
   let result = ''
   const { columns } = schema.tables[tableName]
@@ -40,6 +39,11 @@ export const getExtTableName = (
   if (extValue) {
     return [tableName, extValue].join('_')
   }
+}
+
+export const getRootTableName = (tableName: string): string => {
+  const { extendsTable } = schema.tables[tableName]
+  return extendsTable ? getRootTableName(extendsTable) : tableName
 }
 
 export const pluralTableName = (tableName: string) => {
@@ -80,6 +84,7 @@ export const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] 
 
 // Determines if a column's content should be picked from the translation table
 export const translatable = (tableName: string, columnName: string): boolean => {
+  if (columnName === 'id') return false
   const table = schema.tables[tableName]
   const column = table.columns[columnName]
   
@@ -91,5 +96,17 @@ export const translatable = (tableName: string, columnName: string): boolean => 
   // Check if column type is one of the translatable types
   const translatableTypes: ColumnSchema['type'][] = ['varchar', 'text', 'link_title']
   return translatableTypes.includes(column.type)
+}
+
+export const getTranslatableColumns = (
+  tableName: string,
+  colNames?: string[] | null,
+  isTranslatable?: boolean
+): string[] => {
+  return (colNames ?? getVirtualColNames(tableName).non).
+    filter(colName => {
+      const colIsTranslatable = translatable(tableName, colName)
+      return (isTranslatable ?? true) ? colIsTranslatable : !colIsTranslatable
+    })
 }
 

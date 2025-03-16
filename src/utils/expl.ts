@@ -1,8 +1,11 @@
 import { pick } from "./shape";
 
+export const getExplIdColNames = <K extends string>(colNames: K[]) => colNames
+  .map(colName => colName + '_expl_id' as `${K}_expl_id`)
+
 export const addExplIdColNames = <K extends string>(colNames: K[]) => [
   ...colNames,
-  ...colNames.map(colName => colName + '_expl_id' as `${K}_expl_id`)
+  ...getExplIdColNames(colNames)
 ]
 
 export const pickWithExplId = <T extends Record<string, any>, K extends keyof T & string>(

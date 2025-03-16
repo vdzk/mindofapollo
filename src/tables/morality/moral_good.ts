@@ -1,5 +1,4 @@
-import { TableSchema } from "~/schema/type";
-import { sqlStr } from "~/util-no-circle";
+import { TableSchema } from "~/schema/type"
 
 export const moral_good: TableSchema = {
   plural: 'moral goods',
@@ -7,13 +6,20 @@ export const moral_good: TableSchema = {
     label: {
       type: 'virtual',
       queries: {
-        label: sqlStr`
-          SELECT moral_good.id, moral_good.name, unit.name as unit
-          FROM moral_good
-          JOIN unit
-            ON unit.id = moral_good.unit_id
-          WHERE moral_good.id = ANY($1::integer[])
-        `
+        label: [
+          ['id'],
+          ['name'],
+          ['unit_id', [
+            ['name', 'unit']
+          ]]
+        ],
+        // label: sqlStr`
+        //   SELECT moral_good.id, moral_good.name, unit.name as unit
+        //   FROM moral_good
+        //   JOIN unit
+        //     ON unit.id = moral_good.unit_id
+        //   WHERE moral_good.id = ANY($1::integer[])
+        // `
       },
       get: (ids, results) => Object.fromEntries(results.label.map(
         result => [result.id, `${result.name} (${result.unit})`]

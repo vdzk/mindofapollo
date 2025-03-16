@@ -1,5 +1,6 @@
 import { onError, sql } from "~/server-only/db"
 import { getUserId } from "~/server-only/session"
+import { injectTranslations } from "~/server-only/translation";
 
 export const listUserSubscriptions = async () =>  {
   'use server'
@@ -9,7 +10,6 @@ export const listUserSubscriptions = async () =>  {
   const subscriptions = await sql<{ id: number; text: string; has_updates: boolean }[]>`
     SELECT 
       statement.id, 
-      statement.text, 
       CASE 
         WHEN sub.last_opened IS NULL THEN true
         ELSE EXISTS (
@@ -28,5 +28,6 @@ export const listUserSubscriptions = async () =>  {
     ORDER BY statement.id DESC
   `.catch(onError)
 
+  await injectTranslations('statement', subscriptions, ['text'])
   return subscriptions
 }

@@ -1,17 +1,18 @@
 import { Component } from "solid-js";
 import { DataLiteral } from "~/schema/type";
 import { schema } from "~/schema/schema";
-import { debounce } from "@solid-primitives/scheduled";
+import { debounce } from "@solid-primitives/scheduled"
+import { GenericInputEvent } from "~/types";
 
 export interface TextInputProps {
-  value: DataLiteral | undefined;
-  onChange: (event: { target: { value: string; name: string } }) => void;
-  tableName: string;
-  colName: string;
-  placeholder?: string;
-  disabled?: boolean;
-  onKeyDown?: (e: KeyboardEvent) => void;
-  lines?: number;
+  value: DataLiteral | undefined
+  onChange: (event: GenericInputEvent) => void
+  tableName: string
+  colName: string
+  placeholder?: string
+  disabled?: boolean
+  onKeyDown?: (e: KeyboardEvent) => void
+  lines?: number
 }
 
 export const TextInput: Component<TextInputProps> = (props) => {

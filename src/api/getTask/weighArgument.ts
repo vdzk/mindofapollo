@@ -1,9 +1,11 @@
 import { onError, sql } from "~/server-only/db"
 import { getWeightedArguments } from "../../server-only/getWeightedArguments"
+import { injectTranslations } from "~/server-only/translation"
+import { DataRecordWithId } from "~/schema/type"
 
 export const getTaskWeighArgument = async () => {
   "use server"
-  const [argument] = await sql`
+  const [argument] = await sql<DataRecordWithId[]>`
     SELECT a.*
     FROM argument a
     JOIN statement s ON a.statement_id = s.id
@@ -18,7 +20,10 @@ export const getTaskWeighArgument = async () => {
     ORDER BY RANDOM()
     LIMIT 1
   `.catch(onError)
+  
   if (!argument) return
+  await injectTranslations('argument', [argument])
+  
   const weightedArguments = await getWeightedArguments(argument.statement_id as number)
   return { argument, weightedArguments }
 }

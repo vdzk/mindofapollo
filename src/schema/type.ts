@@ -1,3 +1,5 @@
+import { VqColumn } from "~/server-only/queryVirtualColumn"
+
 export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id' | 'table_name' | 'column_name'
 export type DataLiteral = string | number | boolean | null
 export type DataOp = 'INSERT' | 'UPDATE' | 'DELETE'
@@ -41,12 +43,17 @@ export interface ValueTypeIdColumn extends SharedColumnProps {
   getTypeByRecordIdQuery: string
 }
 
+export interface VqSettings {
+  startTable: string,
+  fkName: string
+}
+
 // It's values are not stored in db,
 // but instead derevied from other values when the record is read
 export interface VirtualColumnQueries extends SharedColumnProps {
   type: 'virtual',
   // queries that will be run with ids as the only parameter
-  queries: Record<string, string>,
+  queries: Record<string, VqColumn[] | [VqSettings, ...VqColumn[]]>,
   // generate strings for every id from query resuls
   get: (ids: number[], results: Record<string, DataRecord[]>)
     => Record<number, string>

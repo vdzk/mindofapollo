@@ -42,6 +42,7 @@ function createTriangularRandomGenerator(a: number, m: number, b: number) {
 }
 
 export interface WeightedArgument {
+  id: number,
   title: string,
   pro: boolean,
   weight_lower_limit: number,

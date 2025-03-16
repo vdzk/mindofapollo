@@ -1,5 +1,4 @@
-import { TableSchema } from "~/schema/type";
-import { sqlStr } from "~/util-no-circle";
+import { TableSchema } from "~/schema/type"
 
 export const directive_scope: TableSchema = {
   plural: 'directive scopes',
@@ -7,13 +6,18 @@ export const directive_scope: TableSchema = {
     label: {
       type: 'virtual',
       queries: {
-        person_category: sqlStr`
-          SELECT ds.id, ds.include, pc.name
-          FROM directive_scope ds
-          JOIN person_category pc
-            ON pc.id = ds.person_category_id
-          WHERE ds.id = ANY($1::integer[])
-        `
+        person_category: [
+          ['id'],
+          ['include'],
+          ['person_category_id', [
+            ['name']
+          ]]
+        ],
+        // person_category: sqlStr`
+        //   SELECT ds.id, ds.include, ds.person_category_id
+        //   FROM directive_scope ds
+        //   WHERE ds.id = ANY($1::integer[])
+        // `
       },
       get: (ids, results) => Object.fromEntries(results.person_category.map(
         result => [result.id, `(${result.include ? '+' : '−'}) ${result.name}`]
