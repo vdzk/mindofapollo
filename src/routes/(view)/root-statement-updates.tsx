@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta"
-import { createAsync, query, useAction, useLocation } from "@solidjs/router"
+import { createAsync, query, useAction } from "@solidjs/router"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRootStatementUpdates } from "~/api/list/rootStatementUpdates"
 import { ActivityList } from "~/components/ActivityList"

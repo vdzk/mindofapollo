@@ -41,6 +41,7 @@ const SearchPage: Component = () => {
             value={searchParams.q || ""}
             placeholder="Search..."
             class="flex-1 p-2 border rounded-md"
+            autofocus
             onInput={onInput}
           />
         </div>

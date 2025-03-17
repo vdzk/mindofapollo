@@ -4,9 +4,7 @@ import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType"
 import { AddExplId } from "~/components/expl/types"
-import { addExplIdColNames } from "~/utils/expl"
-import { addExplIds } from "~/utils/expl"
-import { splitTranslatable, translatable } from "~/utils/schema"
+import { splitTranslatable } from "~/utils/schema"
 import { createTranslations } from "./createTranslations"
 import { _getRecordById } from "./select"
 
@@ -99,8 +97,7 @@ export const _updateRecord = async <T extends DataRecord>(
     colNames.map(colName => [`${colName}_expl_id`, explId])
   )
 
-  const oldFragments = await _getRecordById(tableName, id, colNames)
-  if (!oldFragments) return
+  const oldFragments = (await _getRecordById(tableName, id, colNames))!
 
   const { translationRequired, originalText, nonTranslatable } = splitTranslatable(tableName, newFragment)
 

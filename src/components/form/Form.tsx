@@ -6,7 +6,7 @@ import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { isEmpty } from "~/utils/shape"
 import { buildUrl } from "~/utils/string"
 import { getExtTableName } from "~/utils/schema"
-import { createStore } from "solid-js/store"
+import { createStore, reconcile } from "solid-js/store"
 import { getRecords } from "~/client-only/query"
 import { SessionContext } from "~/SessionContext"
 import { Link } from "~/components/Link"
@@ -20,7 +20,7 @@ import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
 import { login } from "~/api/execute/login"
 
-export const ExtValueContext = createContext<Setter<string | undefined>>()
+export const ExtValueContext = createContext<(value: string) => void>()
 
 export type FormExitHandler = (savedId?: number) => void
 export type ExitSettings = { linkData: LinkData } | { onExit: FormExitHandler }
@@ -148,9 +148,14 @@ export const Form: Component<{
     }
   }
 
+  const updateExtValue = (value: string) => {
+    setExtValue(value)
+    setDiffExt(reconcile({}))
+  }
+
   return (
     <div class="px-2 max-w-screen-sm pb-2">
-      <ExtValueContext.Provider value={setExtValue}>
+      <ExtValueContext.Provider value={updateExtValue}>
         <For each={colNames()}>
           {colName => (
             <FormField

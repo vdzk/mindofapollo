@@ -19,7 +19,7 @@ export const injectTranslations = async (
   mainIdColName = 'id'
 ) => {
   if (!records || records.length === 0) return
-  const language = await getUserLanguage()
+  const language = (await getUserLanguage()) ?? languages[0]
 
   // Get main translaed columns
   if (tableName) {
