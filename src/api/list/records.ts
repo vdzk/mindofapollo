@@ -5,18 +5,30 @@ import { injectVirtualValues } from "~/server-only/select"
 import { getUserId } from "~/server-only/session";
 import { injectTranslations } from "~/server-only/injectTranslations";
 
-export const listRecords = async (tableName: string) => {
+export const listRecords = async (
+  tableName: string,
+  childStatementId?: number
+) => {
   "use server"
-  const whereClause = isPersonal(tableName)
-    ? sql`WHERE owner_id = ${await getUserId()}`
-    : sql``  
+  let filterClause
+  if (isPersonal(tableName)) {
+    filterClause = sql`WHERE owner_id = ${await getUserId()}`
+  } else if (childStatementId && tableName === 'statement') {
+    filterClause = sql`
+      JOIN argument a ON a.statement_id = t.id
+      JOIN critical_statement cs ON cs.argument_id = a.id
+      WHERE cs.statement_id = ${childStatementId}
+    `
+  } else {
+    filterClause = sql``
+  }  
   const records = await sql`
     SELECT t.*
     FROM ${sql(tableName)} t
-    ${whereClause}
+    ${filterClause}
     ORDER BY t.id
   `.catch(onError)
   await injectTranslations(tableName, records)
   await injectVirtualValues(tableName, records)
   return records as unknown as DataRecordWithId[]
-};
+}

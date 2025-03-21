@@ -1,8 +1,8 @@
-import { AggregateSchema, BooleanColumn, DataRecord, DataRecordWithId, ForeignKey, NToNSchema, OneToNSchema, TableSchema } from "~/schema/type";
-import { firstCap } from "~/utils/string";
-import { pluralTableName } from "~/utils/schema";
-import { titleColumnName } from "~/utils/schema";
-import { AggregateSection } from "./Aggregate"
+import { AggregateSchema, BooleanColumn, DataRecord, DataRecordWithId, ForeignKey, NToNSchema, OneToNSchema, TableSchema } from "~/schema/type"
+import { firstCap } from "~/utils/string"
+import { pluralTableName } from "~/utils/schema"
+import { titleColumnName } from "~/utils/schema"
+import { AggregateSectionSettings } from "./AggregateSection"
 
 export type Aggregator = (props: {
   tableName: string
@@ -11,7 +11,7 @@ export type Aggregator = (props: {
   aggregate: AggregateSchema
   records: () => DataRecordWithId[] | undefined,
   splitRecords?: () => DataRecord[] | undefined,
-}) => AggregateSection[]
+}) => AggregateSectionSettings[]
 
 export const simpleList: Aggregator = (props) => [{
   title: firstCap(pluralTableName(props.aggregate.table)),
@@ -93,6 +93,7 @@ export const splitFk: Aggregator = (props) => {
         [aggregateOneToN.column]: props.id,
         [splitColumnName]: record.id
       }
-    }
+    },
+    splitById: record.id as number
   }))
 }

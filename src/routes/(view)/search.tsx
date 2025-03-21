@@ -31,7 +31,7 @@ const SearchPage: Component = () => {
   return (
     <>
       <Title>Search{searchParams.q ? `: ${searchParams.q}` : ""}</Title>
-      <div class="container mx-auto p-2">
+      <div class="p-2">
         <h1 class="text-2xl font-bold mb-4">Search</h1>
 
         <div class="flex gap-2">

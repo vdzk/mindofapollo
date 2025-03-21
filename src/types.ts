@@ -1,8 +1,9 @@
 import { Language } from "./translation"
 
-export type Option<TId> = {
+export type Option<TId, TGroupId = any> = {
   id: TId; // Generic ID type
   label: string; // Descriptive label for the option
+  groupId?: TGroupId; // Optional group identifier with independent type
 }
 
 export const authRoles = ['admin', 'invited'] as const;

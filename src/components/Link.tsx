@@ -7,16 +7,34 @@ export const Link: Component<{
   params?: Record<string, any>
   label?: DataLiteral | JSXElement
   route: string,
-  type?: 'button' | 'logo',
+  type?: 'button' | 'logo' | 'faded',
   tooltip?: string
+  class?: string
 }> = props => {
-  const href = buildUrl(props.route, props.params)
+
+  const href = () => {
+    let route = props.route
+    let params = props.params
+    if (props.route === 'show-record') {
+      if (props.params?.tableName === 'statement') {
+        route = 'statement'
+        params = { id: props.params.id }
+      } else if (props.params?.tableName === 'argument') {
+        route = 'statement'
+        params = { argumentId: props.params.id }
+      }
+    }
+    return buildUrl(route, params)
+  }
   
   let className = 'hover:underline'
   if (props.type === 'button') className = btnStyle()
   if (props.type === 'logo') className = 'font-bold'
+  if (props.type === 'faded') className = 'text-gray-500'
+
+  if (props.class) className += ' ' + props.class
   
-  return <a href={href} title={props.tooltip} class={className}>{props.label}</a>
+  return <a href={href()} title={props.tooltip} class={className}>{props.label}</a>
 }
 
 export const ExternalLink: Component<{

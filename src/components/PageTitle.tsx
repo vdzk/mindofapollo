@@ -1,9 +1,20 @@
-import { Component, ParentComponent } from "solid-js";
+import { Component, JSXElement, ParentComponent } from "solid-js";
 import { firstCap, humanCase } from "~/utils/string";
 
-export const PageTitle: ParentComponent = (props) => {
+export const PageTitle: Component<{
+  children: JSXElement,
+  textSize?: string
+}> = (props) => {
   return (
-    <h1 class="text-3xl font-bold px-2 py-4 first-letter:uppercase">{props.children}</h1>
+    <h1
+      class="font-bold px-2 py-4 first-letter:uppercase"
+      classList={{
+        'text-3xl': !props.textSize,
+        [props.textSize || '']: !!props.textSize
+      }}
+    >
+      {props.children}
+    </h1>
   )
 }
 
@@ -22,7 +33,7 @@ export const RecordPageTitle: Component<{
 }> = props => (
   <div>
     <AbovePageTitle label={firstCap(humanCase(props.tableName)) + ':'} />
-    <PageTitle>
+    <PageTitle textSize={props.text.length > 200 ? 'text-2xl' : ''}>
       {props.text}
     </PageTitle>
   </div>

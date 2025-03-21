@@ -1,5 +1,5 @@
 import { action, redirect, useAction, useSearchParams, revalidate } from "@solidjs/router"
-import { Component, createContext, createEffect, createSignal, For, Match, Setter, Show, Switch, useContext } from "solid-js"
+import { Component, createContext, createEffect, createSignal, For, Match,  Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
@@ -7,7 +7,7 @@ import { isEmpty } from "~/utils/shape"
 import { buildUrl } from "~/utils/string"
 import { getExtTableName } from "~/utils/schema"
 import { createStore, reconcile } from "solid-js/store"
-import { getRecords } from "~/client-only/query"
+import { getOneExtRecordByIdCache, getRecords } from "~/client-only/query"
 import { SessionContext } from "~/SessionContext"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
@@ -20,7 +20,7 @@ import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
 import { login } from "~/api/execute/login"
 
-export const ExtValueContext = createContext<(value: string) => void>()
+export const ExtValueContext = createContext<(value?: string) => void>()
 
 export type FormExitHandler = (savedId?: number) => void
 export type ExitSettings = { linkData: LinkData } | { onExit: FormExitHandler }
@@ -30,6 +30,9 @@ export const Form: Component<{
   exitSettings: ExitSettings
   id?: number
   record?: DataRecord
+  hideColumns?: string[]
+  preset?: DataRecord
+  depth?: number
 }> = (props) => {
   const session = useContext(SessionContext)
   const [searchParams] = useSearchParams()
@@ -42,6 +45,14 @@ export const Form: Component<{
   const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
     return 'onExit' in exit
   }
+
+  createEffect(() => {
+    if (props.preset) {
+      setDiff(reconcile(props.preset))
+      setExtValue(undefined)
+    }
+  })
+    
 
   const getExitUrl = () => hasExitHandler(props.exitSettings)
     ? ''
@@ -73,7 +84,8 @@ export const Form: Component<{
       if (hasExitHandler(props.exitSettings)) {
         revalidate([
           getRecords.keyFor(tableName),
-          'getRecords' + tableName + props.id
+          'getRecords' + tableName + props.id,
+          getOneExtRecordByIdCache.keyFor(tableName, props.id)
         ])
         props.exitSettings.onExit(props.id)
         return
@@ -83,7 +95,8 @@ export const Form: Component<{
           {
             revalidate: [
               getRecords.keyFor(tableName),
-              'getRecords' + tableName + props.id
+              'getRecords' + tableName + props.id,
+              getOneExtRecordByIdCache.keyFor(tableName, props.id)
             ]
           }
         )
@@ -148,7 +161,7 @@ export const Form: Component<{
     }
   }
 
-  const updateExtValue = (value: string) => {
+  const updateExtValue = (value?: string) => {
     setExtValue(value)
     setDiffExt(reconcile({}))
   }
@@ -164,7 +177,11 @@ export const Form: Component<{
               record={props.record}
               diff={diff}
               setDiff={setDiff}
-              hidden={isAdvanced(colName) && !showAdvanced()}
+              hidden={
+                (isAdvanced(colName) && !showAdvanced())
+                || props.hideColumns?.includes(colName)
+              }
+              formDepth={props.depth}
             />
           )}
         </For>
@@ -176,6 +193,7 @@ export const Form: Component<{
           record={props.record}
           diff={diffExt}
           setDiff={setDiffExt}
+          formDepth={props.depth}
         />}
       </For>
       <Show when={hasAdvancedFields()}>

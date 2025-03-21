@@ -114,7 +114,7 @@ export const _updateRecord = async <T extends DataRecord>(
   if (translationRequired) {
     await createTranslations(tableName, originalText, id, true)
   }
-
+  console.log('_updateRecord', {nonTranslatable, originalText})
   return diff
 }
 

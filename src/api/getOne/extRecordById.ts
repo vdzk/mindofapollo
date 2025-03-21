@@ -4,7 +4,7 @@ import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
 import { getTypeByRecordId } from "../../server-only/valueType"
 import { getExtTableName } from "~/utils/schema"
 import { whoCanGetOneRecordById } from "./recordById"
-import { belongsTo, getAuthRole } from "~/server-only/session"
+import { belongsTo } from "~/server-only/session"
 import { ofSelf } from "~/server-only/ofSelf"
 
 export const whoCanGetOneExtRecordById = (tableName: string, ofSelf: boolean) => whoCanGetOneRecordById(tableName, ofSelf)

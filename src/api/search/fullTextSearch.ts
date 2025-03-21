@@ -27,8 +27,21 @@ export const fullTextSearch = async (query: string): Promise<SearchResult[]> => 
   // Sanitized query string
   const searchQuery = query.trim()
 
-  // Format the search query with :* suffix for prefix matching
-  const formattedSearchQuery = searchQuery.split(' ').join(' & ') + ':*'
+  // Format the search query properly handling special characters
+  const sanitizedTerms = searchQuery
+    .split(' ')
+    .filter(term => term.length > 0)
+    .map(term => {
+      // Escape special characters that have meaning in tsquery
+      const escaped = term
+        .replace(/[&|!:*()]/g, match => `\\${match}`);
+      return escaped;
+    });
+  
+  // Join terms with AND operator and add prefix matching
+  const formattedSearchQuery = sanitizedTerms.length > 0 
+    ? sanitizedTerms.join(' & ') + ':*' 
+    : '';
 
   // Create search query with language-specific configuration
   let results: SearchResult[] | undefined
@@ -42,39 +55,27 @@ export const fullTextSearch = async (query: string): Promise<SearchResult[]> => 
          to_tsquery(${language}::regconfig, ${formattedSearchQuery})`
 
   // For non-groonga languages, we can use ts_headline to extract relevant text
-  if (langSetting?.indexType !== 'groonga') {
-    results = await sql<SearchResult[]>`
-      SELECT 
-        table_name, 
-        column_name, 
-        record_id, 
-        ts_headline(
-          ${language}::regconfig, 
-          ${sql(language)},
-          to_tsquery(${language}::regconfig, ${formattedSearchQuery}),
-          'MaxFragments=1, MaxWords=20, MinWords=10, FragmentDelimiter=...'
-        ) as matched_text
-      FROM 
-        translation
-      WHERE 
-        ${whereClause}
-      LIMIT 20
-    `.catch(onError)
-  } else {
-    // For groonga engine, keep the existing query
-    results = await sql<SearchResult[]>`
-      SELECT 
-        table_name, 
-        column_name, 
-        record_id, 
-        ${sql(language)} as matched_text
-      FROM 
-        translation
-      WHERE 
-        ${whereClause}
-      LIMIT 20
-    `.catch(onError)
-  }
+  const matchedTextExpression = langSetting?.indexType !== 'groonga'
+    ? sql`ts_headline(
+        ${language}::regconfig, 
+        ${sql(language)},
+        to_tsquery(${language}::regconfig, ${formattedSearchQuery}),
+        'MaxFragments=1, MaxWords=20, MinWords=10, FragmentDelimiter=...'
+      )`
+    : sql`${sql(language)}`;
+
+  results = await sql<SearchResult[]>`
+    SELECT 
+      table_name, 
+      column_name, 
+      record_id, 
+      ${matchedTextExpression} as matched_text
+    FROM 
+      translation
+    WHERE 
+      ${whereClause}
+    LIMIT 20
+  `.catch(onError)
 
   // Process results - only needed for groonga where we don't have ts_headline
   if (!results) return []

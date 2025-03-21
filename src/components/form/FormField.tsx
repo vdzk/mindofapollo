@@ -23,6 +23,7 @@ export const FormField: Component<{
   diff: DataRecord
   setDiff: SetStoreFunction<DataRecord>
   hidden?: boolean
+  formDepth?: number
 }> = (props) => {
   const column = () => schema.tables[props.tableName].columns[props.colName]
   const [searchParams] = useSearchParams()
@@ -149,6 +150,7 @@ export const FormField: Component<{
             column={column() as ForeignKey}
             value={value() as number | undefined}
             isNew={isNew()}
+            formDepth={props.formDepth}
             {...{ onChangeFormat }}
           />
         </Match>

@@ -104,7 +104,14 @@ export interface NToNSchema {
   first?: boolean // should the parent table appear first in the name of the cross table. Exactly one of the table pair should have this param set to true!
 }
 
-export type AggregateSchema = OneToNSchema | NToNSchema
+export type AggregateSchema = (OneToNSchema | NToNSchema) & {
+  viewLink?: {  // custom link to view the record
+    route: string
+    idParamName: string
+    idParamSource: string
+  },
+  showForm?: true // show form to add new records
+}
 
 interface Section {
   label: string

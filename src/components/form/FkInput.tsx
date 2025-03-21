@@ -22,6 +22,7 @@ export const FkInput: Component<{
   value?: number
   isNew: boolean
   onChangeFormat: OnChangeFormat
+  formDepth?: number
 }> = (props) => {
   const [searchParams] = useSearchParams()
   const records = createAsync(() => getRecords(props.column.fk.table))
@@ -103,6 +104,9 @@ export const FkInput: Component<{
     })).sort((a, b) => a.label.localeCompare(b.label));
   })
 
+  const nestedBgColor = () => (props.formDepth ?? 0) % 2 === 0
+    ? 'bg-orange-100' : 'bg-orange-50'
+
   return (
     <>
       <Show when={!isPreset()}>
@@ -115,11 +119,15 @@ export const FkInput: Component<{
           </div>
         </Show>
         <Show when={showForm()}>
-          <div class="bg-orange-100 rounded-md my-2 p-2">
+          <div
+            class="rounded-md my-2 p-2"
+            classList={{ [nestedBgColor()]: true }}
+          >
             <Subtitle>New {humanCase(props.column.fk.table)}</Subtitle>
             <Form
               tableName={props.column.fk.table}
               exitSettings={{ onExit: onFormExit }}
+              depth={(props.formDepth ?? 0) + 1}
             />
           </div>
         </Show>
@@ -129,7 +137,10 @@ export const FkInput: Component<{
           <Show when={presetValue()} fallback={<div>{nbsp}</div>}>
             <Switch>
               <Match when={showRecord()}>
-                <div class="bg-orange-100 rounded-md my-2 p-2 pb-4">
+                <div
+                  class="rounded-md my-2 p-2 pb-4"
+                  classList={{ [nestedBgColor()]: true }}
+                >
                   <RecordDetails
                     tableName={props.column.fk.table}
                     id={props.value!}

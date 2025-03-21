@@ -44,7 +44,13 @@ export const argument: TableSchema = {
       table: 'critical_statement',
       column: 'argument_id',
       splitByColumn: 'critical_question_id',
-      filterSplitBy: 'argument_type_id'
+      filterSplitBy: 'argument_type_id',
+      viewLink: {
+        route: 'statement',
+        idParamName: 'id',
+        idParamSource: 'statement_id'
+      },
+      showForm: true
     },
     judgements: {
       type: '1-n',
@@ -63,7 +69,7 @@ export const argument: TableSchema = {
       fields: ['statement_id', 'pro', 'argument_type_id']
     },
     criticism: {
-      label: 'criticism',
+      label: 'critical questions',
       fields: ['critical_statements']
     },
     evaluation: {

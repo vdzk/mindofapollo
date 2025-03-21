@@ -1,5 +1,5 @@
 import { createAsync, useAction } from "@solidjs/router"
-import { createSignal, For } from "solid-js"
+import { createSignal, For, Show } from "solid-js"
 import { getHomePageStatementsCache, getRecords } from "~/client-only/query"
 import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
