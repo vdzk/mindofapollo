@@ -23,7 +23,8 @@ import { login } from "~/api/execute/login"
 export const ExtValueContext = createContext<(value?: string) => void>()
 
 export type FormExitHandler = (savedId?: number) => void
-export type ExitSettings = { linkData: LinkData } | { onExit: FormExitHandler }
+export type ExitSettings = { getLinkData: (savedId?: number) => LinkData }
+  | { onExit: FormExitHandler }
 
 export const Form: Component<{
   tableName: string
@@ -54,12 +55,13 @@ export const Form: Component<{
   })
     
 
-  const getExitUrl = () => hasExitHandler(props.exitSettings)
-    ? ''
-    : buildUrl(
-      props.exitSettings.linkData.route,
-      props.exitSettings.linkData.params
-    )
+  const getExitUrl = (savedId?: number) => {
+    if (hasExitHandler(props.exitSettings)) {
+      return ''
+    }
+    const linkData = props.exitSettings.getLinkData(savedId)
+    return buildUrl(linkData.route, linkData.params)
+  }
 
   const saveAction = useAction(action(async (
     tableName: string,
@@ -91,7 +93,7 @@ export const Form: Component<{
         return
       } else {
         throw redirect(
-          getExitUrl(),
+          getExitUrl(props.id),
           {
             revalidate: [
               getRecords.keyFor(tableName),
@@ -115,7 +117,7 @@ export const Form: Component<{
         props.exitSettings.onExit(savedRecord?.id)
         return
       } else {
-        throw redirect(getExitUrl())
+        throw redirect(getExitUrl(savedRecord?.id))
       }
     }
   }))
@@ -220,7 +222,7 @@ export const Form: Component<{
           </Match>
           <Match when={!hasExitHandler(props.exitSettings)}>
             <Link
-              {...(props.exitSettings as { linkData: LinkData }).linkData}
+              {...(props.exitSettings as { getLinkData: () => LinkData }).getLinkData()}
               type="button"
               label="Cancel"
             />

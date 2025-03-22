@@ -11,19 +11,26 @@ export default function CreateRecord() {
   const [searchParams] = useSearchParams()
   const title = () => `New ${humanCase(sp().tableName)}`
 
-  const exitLink = (): LinkData => {
-    if (searchParams.sourceTable && searchParams.sourceId) {
+  const getLinkData = (savedId?: number): LinkData => {
+    if (savedId) {
       return {
         route: 'show-record',
-        params: {
-          tableName: searchParams.sourceTable as string,
-          id: searchParams.sourceId as string
-        }
+        params: { tableName: sp().tableName, id: savedId }
       }
     } else {
-      return {
-        route: 'list-records',
-        params: { tableName: sp().tableName as string }
+      if (searchParams.sourceTable && searchParams.sourceId) {
+        return {
+          route: 'show-record',
+          params: {
+            tableName: searchParams.sourceTable as string,
+            id: searchParams.sourceId as string
+          }
+        }
+      } else {
+        return {
+          route: 'list-records',
+          params: { tableName: sp().tableName as string }
+        }
       }
     }
   }
@@ -34,7 +41,7 @@ export default function CreateRecord() {
       <PageTitle>{title()}</PageTitle>
       <Form
         tableName={sp().tableName}
-        exitSettings={{ linkData: exitLink() }}
+        exitSettings={{ getLinkData }}
       />
     </main>
   )

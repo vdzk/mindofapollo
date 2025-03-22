@@ -19,7 +19,7 @@ export default function EditRecord() {
   const record = createAsync(async () => getOneExtRecordById(sp.tableName, recordId()))
   const titleText = () => '' + (record()?.[titleColumnName(sp.tableName)] ?? '')
 
-  const exitLink = (): LinkData => {
+  const getLinkData = (): LinkData => {
     return {
       route: 'show-record',
       params: { tableName: sp.tableName, id: sp.id }
@@ -35,7 +35,7 @@ export default function EditRecord() {
           id={recordId()}
           tableName={sp.tableName}
           record={record()}
-          exitSettings={{ linkData: exitLink() }}
+          exitSettings={{ getLinkData }}
         />
       </Suspense>
     </main>

@@ -12,20 +12,7 @@ export const Link: Component<{
   class?: string
 }> = props => {
 
-  const href = () => {
-    let route = props.route
-    let params = props.params
-    if (props.route === 'show-record') {
-      if (props.params?.tableName === 'statement') {
-        route = 'statement'
-        params = { id: props.params.id }
-      } else if (props.params?.tableName === 'argument') {
-        route = 'statement'
-        params = { argumentId: props.params.id }
-      }
-    }
-    return buildUrl(route, params)
-  }
+  const href = () => buildUrl(props.route, props.params)
   
   let className = 'hover:underline'
   if (props.type === 'button') className = btnStyle()

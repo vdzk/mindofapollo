@@ -23,6 +23,17 @@ export const genCode = (length: number) => {
 export const getPercent = (x: number) => Math.round(x * 100) + '%'
 
 export const buildUrl = (route: string, params?: Record<string, any>) => {
+  // Rewrite link
+  if (route === 'show-record') {
+    if (params?.tableName === 'statement') {
+      route = 'statement'
+      params = { id: params.id }
+    } else if (params?.tableName === 'argument') {
+      route = 'statement'
+      params = { argumentId: params.id }
+    }
+  }
+
   let url = '/' + route
   if (params) {
     url += '?' + Object.entries(params)
