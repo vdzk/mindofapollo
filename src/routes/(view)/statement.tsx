@@ -24,8 +24,6 @@ export default function Statement() {
       setSearchParams({ id: argument.statement_id }, { replace: true })
     }
   })
-  createEffect(() => console.log('sp', {...searchParams}))
-  createEffect(() => console.log('recordId', recordId()))
   const statement = createAsync(async () => {if (recordId()) {
     return  getOneExtRecordByIdCache('statement', recordId()!)
   }})

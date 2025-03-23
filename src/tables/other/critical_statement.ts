@@ -1,4 +1,5 @@
-import { DataRecord, TableSchema } from "../../schema/type"
+import { schema } from "~/schema/schema"
+import { DataRecord, TableSchema, VirtualColumnLocal } from "../../schema/type"
 
 export const critical_statement: TableSchema = {
   plural: 'critical statements',
@@ -9,7 +10,9 @@ export const critical_statement: TableSchema = {
         critical_statement: [
           ['id'],
           ['statement_id', [
-            ['text']
+            ['text'],
+            ['decided'],
+            ['confidence']
           ]]
         ],
         // critical_statement: sqlStr`
@@ -21,7 +24,10 @@ export const critical_statement: TableSchema = {
       },
       get: (ids, results) => {
         const labels = Object.fromEntries(results.critical_statement.map(
-          (record: DataRecord) => [record.id, record.text]
+          (record: DataRecord) => [
+            record.id,
+            (schema.tables.statement.columns.label as VirtualColumnLocal).getLocal(record)
+          ]
         ))
         return labels
       }
