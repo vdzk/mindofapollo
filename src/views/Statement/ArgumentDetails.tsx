@@ -1,6 +1,5 @@
-import { revalidate, useAction } from "@solidjs/router"
+import { revalidate } from "@solidjs/router"
 import { Component, createSignal, For, Show } from "solid-js"
-import { whoCanDeleteExtById } from "~/api/delete/extById"
 import { whoCanUpdateRecord } from "~/api/update/record"
 import { _delete } from "~/client-only/action"
 import { listForeignRecordsCache } from "~/client-only/query"
@@ -29,8 +28,7 @@ export const ArgumentDetails: Component<{
   }
 
   return (
-    <div class="flex-1">
-      <div class="h-2" />
+    <div class="flex-2">
       <Subtitle>Details</Subtitle>
       <Show when={props.record && extTableName()}>
         <Show when={showForm()}>

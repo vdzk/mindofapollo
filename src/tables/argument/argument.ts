@@ -32,7 +32,13 @@ export const argument: TableSchema = {
       type: 'boolean',
       defaultValue: false,
       label: 'judgement',
-      optionLabels: ['Not requested', 'requested'],
+      optionLabels: ['not requested', 'requested'],
+      readOnly: true
+    },
+    open_for_judgement: {
+      type: 'boolean',
+      defaultValue: false,
+      optionLabels: ['closed', 'open'],
       readOnly: true
     }
   },

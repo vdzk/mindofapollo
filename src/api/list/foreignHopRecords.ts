@@ -4,13 +4,13 @@ import { DataRecordWithId, ForeignKey } from "~/schema/type"
 import { injectTranslations } from "~/server-only/injectTranslations";
 
 export const listForeignHopRecords = async (
-    tableName: string,
+    tableName: string,  // the target table
     fkName: string,
     fkId: number,
-    hopColName: string
+    hopColName: string  // final table
 ) => {
     "use server"
-    const extColumn = schema.tables[tableName].columns[hopColName] as ForeignKey;
+    const extColumn = schema.tables[tableName].columns[hopColName] as ForeignKey
 
     // tMain.id overrides tHop.id
     const results = await sql<DataRecordWithId[]>`
