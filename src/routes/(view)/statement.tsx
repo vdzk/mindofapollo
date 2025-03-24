@@ -63,7 +63,7 @@ export default function Statement() {
                 params={{ id: parentStatement.id }}
                 label={'◄' + parentStatement.label}
                 type="faded"
-                class="pr-2 inline-block max-w-screen-sm whitespace-nowrap overflow-hidden text-ellipsis"
+                class="pr-2 inline-block max-w-(--breakpoint-sm) whitespace-nowrap overflow-hidden text-ellipsis"
                 tooltip={parentStatement.label as string}
               />
             )}

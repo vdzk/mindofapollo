@@ -169,7 +169,7 @@ export const Form: Component<{
   }
 
   return (
-    <div class="px-2 max-w-screen-sm pb-2">
+    <div class="px-2 max-w-(--breakpoint-sm) pb-2">
       <ExtValueContext.Provider value={updateExtValue}>
         <For each={colNames()}>
           {colName => (

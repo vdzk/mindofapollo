@@ -42,7 +42,7 @@ export const TextInput: Component<TextInputProps> = (props) => {
         name={props.colName}
         value={displayValue()}
         type="text"
-        class="border rounded pl-1 w-full"
+        class="border rounded-sm pl-1 w-full"
         autocomplete="off"
         readonly={isReadonly()}
         onChange={props.onChange}

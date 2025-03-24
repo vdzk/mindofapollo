@@ -61,7 +61,7 @@ export default function WeighArgument() {
         {...{ displayColumn }}
       />
       <Subtitle>Weigh Argument</Subtitle>
-      <div class="px-2 max-w-screen-sm">
+      <div class="px-2 max-w-(--breakpoint-sm)">
         <For each={Object.keys(formColumns)}>
           {colName => (
             <FormField

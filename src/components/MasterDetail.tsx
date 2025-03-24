@@ -34,8 +34,8 @@ export const MasterDetail = <TId, TGroupId>(props: {
     return {
       'cursor-default bg-yellow-600 hover:bg-yellow-600 text-white': isSelected,
       'bg-yellow-400 hover:bg-yellow-500 text-gray-900': !isSelected,
-      'rounded-b-none rounded-l-md': hz && first,
-      'rounded-b-none rounded-r-md': hz && last,
+      'rounded-l-md': hz && first,
+      'rounded-r-md': hz && last,
       'rounded-t-md': !hz && first,
       'rounded-b-md': !hz && last
     }

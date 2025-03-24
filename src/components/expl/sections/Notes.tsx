@@ -4,7 +4,7 @@ import { ExplData } from "../types"
 export const Notes: Component<ExplData> = (props) => {
   return (
     <Show when={props.notes?.length}>
-      <div class="px-2 max-w-screen-sm">
+      <div class="px-2 max-w-(--breakpoint-sm)">
         <ul class="list-disc pl-6">
           <For each={props.notes}>
             {note => <li>{note}</li>}

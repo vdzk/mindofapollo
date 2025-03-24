@@ -30,7 +30,7 @@ export default function JudgeArgument() {
         {...{ displayColumn }}
       />
       <PageTitle>Make judgement</PageTitle>
-      <div class="px-2 max-w-screen-sm">
+      <div class="px-2 max-w-(--breakpoint-sm)">
         <For each={Object.keys(formColumns)}>
           { colName => (
             <FormField

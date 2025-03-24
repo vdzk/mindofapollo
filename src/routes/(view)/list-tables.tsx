@@ -21,7 +21,7 @@ function TableList(props: { tables: string[], title?: string }) {
       {props.title && (
         <h2 class="text-xl font-semibold mb-2 px-2 capitalize">{props.title}</h2>
       )}
-      <div class="px-2 max-w-screen-md flex flex-wrap gap-2">
+      <div class="px-2 max-w-(--breakpoint-md) flex flex-wrap gap-2">
         <For each={props.tables}>
           {(tableName) => (
             <Link

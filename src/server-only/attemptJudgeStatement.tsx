@@ -193,7 +193,7 @@ const Derivation: Component<ExplJudgeStatementData> = data => {
       </div>
 
       <Subtitle>Result</Subtitle>
-      <div class="px-2 max-w-screen-sm">
+      <div class="px-2 max-w-(--breakpoint-sm)">
         The system applied the statement confidence formula to the confidences above.
         <br/>You can test it out in the{' '}
         <Link label="confidence calculator" route="confidence-calculator" />.

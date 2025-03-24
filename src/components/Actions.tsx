@@ -20,7 +20,7 @@ const Action: Component<{
 
   return (
     <Show when={!validationError()} fallback={(
-      <div class="bg-red-100 rounded mx-2 px-2 max-w-md">
+      <div class="bg-red-100 rounded-sm mx-2 px-2 max-w-md">
         {validationError()}
       </div>
     )}>

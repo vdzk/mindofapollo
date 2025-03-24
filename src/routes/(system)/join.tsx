@@ -36,7 +36,7 @@ export default function Join() {
       <PageTitle>
         Join
       </PageTitle>
-      <div class="px-2 max-w-screen-md">
+      <div class="px-2 max-w-(--breakpoint-md)">
         <FormField
           tableName="person"
           colName="name"

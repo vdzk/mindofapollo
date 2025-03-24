@@ -105,7 +105,7 @@ export const LongSelect: Component<LongSelectProps> = (props) => {
       <input
         type="text"
         name={props.name}
-        class="border rounded pl-1 w-full"
+        class="border rounded-sm pl-1 w-full"
         placeholder={props.placeholder}
         value={dropdownOpen() ? filterText() : selectedLabel()}
         onFocus={handleInputFocus}
@@ -125,7 +125,7 @@ export const LongSelect: Component<LongSelectProps> = (props) => {
           <For each={filteredOptions()}>
             {option => (
               <div 
-                class="dropdown-item px-4 py-2 cursor-pointer hover:bg-blue-100 focus:bg-blue-100 focus:outline-none"
+                class="dropdown-item px-4 py-2 cursor-pointer hover:bg-blue-100 focus:bg-blue-100 focus:outline-hidden"
                 classList={{ "bg-blue-200": option.id === props.value }}
                 onClick={handleDropdownItemClick(option)}
                 onKeyDown={handleDropdownItemKeyDown(option)}

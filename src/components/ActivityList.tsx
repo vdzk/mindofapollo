@@ -99,13 +99,13 @@ export function ActivityList(props: {
                               <For each={items}>
                                 {(explRecord) => (
                                   <div class="mb-2 flex gap-2">
-                                    <div class="text-sm text-gray-500 flex-shrink-0">
+                                    <div class="text-sm text-gray-500 shrink-0">
                                       {formatMinutes(explRecord.timestamp)}
                                     </div>
                                     <Show when={explRecord.data}>
                                       <div class="flex items-start gap-2 flex-1">
                                         {explRecord.is_new && (
-                                          <span class="inline-block w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" title="New update"></span>
+                                          <span class="inline-block w-2 h-2 bg-blue-500 rounded-full shrink-0 mt-1.5" title="New update"></span>
                                         )}
                                         <Switch>
                                           <Match when={props.goToRecord}>
