@@ -1,4 +1,3 @@
-import { explAskToJudgeAdditiveStatement } from "~/api/askToJudge/additiveStatement"
 import { ExplData } from "./types"
 import { explDeleteById } from "~/api/delete/byId"
 import { explDeleteCrossRecord } from "~/api/delete/crossRecord"
@@ -10,12 +9,13 @@ import { explExecuteProposalChange, explSubmitTaskVoteChangeProposal } from "~/a
 import { explAttemptJudgeStatement } from "~/server-only/attemptJudgeStatement"
 import { explInsertRecord } from "~/api/insert/record"
 import { explSubmitChangeProposal } from "~/api/submit/changeProposal"
-import { explAttemptAggregateArguments, explSubmitTaskWeighArgument } from "~/api/submitTask/weighArgument"
 import { explUpdateExtRecord } from "~/api/update/extRecord"
 import { explUpdateRecord } from "~/api/update/record"
+import { explAttemptAggregateArguments } from "~/server-only/attemptAggregateArguments"
+import { ExplRecord } from "~/server-only/expl"
+import { humanCase } from "~/utils/string"
 
 export const formatters: Record<string, (data: any) => ExplData> = {
-  explAskToJudgeAdditiveStatement,
   explDeleteById,
   explDeleteCrossRecord,
   explDeleteExtById,
@@ -26,9 +26,27 @@ export const formatters: Record<string, (data: any) => ExplData> = {
   explSubmitChangeProposal,
   explSubmitTaskVoteChangeProposal,
   explExecuteProposalChange,
-  explSubmitTaskWeighArgument,
   explUpdateExtRecord,
   explUpdateRecord,
   explAttemptAggregateArguments,
   explAttemptJudgeStatement
+}
+
+export const fallbackFormatter = (explRecord: ExplRecord<any>): ExplData => {
+  return {
+    actor: explRecord.user_id ? {
+      type: 'user',
+      user: {
+        id: explRecord.user_id,
+        name: `user #${explRecord.user_id}`,
+        auth_role: 'unknown'
+      }
+    } : { type: 'system' },
+    action: explRecord.action,
+    target: {
+      tableName: explRecord.table_name ?? 'unknown',
+      id: explRecord.record_id ?? 0,
+      label: `${humanCase(explRecord.table_name ?? 'unknown')} #${explRecord.record_id}`
+    }
+  }
 }

@@ -10,14 +10,24 @@ import { RecordDetails } from "~/components/RecordDetails"
 import { getOneRecordByIdCache } from "~/client-only/query"
 import { whoCanUpdateRecord } from "~/api/update/record"
 import { ConditionArgument } from "./ConditionArgument"
+import { ArgumentAggregationType } from "~/tables/argument/aggregation_type"
+import { Form } from "~/components/form/Form"
+
+const judgementTableName = {
+  'evidential': 'argument_judgement',
+  'additive': 'argument_weight'
+}
 
 export const ArgumentJudgement: Component<{
   argumentId: number,
+  record?: DataRecordWithId,
   firstArgOnSide: boolean,
   refreshStatementConfidence: () => void,
-  record?: DataRecordWithId
+  aggregationType: ArgumentAggregationType
 }> = props => {
-  const judgement = createAsync(() => getOneRecordByIdCache('argument_judgement', props.argumentId))
+  const judgement = createAsync(() => getOneRecordByIdCache(
+    judgementTableName[props.aggregationType], props.argumentId
+  ))
   const conditionalConfidence = createAsync(() => getOneRecordByIdCache('argument_conditional', props.argumentId))
   const canJudge = () => useBelongsTo(whoCanUpdateRecord('argument_judgement'))
   const canCondition = () => useBelongsTo(whoCanUpdateRecord('argument_conditional'))
@@ -44,7 +54,7 @@ export const ArgumentJudgement: Component<{
       return 'condition-argument'
     } else {
       if (judgement()) {
-        return 'latest-judgement'
+        return 'judgement'
       } else {
         return 'no-judgement'
       }
@@ -98,11 +108,22 @@ export const ArgumentJudgement: Component<{
             />
           </div>
         </Match>
-        <Match when={viewName() === 'judge-argument'}>
+        <Match when={
+          viewName() === 'judge-argument' && props.aggregationType === 'evidential'
+        }>
           <JudgeArgument
             argumentId={props.argumentId}
             onExit={onJudgeArgumentExit}
             currentJudgement={judgement()}
+          />
+        </Match>
+        <Match when={viewName() === 'judge-argument'}>
+          <Form
+            tableName={judgementTableName[props.aggregationType]}
+            id={judgement()?.id}
+            record={judgement()}
+            preset={judgement() ? undefined : { id: props.argumentId }}
+            exitSettings={{ onExit: onJudgeArgumentExit }}
           />
         </Match>
         <Match when={viewName() === 'condition-argument'}>
@@ -113,7 +134,7 @@ export const ArgumentJudgement: Component<{
             refreshStatementConfidence={props.refreshStatementConfidence}
           />
         </Match>
-        <Match when={viewName() === 'latest-judgement'}>
+        <Match when={viewName() === 'judgement' && props.aggregationType === 'evidential'}>
           <RecordDetails
             tableName="argument_judgement"
             id={props.argumentId}
@@ -128,13 +149,20 @@ export const ArgumentJudgement: Component<{
             />
           </Show>
           <Show when={canCondition() && !props.firstArgOnSide}>
-          <div class="px-2">
-            <Button
-              label={`${conditionalConfidence() ? "Edit" : "Apply"} conditional confidence`}
-              onClick={() => setWantsToCondition(true)}
-            />
-          </div>
+            <div class="px-2">
+              <Button
+                label={`${conditionalConfidence() ? "Edit" : "Apply"} conditional confidence`}
+                onClick={() => setWantsToCondition(true)}
+              />
+            </div>
           </Show>
+        </Match>
+        <Match when={viewName() === 'judgement'}>
+          <RecordDetails
+            tableName={judgementTableName[props.aggregationType]}
+            id={props.argumentId}
+          />
+          {getJudgeButton()}
         </Match>
       </Switch>
     </div>

@@ -1,10 +1,9 @@
 import {action, json, redirect} from "@solidjs/router"
 import { deleteById } from "~/api/delete/byId"
 import { deleteCrossRecord } from "~/api/delete/crossRecord"
-import { executeAction } from "./tableActions"
 import { CrossRecordMutateProps, insertCrossRecord } from "~/api/insert/crossRecord"
 import { setSubscription } from "~/api/set/subscription"
-import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache, getUserSubscriptionsCache, listRecordsCache} from "~/client-only/query"
+import { listCrossRecordsCache, listForeignHopRecordsCache, getUserSubscriptionsCache, listRecordsCache} from "~/client-only/query"
 import { updateSubscriptionLastOpened } from "~/api/set/subscriptionLastOpened"
 import { deleteExtById } from "~/api/delete/extById"
 
@@ -54,27 +53,6 @@ export const insertCrossRecordAction = action(
         ]
       }
     )
-  }
-)
-export const executeTableAction = action(
-  async (
-    tableName: string,
-    actionName: string,
-    recordId: number
-  ) => {
-    const error = await executeAction(tableName, actionName, recordId)
-    if (error) {
-      return error
-    } else {
-      return json(
-        undefined,
-        {
-          revalidate: [
-            getVisibleActionsCache.keyFor(tableName, recordId)
-          ]
-        }
-      )
-    }
   }
 )
 

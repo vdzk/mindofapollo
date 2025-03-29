@@ -67,7 +67,7 @@ export const argument: TableSchema = {
     },
     evaluation: {
       label: 'evaluation',
-      fields: ['judgement_requested', 'judgements', 'conditionals']
+      fields: [ 'judgements', 'conditionals']
     }
   }
 }

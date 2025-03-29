@@ -6,11 +6,13 @@ import { ShowRecord } from "../ShowRecord"
 import { ArgumentJudgement } from "./ArgumentJudgement"
 import { Subtitle } from "~/components/PageTitle"
 import { Aggregate } from "~/components/aggregate/Aggregate"
+import { ArgumentAggregationType } from "~/tables/argument/aggregation_type"
 
 export const Argument: Component<{
   id: number,
   firstArgOnSide: boolean,
-  refreshStatementConfidence: () => Promise<void>
+  refreshStatementConfidence: () => Promise<void>,
+  aggregationType: ArgumentAggregationType
 }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
@@ -48,6 +50,7 @@ export const Argument: Component<{
               record={record()}
               firstArgOnSide={props.firstArgOnSide}
               refreshStatementConfidence={props.refreshStatementConfidence}
+              aggregationType={props.aggregationType}
             />
           </>
         </Match>

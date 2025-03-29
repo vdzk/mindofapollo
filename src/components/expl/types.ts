@@ -7,7 +7,7 @@ export type UserActor = { type: 'user',
   user: {
     id: number,
     name: string,
-    auth_role: AuthRole
+    auth_role: AuthRole | 'unknown'
   }
 }
 

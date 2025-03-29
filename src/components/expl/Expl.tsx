@@ -1,6 +1,6 @@
 import { Component, createMemo, Switch, Match } from "solid-js"
 import { ExplRecord } from "~/server-only/expl"
-import { formatters } from "./formatter"
+import { fallbackFormatter, formatters } from "./formatter"
 import { firstCap, humanCase } from "~/utils/string"
 import { ExplData } from "./types"
 import { Title } from "@solidjs/meta"
@@ -27,7 +27,7 @@ const getSummaryStr = (expl: ExplData) => {
 
 export const getExplData = (explRecord: ExplRecord<any>) => {
   const formatter = formatters['expl' + firstCap(explRecord.action)]
-  return formatter(explRecord.data)
+  return formatter ? formatter(explRecord.data) : fallbackFormatter(explRecord)
 }
 
 export const getExplActionStr = (explRecord: ExplRecord<any>) =>

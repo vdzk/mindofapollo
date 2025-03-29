@@ -10,6 +10,7 @@ import { MasterDetail } from "~/components/MasterDetail"
 import { RecordPageTitle } from "~/components/PageTitle"
 import { schema } from "~/schema/schema"
 import { BooleanColumn } from "~/schema/type"
+import { ArgumentAggregationType } from "~/tables/argument/aggregation_type"
 import { ShowRecord } from "~/views/ShowRecord"
 import { Argument } from "~/views/Statement/Argument"
 import { Discussion } from "~/views/Statement/Discussion"
@@ -116,11 +117,12 @@ export default function Statement() {
               class="pl-2"
               optionsClass="w-56 border-r pr-2 pt-2"
             >
-              <Show when={selectedArgument() > 0}>
+              <Show when={selectedArgument() > 0 && statement()}>
                 <Argument
                   id={selectedArgument()!}
                   firstArgOnSide={selectedFirstArgOnSide()}
                   refreshStatementConfidence={refreshStatementConfidence}
+                  aggregationType={statement()!.argument_aggregation_type_name as ArgumentAggregationType}
                 />
               </Show>
               <Show when={selectedArgument() < 0 && recordId()}>

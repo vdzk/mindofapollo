@@ -1,11 +1,8 @@
-import { Title } from "@solidjs/meta"
 import { createAsync, useAction, useSearchParams } from "@solidjs/router"
 import { Component, Match, Show, Switch, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import { Actions } from "~/components/Actions"
 import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
-import { titleColumnName } from "~/utils/schema"
 import { MasterDetail } from "~/components/MasterDetail"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
@@ -85,7 +82,6 @@ export const ShowRecord: Component<{
       </Show>
       <Switch>
         <Match when={selectedSection() === 'actions'}>
-          <Actions tableName={props.tableName} recordId={props.id} />
           <div class="px-2 pb-2">
             <Link
               route="propose-change"

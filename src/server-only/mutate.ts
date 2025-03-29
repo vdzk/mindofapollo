@@ -9,6 +9,7 @@ import { createTranslations } from "./createTranslations"
 import { _getRecordById } from "./select"
 import { attemptJudgeStatement } from "./attemptJudgeStatement"
 import { humanCase } from "~/utils/string"
+import { attemptAggregateArguments } from "./attemptAggregateArguments"
 
 
 // TODO: implement efficient bulk version
@@ -144,10 +145,13 @@ const trigger = async (
   id: number,
   explId: number | null
 ) => {
-  if (['argument_judgement', 'argument_conditional'].includes(tableName)) {
+  if (['argument_judgement', 'argument_conditional', 'argument_weight'].includes(tableName)) {
     const argument = await _getRecordById('argument', id, ['statement_id'])
     if (argument && explId) {
-      await attemptJudgeStatement(
+      const attemptJudge = tableName === 'argument_weight'
+        ? attemptAggregateArguments
+        : attemptJudgeStatement
+      await attemptJudge(
         argument.statement_id as number,
         explId,
         `${op} of ${humanCase(tableName)}`

@@ -30,8 +30,8 @@ export const ConditionArgument: Component<{
         tableName="argument_conditional"
         id={props.conditionalConfidence?.id}
         record={props.conditionalConfidence}
-        exitSettings={{ onExit }}
         preset={props.conditionalConfidence ? undefined : {id: props.judgement.id}}
+        exitSettings={{ onExit }}
       />
     </>
 

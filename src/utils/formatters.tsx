@@ -1,10 +1,5 @@
 import { JSX } from "solid-js";
 
-/**
- * Safely parses text with <b> tags and converts them to JSX bold elements
- * @param text String containing <b> tags from ts_headline
- * @returns Array of string or JSX elements
- */
 export function parseBoldTags(text: string): (string | JSX.Element)[] {
   if (!text) return [];
   

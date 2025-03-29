@@ -53,7 +53,6 @@ export const attemptJudgeStatement = async (
     const explId = await startExpl(
       null, 'attemptJudgeStatement', 1, 'statement', statementId)
     const newFragment = {
-      judgement_requested: false,
       confidence: calcStatementConfidence(confidences),
       decided: true
     }

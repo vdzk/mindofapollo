@@ -22,6 +22,20 @@ export const statement: TableSchema = {
         optional: true
       }
     },
+    argument_aggregation_type_name: {
+      type: 'virtual',
+      queries: {
+        aggregation_types: [
+          ['id'],
+          ['argument_aggregation_type_id', [
+            ['name']
+          ]]
+        ],
+      },
+      get: (ids, results) => Object.fromEntries(results.aggregation_types.map(
+        result => [result.id, result.name]
+      ))
+    },
     decided: {
       type: 'boolean',
       defaultValue: false,
@@ -33,13 +47,6 @@ export const statement: TableSchema = {
       type: 'proportion',
       getVisibility: record => record.decided as boolean,
       defaultValue: 0.5,
-      readOnly: true
-    },
-    judgement_requested: {
-      type: 'boolean',
-      defaultValue: false,
-      label: 'judgement',
-      optionLabels: ['Not requested', 'requested'],
       readOnly: true
     },
     featured: {
@@ -90,7 +97,7 @@ export const statement: TableSchema = {
       label: 'evaluation',
       fields: [
         'confirmations', 'statement_approvals', 'decided',
-        'confidence', 'judgement_requested'
+        'confidence'
       ]
     },
     other: {
