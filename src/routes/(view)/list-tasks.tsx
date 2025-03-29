@@ -16,12 +16,6 @@ export default function ListTasks() {
         </div>
         <div>
           <Link
-            route="judge-correlations"
-            label="Judge correlations"
-          />
-        </div>
-        <div>
-          <Link
             route="weigh-argument"
             label="Weigh arguments"
           />

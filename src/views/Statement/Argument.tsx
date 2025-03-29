@@ -7,7 +7,10 @@ import { ArgumentJudgement } from "./ArgumentJudgement"
 import { Subtitle } from "~/components/PageTitle"
 import { Aggregate } from "~/components/aggregate/Aggregate"
 
-export const Argument: Component<{ id: number }> = props => {
+export const Argument: Component<{
+  id: number,
+  firstArgOnSide: boolean,
+}> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
   return (
@@ -39,7 +42,11 @@ export const Argument: Component<{ id: number }> = props => {
                 aggregateName="critical_statements"
               />
             </div>
-            <ArgumentJudgement argumentId={props.id} record={record()} />
+            <ArgumentJudgement
+              argumentId={props.id}
+              record={record()}
+              firstArgOnSide={props.firstArgOnSide}
+            />
           </>
         </Match>
       </Switch>

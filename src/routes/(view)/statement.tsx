@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { createAsync, useSearchParams } from "@solidjs/router"
-import { createEffect, For, Match, Show, Switch } from "solid-js"
+import { createMemo, For, Match, Show, Switch } from "solid-js"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRecords } from "~/api/list/records"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
@@ -52,6 +52,24 @@ export default function Statement() {
   const selectedArgument = () => searchParams.argumentId ? parseInt(searchParams.argumentId as string) : 0
   const selectedSection = () => searchParams.tab ?? 'arguments'
 
+  const selectedFirstArgOnSide = createMemo(() => {
+    const selectedId = selectedArgument()
+    if (selectedId <= 0 || !_arguments()) return false
+    const foundSide = [false, false]
+    for (const arg of _arguments()!) {
+      const sideIndex = Number(arg.pro)
+      if (arg.id === selectedId) {
+        return !foundSide[sideIndex]
+      } else {
+        foundSide[sideIndex] = true
+        if (foundSide.every(x => x)) {
+          return false
+        }
+      }
+    }
+    return false
+  })
+
   return (
     <main class="relative flex-1 flex flex-col">
       <Title>{titleText()}</Title>
@@ -96,7 +114,10 @@ export default function Statement() {
               optionsClass="w-56 border-r pr-2 pt-2"
             >
               <Show when={selectedArgument() > 0}>
-                <Argument id={selectedArgument()!} />
+                <Argument
+                  id={selectedArgument()!}
+                  firstArgOnSide={selectedFirstArgOnSide()}
+                />
               </Show>
               <Show when={selectedArgument() < 0 && recordId()}>
                 <div class="pl-2">

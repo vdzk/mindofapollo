@@ -135,7 +135,7 @@ export const Form: Component<{
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
-  createEffect(() => !props.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
+  createEffect(() => !props.id && !diff.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
   const pristine = () => Object.entries(diff).every(
     ([key, value]) => (key === 'id') || value === undefined) && 
     Object.values(diffExt).every(value => value === undefined)
