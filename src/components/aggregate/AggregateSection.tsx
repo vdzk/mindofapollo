@@ -61,8 +61,8 @@ export const AggregateSection: Component<{
 
   return (
     <section class="pb-2">
-      <div>
-        <span class="px-2 font-bold">{props.section.title}</span>
+      <div class="px-2">
+        <span class="font-bold pr-2">{props.section.title}</span>
         <Show when={session?.userSession()?.authenticated && !showForm()}>
           <Switch>
             <Match when={props.aggregate.showForm}>

@@ -122,7 +122,7 @@ interface Section {
 
 export interface TableSchema {
   plural?: string,
-  private?: true,
+  private?: boolean,
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
   preview?: (record: DataRecord) => string, // Text to represent the whole record

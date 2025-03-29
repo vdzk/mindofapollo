@@ -1,11 +1,11 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createEffect, For, Show } from "solid-js"
+import { Component, For, Show } from "solid-js"
 import { schema } from "~/schema/schema"
 import { ColumnSchema } from "~/schema/type"
 import { getAllKeys } from "~/utils/shape"
 import { Aggregate } from "./aggregate/Aggregate"
 import { Detail, DetailProps } from "./details"
-import { getOneExtRecordById } from "~/api/getOne/extRecordById"
+import { getOneExtRecordByIdCache } from "~/client-only/query"
 
 export type ColumnFilter = (
   colName: string,
@@ -21,7 +21,7 @@ export const RecordDetails: Component<{
   showAggregates?: boolean
   showExplLinks?: boolean
 }> = props => {
-  const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
+  const record = createAsync(() => getOneExtRecordByIdCache(props.tableName, props.id))
   const table = () => schema.tables[props.tableName]
 
   // TODO: check how to optimise this if necesary

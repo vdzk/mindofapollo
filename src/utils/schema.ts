@@ -125,3 +125,5 @@ export const getTranslatableColumns = (
     })
 }
 
+export const needsExpl = (tableName: string) => schema.tables[tableName].expl ?? true
+

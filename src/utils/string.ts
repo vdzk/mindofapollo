@@ -1,4 +1,5 @@
 import { url } from "~/constant"
+import { getRootTableName } from "./schema";
 
 export const humanCase = (str: string) => str
   .split('_')
@@ -24,7 +25,8 @@ export const getPercent = (x: number) => Math.round(x * 100) + '%'
 
 export const buildUrl = (route: string, params?: Record<string, any>) => {
   // Rewrite link
-  if (route === 'show-record') {
+  if (route === 'show-record' && params) {
+    params.tableName = getRootTableName(params.tableName)
     if (params?.tableName === 'statement') {
       route = 'statement'
       params = { id: params.id }

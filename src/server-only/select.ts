@@ -2,7 +2,7 @@ import { onError, sql } from "./db"
 import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries, VqSettings } from "~/schema/type"
 import { getExplIdColNames } from "~/utils/expl"
 import { resolveEntries } from "~/utils/async"
-import { getTranslatableColumns, getVirtualColNames } from "~/utils/schema"
+import { getTranslatableColumns, getVirtualColNames, needsExpl } from "~/utils/schema"
 import { Row, RowList } from "postgres"
 import { getVirtualValuesByServerFn } from "./virtualColumns"
 import { schema } from "~/schema/schema"
@@ -105,7 +105,9 @@ export const _getRecordById = async (
   withExplIds = true
 ) => {
   const records = await sql<DataRecordWithId[]>`
-    SELECT ${sql(getSelectColNames(tableName, colNames, withExplIds))}
+    SELECT ${sql(getSelectColNames(
+      tableName, colNames, withExplIds && needsExpl(tableName)
+    ))}
     FROM ${sql(tableName)}
     WHERE id = ${id}
   `.catch(onError)

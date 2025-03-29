@@ -9,11 +9,16 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
+  }
+
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    background-color: white;
   }
 }

@@ -14,7 +14,6 @@ export const createTranslationTable = () => {
       record_id integer NOT NULL,
       ${languageColumns.join(',\n      ')},
       original_language text NOT NULL,
-      translated boolean NOT NULL DEFAULT false,
       PRIMARY KEY (table_name, column_name, record_id)
     )`,
     sqlStr`CREATE INDEX translation_record_idx ON translation (table_name, record_id)`

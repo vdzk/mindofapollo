@@ -17,7 +17,7 @@ export const hasUnjudgedArguments = async (statementId: number) => {
     SELECT id
     FROM argument
     WHERE statement_id = ${statementId}
-      AND ( judgement_requested  OR NOT EXISTS (
+      AND ( NOT EXISTS (
         SELECT 1
         FROM argument_judgement
         WHERE argument_judgement.id = argument.id

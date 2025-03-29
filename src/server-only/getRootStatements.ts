@@ -1,5 +1,6 @@
 import { sqlStr } from "~/util-no-circle"
 import { onError, sql } from "./db"
+import { getRootTableName } from "~/utils/schema";
 
 export interface RootStatement {
   id: number;
@@ -7,7 +8,7 @@ export interface RootStatement {
   featured: boolean;
 }
 
-export const hierarchyTableNames = ['statement', 'argument', 'critical_statement'] as const
+export const hierarchyTableNames = ['statement', 'argument', 'critical_statement', 'argument_judgement'] as const
 
 export type HierarchyTableName = typeof hierarchyTableNames[number];
 
@@ -55,7 +56,7 @@ export const getRootStatements = async (
   `
 
   const result = await sql.unsafe<RootStatement[]>(
-    query, [tableName, recordId]
+    query, [getRootTableName(tableName), recordId]
   ).catch(onError)
   return result
 }

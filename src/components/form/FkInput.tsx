@@ -3,7 +3,7 @@ import { Component, createEffect, createSignal, For, onMount, Show, useContext, 
 import { ForeignKey } from "~/schema/type"
 import { ExtValueContext, Form } from "./Form"
 import { OnChangeFormat } from "./FormField"
-import { getRecords } from "~/client-only/query"
+import { listRecordsCache } from "~/client-only/query"
 import { getOneIdByName } from "~/api/getOne/idByName"
 import { Button } from "../buttons"
 import { Subtitle } from "../PageTitle"
@@ -25,7 +25,7 @@ export const FkInput: Component<{
   formDepth?: number
 }> = (props) => {
   const [searchParams] = useSearchParams()
-  const records = createAsync(() => getRecords(props.column.fk.table))
+  const records = createAsync(() => listRecordsCache(props.column.fk.table))
   const [isPreset, setIsPreset] = createSignal(false)
   const [showForm, setShowForm] = createSignal(false)
   const [showRecord, setShowRecord] = createSignal(false)
@@ -84,7 +84,7 @@ export const FkInput: Component<{
   const onFormExit = async (savedId?: number) => {
     setShowForm(false)
     if (savedId) {
-      await revalidate(getRecords.keyFor(props.column.fk.table))
+      await revalidate(listRecordsCache.keyFor(props.column.fk.table))
       setValue('' + savedId)
     }
   }

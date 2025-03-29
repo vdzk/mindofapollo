@@ -7,7 +7,7 @@ import { isEmpty } from "~/utils/shape"
 import { buildUrl } from "~/utils/string"
 import { getExtTableName } from "~/utils/schema"
 import { createStore, reconcile } from "solid-js/store"
-import { getOneExtRecordByIdCache, getRecords } from "~/client-only/query"
+import { getOneExtRecordByIdCache, listRecordsCache } from "~/client-only/query"
 import { SessionContext } from "~/SessionContext"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
@@ -85,7 +85,7 @@ export const Form: Component<{
       }
       if (hasExitHandler(props.exitSettings)) {
         revalidate([
-          getRecords.keyFor(tableName),
+          listRecordsCache.keyFor(tableName),
           'getRecords' + tableName + props.id,
           getOneExtRecordByIdCache.keyFor(tableName, props.id)
         ])
@@ -96,7 +96,7 @@ export const Form: Component<{
           getExitUrl(props.id),
           {
             revalidate: [
-              getRecords.keyFor(tableName),
+              listRecordsCache.keyFor(tableName),
               'getRecords' + tableName + props.id,
               getOneExtRecordByIdCache.keyFor(tableName, props.id)
             ]
@@ -113,7 +113,7 @@ export const Form: Component<{
         savedRecord = await insertRecord(tableName, record)
       }
       if (hasExitHandler(props.exitSettings)) {
-        revalidate([getRecords.keyFor(tableName)])
+        revalidate([listRecordsCache.keyFor(tableName)])
         props.exitSettings.onExit(savedRecord?.id)
         return
       } else {

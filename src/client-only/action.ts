@@ -4,7 +4,7 @@ import { deleteCrossRecord } from "~/api/delete/crossRecord"
 import { executeAction } from "./tableActions"
 import { CrossRecordMutateProps, insertCrossRecord } from "~/api/insert/crossRecord"
 import { setSubscription } from "~/api/set/subscription"
-import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache, getUserSubscriptionsCache, getRecords} from "~/client-only/query"
+import {getVisibleActionsCache, listCrossRecordsCache, listForeignHopRecordsCache, getUserSubscriptionsCache, listRecordsCache} from "~/client-only/query"
 import { updateSubscriptionLastOpened } from "~/api/set/subscriptionLastOpened"
 import { deleteExtById } from "~/api/delete/extById"
 
@@ -117,7 +117,7 @@ export const _delete = action(async (
   throw redirect(
     `/list-records?tableName=${tableName}`,
     // TODO: this doesn't seem to do anything
-    { revalidate: getRecords.keyFor(tableName) }
+    { revalidate: listRecordsCache.keyFor(tableName) }
   )
 })
 

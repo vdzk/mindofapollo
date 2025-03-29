@@ -1,6 +1,7 @@
 import { Component } from "solid-js";
 
 export const btnStyle = (params?: { disabled?: boolean }) => `
+  cursor-pointer
   /* Layout */
   rounded-lg
   px-2

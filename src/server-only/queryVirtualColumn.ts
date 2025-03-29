@@ -26,8 +26,14 @@ export const queryVirtualColumn = async (
       const [columnName, secondPart] = column
       if (Array.isArray(secondPart)) {
         const children = secondPart
-        const fkColumn = schema.tables[parentTable].columns[columnName] as ForeignKey
-        const fkTable = fkColumn.fk.table
+        let fkTable: string
+        const table = schema.tables[parentTable]
+        if (columnName === 'id' && table.extendsTable) {
+          fkTable = table.extendsTable
+        } else {
+          const fkColumn = table.columns[columnName] as ForeignKey
+          fkTable = fkColumn.fk.table
+        }
         joins.push(sqlStr`
           JOIN ${fkTable} ON ${fkTable}.id = ${parentTable}.${columnName}
         `)

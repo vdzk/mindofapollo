@@ -27,19 +27,6 @@ export const argument: TableSchema = {
         labelColumn: 'name',
         extensionTables: ['','authority', 'analogy', 'other', 'explanation', 'epistemic', 'deduction', 'comparison', 'example']
       }
-    },
-    judgement_requested: {
-      type: 'boolean',
-      defaultValue: false,
-      label: 'judgement',
-      optionLabels: ['not requested', 'requested'],
-      readOnly: true
-    },
-    open_for_judgement: {
-      type: 'boolean',
-      defaultValue: false,
-      optionLabels: ['closed', 'open'],
-      readOnly: true
     }
   },
   extendedByTable: 'argument_judgement',
@@ -75,7 +62,7 @@ export const argument: TableSchema = {
       fields: ['statement_id', 'pro', 'argument_type_id']
     },
     criticism: {
-      label: 'critical questions',
+      label: 'criticism',
       fields: ['critical_statements']
     },
     evaluation: {

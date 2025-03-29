@@ -4,6 +4,7 @@ import { onError, sql } from "~/server-only/db"
 import { injectVirtualValues } from "~/server-only/select"
 import { getUserId } from "~/server-only/session";
 import { injectTranslations } from "~/server-only/injectTranslations";
+import { schema } from "../../schema/schema";
 
 export const listRecords = async (
   tableName: string,
@@ -11,7 +12,7 @@ export const listRecords = async (
 ) => {
   "use server"
   let filterClause
-  if (isPersonal(tableName)) {
+  if (isPersonal(tableName) && (schema.tables[tableName].private ?? true)) {
     filterClause = sql`WHERE owner_id = ${await getUserId()}`
   } else if (childStatementId && tableName === 'statement') {
     filterClause = sql`

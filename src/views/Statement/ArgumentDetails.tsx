@@ -14,6 +14,8 @@ import { getExtTableName } from "~/utils/schema"
 
 export const ArgumentDetails: Component<{
   record?: DataRecordWithId
+  showMoreDetails: boolean
+  setShowMoreDetails: (show: boolean) => void
 }> = props => {
   const [showForm, setShowForm] = createSignal(false)
   const extTableName = () => props.record
@@ -54,6 +56,13 @@ export const ArgumentDetails: Component<{
               <Button
                 label="Edit"
                 onClick={() => setShowForm(true)}
+              />
+              <Button
+                label={props.showMoreDetails
+                  ? "Hide more details"
+                  : "Show more details"
+                }
+                onClick={() => props.setShowMoreDetails(!props.showMoreDetails)}
               />
             </Show>
           </div>

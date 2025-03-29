@@ -5,7 +5,7 @@ import { pluralTableName } from "~/utils/schema"
 import { titleColumnName } from "~/utils/schema"
 import { action, createAsync, json, useAction } from "@solidjs/router"
 import { schema } from "~/schema/schema"
-import { getRecords } from "~/client-only/query"
+import { listRecordsCache } from "~/client-only/query"
 import { PageTitle } from "~/components/PageTitle"
 import { useSafeParams } from "~/client-only/util"
 import { Link } from "~/components/Link"
@@ -16,7 +16,7 @@ import { useBelongsTo } from "~/client-only/useBelongsTo"
 export default function ListRecords() {
   const sp = useSafeParams<{tableName: string}>(['tableName'])
 
-  const records = createAsync(() => getRecords(sp().tableName))
+  const records = createAsync(() => listRecordsCache(sp().tableName))
   const title = () => firstCap(pluralTableName(sp().tableName))
   const table = () => schema.tables[sp().tableName]
 
@@ -25,7 +25,7 @@ export default function ListRecords() {
   const addAction = useAction(action(async () => {
     const record = table().createRecord!()
     await insertRecord(sp().tableName, record)
-    return json( 'ok', { revalidate: [ getRecords.keyFor(sp().tableName) ] })
+    return json( 'ok', { revalidate: [ listRecordsCache.keyFor(sp().tableName) ] })
   }))
 
   return (

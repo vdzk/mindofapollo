@@ -13,8 +13,8 @@ import { printError } from "../../server-only/db"
 
 export const whoCanUpdateRecord = (
   tableName: string,
-  ofSelf: boolean,
-  self: boolean
+  ofSelf = false,
+  self = false
 ) => {
   if (!hasOwnFields(tableName)) {
     return []

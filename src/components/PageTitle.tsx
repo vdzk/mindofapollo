@@ -24,6 +24,12 @@ export const Subtitle: ParentComponent = (props) => {
   )
 }
 
+export const H2: ParentComponent = (props) => {
+  return (
+    <h2 class="text-lg font-bold px-2 py-1.5 first-letter:uppercase">{props.children}</h2>
+  )
+}
+
 export const AbovePageTitle: ParentComponent<{label: string}> =
   (props) => <div class="relative top-5 pl-2.5">{props.label}</div>
 

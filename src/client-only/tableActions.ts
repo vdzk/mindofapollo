@@ -1,4 +1,3 @@
-import { askToJudgeArgument } from "~/api/askToJudge/argument"
 import { askToJudgeEvidentialStatement } from "~/api/askToJudge/evidentialStatement"
 import { askToJudgeAdditiveStatement } from "~/api/askToJudge/additiveStatement"
 
@@ -8,9 +7,6 @@ export type TableAction = (
 ) => Promise<void | string | boolean>
 
 export const tableActions: Record<string, Record<string, TableAction>> = {
-  argument: {
-    askToJudgeArgument
-  },
   statement: {
     askToJudgeEvidentialStatement,
     askToJudgeAdditiveStatement

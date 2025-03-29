@@ -1,5 +1,5 @@
-import { onError, sql } from "./db";
-import { ExplRecord } from "./expl";
+import { onError, sql } from "./db"
+import { ExplRecord } from "./expl"
 import { hierarchyTableNames, getRootStatements } from "./getRootStatements"
 
 export const updateNotifications = async (explRecord: ExplRecord<any>) => {

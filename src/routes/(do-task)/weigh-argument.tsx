@@ -2,7 +2,7 @@ import { createResource, For, Show } from "solid-js"
 import { createStore } from "solid-js/store"
 import { FormField } from "~/components/form/FormField"
 import { Subtitle } from "~/components/PageTitle"
-import { ColumnFilter, RecordDetails } from "~/components/RecordDetails"
+import {  RecordDetails } from "~/components/RecordDetails"
 import { Task } from "~/components/Task"
 import { schema } from "~/schema/schema"
 import { BooleanColumn, DataRecord } from "~/schema/type"
@@ -13,7 +13,6 @@ import { submitTaskWeighArgument } from "~/api/submitTask/weighArgument"
 export default function WeighArgument() {
   const [diff, setDiff] = createStore<DataRecord>({})
   const [taskData, { refetch }] = createResource(getTaskWeighArgument)
-  const displayColumn: ColumnFilter = (colName, column, visible) => visible && colName !== 'judgement_requested'
   const formColumns = schema.tables.argument_weight.columns
   const id = () => taskData()?.argument.id
   const {optionLabels} = schema.tables.argument.columns.pro as BooleanColumn
@@ -55,11 +54,12 @@ export default function WeighArgument() {
         </div>
       </Show>
       <Subtitle>Read Argument</Subtitle>
-      <RecordDetails
-        tableName="argument"
-        id={id()}
-        {...{ displayColumn }}
-      />
+      <Show when={id()}>
+        <RecordDetails
+          tableName="argument"
+          id={id()!}
+        />
+      </Show>
       <Subtitle>Weigh Argument</Subtitle>
       <div class="px-2 max-w-(--breakpoint-sm)">
         <For each={Object.keys(formColumns)}>

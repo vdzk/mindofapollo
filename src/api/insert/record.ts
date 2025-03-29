@@ -3,7 +3,7 @@ import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
 import { _insertRecord, injectValueTypes } from "~/server-only/mutate"
 import { ExplData, UserActor } from "~/components/expl/types"
-import { titleColumnName } from "~/utils/schema"
+import { needsExpl, titleColumnName } from "~/utils/schema"
 import { isPersonal, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
 
@@ -27,11 +27,13 @@ export const insertRecord = async (
     record.owner_id = userId
   }
     
-  await injectValueTypes(tableName, record);
-  const explId = await startExpl(userId, 'insertRecord', 1, tableName, null)
+  await injectValueTypes(tableName, record)
+  const explId = needsExpl(tableName)
+    ? await startExpl(userId, 'insertRecord', 1, tableName, null)
+    : null
   const result = await _insertRecord(tableName, record, explId)
   const savedRecord = await _getRecordById(tableName, result.id)
-  if (!savedRecord) return
+  if (!savedRecord || !explId) return
   await setExplRecordId(explId, savedRecord.id)
 
   const user = await getUserActorUser()

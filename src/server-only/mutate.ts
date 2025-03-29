@@ -48,7 +48,7 @@ export const injectValueTypes = async (
 export const _insertRecord = async (
   tableName: string,
   record: DataRecord,
-  explId: number
+  explId: number | null
 ) => {
   await injectValueTypes(tableName, record)
   const allColNames = ['id', ...Object.entries(schema.tables[tableName].columns)
@@ -56,9 +56,9 @@ export const _insertRecord = async (
       colName !== 'id' && column.type !== 'virtual')
     .map(([colName]) => colName)
   ]
-  const explIds = Object.fromEntries(
+  const explIds = explId ? Object.fromEntries(
     allColNames.map(colName => [`${colName}_expl_id`, explId])
-  )
+  ) : {}
 
   const { translationRequired, originalText, nonTranslatable } = splitTranslatable(tableName, record)
 
@@ -114,7 +114,6 @@ export const _updateRecord = async <T extends DataRecord>(
   if (translationRequired) {
     await createTranslations(tableName, originalText, id, true)
   }
-  console.log('_updateRecord', {nonTranslatable, originalText})
   return diff
 }
 

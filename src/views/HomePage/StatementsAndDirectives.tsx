@@ -1,6 +1,6 @@
 import { createAsync, useAction } from "@solidjs/router"
 import { createSignal, For, Show } from "solid-js"
-import { getHomePageStatementsCache, getRecords } from "~/client-only/query"
+import { getHomePageStatementsCache, listRecordsCache } from "~/client-only/query"
 import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
 import { Subtitle } from "~/components/PageTitle"
@@ -9,7 +9,7 @@ import { setSubscriptionAction } from "~/client-only/action"
 import { Button } from "~/components/buttons"
 
 export default function StatementsAndDirectives() {
-  const tags = createAsync(() => getRecords('tag'))
+  const tags = createAsync(() => listRecordsCache('tag'))
 
   const featuredOption = { id: -1, label: 'featured' }
   const tagOptions = () => tags()?.map(

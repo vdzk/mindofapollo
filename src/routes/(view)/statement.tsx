@@ -12,6 +12,7 @@ import { schema } from "~/schema/schema"
 import { BooleanColumn } from "~/schema/type"
 import { ShowRecord } from "~/views/ShowRecord"
 import { Argument } from "~/views/Statement/Argument"
+import { Discussion } from "~/views/Statement/Discussion"
 
 export default function Statement() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -77,7 +78,8 @@ export default function Statement() {
       <MasterDetail
         options={[
           { id: 'arguments', label: 'Arguments' },
-          { id: 'details', label: 'Details' }
+          { id: 'details', label: 'Details' },
+          { id: 'discussion', label: 'Discussion' }
         ]}
         selectedId={selectedSection()}
         onChange={id => setSearchParams({ tab: id })}
@@ -118,6 +120,9 @@ export default function Statement() {
               id={recordId()!}
               hideSections={['arguments']}
             />
+          </Match>
+          <Match when={selectedSection() === 'discussion' && recordId()}>
+            <Discussion statementId={recordId()!} />
           </Match>
         </Switch>
       </MasterDetail>
