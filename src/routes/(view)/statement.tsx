@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta"
-import { createAsync, useSearchParams } from "@solidjs/router"
+import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
 import { createMemo, For, Match, Show, Switch } from "solid-js"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRecords } from "~/api/list/records"
@@ -70,6 +70,9 @@ export default function Statement() {
     return false
   })
 
+  // TODO: do this inside attemptJudgeStatement
+  const refreshStatementConfidence = () => revalidate(getOneExtRecordByIdCache.keyFor('statement', recordId()!))
+
   return (
     <main class="relative flex-1 flex flex-col">
       <Title>{titleText()}</Title>
@@ -117,6 +120,7 @@ export default function Statement() {
                 <Argument
                   id={selectedArgument()!}
                   firstArgOnSide={selectedFirstArgOnSide()}
+                  refreshStatementConfidence={refreshStatementConfidence}
                 />
               </Show>
               <Show when={selectedArgument() < 0 && recordId()}>

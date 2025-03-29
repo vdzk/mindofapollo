@@ -38,8 +38,9 @@ export const createTranslations = async (
   const targetLanguages = languages.filter(lang => lang !== language)
   Promise.all(targetLanguages.map(targetLang => {
     const { iso_639_1, regionCode } = langSettings[targetLang]
+    const sourceTexts = Object.values(originalText).map(text => text ? text : '--')
     return translator.translateText(
-      Object.values(originalText),
+      sourceTexts,
       langSettings[language].iso_639_1 as SourceLanguageCode,
       (regionCode ?? iso_639_1) as TargetLanguageCode,
       {
@@ -63,5 +64,5 @@ export const createTranslations = async (
           AND record_id = ${recordId}
       `.catch(onError)
     }))
-  })
+  }).catch(onError)
 }

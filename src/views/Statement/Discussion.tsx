@@ -34,7 +34,9 @@ export const Discussion: Component<{ statementId: number }> = props => {
   }
   return (
     <>
-      <For each={messages()}>
+      <For each={messages()} fallback={
+        <div class="p-2 text-gray-500">No messages yet.</div>
+      }>
         {message => (
           <div class="flex gap-2 px-2">
             <Link

@@ -1,4 +1,3 @@
-import { askToJudgeEvidentialStatement } from "~/api/askToJudge/evidentialStatement"
 import { askToJudgeAdditiveStatement } from "~/api/askToJudge/additiveStatement"
 
 export type TableAction = (
@@ -8,7 +7,6 @@ export type TableAction = (
 
 export const tableActions: Record<string, Record<string, TableAction>> = {
   statement: {
-    askToJudgeEvidentialStatement,
     askToJudgeAdditiveStatement
   }
 }

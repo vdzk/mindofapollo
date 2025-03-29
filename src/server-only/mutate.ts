@@ -7,6 +7,8 @@ import { AddExplId } from "~/components/expl/types"
 import { splitTranslatable } from "~/utils/schema"
 import { createTranslations } from "./createTranslations"
 import { _getRecordById } from "./select"
+import { attemptJudgeStatement } from "./attemptJudgeStatement"
+import { humanCase } from "~/utils/string"
 
 
 // TODO: implement efficient bulk version
@@ -72,6 +74,7 @@ export const _insertRecord = async (
   if (translationRequired) {
     await createTranslations(tableName, originalText, result.id)
   }
+  await trigger('insert', tableName, result.id, explId)
   return result
 };
 
@@ -114,14 +117,16 @@ export const _updateRecord = async <T extends DataRecord>(
   if (translationRequired) {
     await createTranslations(tableName, originalText, id, true)
   }
+  await trigger('update', tableName, id, explId)
   return diff
 }
 
 export const _deleteById = async (
   tableName: string,
-  id: number
+  id: number,
+  explId: number
 ) => {
-   await sql`
+  await sql`
     DELETE FROM ${sql(tableName)}
     WHERE id = ${id}
   `.catch(onError)
@@ -130,4 +135,23 @@ export const _deleteById = async (
     WHERE table_name = ${tableName}
       AND record_id = ${id}
   `.catch(onError)
+  await trigger('delete', tableName, id, explId)
+}
+
+const trigger = async (
+  op: 'insert' | 'update' | 'delete',
+  tableName: string,
+  id: number,
+  explId: number | null
+) => {
+  if (['argument_judgement', 'argument_conditional'].includes(tableName)) {
+    const argument = await _getRecordById('argument', id, ['statement_id'])
+    if (argument && explId) {
+      await attemptJudgeStatement(
+        argument.statement_id as number,
+        explId,
+        `${op} of ${humanCase(tableName)}`
+      )
+    }
+  }
 }

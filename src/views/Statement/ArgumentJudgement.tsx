@@ -14,6 +14,7 @@ import { ConditionArgument } from "./ConditionArgument"
 export const ArgumentJudgement: Component<{
   argumentId: number,
   firstArgOnSide: boolean,
+  refreshStatementConfidence: () => void,
   record?: DataRecordWithId
 }> = props => {
   const judgement = createAsync(() => getOneRecordByIdCache('argument_judgement', props.argumentId))
@@ -27,6 +28,7 @@ export const ArgumentJudgement: Component<{
   const onJudgeArgumentExit = () => {
     setWantsToJudge(false)
     setConfirmedPreJudgementCheck(false)
+    props.refreshStatementConfidence()
   }
 
   const viewName = createMemo(() => {
@@ -108,6 +110,7 @@ export const ArgumentJudgement: Component<{
             judgement={judgement()!}
             conditionalConfidence={conditionalConfidence()}
             setWantsToCondition={setWantsToCondition}
+            refreshStatementConfidence={props.refreshStatementConfidence}
           />
         </Match>
         <Match when={viewName() === 'latest-judgement'}>

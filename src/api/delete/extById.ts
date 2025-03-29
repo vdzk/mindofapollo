@@ -32,9 +32,9 @@ export const deleteExtById = async (tableName: string, id: number) => {
   const extRecord = extTableName ? await _getRecordById(extTableName, id) : undefined
 
   const explId = await startExpl(userId, 'deleteExtById', 1, tableName, id)
-  await _deleteById(tableName, id)
+  await _deleteById(tableName, id, explId)
   if (extTableName && extRecord) {
-    await _deleteById(extTableName, id)
+    await _deleteById(extTableName, id, explId)
   }
 
   const user = await getUserActorUser()

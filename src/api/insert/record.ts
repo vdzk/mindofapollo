@@ -8,7 +8,11 @@ import { isPersonal, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
 
 export const whoCanInsertRecord = (tableName: string) => {
-  if (tableName === 'person' || tablesThatExtendByName.includes(tableName)) {
+  if (
+    tableName === 'person'
+    || tablesThatExtendByName.includes(tableName)
+    || tableName === 'argument_aggregation_type'
+  ) {
     return []
   } else {
     return ['invited']

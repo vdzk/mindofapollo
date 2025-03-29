@@ -7,7 +7,13 @@ export const ConditionArgument: Component<{
   judgement: DataRecordWithId,
   conditionalConfidence?: DataRecordWithId,
   setWantsToCondition: Setter<boolean>
+  refreshStatementConfidence: () => void
 }> = props => {
+  const onExit = () => {
+    props.setWantsToCondition(false)
+    props.refreshStatementConfidence()
+  }
+
   return (
     <>
       <Detail
@@ -24,7 +30,7 @@ export const ConditionArgument: Component<{
         tableName="argument_conditional"
         id={props.conditionalConfidence?.id}
         record={props.conditionalConfidence}
-        exitSettings={{ onExit: () => props.setWantsToCondition(false) }}
+        exitSettings={{ onExit }}
         preset={props.conditionalConfidence ? undefined : {id: props.judgement.id}}
       />
     </>

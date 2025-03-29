@@ -10,6 +10,7 @@ import { Aggregate } from "~/components/aggregate/Aggregate"
 export const Argument: Component<{
   id: number,
   firstArgOnSide: boolean,
+  refreshStatementConfidence: () => Promise<void>
 }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
@@ -46,6 +47,7 @@ export const Argument: Component<{
               argumentId={props.id}
               record={record()}
               firstArgOnSide={props.firstArgOnSide}
+              refreshStatementConfidence={props.refreshStatementConfidence}
             />
           </>
         </Match>

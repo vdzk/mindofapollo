@@ -31,9 +31,8 @@ export const attemptJudgeStatement = async (
     LEFT JOIN argument_judgement aj ON aj.id = a.id
     LEFT JOIN argument_conditional ac ON ac.id = a.id
     WHERE a.statement_id = ${statementId}
-      `.catch(onError) as any[]
+  `.catch(onError) as any[]
   let canJudge = true
-  let hasNonConditional = [false, false] // [con, pro]
   const confidences: [number[], number[]] = [[], []]
   for (const argument of argumentConfidences) {
     if (argument.isolated_confidence === null) {
@@ -42,12 +41,6 @@ export const attemptJudgeStatement = async (
 
     const side = Number(argument.pro)
     if (argument.conditional_confidence === null) {
-      if (hasNonConditional[side]) {
-        // Only one non-conditional argument is allowed
-        canJudge = false
-      } else {
-        hasNonConditional[side] = true
-      }
       confidences[side].push(argument.isolated_confidence as number)
     } else {
       confidences[side].push(argument.conditional_confidence)
