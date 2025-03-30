@@ -126,7 +126,7 @@ export default function Statement() {
                 />
               </Show>
               <Show when={selectedArgument() < 0 && recordId()}>
-                <div class="pl-2">
+                <div class="pt-2">
                   <Form
                     tableName="argument"
                     preset={{

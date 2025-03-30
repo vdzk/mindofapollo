@@ -17,7 +17,7 @@ export const Argument: Component<{
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
   return (
-    <section class="flex flex-2">
+    <section class="flex flex-1">
       <ArgumentDetails
         record={record()}
         showMoreDetails={showMoreDetails()}
@@ -37,7 +37,7 @@ export const Argument: Component<{
         </Match>
         <Match when={!showMoreDetails()}>
           <>
-            <div class="flex-2 border-l">
+            <div class="flex-1 border-l">
               <Subtitle>Crtical Questions</Subtitle>
               <Aggregate
                 tableName="argument"
