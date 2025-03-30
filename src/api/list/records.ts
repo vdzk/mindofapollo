@@ -12,9 +12,11 @@ export const listRecords = async (
 ) => {
   "use server"
   let filterClause
+  let selectClause = sql`t.*`
   if (isPersonal(tableName) && (schema.tables[tableName].private ?? true)) {
     filterClause = sql`WHERE owner_id = ${await getUserId()}`
   } else if (childStatementId && tableName === 'statement') {
+    selectClause = sql`t.*, cs.argument_id`
     filterClause = sql`
       JOIN argument a ON a.statement_id = t.id
       JOIN critical_statement cs ON cs.argument_id = a.id
@@ -24,7 +26,7 @@ export const listRecords = async (
     filterClause = sql``
   }  
   const records = await sql`
-    SELECT t.*
+    SELECT ${selectClause}
     FROM ${sql(tableName)} t
     ${filterClause}
     ORDER BY t.id

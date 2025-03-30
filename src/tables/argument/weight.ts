@@ -16,7 +16,8 @@ export const argument_weight: TableSchema = {
       type: 'weight'
     },
     weight_explanation: {
-      type: 'varchar'
+      type: 'text',
+      lines: 4
     }
   }
 }

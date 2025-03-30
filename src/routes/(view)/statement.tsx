@@ -83,7 +83,10 @@ export default function Statement() {
             {parentStatement => (
               <Link
                 route="statement"
-                params={{ id: parentStatement.id }}
+                params={{
+                  id: parentStatement.id,
+                  argumentId: parentStatement.argument_id
+                }}
                 label={'◄' + parentStatement.label}
                 type="faded"
                 class="pr-2 inline-block max-w-(--breakpoint-sm) whitespace-nowrap overflow-hidden text-ellipsis"

@@ -16,7 +16,8 @@ export const rule_change_request: TableSchema = {
     },
     response: {
       type: 'text',
-      lines: 4
+      lines: 4,
+      readOnly: true
     },
     rule_id: {
       type: 'fk',
@@ -24,7 +25,8 @@ export const rule_change_request: TableSchema = {
         table: 'rule',
         labelColumn: 'name',
         optional: true
-      }
+      },
+      readOnly: true
     }
   }
 }

@@ -1,24 +1,22 @@
-//https://docs.google.com/spreadsheets/d/1lwBvNssVy33m0RcAOSJx_n_w56ZnhgSOpOMJ1PdiRio/edit?gid=880944073#gid=880944073
-export const calcStatementConfidence = (argStrengths: [number[], number[]]) => {
-  const argConfidences = argStrengths.map(
-    strengths => strengths.map(strength => (strength + 1) / 2)
-  )
-  const sideConfidences = argConfidences.map(
-    confidences => {
-      if (confidences.length === 0) {
-        return 0.5
-      } else {
-        return 1 - confidences.reduce(
-          (product, current) => product * (1 - current)
-        , 1)
-      }
-    }
-  )
-  const [conConf, proConf] = sideConfidences
-  const conTotalConf = conConf * (1 - proConf)
-  const proTotalConf = proConf * (1 - conConf)
-  const confidence = proTotalConf / (proTotalConf + conTotalConf)
-  return confidence
+const getAllFailProb = (confidences: number[]) =>
+  confidences.reduce((product, c) => product * (1 - c), 1)
+
+export const calcStatementConfidence = (argConfidences: [number[], number[]]) => {
+  // Scenario 1: pro side tries to succeed
+  const pAllProFail = getAllFailProb(argConfidences[1])
+  const pAllConFail = getAllFailProb(argConfidences[0])
+  // const pProTrySuccess = (1 - pAllProFail) * pAllConFail
+
+  // Scenario 2: con side tries to succeed
+  // const pConTrySuccess = (1 - pAllConFail) * pAllProFail
+
+  // Flip a coin beween the two scenarios
+  // const pProWin = (pProTrySuccess + (1 - pConTrySuccess)) / 2
+
+  // Use algebra to substitute and simplify the formula above 
+  const pProWin = (1 - pAllProFail + pAllConFail) / 2
+
+  return pProWin
 }
 
 function createTriangularRandomGenerator(a: number, m: number, b: number) {
