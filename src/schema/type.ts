@@ -90,21 +90,7 @@ export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignK
   unique?: true
 }
 
-export interface OneToNSchema {
-  type: '1-n'
-  table: string
-  column: string
-  splitByColumn?: string
-  filterSplitBy?: string // both parent and split tables should have this column and only overlapping entries will be shown
-}
-
-export interface NToNSchema {
-  type: 'n-n'
-  table: string
-  first?: boolean // should the parent table appear first in the name of the cross table. Exactly one of the table pair should have this param set to true!
-}
-
-export type AggregateSchema = (OneToNSchema | NToNSchema) & {
+interface SharedAggregateProps {
   viewLink?: {  // custom link to view the record
     route: string
     idParamName: string
@@ -112,6 +98,22 @@ export type AggregateSchema = (OneToNSchema | NToNSchema) & {
   },
   showForm?: true // show form to add new records
 }
+
+export interface OneToNSchema extends SharedAggregateProps{
+  type: '1-n'
+  table: string
+  column: string
+  splitByColumn?: string
+  filterSplitBy?: string // both parent and split tables should have this column and only overlapping entries will be shown
+}
+
+export interface NToNSchema extends SharedAggregateProps {
+  type: 'n-n'
+  table: string
+  first?: boolean // should the parent table appear first in the name of the cross table. Exactly one of the table pair should have this param set to true!
+}
+
+export type AggregateSchema = OneToNSchema | NToNSchema
 
 interface Section {
   label: string

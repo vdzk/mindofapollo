@@ -14,8 +14,9 @@ import { AggregateSection } from "./AggregateSection"
 const getAggregateRecords = (
   tableName: string,
   id: number,
-  aggregate: AggregateSchema
+  aggregateName: string
 ) => {
+  const aggregate = schema.tables[tableName].aggregates?.[aggregateName] as AggregateSchema
   const titleColName = titleColumnName(aggregate.table)
   const titleColumn = () => schema.tables[aggregate.table].columns[titleColName]
   if (aggregate.type === '1-n') {
@@ -38,7 +39,7 @@ export const Aggregate: Component<{
 }> = (props) => {
   const _aggregate = () => schema.tables[props.tableName].aggregates?.[props.aggregateName] as AggregateSchema
 
-  const records = createAsync(() => getAggregateRecordsCache(props.tableName, props.id, _aggregate()))
+  const records = createAsync(() => getAggregateRecordsCache(props.tableName, props.id, props.aggregateName))
 
   const splitRecords = createAsync(async () => {
     const aggregate = _aggregate()
@@ -94,6 +95,7 @@ export const Aggregate: Component<{
         <AggregateSection
           tableName={props.tableName}
           id={props.id}
+          aggregateName={props.aggregateName}
           aggregate={_aggregate()}
           section={section}
         />

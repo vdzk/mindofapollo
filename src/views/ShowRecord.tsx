@@ -110,7 +110,7 @@ export const ShowRecord: Component<{
             </Show>
           </div>
           <Show when={canDeleteExtById()}>
-            <NestPanel title="Delete">
+            <NestPanel title="Delete" class="ml-2 mb-2">
               <UserExplField value={userExpl()} onChange={setUserExpl} />
               <Button
                 label="Delete"

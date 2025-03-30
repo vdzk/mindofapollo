@@ -132,7 +132,7 @@ export default function EditCrossRef() {
           )}
         </For>
       </div>
-      <NestPanel title={`Add ${humanCase(sp().b)}`}>
+      <NestPanel title={`Add ${humanCase(sp().b)}`} class="ml-2 mb-2">
         <RecordSelect
           selectedId={selectedAddId()}
           setSelectedId={setSelectedAddId}
@@ -147,7 +147,7 @@ export default function EditCrossRef() {
         />
       </NestPanel>
       <Show when={canDeleteCrossRecord()}>
-        <NestPanel title={`Remove ${humanCase(sp().b)}`}>
+        <NestPanel title={`Remove ${humanCase(sp().b)}`} class="ml-2 mb-2">
           <UserExplField value={userExpl()} onChange={setUserExpl} />
           <RecordSelect
             selectedId={selectedRemoveId()}

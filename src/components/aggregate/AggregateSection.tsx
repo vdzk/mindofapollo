@@ -9,6 +9,7 @@ import { FkRecordListItem } from "./FkRecordListItem"
 import { Form } from "../form/Form"
 import { getAggregateRecordsCache } from "./Aggregate"
 import { revalidate } from "@solidjs/router"
+import { RemovableListItem } from "./RemovableListItem"
 
 export interface AggregateSectionSettings {
   title: string;
@@ -20,6 +21,7 @@ export interface AggregateSectionSettings {
 export const AggregateSection: Component<{
   tableName: string,
   id: number,
+  aggregateName: string,
   aggregate: AggregateSchema,
   section: AggregateSectionSettings
 }> = (props) => {
@@ -33,7 +35,7 @@ export const AggregateSection: Component<{
     setShowForm(false)
     if (savedId) {
       await revalidate(getAggregateRecordsCache.keyFor(
-        props.tableName, props.id, props.aggregate
+        props.tableName, props.id, props.aggregateName
       ))
     }
   }
@@ -95,22 +97,27 @@ export const AggregateSection: Component<{
             <Match when={titleColumn().type === 'fk'}>
               <FkRecordListItem
                 tableName={props.tableName}
+                aggregateName={props.aggregateName}
                 aggregate={props.aggregate as OneToNSchema}
                 titleColumnName={titleColName()}
                 titleColumn={titleColumn() as ForeignKey}
-                record={record}
-                id={props.id}
+                item={record}
+                recordId={props.id}
               />
             </Match>
             <Match when={props.aggregate.viewLink}>
-              <Link
-                route={props.aggregate.viewLink!.route}
-                params={{
+              <RemovableListItem
+                tableName={props.tableName}
+                recordId={props.id}
+                aggregateName={props.aggregateName}
+                itemTable={props.aggregate.table}
+                item={record}
+                text={record[titleColName()] as string}
+                linkRoute={props.aggregate.viewLink!.route}
+                linkParams={{
                   [props.aggregate.viewLink!.idParamName]:
                     record[props.aggregate.viewLink!.idParamSource]
                 }}
-                label={record[titleColName()]}
-                class="leading-5 mb-2 inline-block"
               />
             </Match>
             <Match when>
