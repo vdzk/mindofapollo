@@ -14,7 +14,7 @@ export const whoCanDeleteCrossRecord = (tableName: string) => {
   }
 }
 
-export const deleteCrossRecord = async (params: CrossRecordMutateProps) => {
+export const deleteCrossRecord = async (params: CrossRecordMutateProps, userExpl: string) => {
   "use server"
   if (! await belongsTo(whoCanDeleteCrossRecord(
     params.first ? params.a : params.b
@@ -39,7 +39,7 @@ export const deleteCrossRecord = async (params: CrossRecordMutateProps) => {
     const recordA = (await _getRecordById(params.a, params.a_id))!
     const recordB = (await _getRecordById(params.b, params.b_id))!
     const data = await prepareCrossRecordData(params, user, recordA, recordB, result[0])
-    await finishExpl(explId, data)
+    await finishExpl(explId, { ...data, userExpl })
   }
 
   return result;

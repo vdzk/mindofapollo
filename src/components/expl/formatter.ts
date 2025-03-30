@@ -5,10 +5,8 @@ import { explDeleteExtById } from "~/api/delete/extById"
 import { explJoin } from "~/api/execute/join"
 import { explInsertCrossRecord } from "~/api/insert/crossRecord"
 import { explInsertExtRecord } from "~/api/insert/extRecord"
-import { explExecuteProposalChange, explSubmitTaskVoteChangeProposal } from "~/api/submitTask/voteChangeProposal"
 import { explAttemptJudgeStatement } from "~/server-only/attemptJudgeStatement"
 import { explInsertRecord } from "~/api/insert/record"
-import { explSubmitChangeProposal } from "~/api/submit/changeProposal"
 import { explUpdateExtRecord } from "~/api/update/extRecord"
 import { explUpdateRecord } from "~/api/update/record"
 import { explAttemptAggregateArguments } from "~/server-only/attemptAggregateArguments"
@@ -23,9 +21,6 @@ export const formatters: Record<string, (data: any) => ExplData> = {
   explInsertCrossRecord,
   explInsertExtRecord,
   explInsertRecord,
-  explSubmitChangeProposal,
-  explSubmitTaskVoteChangeProposal,
-  explExecuteProposalChange,
   explUpdateExtRecord,
   explUpdateRecord,
   explAttemptAggregateArguments,

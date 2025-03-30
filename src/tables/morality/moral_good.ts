@@ -12,14 +12,7 @@ export const moral_good: TableSchema = {
           ['unit_id', [
             ['name', 'unit']
           ]]
-        ],
-        // label: sqlStr`
-        //   SELECT moral_good.id, moral_good.name, unit.name as unit
-        //   FROM moral_good
-        //   JOIN unit
-        //     ON unit.id = moral_good.unit_id
-        //   WHERE moral_good.id = ANY($1::integer[])
-        // `
+        ]
       },
       get: (ids, results) => Object.fromEntries(results.label.map(
         result => [result.id, `${result.name} (${result.unit})`]

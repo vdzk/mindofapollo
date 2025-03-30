@@ -67,11 +67,6 @@ export const statement: TableSchema = {
       table: 'research_note',
       column: 'statement_id'
     },
-    statement_approvals: {
-      type: 'n-n',
-      table: 'person',
-      first: true
-    },
     confirmations: {
       type: '1-n',
       table: 'confirmation',

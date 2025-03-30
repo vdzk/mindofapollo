@@ -10,7 +10,8 @@ export const whoCanDeleteById = whoCanDeleteExtById
 
 export const deleteById = async (
   tableName: string,
-  id: number
+  id: number,
+  userExpl: string
 ) => {
   "use server"
   if (! await belongsTo(whoCanDeleteById(
@@ -23,11 +24,11 @@ export const deleteById = async (
   if (!record) return
 
   const explId = await startExpl(userId, 'deleteById', 1, tableName, id)
-  await _deleteById(tableName, id)
+  await _deleteById(tableName, id, explId)
 
   const user = await getUserActorUser()
   const targetLabel = record[titleColumnName(tableName)] as string
-  const data: DeleteExtByIdData = { tableName, id, targetLabel, user, record }
+  const data: DeleteExtByIdData = { tableName, id, targetLabel, user, record, userExpl }
   await finishExpl(explId, data)
 }
 

@@ -30,7 +30,8 @@ export const whoCanUpdateRecord = (
 export const updateRecord = async (
   tableName: string,
   id: number,
-  record: DataRecord
+  record: DataRecord,
+  userExpl: string
 ) => {
   "use server"
   const {userId, authRole} = await getUserSession()
@@ -57,7 +58,8 @@ export const updateRecord = async (
     diff,
     user,
     id,
-    targetLabel: originalRecord[titleColumnName(tableName)] as string
+    targetLabel: originalRecord[titleColumnName(tableName)] as string,
+    userExpl
   }
   await finishExpl(explId, data)
   return diff
@@ -69,6 +71,7 @@ interface UpdateRecordData {
   user: UserActor['user']
   id: number
   targetLabel: string
+  userExpl: string
 }
 
 export const explUpdateRecord = (data: UpdateRecordData): ExplData => ({
@@ -81,5 +84,6 @@ export const explUpdateRecord = (data: UpdateRecordData): ExplData => ({
   },
   updatedRecords: {
     [data.tableName]: [{...data.diff, id: data.id}]
-  }
+  },
+  userExpl: data.userExpl
 })

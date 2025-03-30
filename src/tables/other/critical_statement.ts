@@ -14,13 +14,7 @@ export const critical_statement: TableSchema = {
             ['decided'],
             ['confidence']
           ]]
-        ],
-        // critical_statement: sqlStr`
-        //   SELECT cs.id, statement.text
-        //   FROM critical_statement AS cs
-        //   JOIN statement ON cs.statement_id = statement.id
-        //   WHERE cs.id = ANY($1::integer[])
-        // `
+        ]
       },
       get: (ids, results) => {
         const labels = Object.fromEntries(results.critical_statement.map(

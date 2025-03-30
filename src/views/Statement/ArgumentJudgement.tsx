@@ -114,7 +114,7 @@ export const ArgumentJudgement: Component<{
           <JudgeArgument
             argumentId={props.argumentId}
             onExit={onJudgeArgumentExit}
-            currentJudgement={judgement()}
+            judgement={judgement()}
           />
         </Match>
         <Match when={viewName() === 'judge-argument'}>
@@ -138,7 +138,7 @@ export const ArgumentJudgement: Component<{
           <RecordDetails
             tableName="argument_judgement"
             id={props.argumentId}
-            displayColumn={colName => !['label', 'dismissal_explanation'].includes(colName)}
+            displayColumn={colName => colName !== 'label'}
           />
           {getJudgeButton()}
           <div class="h-2" />

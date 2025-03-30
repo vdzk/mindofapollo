@@ -19,11 +19,6 @@ export const argument_judgement: TableSchema = {
         [record.id, `${record.title} (${getPercent(record.isolated_confidence as number)})`]
       ))
     },
-    dismissal_explanation: {
-      type: 'text',
-      lines: 2,
-      defaultValue: '',
-    },
     isolated_confidence: {
       type: 'proportion',
       label: 'confidence'

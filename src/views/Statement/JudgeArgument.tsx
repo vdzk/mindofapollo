@@ -1,4 +1,4 @@
-import { Component, For, Show } from "solid-js"
+import { Component, createSignal, For, Show } from "solid-js"
 import { createStore } from "solid-js/store"
 import { FormField } from "~/components/form/FormField"
 import { schema } from "~/schema/schema"
@@ -10,14 +10,16 @@ import { RecordDetails } from "~/components/RecordDetails"
 import { H2 } from "~/components/PageTitle"
 import { insertRecord } from "~/api/insert/record"
 import { updateRecord } from "~/api/update/record"
+import { UserExplField } from "~/components/form/UserExplField"
 
 const judgeArgumentAction = action(async (
   argumentId: number,
   diff: DataRecord,
-  exists: boolean
+  exists: boolean,
+  userExpl: string
 ) => {
   if (exists) {
-    await updateRecord('argument_judgement', argumentId, diff)
+    await updateRecord('argument_judgement', argumentId, diff, userExpl)
   } else {
     await insertRecord('argument_judgement', { ...diff, id: argumentId })
   }
@@ -31,36 +33,31 @@ const judgeArgumentAction = action(async (
 export const JudgeArgument: Component<{
   argumentId: number,
   onExit: () => void,
-  currentJudgement?: DataRecordWithId
+  judgement?: DataRecordWithId
 }> = props => {
   const [diff, setDiff] = createStore<DataRecord>({})
+  const [userExpl, setUserExpl] = createSignal('')
   const newJudgementColNames = () => Object
     .keys(schema.tables.argument_judgement.columns)
-    .filter(colName => !['label', 'dismissal_explanation'].includes(colName))
+    .filter(colName => colName !== 'label')
   const judgeArgument = useAction(judgeArgumentAction)
+  const exists = () => !!props.judgement
 
   const onSubmit = async () => {
-    await judgeArgument(props.argumentId, diff, !!props.currentJudgement)
+    await judgeArgument(props.argumentId, diff, exists(), userExpl())
     props.onExit()
   }
 
   return (
     <>
-      <Show when={props.currentJudgement}>
+      <Show when={exists()}>
         <div class="border-t"/>
         <H2>Current Judgement</H2>
         <RecordDetails
           tableName="argument_judgement"
-          id={props.currentJudgement!.id}
-          displayColumn={colName => !['label', 'dismissal_explanation'].includes(colName)}
+          id={props.judgement!.id}
+          displayColumn={colName => colName !== 'label'}
         />
-        <div class="px-2">
-          <FormField
-            tableName="argument_judgement"
-            colName="dismissal_explanation"
-            {...{ diff, setDiff }}
-          />
-        </div>
         <div class="border-t"/>
         <H2>New Judgement</H2>
       </Show>
@@ -73,6 +70,9 @@ export const JudgeArgument: Component<{
             />
           )}
         </For>
+        <Show when={exists()}>
+          <UserExplField value={userExpl()} onChange={setUserExpl} />
+        </Show>
         <div class="pt-2 flex gap-2">
           <Button
             label="Submit"

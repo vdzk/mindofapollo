@@ -93,7 +93,8 @@ export interface CrossRecordData {
     id: number
     label: string
   }
-  record: DataRecord
+  record: DataRecord,
+  userExpl?: string
 }
 
 export const createCrossRecordExplData = (
@@ -114,7 +115,8 @@ export const createCrossRecordExplData = (
       target: data.target,
       cross: data.cross,
       data: data.record
-    }
+    },
+    userExpl: data.userExpl
   }
 }
 

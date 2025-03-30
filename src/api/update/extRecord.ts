@@ -11,7 +11,8 @@ export const updateExtRecord = async (
   id: number,
   record: DataRecord,
   extTableName: string,
-  extRecord: DataRecord
+  extRecord: DataRecord,
+  userExpl: string
 ) => {
   "use server"
   const userSession = await getUserSession()
@@ -31,7 +32,8 @@ export const updateExtRecord = async (
     extRecord: extRecordDiff,
     user,
     id,
-    targetLabel: originalRecord[titleColumnName(tableName)] as string
+    targetLabel: originalRecord[titleColumnName(tableName)] as string,
+    userExpl
   }
   await finishExpl(explId, data)
 
@@ -46,6 +48,7 @@ interface UpdateExtRecordData {
   user: UserActor['user']
   id: number
   targetLabel: string
+  userExpl: string
 }
 
 export const explUpdateExtRecord = (data: UpdateExtRecordData): ExplData => ({
@@ -59,5 +62,6 @@ export const explUpdateExtRecord = (data: UpdateExtRecordData): ExplData => ({
   updatedRecords: {
     [data.tableName]: [{...data.record, id: data.id}],
     [data.extTableName]: [{...data.extRecord, id: data.id}]
-  }
+  },
+  userExpl: data.userExpl
 })

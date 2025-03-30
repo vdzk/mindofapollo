@@ -25,7 +25,7 @@ export const Argument: Component<{
       />
       <Switch>
         <Match when={showMoreDetails()}>
-          <div class="flex-3 border-l">
+          <div class="flex-2 border-l">
             <div class="h-2" />
             <ShowRecord
               tableName="argument"

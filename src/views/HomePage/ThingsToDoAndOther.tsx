@@ -10,14 +10,6 @@ export default function ThingsToDoAndOther() {
           type="button"
           links={[
             {
-              label: "Tasks",
-              route: "list-tasks"
-            },
-            {
-              label: "My directives",
-              route: "show-directive"
-            },
-            {
               label: "Invites",
               route: "list-records",
               params: { tableName: 'invite' }
@@ -25,6 +17,10 @@ export default function ThingsToDoAndOther() {
             {
               label: "Chat",
               route: "chat"
+            },
+            {
+              label: "My directives",
+              route: "show-directive"
             }
           ]}
         />

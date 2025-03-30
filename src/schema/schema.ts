@@ -16,7 +16,6 @@ import { rule } from "~/tables/other/rule"
 import { argument_judgement } from "~/tables/argument/judgement"
 import { rule_change_request } from "~/tables/other/rule_change_request"
 import { argument_conditional } from "~/tables/argument/conditional"
-import { change_proposal } from "~/tables/other/change_proposal"
 import { argument_aggregation_type } from "~/tables/argument/aggregation_type"
 import { argument_weight } from "~/tables/argument/weight"
 import { deed } from "~/tables/morality/deed"
@@ -68,7 +67,6 @@ export const schema: AppDataSchema = {
     argument_judgement,
     rule_change_request,
     argument_conditional,
-    change_proposal,
     argument_weight,
     deed,
     directive,

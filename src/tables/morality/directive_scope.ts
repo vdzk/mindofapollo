@@ -12,12 +12,7 @@ export const directive_scope: TableSchema = {
           ['person_category_id', [
             ['name']
           ]]
-        ],
-        // person_category: sqlStr`
-        //   SELECT ds.id, ds.include, ds.person_category_id
-        //   FROM directive_scope ds
-        //   WHERE ds.id = ANY($1::integer[])
-        // `
+        ]
       },
       get: (ids, results) => Object.fromEntries(results.person_category.map(
         result => [result.id, `(${result.include ? '+' : '−'}) ${result.name}`]

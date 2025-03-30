@@ -1,4 +1,5 @@
 import { DataRecord, TableSchema } from "~/schema/type";
+import { getPercent } from "~/utils/string";
 
 export const presuasion_critique: TableSchema = {
   plural: 'persuasion critiques',
@@ -18,7 +19,7 @@ export const presuasion_critique: TableSchema = {
         table: 'statement',
         labelColumn: 'text',
         getLabel: (record: DataRecord) => record.decided
-          ? `(c: ${record.confidence}) ${record.text}`
+          ? `(${getPercent(record.confidence as number)}) ${record.text}`
           : record.text as string
       }
     }

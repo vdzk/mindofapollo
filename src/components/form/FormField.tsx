@@ -65,7 +65,7 @@ export const FormField: Component<{
 
   return (
     <div 
-      class="block pb-2"
+      class="pb-2"
       classList={{ "hidden": props.hidden }}
     >
       <label>

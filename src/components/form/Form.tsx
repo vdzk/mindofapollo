@@ -19,6 +19,7 @@ import { getWritableColNames } from "~/permissions"
 import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
 import { login } from "~/api/execute/login"
+import { UserExplField } from "./UserExplField"
 
 export const ExtValueContext = createContext<(value?: string) => void>()
 
@@ -41,6 +42,7 @@ export const Form: Component<{
   const [diffExt, setDiffExt] = createStore<DataRecord>({})
   const [extValue, setExtValue] = createSignal<string>()
   const [showAdvanced, setShowAdvanced] = createSignal(false)
+  const [userExpl, setUserExpl] = createSignal('')
 
   const isSelf = () => props.tableName === 'person' && props.id === session?.userSession?.()?.userId
   const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
@@ -74,10 +76,11 @@ export const Form: Component<{
     if (props.id) {
       if (extension) {
         await updateExtRecord(
-          tableName, props.id, record, extension.tableName, extension.record
+          tableName, props.id, record,
+          extension.tableName, extension.record, userExpl()
         )
       } else {
-        await updateRecord(tableName, props.id, record)
+        await updateRecord(tableName, props.id, record, userExpl())
       }
       if (isSelf()) {
         await login(props.id)
@@ -205,6 +208,9 @@ export const Form: Component<{
             onClick={() => setShowAdvanced(!showAdvanced())}
           />
         </div>
+      </Show>
+      <Show when={props.id}>
+        <UserExplField value={userExpl()} onChange={setUserExpl} />
       </Show>
       <div class="pt-2">
         <Button

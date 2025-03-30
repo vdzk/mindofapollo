@@ -1,5 +1,5 @@
-import { createAsync, useAction, useSearchParams } from "@solidjs/router"
-import { Component, Match, Show, Switch, useContext } from "solid-js"
+import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
+import { Component, createSignal, Match, Show, Switch, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
@@ -7,7 +7,7 @@ import { MasterDetail } from "~/components/MasterDetail"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
 import { componentsByName } from "~/components/componentsByName"
-import { whoCanDeleteExtById } from "~/api/delete/extById"
+import { deleteExtById, whoCanDeleteExtById } from "~/api/delete/extById"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
@@ -15,8 +15,23 @@ import { whoCanUpdateRecord } from "~/api/update/record"
 import { SessionContext } from "~/SessionContext"
 import { RecordHistory } from "~/components/RecordHistory"
 import { personalTableNames } from "~/permissions"
-import { _delete } from "~/client-only/action"
 import { firstCap } from "~/utils/string"
+import { listRecordsCache } from "~/client-only/query"
+import { NestPanel } from "~/components/NestPanel"
+import { UserExplField } from "~/components/form/UserExplField"
+
+const deleteAction = action(async (
+  tableName: string,
+  id: number,
+  userExpl: string
+) => {
+  await deleteExtById(tableName, id, userExpl)
+  throw redirect(
+    `/list-records?tableName=${tableName}`,
+    // TODO: this doesn't seem to do anything
+    { revalidate: listRecordsCache.keyFor(tableName) }
+  )
+})
 
 export const ShowRecord: Component<{
   tableName: string
@@ -26,8 +41,10 @@ export const ShowRecord: Component<{
 }> = props => {
   const [searchParams, setSearchParams] = useSearchParams()
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
-  const deleteAction = useAction(_delete)
-  const onDelete = () => deleteAction(props.tableName, props.id)
+
+  const [userExpl, setUserExpl] = createSignal('')
+  const _delete = useAction(deleteAction)
+  const onDelete = () => _delete(props.tableName, props.id, userExpl())
   const session = useContext(SessionContext)
   const isSelf = () => props.id === session?.userSession?.()?.userId
 
@@ -56,7 +73,7 @@ export const ShowRecord: Component<{
       options.push({ id: 'history', label: 'History' })
     }
     options.push({ id: 'actions', label: 'Actions' })
-    const filteredOptions = props.hideSections ? options.filter(option => !props.hideSections?.includes(option.id)) : options  
+    const filteredOptions = props.hideSections ? options.filter(option => !props.hideSections?.includes(option.id)) : options
     return filteredOptions
   }
 
@@ -82,15 +99,7 @@ export const ShowRecord: Component<{
       </Show>
       <Switch>
         <Match when={selectedSection() === 'actions'}>
-          <div class="px-2 pb-2">
-            <Link
-              route="propose-change"
-              params={{ tableName: props.tableName, id: props.id }}
-              type="button"
-              label="Propose Change"
-            />
-          </div>
-          <div class="px-2 flex gap-2">
+          <div class="px-2 flex gap-2 pb-2">
             <Show when={canUpdateRecord()}>
               <Link
                 route="edit-record"
@@ -99,13 +108,16 @@ export const ShowRecord: Component<{
                 label="Edit"
               />
             </Show>
-            <Show when={canDeleteExtById()}>
+          </div>
+          <Show when={canDeleteExtById()}>
+            <NestPanel title="Delete">
+              <UserExplField value={userExpl()} onChange={setUserExpl} />
               <Button
                 label="Delete"
                 onClick={onDelete}
               />
-            </Show>
-          </div>
+            </NestPanel>
+          </Show>
         </Match>
         <Match when={selectedSection() === 'history'}>
           <RecordHistory tableName={props.tableName} id={props.id} />

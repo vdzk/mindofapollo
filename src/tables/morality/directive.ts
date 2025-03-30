@@ -12,12 +12,6 @@ export const directive: TableSchema = {
             ['text']
           ]]
         ],
-        // deed: sqlStr`
-        //   SELECT dir.id AS directive_id, d.text
-        //   FROM deed d
-        //   JOIN directive dir ON dir.deed_id = d.id
-        //   WHERE dir.id = ANY($1::integer[])
-        // `,
         scope: [
           {startTable: 'directive_scope', fkName: 'directive_id'},
           ['directive_id'],
@@ -25,13 +19,7 @@ export const directive: TableSchema = {
           ['person_category_id', [
             ['name'],
           ]]
-        ],
-        // scope: sqlStr`
-        //   SELECT ds.directive_id, pc.name, ds.include
-        //   FROM directive_scope ds
-        //   JOIN person_category pc ON ds.person_category_id = pc.id
-        //   WHERE ds.directive_id = ANY($1::integer[])
-        // `
+        ]
       },
       get: (ids, results) => {
         const directives = Object.fromEntries(ids.map(

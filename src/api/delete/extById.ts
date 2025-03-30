@@ -17,7 +17,7 @@ export const whoCanDeleteExtById = (tableName: string, ofSelf: boolean) => {
   }
 }
 
-export const deleteExtById = async (tableName: string, id: number) => {
+export const deleteExtById = async (tableName: string, id: number, userExpl: string) => {
   "use server"
   if (! await belongsTo(whoCanDeleteExtById(
     tableName,
@@ -46,7 +46,8 @@ export const deleteExtById = async (tableName: string, id: number) => {
     targetLabel, 
     user, 
     record,
-    extRecord
+    extRecord,
+    userExpl
   }
   await finishExpl(explId, data)
 }
@@ -59,6 +60,7 @@ export interface DeleteExtByIdData {
   user: UserActor['user']
   record: DataRecordWithId
   extRecord?: DataRecordWithId
+  userExpl: string
 }
 
 export const explDeleteExtById = (data: DeleteExtByIdData): ExplData => ({
@@ -72,5 +74,6 @@ export const explDeleteExtById = (data: DeleteExtByIdData): ExplData => ({
   deletedRecords: {
     [data.tableName]: [data.record],
     ...(data.extTableName && data.extRecord ? {[data.extTableName]: [data.extRecord]} : {})
-  }
+  },
+  userExpl: data.userExpl
 })

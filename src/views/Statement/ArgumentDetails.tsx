@@ -1,7 +1,6 @@
 import { revalidate } from "@solidjs/router"
 import { Component, createSignal, For, Show } from "solid-js"
 import { whoCanUpdateRecord } from "~/api/update/record"
-import { _delete } from "~/client-only/action"
 import { listForeignRecordsCache } from "~/client-only/query"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { Button } from "~/components/buttons"
