@@ -1,25 +1,19 @@
-import { action, redirect, useAction, useSearchParams, revalidate } from "@solidjs/router"
-import { Component, createContext, createEffect, createSignal, For, Match,  Show, Switch, useContext } from "solid-js"
+import { useAction, useSearchParams } from "@solidjs/router"
+import { Component, createContext, createEffect, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
-import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { isEmpty } from "~/utils/shape"
-import { buildUrl } from "~/utils/string"
-import { getExtTableName } from "~/utils/schema"
+import { DataRecord } from "~/schema/type"
+import { getExtTableName, titleColumnName } from "~/utils/schema"
 import { createStore, reconcile } from "solid-js/store"
-import { getOneExtRecordByIdCache, listRecordsCache } from "~/client-only/query"
 import { SessionContext } from "~/SessionContext"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
-import { updateExtRecord } from "~/api/update/extRecord"
-import { updateRecord } from "~/api/update/record"
-import { insertExtRecord } from "~/api/insert/extRecord"
-import { insertRecord } from "~/api/insert/record"
 import { getWritableColNames } from "~/permissions"
 import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
-import { login } from "~/api/execute/login"
 import { UserExplField } from "./UserExplField"
+import { saveAction } from "~/components/form/saveAction"
+import { FkInput } from "./FkInput"
 
 export const ExtValueContext = createContext<(value?: string) => void>()
 
@@ -44,7 +38,7 @@ export const Form: Component<{
   const [showAdvanced, setShowAdvanced] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
 
-  const isSelf = () => props.tableName === 'person' && props.id === session?.userSession?.()?.userId
+
   const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
     return 'onExit' in exit
   }
@@ -55,75 +49,7 @@ export const Form: Component<{
       setExtValue(undefined)
     }
   })
-    
-
-  const getExitUrl = (savedId?: number) => {
-    if (hasExitHandler(props.exitSettings)) {
-      return ''
-    }
-    const linkData = props.exitSettings.getLinkData(savedId)
-    return buildUrl(linkData.route, linkData.params)
-  }
-
-  const saveAction = useAction(action(async (
-    tableName: string,
-    record: DataRecord,
-    extension?: {
-      tableName: string,
-      record: DataRecord
-    }
-  ) => {
-    if (props.id) {
-      if (extension) {
-        await updateExtRecord(
-          tableName, props.id, record,
-          extension.tableName, extension.record, userExpl()
-        )
-      } else {
-        await updateRecord(tableName, props.id, record, userExpl())
-      }
-      if (isSelf()) {
-        await login(props.id)
-        await session?.refetch()
-      }
-      if (hasExitHandler(props.exitSettings)) {
-        revalidate([
-          listRecordsCache.keyFor(tableName),
-          'getRecords' + tableName + props.id,
-          getOneExtRecordByIdCache.keyFor(tableName, props.id)
-        ])
-        props.exitSettings.onExit(props.id)
-        return
-      } else {
-        throw redirect(
-          getExitUrl(props.id),
-          {
-            revalidate: [
-              listRecordsCache.keyFor(tableName),
-              'getRecords' + tableName + props.id,
-              getOneExtRecordByIdCache.keyFor(tableName, props.id)
-            ]
-          }
-        )
-      }
-    } else {
-      let savedRecord: DataRecordWithId | undefined
-      if (extension) {
-        savedRecord = await insertExtRecord(
-          tableName, record, extension.tableName, extension.record
-        )
-      } else {
-        savedRecord = await insertRecord(tableName, record)
-      }
-      if (hasExitHandler(props.exitSettings)) {
-        revalidate([listRecordsCache.keyFor(tableName)])
-        props.exitSettings.onExit(savedRecord?.id)
-        return
-      } else {
-        throw redirect(getExitUrl(savedRecord?.id))
-      }
-    }
-  }))
+  createEffect(() => !props.id && !diff.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
 
   const table = () => schema.tables[props.tableName]
   const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
@@ -138,27 +64,20 @@ export const Form: Component<{
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
-  createEffect(() => !props.id && !diff.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
   const pristine = () => Object.entries(diff).every(
-    ([key, value]) => (key === 'id') || value === undefined) && 
+    ([key, value]) => (key === 'id') || value === undefined) &&
     Object.values(diffExt).every(value => value === undefined)
   const complete = () => isComplete(
-    props.tableName, 
-    diff, 
-    diffExt, 
-    colNames(),
-    extTableName(),
-    extColNames(),
-    props.record
+    props.tableName, diff, diffExt, colNames(),
+    extTableName(), extColNames(), props.record
   )
 
-  const onSubmit = async () => {
-    const extension = extTableName() && !isEmpty(diffExt) ? {
-      tableName: extTableName() as string,
-      record: diffExt
-    } : undefined
-    saveAction(props.tableName, diff, extension)
-  }
+  const save = useAction(saveAction)
+  const onSubmit = () => save(
+    props.tableName, props.id, diff,
+    extTableName(), diffExt,
+    userExpl(), props.exitSettings
+  )
 
   const handleCancel = () => {
     if (hasExitHandler(props.exitSettings)) {
@@ -174,7 +93,10 @@ export const Form: Component<{
   return (
     <div class="px-2 max-w-(--breakpoint-sm) pb-2">
       <ExtValueContext.Provider value={updateExtValue}>
-        <For each={colNames()}>
+        <For each={[
+          ...(table().extendsTable ? ['id'] : []),
+          ...colNames()
+        ]}>
           {colName => (
             <FormField
               tableName={props.tableName}

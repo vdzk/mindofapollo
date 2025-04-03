@@ -1,5 +1,5 @@
 import { createAsync, query } from "@solidjs/router"
-import { Component, createMemo, For } from "solid-js"
+import { Component, createMemo, createEffect, For } from "solid-js"
 import { schema } from "~/schema/schema"
 import { AggregateSchema } from "~/schema/type"
 import { titleColumnName } from "~/utils/schema"

@@ -1,5 +1,5 @@
 export const languages = [
-  "english",  // first is the default language
+  "english",
   "chinese",
   "spanish",
   "arabic", 
@@ -8,9 +8,11 @@ export const languages = [
   "russian",
   "german",
   "ukrainian"
-] as const;
+] as const
 
-export type Language = typeof languages[number];
+export const defaultLanguage = languages[0]
+
+export type Language = typeof languages[number]
 
 export const langSettings: Record<Language, {
   iso_639_1: string,

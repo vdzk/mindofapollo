@@ -8,7 +8,7 @@ import { Button } from "~/components/buttons"
 import { login } from "~/api/execute/login"
 import { SessionContext } from "~/SessionContext"
 import { useContext } from "solid-js"
-import { Language } from "~/translation"
+import { defaultLanguage, Language } from "~/translation"
 
 interface Join {
   code: string
@@ -18,7 +18,7 @@ export default function Join() {
   const session = useContext(SessionContext)
   const navigate = useNavigate()
   const [sp] = useSearchParams() as unknown as [Join]
-  const [diff, setDiff] = createStore({ name: '', language: 'english' })
+  const [diff, setDiff] = createStore({ name: '', language: defaultLanguage })
   const onSubmit = async () => {
     const userId = await join(diff.name, diff.language as Language, sp.code)
     if (!userId) {

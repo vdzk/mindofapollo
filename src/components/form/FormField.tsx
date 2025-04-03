@@ -1,6 +1,6 @@
 import { Component, createEffect, For, Match, Show, Switch } from "solid-js"
 import { schema } from "~/schema/schema"
-import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, OptionColumn, TextColumn } from "~/schema/type"
+import { BooleanColumn, ColumnSchema, DataLiteral, DataRecord, ForeignKey, ExtendsIdColumn, OptionColumn, TextColumn } from "~/schema/type"
 import { FkInput } from "./FkInput"
 import { ColumnLabel } from "../ColumnLabel"
 import { createAsync, useSearchParams } from "@solidjs/router"
@@ -8,6 +8,8 @@ import { SetStoreFunction } from "solid-js/store"
 import { etv } from "~/client-only/util"
 import { TextInput } from "./TextInput"
 import { listOriginTypes } from "~/api/list/originTypes"
+import { titleColumnName } from "~/utils/schema"
+import { humanCase } from "~/utils/string"
 
 const getCurrent = (colName: string, diff: DataRecord, record?: DataRecord) =>
   diff[colName] ?? record?.[colName]
@@ -25,7 +27,13 @@ export const FormField: Component<{
   hidden?: boolean
   formDepth?: number
 }> = (props) => {
-  const column = () => schema.tables[props.tableName].columns[props.colName]
+  const table = () => schema.tables[props.tableName]
+  const column = () => props.colName === 'id'
+    ? {
+      type: 'extends_id',
+      label: humanCase(table().extendsTable!)
+    } as ExtendsIdColumn
+    : table().columns[props.colName]
   const [searchParams] = useSearchParams()
   const value = () => props.diff[props.colName] ?? props.record?.[props.colName]
   const isNew = () => !props.record
@@ -64,7 +72,7 @@ export const FormField: Component<{
   if (columnType() === 'virtual' && isNew()) return null
 
   return (
-    <div 
+    <div
       class="pb-2"
       classList={{ "hidden": props.hidden }}
     >
@@ -142,6 +150,22 @@ export const FormField: Component<{
               >{option}</option>}
             </For>
           </select>
+        </Match>
+        <Match when={columnType() === 'extends_id'}>
+          <FkInput
+            tableName={props.tableName}
+            colName="id"
+            column={{
+              type: 'fk',
+              fk: {
+                table: table().extendsTable!,
+                labelColumn: titleColumnName(table().extendsTable!),
+              }
+            }}
+            value={value() as number | undefined}
+            isNew={isNew()}
+            {...{ onChangeFormat }}
+          />
         </Match>
         <Match when={columnType() === 'fk'}>
           <FkInput

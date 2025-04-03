@@ -8,6 +8,8 @@ export const getDirConcsWithValues = async (ids: number[]) => {
     SELECT dc.id, dc.value_id, unit.column_type,
       dc.moral_good_id, moral_good.unit_id
     FROM directive_consequence AS dc
+    JOIN moral_good
+      ON moral_good.id = dc.moral_good_id
     JOIN unit
       ON unit.id = moral_good.unit_id
     WHERE dc.id IN ${sql(ids)}

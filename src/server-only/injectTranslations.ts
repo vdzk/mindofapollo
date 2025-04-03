@@ -2,7 +2,7 @@ import { DataRecord } from "~/schema/type"
 import { getUserLanguage } from "./session"
 import { getTranslatableColumns } from "~/utils/schema"
 import { onError, sql } from "./db"
-import { languages } from "~/translation"
+import { defaultLanguage, languages } from "~/translation"
 
 export interface TranslatedColumn {
   tableName: string
@@ -19,7 +19,7 @@ export const injectTranslations = async (
   mainIdColName = 'id'
 ) => {
   if (!records || records.length === 0) return
-  const language = (await getUserLanguage()) ?? languages[0]
+  const language = (await getUserLanguage()) ?? defaultLanguage
 
   // Get main translaed columns
   if (tableName) {

@@ -70,10 +70,8 @@ export interface VirtualColumnLocal extends SharedColumnProps {
   getLocal: (record: DataRecord) => string
 }
 
-export interface ForeignKey {
+export interface ForeignKey extends SharedColumnProps {
   type: 'fk'
-  label?: string
-  preview?: boolean //Use this column to represent the whole record
   fk: {
     table: string 
     labelColumn: string
@@ -82,10 +80,14 @@ export interface ForeignKey {
     defaultName?: string // the FK value should be set to id corresponding to this name by default
     optional?: boolean  // Foreign key can be NULL
   }
-  getVisibility?: (record: DataRecord) => boolean
 }
 
-export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
+// This type should not be used in table columns definitions. It is generated automatically
+export interface ExtendsIdColumn extends SharedColumnProps {
+  type: 'extends_id'
+}
+
+export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | ExtendsIdColumn | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
   readOnly?: true // ordinarily, this field should not be edited directly
   unique?: true
 }

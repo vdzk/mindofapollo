@@ -1,5 +1,5 @@
 import { TableSchema } from "~/schema/type";
-import { languages } from "~/translation";
+import { defaultLanguage, languages } from "~/translation";
 
 export const person: TableSchema = {
   plural: 'persons',
@@ -18,7 +18,7 @@ export const person: TableSchema = {
     language: {
       type: 'option',
       options: languages,
-      defaultValue: languages[0]
+      defaultValue: defaultLanguage
     }
   },
   aggregates: {

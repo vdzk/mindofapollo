@@ -1,6 +1,6 @@
-import { onError, sql } from "~/server-only/db";
-import { getUserSession } from "~/server-only/session";
-import { languages } from "~/translation";
+import { onError, sql } from "~/server-only/db"
+import { getUserSession } from "~/server-only/session"
+import { defaultLanguage } from "~/translation"
 
 export const listChatMessages = async () => {
   "use server";
@@ -9,7 +9,7 @@ export const listChatMessages = async () => {
   const messages = await sql`
     SELECT
       m.id, m.text, m.user_id, m.timestamp,
-      t.${sql(languages[0])} as sender_name
+      t.${sql(defaultLanguage)} as sender_name
     FROM chat_message m
     JOIN person p ON p.id = m.user_id
     JOIN translation t

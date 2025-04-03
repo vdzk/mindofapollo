@@ -9,9 +9,16 @@ export const ColumnLabel: Component<{
   suffix?: string
 }> = (props) => {
   const labelText = () => {
+    const table = schema.tables[props.tableName]
     if (props.label) return props.label
-    if (props.colName === 'id') return 'ID'
-    const column = schema.tables[props.tableName].columns[props.colName]
+    if (props.colName === 'id') {
+      if (table.extendsTable) {
+        return humanCase(table.extendsTable)
+      } else {
+        return 'ID'
+      }
+    }
+    const column = table.columns[props.colName]
     if (!column) return props.colName
     if (column.label) return column.label
     if (column.type === 'fk') return column.fk.table

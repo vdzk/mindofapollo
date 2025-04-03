@@ -1,4 +1,4 @@
-import { langSettings, languages } from "~/translation"
+import { defaultLanguage, langSettings, languages } from "~/translation"
 import { onError, sql } from "./db"
 import { getUserLanguage } from "./session"
 import { SourceLanguageCode, TargetLanguageCode, Translator } from 'deepl-node'
@@ -14,7 +14,7 @@ export const createTranslations = async (
   recordId: number,
   overwrite?: boolean
 ) => {
-  const language = await getUserLanguage()
+  const language = (await getUserLanguage()) ?? defaultLanguage
   const values = Object.entries(originalText).map(([colName, text]) => ({
     table_name: tableName,
     column_name: colName,
