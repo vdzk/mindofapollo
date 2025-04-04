@@ -94,7 +94,7 @@ export const FkInput: Component<{
     ?.[props.column.fk.labelColumn])
 
   const isLargeRecordSet = createMemo(() => (records() ?? []).length > 15)
-  
+
   // Transform records to dropdown options format
   const dropdownOptions = createMemo<Option<number>[]>(() => {
     if (!records()) return []
@@ -135,45 +135,19 @@ export const FkInput: Component<{
       <Switch>
         <Match when={disabled()}>
           <Show when={presetValue()} fallback={<div>{nbsp}</div>}>
-            <Switch>
-              <Match when={showRecord()}>
-                <div
-                  class="rounded-md my-2 p-2 pb-4"
-                  classList={{ [nestedBgColor()]: true }}
-                >
-                  <RecordDetails
-                    tableName={props.column.fk.table}
-                    id={props.value!}
-                    showAggregates={false}
-                    showExplLinks={false}
-                  />
-                  <Button
-                    label="collapse"
-                    onClick={() => setShowRecord(false)}
-                    class="ml-2"
-                  />
-                </div>
-              </Match>
-              <Match when={!showRecord()}>
-                <Link
-                  label={presetValue()}
-                  route="show-record"
-                  params={{
-                    tableName: props.column.fk.table,
-                    id: props.value
-                  }}
-                />{' '}
-                <Button
-                  label="expand"
-                  onClick={() => setShowRecord(true)}
-                />
-              </Match>
-            </Switch>
+            <Link
+              label={presetValue()}
+              route="show-record"
+              params={{
+                tableName: props.column.fk.table,
+                id: props.value
+              }}
+            />
           </Show>
         </Match>
         <Match when={!disabled()}>
           <Show when={isLargeRecordSet()}>
-            <LongSelect 
+            <LongSelect
               options={dropdownOptions()}
               value={props.value}
               name={props.colName}
@@ -206,6 +180,25 @@ export const FkInput: Component<{
           </Show>
         </Match>
       </Switch>
+      <Button
+        label={showRecord() ? 'collapse' : 'expand'}
+        class="ml-2"
+        onClick={() => setShowRecord(x => !x)}
+      />
+      <Show when={showRecord()}>
+        <div
+          class="rounded-md my-2 pt-2"
+          classList={{ [nestedBgColor()]: true }}
+        >
+          <RecordDetails
+            tableName={props.column.fk.table}
+            id={props.value!}
+            showAggregates={false}
+            showExplLinks={false}
+            displayColumn={(colName) => colName !== props.column.fk.labelColumn}
+          />
+        </div>
+      </Show>
     </>
   );
 };

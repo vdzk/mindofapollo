@@ -67,11 +67,6 @@ export const statement: TableSchema = {
       table: 'research_note',
       column: 'statement_id'
     },
-    confirmations: {
-      type: '1-n',
-      table: 'confirmation',
-      column: 'id'
-    },
     tags: {
       type: 'n-n',
       table: 'tag',
@@ -90,10 +85,7 @@ export const statement: TableSchema = {
     },
     evaluation: {
       label: 'evaluation',
-      fields: [
-        'confirmations', 'statement_approvals', 'decided',
-        'confidence'
-      ]
+      fields: ['statement_approvals', 'decided', 'confidence'],
     },
     other: {
       label: 'other details'

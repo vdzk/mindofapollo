@@ -1,6 +1,7 @@
 import { TableSchema } from "~/schema/type"
 
 export const directive: TableSchema = {
+  extendsTable: 'statement',
   plural: 'directives',
   columns: {
     label: {

@@ -12,7 +12,7 @@ const tableCategories = {
   statement: ['statement'],
   argument: ['argument', 'argument_type', 'argument_analogy', 'argument_authority', 'argument_other', 'argument_judgement', 'argument_conditional', 'argument_weight', 'argument_aggregation_type'],
   morality: ['deed', 'directive', 'directive_consequence', 'directive_scope', 'moral_good', 'moral_persuasion', 'moral_weight', 'person_category', 'presuasion_critique', 'unit'],
-  other: ['auth_role', 'person', 'tag', 'critical_question', 'critical_statement', 'research_note', 'confirmation', 'role', 'rule', 'rule_change_request', 'invite']
+  other: ['auth_role', 'person', 'tag', 'critical_question', 'critical_statement', 'research_note', 'role', 'rule', 'rule_change_request', 'invite']
 }
 
 function TableList(props: { tables: string[], title?: string }) {

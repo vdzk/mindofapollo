@@ -10,7 +10,6 @@ import { research_note } from "~/tables/other/research_note"
 import { argument_analogy } from "~/tables/argument/analogy"
 import { argument_authority } from "~/tables/argument/authority"
 import { argument_other } from "~/tables/argument/other"
-import { confirmation } from "~/tables/other/confirmation"
 import { role } from "~/tables/other/role"
 import { rule } from "~/tables/other/rule"
 import { argument_judgement } from "~/tables/argument/judgement"
@@ -61,7 +60,6 @@ export const schema: AppDataSchema = {
     argument_obvious,
     critical_statement,
     research_note,
-    confirmation,
     role,
     rule,
     argument_judgement,

@@ -1,5 +1,5 @@
 import { useAction, useSearchParams } from "@solidjs/router"
-import { Component, createContext, createEffect, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
+import { Component, ComponentProps, createContext, createEffect, createMemo, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
 import { DataRecord } from "~/schema/type"
@@ -90,47 +90,50 @@ export const Form: Component<{
     setDiffExt(reconcile({}))
   }
 
+  const fieldGroups = createMemo(() => {
+    const _table = table()
+    const { tableName, record, hideColumns, depth } = props
+    const groupKeys = ['normal', 'advanced', 'ext'] as const
+    const groups = Object.fromEntries(groupKeys.map(
+      key => [key, [] as ComponentProps<typeof FormField>[]]
+    ))
+    for (const colName of [
+      ...(_table.extendsTable ? ['id'] : []),
+      ...colNames()
+    ]) {
+      const isAdvanced = _table.advanced?.includes(colName)
+      const hidden = hideColumns?.includes(colName)
+        || (isAdvanced && !showAdvanced())
+      groups[isAdvanced ? 'advanced' : 'normal'].push({
+        tableName, colName, record, diff, setDiff,
+        hidden, formDepth: depth
+      })
+    }
+    for (const colName of extColNames()) {
+      groups.ext.push({
+        tableName: extTableName() as string,
+        colName, record, diff: diffExt, setDiff: setDiffExt,
+        formDepth: depth
+      })
+    }
+    return groups
+  })
+
   return (
     <div class="px-2 max-w-(--breakpoint-sm) pb-2">
       <ExtValueContext.Provider value={updateExtValue}>
-        <For each={[
-          ...(table().extendsTable ? ['id'] : []),
-          ...colNames()
-        ]}>
-          {colName => (
-            <FormField
-              tableName={props.tableName}
-              colName={colName}
-              record={props.record}
-              diff={diff}
-              setDiff={setDiff}
-              hidden={
-                (isAdvanced(colName) && !showAdvanced())
-                || props.hideColumns?.includes(colName)
-              }
-              formDepth={props.depth}
+        <For each={fieldGroups().normal}>{FormField}</For>
+        <For each={fieldGroups().ext}>{FormField}</For>
+        <Show when={hasAdvancedFields()}>
+          <div class="py-2">
+            <Button
+              label={showAdvanced() ? 'Hide advanced fields' : 'Show advanced fields'}
+              onClick={() => setShowAdvanced(!showAdvanced())}
             />
-          )}
-        </For>
+          </div>
+        </Show>
+        <For each={fieldGroups().advanced}>{FormField}</For>
       </ExtValueContext.Provider>
-      <For each={extColNames()}>
-        {colName => <FormField
-          tableName={extTableName() as string}
-          colName={colName}
-          record={props.record}
-          diff={diffExt}
-          setDiff={setDiffExt}
-          formDepth={props.depth}
-        />}
-      </For>
-      <Show when={hasAdvancedFields()}>
-        <div class="py-2">
-          <Button
-            label={showAdvanced() ? 'Hide advanced fields' : 'Show advanced fields'}
-            onClick={() => setShowAdvanced(!showAdvanced())}
-          />
-        </div>
-      </Show>
       <Show when={props.id}>
         <UserExplField value={userExpl()} onChange={setUserExpl} />
       </Show>
