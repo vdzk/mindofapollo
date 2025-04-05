@@ -2,18 +2,17 @@ import { TableSchema } from "~/schema/type";
 import { sqlStr } from "~/util-no-circle";
 
 export const directive_consequence: TableSchema = {
-  extendsTable: 'statement',
   plural: 'directive consequences',
   columns: {
     label: {
       type: 'virtual',
       serverFn: true
     },
-    directive_id: {
+    argument_id: {
       type: 'fk',
       fk: {
-        table: 'directive',
-        labelColumn: 'label'
+        table: 'argument',
+        labelColumn: 'title'
       }
     },
     moral_good_id: {

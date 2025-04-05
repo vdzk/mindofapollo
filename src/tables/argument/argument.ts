@@ -1,5 +1,7 @@
 import { getPercent } from "~/utils/string";
 import { DataRecord, TableSchema } from "../../schema/type";
+import { argumentTypes } from "./type";
+import { directive } from "../morality/directive";
 
 export const argument: TableSchema = {
   plural: 'arguments',
@@ -25,7 +27,7 @@ export const argument: TableSchema = {
       fk: {
         table: 'argument_type',
         labelColumn: 'name',
-        extensionTables: ['','authority', 'analogy', 'other', 'explanation', 'epistemic', 'deduction', 'comparison', 'example', 'obvious']
+        extensionTables: ['', ...argumentTypes.map(t => `argument_${t}`)],
       }
     }
   },
@@ -54,6 +56,12 @@ export const argument: TableSchema = {
       type: '1-n',
       table: 'argument_conditional',
       column: 'id'
+    },
+    directive_consequences: {
+      type: '1-n',
+      table: 'directive_consequence',
+      column: 'argument_id',
+      showForm: true
     }
   },
   sections: {
@@ -67,7 +75,7 @@ export const argument: TableSchema = {
     },
     evaluation: {
       label: 'evaluation',
-      fields: [ 'judgements', 'conditionals']
+      fields: [ 'judgements', 'conditionals', 'directive_consequences']
     }
   }
 }

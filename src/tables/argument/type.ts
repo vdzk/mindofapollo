@@ -1,12 +1,13 @@
-import { ForeignKey, TableSchema } from "../../schema/type";
-import { argument } from "./argument";
+import { TableSchema } from "../../schema/type"
+
+export const argumentTypes = ['authority', 'analogy', 'other', 'explanation', 'epistemic', 'deduction', 'comparison', 'example', 'obvious', 'normative'] as const
 
 export const argument_type: TableSchema = {
   plural: 'argument types',
   columns: {
     name: {
       type: 'option',
-      options: (argument.columns.argument_type_id as ForeignKey).fk.extensionTables!.slice(1),
+      options: argumentTypes,
       preview: true
     },
     description: {

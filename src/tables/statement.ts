@@ -1,6 +1,9 @@
 import { TableSchema } from "~/schema/type"
 import { getPercent } from "~/utils/string"
 
+// Indexes corresponts to IDs in argument_aggregation_type table
+const argumentAggregationExtensonTables = ['', '', '', 'directive']
+
 export const statement: TableSchema = {
   plural: 'statements',
   columns: {
@@ -11,7 +14,9 @@ export const statement: TableSchema = {
     },
     text: {
       type: 'text',
-      lines: 2
+      lines: 2,
+      getVisibility: record => record.argument_aggregation_type_id !== argumentAggregationExtensonTables.indexOf('directive'),
+      defaultValue: ''
     },
     argument_aggregation_type_id: {
       type: 'fk',
@@ -19,7 +24,8 @@ export const statement: TableSchema = {
         table: 'argument_aggregation_type',
         labelColumn: 'name',
         defaultName: 'evidential',
-        optional: true
+        optional: true,
+        extensionTables: argumentAggregationExtensonTables
       }
     },
     argument_aggregation_type_name: {
@@ -71,11 +77,6 @@ export const statement: TableSchema = {
       type: 'n-n',
       table: 'tag',
       first: true
-    },
-    directive_consequences: {
-      type: '1-n',
-      table: 'directive_consequence',
-      column: 'id'
     }
   },
   sections: {

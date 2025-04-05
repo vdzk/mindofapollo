@@ -24,7 +24,17 @@ export default function RootStatementUpdates() {
   const statementId = () => parseInt(sp().id)
   
   const updates = createAsync(() => getRootStatementUpdatesQuery({ id: statementId() }))
-  const statement = createAsync(() => getOneRecordById('statement', statementId()))
+  const statement = createAsync(async () => {
+    const statement = await getOneRecordById('statement', statementId())
+    if (!statement) return
+    if (statement.argument_aggregation_type_name ===  'normative') {
+      const directive = await getOneRecordById('directive', statementId())
+      if (directive) {
+        statement.label = directive.label
+      }
+    }
+    return statement
+  })
   const updateLastOpened = useAction(updateSubscriptionLastOpenedAction)
   const setSubscription = useAction(setSubscriptionAction)
   const unsubscribe = async () => setSubscription(statementId(), false, '/home-page')
@@ -35,7 +45,7 @@ export default function RootStatementUpdates() {
     } 
   })
   
-  const title = () => `Updates for statement "${statement()?.text}"`
+  const title = () => `Updates for statement "${statement()?.label ?? '...'}"`
   
   return (
     <main>

@@ -3,9 +3,9 @@ import { Subtitle } from "~/components/PageTitle"
 
 export default function ThingsToDoAndOther() {
   return (
-    <>
+    <div class="flex-2 border-l pt-2">
       <Subtitle>Things to do</Subtitle>
-      <div class="px-2 pb-6">
+      <div class="px-2 pb-4">
         <Links
           type="button"
           links={[
@@ -52,6 +52,6 @@ export default function ThingsToDoAndOther() {
           ]}
         />
       </div>
-    </>
+    </div>
   )
 }

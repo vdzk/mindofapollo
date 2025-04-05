@@ -6,7 +6,6 @@ import { doLogout } from "~/api/execute/logout"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { SessionContext } from "~/SessionContext"
 import { Button } from "./buttons"
-import { nbsp } from "~/utils/string"
 
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
@@ -28,7 +27,7 @@ export const TopNav: Component = () => {
         <div class="px-2 py-0.5 flex items-center">
           <Link route="home-page" label="APOLLO" type="logo" />
           <span class="inline-block w-2" />
-          <Link route="search" label={`🔎${nbsp}${nbsp}Search`} type="button" />
+          <Link route="search" label="Search" type="button" />
         </div>
         <div class="px-2 py-0.5">
           <Switch>

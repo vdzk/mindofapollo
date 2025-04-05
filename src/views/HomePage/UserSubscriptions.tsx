@@ -8,7 +8,7 @@ export default function UserSubscriptions() {
   const subscriptions = createAsync(() => getUserSubscriptionsCache())
 
   return (
-    <section class="pb-2">
+    <section class="flex-3 border-l pb-2  pt-2">
       <Subtitle>Subscriptions</Subtitle>
       <Show when={subscriptions()}>
         <Show
@@ -25,7 +25,7 @@ export default function UserSubscriptions() {
                   <Link
                     route="root-statement-updates"
                     params={{ id: subscription.id }}
-                    label={subscription.text}
+                    label={subscription.label}
                   />
                 </div>
               )}

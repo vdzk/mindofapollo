@@ -3,7 +3,7 @@ import { TableSchema } from "../../schema/type";
 const argumentAggretationTypes = [
   'evidential',
   'additive',
-  'normaive'
+  'normative'
 ] as const;
 
 export type ArgumentAggregationType = typeof argumentAggretationTypes[number];

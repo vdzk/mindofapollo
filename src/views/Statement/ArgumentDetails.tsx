@@ -57,10 +57,7 @@ export const ArgumentDetails: Component<{
                 onClick={() => setShowForm(true)}
               />
               <Button
-                label={props.showMoreDetails
-                  ? "Hide more details"
-                  : "Show more details"
-                }
+                label={props.showMoreDetails ? "Show less" : "Show more"}
                 onClick={() => props.setShowMoreDetails(!props.showMoreDetails)}
               />
             </Show>

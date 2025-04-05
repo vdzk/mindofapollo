@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createSignal, Match, Switch } from "solid-js"
+import { Component, createSignal, Match, Show, Switch } from "solid-js"
 import { ArgumentDetails } from "./ArgumentDetails"
 import { getOneExtRecordByIdCache } from "~/client-only/query"
 import { ShowRecord } from "../ShowRecord"
@@ -45,13 +45,24 @@ export const Argument: Component<{
                 aggregateName="critical_statements"
               />
             </div>
-            <ArgumentJudgement
-              argumentId={props.id}
-              record={record()}
-              firstArgOnSide={props.firstArgOnSide}
-              refreshStatementConfidence={props.refreshStatementConfidence}
-              aggregationType={props.aggregationType}
-            />
+            <div class="border-l flex-1">
+              <Subtitle>Judgement</Subtitle>
+              <Show when={props.aggregationType === 'normative'}>
+                <Aggregate
+                  tableName="argument"
+                  id={props.id}
+                  aggregateName="directive_consequences"
+                />
+              </Show>
+              <Show when={props.aggregationType !== 'normative'}>
+                <ArgumentJudgement
+                  argumentId={props.id}
+                  firstArgOnSide={props.firstArgOnSide}
+                  refreshStatementConfidence={props.refreshStatementConfidence}
+                  aggregationType={props.aggregationType as Exclude<ArgumentAggregationType, 'normative'>}
+                />
+              </Show>
+            </div>
           </>
         </Match>
       </Switch>

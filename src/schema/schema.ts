@@ -38,6 +38,7 @@ import { argument_deduction } from "~/tables/argument/deduction";
 import { argument_example } from "~/tables/argument/example";
 import { statement_discussion_message } from "~/tables/other/statement_discussion_message"
 import { argument_obvious } from "~/tables/argument/obvious"
+import { argument_normative } from "~/tables/argument/normative"
 
 // NOTE: table name 'person' and column names 'id', 'name', 'owner_id' have special meanings
 
@@ -81,6 +82,7 @@ export const schema: AppDataSchema = {
     person_secret,
     argument_deduction,
     argument_example,
-    statement_discussion_message
+    statement_discussion_message,
+    argument_normative
   }
 }

@@ -4,6 +4,7 @@ import { createMemo, For, Match, Show, Switch } from "solid-js"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRecords } from "~/api/list/records"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
+import { Aggregate } from "~/components/aggregate/Aggregate"
 import { Form } from "~/components/form/Form"
 import { Link } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
@@ -36,6 +37,7 @@ export default function Statement() {
     return  listForeignRecordsCache('argument', 'statement_id', recordId()!)
   }})
   const titleText = () => (statement()?.label ?? '') as string
+  const argumentAggregationType = () => statement()?.argument_aggregation_type_name as ArgumentAggregationType | undefined
 
   const argumentOptions = () => [
     ..._arguments()?.map(arg => ({
@@ -104,6 +106,9 @@ export default function Statement() {
         options={[
           { id: 'arguments', label: 'Arguments' },
           { id: 'details', label: 'Details' },
+          ...(argumentAggregationType() === 'normative' ? [
+            { id: 'scope', label: 'Scope'}
+          ] : []),
           { id: 'discussion', label: 'Discussion' }
         ]}
         selectedId={selectedSection()}
@@ -125,7 +130,7 @@ export default function Statement() {
                   id={selectedArgument()!}
                   firstArgOnSide={selectedFirstArgOnSide()}
                   refreshStatementConfidence={refreshStatementConfidence}
-                  aggregationType={statement()!.argument_aggregation_type_name as ArgumentAggregationType}
+                  aggregationType={argumentAggregationType()!}
                 />
               </Show>
               <Show when={selectedArgument() < 0 && recordId()}>
@@ -149,6 +154,14 @@ export default function Statement() {
               tableName="statement"
               id={recordId()!}
               hideSections={['arguments']}
+            />
+          </Match>
+          <Match when={selectedSection() === 'scope' && recordId()}>
+            <div class="h-4" />
+            <Aggregate
+              tableName="directive"
+              id={recordId()!}
+              aggregateName="people_categories"
             />
           </Match>
           <Match when={selectedSection() === 'discussion' && recordId()}>

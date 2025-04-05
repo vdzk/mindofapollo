@@ -1,7 +1,7 @@
 import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
 import { Component, createEffect, createSignal, For, onMount, Show, useContext, Switch, Match, createMemo } from "solid-js"
 import { ForeignKey } from "~/schema/type"
-import { ExtValueContext, Form } from "./Form"
+import { Form } from "./Form"
 import { OnChangeFormat } from "./FormField"
 import { listRecordsCache } from "~/client-only/query"
 import { getOneIdByName } from "~/api/getOne/idByName"
@@ -32,21 +32,7 @@ export const FkInput: Component<{
 
   const canCreateNew = () => useBelongsTo(whoCanInsertRecord(props.column.fk.table))
 
-  const setExtValue = useContext(ExtValueContext)!
-  const format = (value: string) => {
-    const { fk } = props.column
-    if (fk.extensionTables) {
-      if (value) {
-        setExtValue(fk.extensionTables[parseInt(value)])
-      } else {
-        setExtValue(undefined)
-      }
-    }
-    if (value) {
-      return parseInt(value)
-    }
-    return null
-  }
+  const format = (value: string) => value ? parseInt(value) : null
   const onSelectChange = props.onChangeFormat(format)
 
   const setValue = (value: string) => {
@@ -142,6 +128,7 @@ export const FkInput: Component<{
                 tableName: props.column.fk.table,
                 id: props.value
               }}
+              class="mr-2"
             />
           </Show>
         </Match>
@@ -153,12 +140,13 @@ export const FkInput: Component<{
               name={props.colName}
               onChange={(id) => setValue('' + id)}
               placeholder={canCreateNew() ? "...or select existing" : ""}
+              class="mb-1"
             />
           </Show>
           <Show when={!isLargeRecordSet()}>
             <select
               name={props.colName}
-              class="max-w-full"
+              class="max-w-full mr-2"
               onChange={onSelectChange}
             >
               <option>
@@ -180,11 +168,12 @@ export const FkInput: Component<{
           </Show>
         </Match>
       </Switch>
-      <Button
-        label={showRecord() ? 'collapse' : 'expand'}
-        class="ml-2"
-        onClick={() => setShowRecord(x => !x)}
-      />
+      <Show when={props.value}>
+        <Button
+          label={showRecord() ? 'collapse' : 'expand'}
+          onClick={() => setShowRecord(x => !x)}
+        />
+      </Show>
       <Show when={showRecord()}>
         <div
           class="rounded-md my-2 pt-2"

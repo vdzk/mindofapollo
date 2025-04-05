@@ -31,19 +31,17 @@ export const isComplete = (
       const diffValue = check.diffRecord[colName];
       
       // Skip this column if any of these conditions are true (column is complete):
-      // 1. Column has defaultValue
       if ('defaultValue' in columnDef) continue
-      
-      // 2. Column is an optional foreign key
+      if (columnDef.type === 'virtual') continue
       if (columnDef.type === 'fk' && columnDef.fk.optional) continue
       
-      // 3. Diff has a non-null, non-undefined value
+      // Diff has a non-null, non-undefined value
       if (diffValue !== undefined && diffValue !== null) continue
       
-      // 4. No diff but record has a value
+      // No diff but record has a value
       if (diffValue === undefined && record && 
           record[colName] !== null && record[colName] !== undefined) continue
-      
+
       // If we get here, the column is incomplete
       return false
     }

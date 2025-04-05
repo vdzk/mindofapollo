@@ -19,25 +19,17 @@ export const titleColumnName = (tableName: string) => {
 
 export const getExtTableName = (
   tableName: string,
-  record?: DataRecord,
-  extValue?: string
+  record?: DataRecord
 ) => {
-  if (record && !extValue) {
-    const tableSchema = schema.tables[tableName]
-    for (const [colName, column] of Object.entries(tableSchema.columns)) {
-      if (column.type === 'fk') {
-        const { extensionTables } = column.fk
-        if (extensionTables) {
-          if (record[colName]) {
-            extValue = extensionTables[record[colName] as number]
-            break
-          }
-        }
+  if (!record) return
+  const tableSchema = schema.tables[tableName]
+  for (const [colName, column] of Object.entries(tableSchema.columns)) {
+    if (column.type === 'fk') {
+      const { extensionTables } = column.fk
+      if (extensionTables) {
+        return extensionTables[record[colName] as number] || undefined
       }
     }
-  }
-  if (extValue) {
-    return [tableName, extValue].join('_')
   }
 }
 

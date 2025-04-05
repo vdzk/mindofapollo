@@ -1,13 +1,16 @@
 import { onError, sql } from "~/server-only/db"
 import { getUserId } from "~/server-only/session"
 import { injectTranslations } from "~/server-only/injectTranslations";
+import { injectVirtualValues } from "~/server-only/select";
 
 export const listUserSubscriptions = async () =>  {
   'use server'
   const userId = await getUserId();
   if (!userId) return [];
 
-  const subscriptions = await sql<{ id: number; text: string; has_updates: boolean }[]>`
+  const subscriptions = await sql<{
+    argument_aggregation_type_name: string; id: number; text: string; has_updates: boolean, label: string;
+}[]>`
     SELECT 
       statement.id, 
       CASE 
@@ -29,5 +32,9 @@ export const listUserSubscriptions = async () =>  {
   `.catch(onError)
 
   await injectTranslations('statement', subscriptions, ['text'])
+  await injectVirtualValues('statement', subscriptions)
+  await injectVirtualValues('directive', subscriptions.filter( statement => 
+    statement.argument_aggregation_type_name === 'normative'
+  ))
   return subscriptions
 }

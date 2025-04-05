@@ -1,12 +1,12 @@
 import { Component } from "solid-js";
 
-export const btnStyle = (params?: { disabled?: boolean }) => `
+export const btnStyle = (params?: { disabled?: boolean, leading?: number }) => `
   ${!params?.disabled ? 'cursor-pointer' : ''} 
   
   /* Layout */
   rounded-lg
   px-2
-  leading-6
+  leading-${params?.leading ?? 6}
   inline-block
 
   /* Colors */
@@ -23,11 +23,12 @@ export const Button: Component<{
   onClick: () => void
   tooltip?: string
   disabled?: boolean
+  leading?: number
   class?: string
 }> = props => {
   return (
     <button
-      class={`${btnStyle({ disabled: props.disabled })} ${props.class || ''}`}
+      class={`${btnStyle(props)} ${props.class || ''}`}
       onClick={props.onClick}
       title={props.tooltip}
       type="button"

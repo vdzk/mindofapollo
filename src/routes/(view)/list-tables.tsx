@@ -40,8 +40,7 @@ function TableList(props: { tables: string[], title?: string }) {
 export default function ListTables() {
   const isValidTable = (tableName: string) => {
     const tableSchema = schema.tables[tableName]
-    return tableSchema.columns[titleColumnName(tableName)]?.type !== 'fk' 
-      && !tableSchema.extendsTable
+    return tableSchema.columns[titleColumnName(tableName)]?.type !== 'fk'
   }
 
   const getCategoryTables = (category: string) => {

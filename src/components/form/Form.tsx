@@ -1,9 +1,9 @@
 import { useAction, useSearchParams } from "@solidjs/router"
-import { Component, ComponentProps, createContext, createEffect, createMemo, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
+import { Component, ComponentProps, createEffect, createMemo, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
 import { DataRecord } from "~/schema/type"
-import { getExtTableName, titleColumnName } from "~/utils/schema"
+import { getExtTableName } from "~/utils/schema"
 import { createStore, reconcile } from "solid-js/store"
 import { SessionContext } from "~/SessionContext"
 import { Link } from "~/components/Link"
@@ -13,9 +13,6 @@ import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
 import { UserExplField } from "./UserExplField"
 import { saveAction } from "~/components/form/saveAction"
-import { FkInput } from "./FkInput"
-
-export const ExtValueContext = createContext<(value?: string) => void>()
 
 export type FormExitHandler = (savedId?: number) => void
 export type ExitSettings = { getLinkData: (savedId?: number) => LinkData }
@@ -34,7 +31,6 @@ export const Form: Component<{
   const [searchParams] = useSearchParams()
   const [diff, setDiff] = createStore<DataRecord>({})
   const [diffExt, setDiffExt] = createStore<DataRecord>({})
-  const [extValue, setExtValue] = createSignal<string>()
   const [showAdvanced, setShowAdvanced] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
 
@@ -46,21 +42,24 @@ export const Form: Component<{
   createEffect(() => {
     if (props.preset) {
       setDiff(reconcile(props.preset))
-      setExtValue(undefined)
     }
+  })
+  // Clear extDiff when extTableName changes
+  createEffect(() => {
+    extTableName()
+    setDiffExt(reconcile({}))
   })
   createEffect(() => !props.id && !diff.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
 
   const table = () => schema.tables[props.tableName]
   const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
 
-  const isAdvanced = (colName: string) => table().advanced?.includes(colName)
-
   const hasAdvancedFields = () => {
     const tableSchema = table()
     return tableSchema.advanced ? tableSchema.advanced.length > 0 : false
   }
-  const extTableName = () => getExtTableName(props.tableName, props.record, extValue())
+  const currentRecord = () => ({...props.record, ...diff})
+  const extTableName = createMemo(() => getExtTableName(props.tableName, currentRecord()))
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
@@ -85,15 +84,10 @@ export const Form: Component<{
     }
   }
 
-  const updateExtValue = (value?: string) => {
-    setExtValue(value)
-    setDiffExt(reconcile({}))
-  }
-
   const fieldGroups = createMemo(() => {
     const _table = table()
     const { tableName, record, hideColumns, depth } = props
-    const groupKeys = ['normal', 'advanced', 'ext'] as const
+    const groupKeys = ['normal', 'advanced'] as const
     const groups = Object.fromEntries(groupKeys.map(
       key => [key, [] as ComponentProps<typeof FormField>[]]
     ))
@@ -103,37 +97,43 @@ export const Form: Component<{
     ]) {
       const isAdvanced = _table.advanced?.includes(colName)
       const hidden = hideColumns?.includes(colName)
-        || (isAdvanced && !showAdvanced())
       groups[isAdvanced ? 'advanced' : 'normal'].push({
         tableName, colName, record, diff, setDiff,
         hidden, formDepth: depth
       })
     }
-    for (const colName of extColNames()) {
-      groups.ext.push({
-        tableName: extTableName() as string,
-        colName, record, diff: diffExt, setDiff: setDiffExt,
-        formDepth: depth
-      })
-    }
     return groups
   })
 
+  const extFields = createMemo(() => extColNames().map(
+    colName => ({
+      tableName: extTableName() as string,
+      colName, record: props.record,
+      diff: diffExt, setDiff: setDiffExt,
+      formDepth: props.depth
+    })
+  ))
+
+  const isVisible = (colName: string) => table().columns[colName]
+    ?.getVisibility?.(currentRecord()) ?? true
+
   return (
     <div class="px-2 max-w-(--breakpoint-sm) pb-2">
-      <ExtValueContext.Provider value={updateExtValue}>
-        <For each={fieldGroups().normal}>{FormField}</For>
-        <For each={fieldGroups().ext}>{FormField}</For>
-        <Show when={hasAdvancedFields()}>
-          <div class="py-2">
-            <Button
-              label={showAdvanced() ? 'Hide advanced fields' : 'Show advanced fields'}
-              onClick={() => setShowAdvanced(!showAdvanced())}
-            />
-          </div>
-        </Show>
-        <For each={fieldGroups().advanced}>{FormField}</For>
-      </ExtValueContext.Provider>
+      <For each={fieldGroups().normal}>{field =>
+        <FormField {...field} hidden={field.hidden || !isVisible(field.colName) } />
+      }</For>
+      <For each={extFields()}>{FormField}</For>
+      <Show when={hasAdvancedFields()}>
+        <div class="py-2">
+          <Button
+            label={showAdvanced() ? 'Hide advanced' : 'Show advanced'}
+            onClick={() => setShowAdvanced(!showAdvanced())}
+          />
+        </div>
+      </Show>
+      <For each={fieldGroups().advanced}>{field =>
+        <FormField {...field} hidden={field.hidden || !showAdvanced() } />
+      }</For>
       <Show when={props.id}>
         <UserExplField value={userExpl()} onChange={setUserExpl} />
       </Show>

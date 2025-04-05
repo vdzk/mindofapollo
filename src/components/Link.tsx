@@ -57,7 +57,7 @@ export const Links: Component<{
       {props.links.map((link, index) => (
         <>
           {index > 0 && <span class="w-2 inline-block" />}
-          <Link {...link} type={props.type} />
+          <Link {...link} type={props.type} class="mb-2" />
         </>
       ))}
     </>
