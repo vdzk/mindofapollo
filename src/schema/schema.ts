@@ -23,7 +23,6 @@ import { directive } from "~/tables/morality/directive"
 import { directive_scope } from "~/tables/morality/directive_scope"
 import { moral_good } from "~/tables/morality/moral_good"
 import { moral_persuasion } from "~/tables/morality/moral_persuasion"
-import { moral_weight } from "~/tables/morality/moral_weight"
 import { person_category } from "~/tables/morality/person_category"
 import { presuasion_critique } from "~/tables/morality/persuasion_critique"
 import { unit } from "~/tables/morality/unit"
@@ -39,6 +38,8 @@ import { argument_example } from "~/tables/argument/example";
 import { statement_discussion_message } from "~/tables/other/statement_discussion_message"
 import { argument_obvious } from "~/tables/argument/obvious"
 import { argument_normative } from "~/tables/argument/normative"
+import { moral_weight_profile } from "~/tables/morality/moral_weight_profile"
+import { moral_weight_of_person, moral_weight_of_profile } from "~/tables/morality/moral_weight"
 
 // NOTE: table name 'person' and column names 'id', 'name', 'owner_id' have special meanings
 
@@ -75,7 +76,6 @@ export const schema: AppDataSchema = {
     directive_consequence,
     directive_scope,
     moral_persuasion,
-    moral_weight,
     presuasion_critique,
     invite,
     chat_message,
@@ -83,6 +83,9 @@ export const schema: AppDataSchema = {
     argument_deduction,
     argument_example,
     statement_discussion_message,
-    argument_normative
+    argument_normative,
+    moral_weight_profile,
+    moral_weight_of_profile,
+    moral_weight_of_person
   }
 }

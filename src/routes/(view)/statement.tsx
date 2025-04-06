@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
-import { createMemo, For, Match, Show, Switch } from "solid-js"
+import { createMemo, createSignal, For, Match, Show, Switch } from "solid-js"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listRecords } from "~/api/list/records"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
@@ -12,9 +12,12 @@ import { RecordPageTitle } from "~/components/PageTitle"
 import { schema } from "~/schema/schema"
 import { BooleanColumn } from "~/schema/type"
 import { ArgumentAggregationType } from "~/tables/argument/aggregation_type"
+import { conclusionPlaceholder } from "~/tables/morality/directive"
 import { ShowRecord } from "~/views/ShowRecord"
 import { Argument } from "~/views/Statement/Argument"
 import { Discussion } from "~/views/Statement/Discussion"
+import { MoralProfileSelector } from "~/views/Statement/MoralProfileSelector"
+import { NormativeConclusion } from "~/views/Statement/NormativeConclusion"
 
 export default function Statement() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -36,8 +39,11 @@ export default function Statement() {
   const _arguments = createAsync(async () => {if (recordId()) {
     return  listForeignRecordsCache('argument', 'statement_id', recordId()!)
   }})
-  const titleText = () => (statement()?.label ?? '') as string
   const argumentAggregationType = () => statement()?.argument_aggregation_type_name as ArgumentAggregationType | undefined
+  const isNormative = () => argumentAggregationType() === 'normative'
+  const titleText = () => (statement()?.label ?? '') as string
+  const mainTitleText = () => isNormative() ? titleText().slice(conclusionPlaceholder.length) : titleText()
+  const [selectedMoralProfileId, setSelectedMoralProfileId] = createSignal(0)
 
   const argumentOptions = () => [
     ..._arguments()?.map(arg => ({
@@ -99,14 +105,24 @@ export default function Statement() {
         </div>
       </Show>
       <div class="min-h-[128px] flex items-center">
-        <RecordPageTitle tableName="statement" text={titleText()} />
+        <RecordPageTitle
+          tableName="statement"
+          text={mainTitleText()}
+          prefix={isNormative() && recordId() 
+            ? <NormativeConclusion
+                statementId={recordId()!}
+                moralProfileId={selectedMoralProfileId()}
+              />
+            : undefined
+          }
+        />
       </div>
       <div class="border-t pb-2" />
       <MasterDetail
         options={[
           { id: 'arguments', label: 'Arguments' },
           { id: 'details', label: 'Details' },
-          ...(argumentAggregationType() === 'normative' ? [
+          ...(isNormative() ? [
             { id: 'scope', label: 'Scope'}
           ] : []),
           { id: 'discussion', label: 'Discussion' }
@@ -114,6 +130,13 @@ export default function Statement() {
         selectedId={selectedSection()}
         onChange={id => setSearchParams({ tab: id })}
         horizontal
+        extraPanel={isNormative()
+          ? <MoralProfileSelector
+              value={selectedMoralProfileId()}
+              onChange={setSelectedMoralProfileId}
+            />
+          : undefined
+        }
       >
         <Switch>
           <Match when={selectedSection() === 'arguments'}>
@@ -125,7 +148,7 @@ export default function Statement() {
               class="pl-2"
               optionsClass="w-56 border-r pr-2 pt-2"
             >
-              <Show when={selectedArgument() > 0 && statement()}>
+              <Show when={selectedArgument() > 0 && argumentAggregationType()}>
                 <Argument
                   id={selectedArgument()!}
                   firstArgOnSide={selectedFirstArgOnSide()}

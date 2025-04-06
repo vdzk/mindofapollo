@@ -3,6 +3,7 @@ import { firstCap } from "~/utils/string"
 import { pluralTableName } from "~/utils/schema"
 import { titleColumnName } from "~/utils/schema"
 import { AggregateSectionSettings } from "./AggregateSection"
+import { Link } from "../Link"
 
 export type Aggregator = (props: {
   tableName: string
@@ -15,34 +16,26 @@ export type Aggregator = (props: {
 
 export const simpleList: Aggregator = (props) => [{
   title: firstCap(pluralTableName(props.aggregate.table)),
-  records: props.records,
-  link: {
-    title: '+',
-    route: 'create-record',
-    params: {
-      tableName: props.aggregate.table,
-      sourceTable: props.tableName,
-      sourceId: props.id,
-      ...((props.aggregate as OneToNSchema).column ? {
-        [(props.aggregate as OneToNSchema).column]: props.id
-      } : {})
-    }
-  }
+  records: props.records
 }]
 
 export const crossList: Aggregator = (props) => [{
   title: firstCap(pluralTableName(props.aggregate.table)),
   records: props.records,
-  link: {
-    title: '+/−',
-    route: 'edit-cross-ref',
-    params: {
-      a: props.tableName,
-      b: props.aggregate.table,
-      id: props.id,
-      first: (props.aggregate as NToNSchema).first || ''
-    }
-  }
+  controls: (
+    <Link
+      type="button"
+      label="+/−"
+      tooltip="add / remove"
+      route="edit-cross-ref"
+      params={{
+        a: props.tableName,
+        b: props.aggregate.table,
+        id: props.id,
+        first: (props.aggregate as NToNSchema).first || ''
+      }}
+    />
+  )
 }]
 
 export const splitBoolean: Aggregator = (props) => {
@@ -56,18 +49,7 @@ export const splitBoolean: Aggregator = (props) => {
     result.push({
       title: label + ' ' + props.aggregateTable.plural,
       records: () => props.records()
-        ?.filter(r => r[splitColumnName] === value),
-      link: {
-        title: '+',
-        route: 'create-record',
-        params: {
-          tableName: props.aggregate.table,
-          sourceTable: props.tableName,
-          sourceId: props.id,
-          [aggregateOneToN.column]: props.id,
-          [splitColumnName]: value
-        }
-      }
+        ?.filter(r => r[splitColumnName] === value)
     })
   }
   return result
@@ -83,17 +65,6 @@ export const splitFk: Aggregator = (props) => {
     title: record[splitTitleColumnName] as string,
     records: () => props.records()
       ?.filter(r => r[splitColumnName] === record.id),
-    link: {
-      title: '+',
-      route: 'create-record',
-      params: {
-        tableName: props.aggregate.table,
-        sourceTable: props.tableName,
-        sourceId: props.id,
-        [aggregateOneToN.column]: props.id,
-        [splitColumnName]: record.id
-      }
-    },
     splitById: record.id as number
   }))
 }

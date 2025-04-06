@@ -47,7 +47,6 @@ export const updateRecord = async (
     printError('Forbidden column', { forbiddenColumn })
     return
   }
-  await injectValueTypes(tableName, record, id)
   const explId = await startExpl(userId, 'updateRecord', 1, tableName, id)
   const diff = await _updateRecord(tableName, id, explId, record)
   const user = await getUserActorUser()

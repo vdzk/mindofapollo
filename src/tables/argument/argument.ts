@@ -1,7 +1,5 @@
-import { getPercent } from "~/utils/string";
-import { DataRecord, TableSchema } from "../../schema/type";
-import { argumentTypes } from "./type";
-import { directive } from "../morality/directive";
+import { TableSchema } from "../../schema/type";
+import { argumentTypes } from "./type"
 
 export const argument: TableSchema = {
   plural: 'arguments',
@@ -32,7 +30,6 @@ export const argument: TableSchema = {
     }
   },
   extendedByTable: 'argument_judgement',
-  preview: (record: DataRecord) => ((record.isolated_confidence === null) ? '' : `(${getPercent(record.isolated_confidence as number)}) `) + record.title,
   aggregates: {
     critical_statements: {
       type: '1-n',
@@ -44,8 +41,7 @@ export const argument: TableSchema = {
         route: 'statement',
         idParamName: 'id',
         idParamSource: 'statement_id'
-      },
-      showForm: true
+      }
     },
     judgements: {
       type: '1-n',
@@ -60,8 +56,7 @@ export const argument: TableSchema = {
     directive_consequences: {
       type: '1-n',
       table: 'directive_consequence',
-      column: 'argument_id',
-      showForm: true
+      column: 'argument_id'
     }
   },
   sections: {

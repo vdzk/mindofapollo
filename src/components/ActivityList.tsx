@@ -3,6 +3,7 @@ import { Link } from "~/components/Link"
 import { getActionStr, getActorStr, getExplData } from "~/components/expl/Expl"
 import { ExplRecord } from "~/server-only/expl"
 import { ExplLink } from "~/components/expl/ExplLink"
+import { schema } from "~/schema/schema"
 
 // Format date for display as "YYYY-MM-DD"
 export const formatDate = (date: Date) => {
@@ -114,11 +115,16 @@ export function ActivityList(props: {
                                                 when={explRecord.table_name && explRecord.record_id}
                                                 fallback={getActionStr(getExplData(explRecord))}
                                               >
-                                                <Link
-                                                  route="show-record"
-                                                  params={{ tableName: explRecord.table_name!, id: explRecord.record_id! }}
-                                                  label={getActionStr(getExplData(explRecord))}
-                                                />
+                                                <Show
+                                                  when={explRecord.table_name! in schema.tables}
+                                                  fallback={getActionStr(getExplData(explRecord))}
+                                                >
+                                                  <Link
+                                                    route="show-record"
+                                                    params={{ tableName: explRecord.table_name!, id: explRecord.record_id! }}
+                                                    label={getActionStr(getExplData(explRecord))}
+                                                  />
+                                                </Show>
                                               </Show></div>
                                             <ExplLink explId={explRecord.id} />
                                           </Match>

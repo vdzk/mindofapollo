@@ -6,6 +6,9 @@ export const unit: TableSchema = {
     name: {
       type: 'varchar'
     },
+    description: {
+      type: 'text'
+    },
     column_type: {
       type: 'option',
       options: [

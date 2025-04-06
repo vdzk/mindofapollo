@@ -49,12 +49,5 @@ export const directive_consequence: TableSchema = {
         WHERE directive_consequence.id = $1::integer
       `
     }
-  },
-  aggregates: {
-    statements: {
-      type: '1-n',
-      table: 'statement',
-      column: 'id'
-    }
   }
 }

@@ -24,7 +24,6 @@ export const statement: TableSchema = {
         table: 'argument_aggregation_type',
         labelColumn: 'name',
         defaultName: 'evidential',
-        optional: true,
         extensionTables: argumentAggregationExtensonTables
       }
     },

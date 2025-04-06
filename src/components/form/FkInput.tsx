@@ -46,7 +46,7 @@ export const FkInput: Component<{
 
   onMount(() => {
     const spValue = searchParams[props.colName]
-    if (spValue) {
+    if (spValue && props.formDepth === undefined) {
       setValue(spValue as string)
       setIsPreset(true)
     }

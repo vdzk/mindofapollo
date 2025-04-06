@@ -1,5 +1,5 @@
-import { Component, JSXElement, ParentComponent } from "solid-js";
-import { firstCap, humanCase } from "~/utils/string";
+import { Component, JSXElement, ParentComponent } from "solid-js"
+import { firstCap, humanCase } from "~/utils/string"
 
 export const PageTitle: Component<{
   children: JSXElement,
@@ -36,11 +36,12 @@ export const AbovePageTitle: ParentComponent<{label: string}> =
 export const RecordPageTitle: Component<{
   tableName: string,
   text: string
+  prefix?: JSXElement
 }> = props => (
   <div>
     <AbovePageTitle label={firstCap(humanCase(props.tableName)) + ':'} />
     <PageTitle textSize={props.text.length > 200 ? 'text-2xl' : ''}>
-      {props.text}
+      {props.prefix}{props.text}
     </PageTitle>
   </div>
 )

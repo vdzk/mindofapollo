@@ -1,60 +1,66 @@
+import { Title } from "@solidjs/meta"
 import { createAsync } from "@solidjs/router"
 import { For, Suspense } from "solid-js"
 import { listUserDirectives } from "~/api/list/userDirectives"
+import { listOwnRecordsCache } from "~/client-only/query"
+import { DecisionIndicator } from "~/components/DecisionIndicator"
 import { PageTitle } from "~/components/PageTitle"
+import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { indexBy } from "~/utils/shape"
+import { calculateMoralSum } from "~/views/Statement/NormativeConclusion"
 
 export default function ShowDirective() {
   const data = createAsync(listUserDirectives)
+  const moralWeights = createAsync(() => listOwnRecordsCache('moral_weight_of_person'))
 
   const rows = () => {
     const _data = data()
-    if (!_data) return []
+    if (!_data || !moralWeights()) return []
+    const directives: (DataRecordWithId
+      & {concs?: (DataRecord & {ext: DataRecord})[]}
+    )[] = _data.directives
 
-    const directivesById = indexBy(_data.directives, 'id')
+    const directivesById = indexBy(directives, 'id')
     const dirConcsById = indexBy(_data.dirConcs, 'id')
-    const moralWeightsByGoodId = indexBy(_data.moralWeights, 'moral_good_id')
 
+    // Setup the data structure
     for (const dirConcExt of _data.dirConcsWithValues.records) {
       dirConcsById[dirConcExt.id].ext = dirConcExt
     }
     for (const dirConcId in _data.dirConcsWithValues.values) {
       dirConcsById[dirConcId].value = _data.dirConcsWithValues.values[dirConcId]
     }
-    for (const directive of _data.directives) {
+    for (const directive of directives) {
       directive.concs = []
     }
     for (const dirConc of _data.dirConcs) {
-      directivesById[dirConc.directive_id].concs.push(dirConc)
+      directivesById[dirConc.directive_id as number].concs.push(dirConc)
     }
-    for (const directive of _data.directives) {
-      let sum = 0
-      for (const dirConc of directive.concs) {
-        const moralWeightRecord = moralWeightsByGoodId[dirConc.moral_good_id]
-        if (moralWeightRecord) {
-          const weight = parseFloat(moralWeightRecord.weight)
-          const { value } = dirConc
-          const colType = dirConc.ext.column_type
-          let weightedValue = 0
-          if (colType === 'boolean') {
-            if (value) {
-              weightedValue = weight
-            }
-          } else if (colType === 'integer') {
-            weightedValue += weight * value
-          }
-          dirConc.weightedValue = weightedValue
-          sum += weightedValue
-        }
+    
+    for (const directive of directives) {
+      // Prepare consequences array in the format expected by calculateMoralSum
+      const processedConcs = directive.concs!.map(dirConc => ({
+        id: dirConc.id as number,
+        moral_good_id: dirConc.moral_good_id,
+        value: dirConc.value,
+        column_type: dirConc.ext.column_type
+      }));
+      
+      const result = calculateMoralSum(processedConcs, moralWeights()!);
+      directive.sum = result.overlap ? result.sum : null;
+      
+      // Assign the weighted values directly from the calculation result
+      for (const dirConc of directive.concs!) {
+        dirConc.weightedValue = result.weightedValues[dirConc.id as number]
       }
-      directive.do = sum > 0
     }
-    return _data.directives
+    return directives
   }
 
   return (
     <main>
-      <PageTitle>Directives</PageTitle>
+      <Title>Your Directives</Title>
+      <PageTitle>Your Directives</PageTitle>
       <Suspense fallback="...loading directives">
         <table class="mx-2">
           <tbody>
@@ -84,7 +90,7 @@ export default function ShowDirective() {
                     </For>
                   </td>
                   <td class="px-2">
-                    {directive.do ? '👍' : "👎"}
+                    <DecisionIndicator score={directive.sum as number | null} />
                   </td>
                 </tr>
               )}

@@ -49,7 +49,7 @@ export const Form: Component<{
     extTableName()
     setDiffExt(reconcile({}))
   })
-  createEffect(() => !props.id && !diff.id && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
+  createEffect(() => !props.id && !diff.id && !('depth' in props) && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
 
   const table = () => schema.tables[props.tableName]
   const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
@@ -63,9 +63,8 @@ export const Form: Component<{
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
-  const pristine = () => Object.entries(diff).every(
-    ([key, value]) => (key === 'id') || value === undefined) &&
-    Object.values(diffExt).every(value => value === undefined)
+  const pristine = () => Object.values({...diff, ...diffExt})
+    .every(value => value === undefined)
   const complete = () => isComplete(
     props.tableName, diff, diffExt, colNames(),
     extTableName(), extColNames(), props.record

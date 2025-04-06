@@ -8,7 +8,7 @@ import { injectTranslations } from "~/server-only/injectTranslations";
 export const listUserDirectives = async () => {
   "use server"
   const userSession = await getUserSession()
-  const directives = await sql<DataRecordWithId[]>`
+  const directives = await sql<(DataRecordWithId)[]>`
     SELECT directive.id, directive.deed_id
     FROM ${sql(xName('person', 'person_category', true))} pxpc
     JOIN directive_scope
@@ -28,9 +28,12 @@ export const listUserDirectives = async () => {
   ])
 
   const dirConcs = await sql<DataRecordWithId[]>`
-    SELECT dc.directive_id, dc.id, dc.moral_good_id, dc.value_id
+    SELECT argument.statement_id as directive_id,
+      dc.id, dc.moral_good_id, dc.value_id
     FROM directive_consequence dc
-    WHERE dc.directive_id IN ${sql(directives.map(x => x.id))}
+    JOIN argument
+      ON argument.id = dc.argument_id
+    WHERE argument.statement_id IN ${sql(directives.map(x => x.id))}
   `.catch(onError)
   const dirConcsWithValues = await getDirConcsWithValues(dirConcs.map(x => x.id))
   const moralGoods = await sql<DataRecordWithId[]>`
@@ -45,11 +48,6 @@ export const listUserDirectives = async () => {
     WHERE unit.id IN ${sql(moralGoods.map(x => x.unit_id))}
   `.catch(onError)
   await injectTranslations('unit', units)
-  const moralWeights = await sql<DataRecordWithId[]>`
-    SELECT moral_weight.moral_good_id, moral_weight.weight
-    FROM moral_weight
-    WHERE moral_weight.owner_id = ${userSession.userId}
-  `.catch(onError)
 
-  return {directives, dirConcs, dirConcsWithValues, moralGoods, units, moralWeights}
+  return {directives, dirConcs, dirConcsWithValues, moralGoods, units}
 }

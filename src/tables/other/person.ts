@@ -29,7 +29,7 @@ export const person: TableSchema = {
     },
     moral_weights: {
       type: '1-n',
-      table: 'moral_weight',
+      table: 'moral_weight_of_person',
       column: 'owner_id'
     },
     person_secrets: {

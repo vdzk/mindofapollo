@@ -1,5 +1,7 @@
 import { TableSchema } from "~/schema/type"
 
+export const conclusionPlaceholder = '(?) '
+
 export const directive: TableSchema = {
   extendsTable: 'statement',
   plural: 'directives',
@@ -38,7 +40,7 @@ export const directive: TableSchema = {
           id => {
             const {deed, scope: [exclude, include]} = directives[id]
             return [id,
-              `(?) ${include.join(' ,')}${exclude.length > 0 ? ' who is not a ' + exclude.join(' ,') : ''} should ${deed}`]
+              `${conclusionPlaceholder}${include.join(' ,')}${exclude.length > 0 ? ' who is not a ' + exclude.join(' ,') : ''} should ${deed}`]
           }
         ))
         return labels

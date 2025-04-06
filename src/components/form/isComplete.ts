@@ -13,7 +13,7 @@ export const isComplete = (
   // Create an array of checks to perform
   const checks = [
     { table: tableName, columns: colNames, diffRecord: diff }
-  ];
+  ]
   
   // Add extension table check if it exists
   if (extTableName) {
@@ -21,7 +21,7 @@ export const isComplete = (
       table: extTableName, 
       columns: extColNames, 
       diffRecord: diffExt 
-    });
+    })
   }
   
   // Check all tables and columns

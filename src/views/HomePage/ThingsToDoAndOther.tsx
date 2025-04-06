@@ -24,7 +24,7 @@ export default function ThingsToDoAndOther() {
               params: { tableName: 'rule_change_request' }
             },
             {
-              label: "My directives",
+              label: "Your directives",
               route: "show-directive"
             }
           ]}
@@ -37,8 +37,7 @@ export default function ThingsToDoAndOther() {
           links={[
             {
               label: "Tables",
-              route: "list-tables",
-              params: { tableName: 'statement' }
+              route: "list-tables"
             },
             {
               label: "Sandboxes",

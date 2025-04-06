@@ -91,6 +91,7 @@ export const _updateRecord = async <T extends DataRecord>(
   explId: number,
   newFragment: T
 ) => {
+  await injectValueTypes(tableName, newFragment, id)
   const colNames = Object.keys(newFragment)
   if (colNames.length === 0) return {
     before: {} as AddExplId<T>,

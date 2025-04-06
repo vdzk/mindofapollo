@@ -1,5 +1,5 @@
 import { action, json, useAction } from "@solidjs/router"
-import { Component, createSignal, Show } from "solid-js"
+import { Component, ComponentProps, createSignal, Show } from "solid-js"
 import { deleteById, whoCanDeleteById } from "~/api/delete/byId"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { useOfSelf } from "~/client-only/useOfSelf"
@@ -33,8 +33,8 @@ export const RemovableListItem: Component<{
   itemTable: string
   item: DataRecordWithId
   text: string
-  linkRoute: string
-  linkParams: Record<string, any>
+  linkProps: ComponentProps<typeof Link>
+  hideControls?: boolean
 }> = (props) => {
   const [showDelete, setShowDelete] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
@@ -76,13 +76,12 @@ export const RemovableListItem: Component<{
       <Show when={!showDelete()}>
         <span class="leading-5 mb-1 inline-block">
           <Link
-            route={props.linkRoute}
-            params={props.linkParams}
             label={props.text}
             class="py-0.5"
+            {...props.linkProps}
           />
           <span class="mr-2" />
-          <Show when={canDeleteById()}>
+          <Show when={canDeleteById() && !props.hideControls}>
             <Button
               label="X"
               onClick={() => setShowDelete(true)}
@@ -93,5 +92,5 @@ export const RemovableListItem: Component<{
         </span>
       </Show>
     </>
-  );
-};
+  )
+}

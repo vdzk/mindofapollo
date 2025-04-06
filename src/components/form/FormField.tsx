@@ -164,6 +164,7 @@ export const FormField: Component<{
             }}
             value={value() as number | undefined}
             isNew={isNew()}
+            formDepth={props.formDepth}
             {...{ onChangeFormat }}
           />
         </Match>

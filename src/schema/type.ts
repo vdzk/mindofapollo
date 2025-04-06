@@ -97,8 +97,7 @@ interface SharedAggregateProps {
     route: string
     idParamName: string
     idParamSource: string
-  },
-  showForm?: true // show form to add new records
+  }
 }
 
 export interface OneToNSchema extends SharedAggregateProps{
@@ -129,7 +128,6 @@ export interface TableSchema {
   private?: boolean,
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
-  preview?: (record: DataRecord) => string, // Text to represent the whole record
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>
   createRecord?: () => DataRecord // Generate new records automatically

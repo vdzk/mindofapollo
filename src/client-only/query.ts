@@ -7,6 +7,8 @@ import { listHomePageStatements } from "~/api/list/homePageStatements"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { listForeignRecords } from "~/api/list/foreignRecords"
 import { getOneRecordById } from "~/api/getOne/recordById"
+import { listOwnRecords } from "~/api/list/ownRecords"
+import { listConsequences } from "~/api/list/consequences"
 
 export const listForeignHopRecordsCache = query(listForeignHopRecords, 'listForeignHopRecords')
 export const listCrossRecordsCache = query(listCrossRecords, 'listCrossRecords')
@@ -16,4 +18,6 @@ export const getHomePageStatementsCache = query(listHomePageStatements, 'getHome
 export const getOneRecordByIdCache = query(getOneRecordById, 'getOneRecordById')
 export const getOneExtRecordByIdCache = query(getOneExtRecordById, 'getOneExtRecordById')
 export const listForeignRecordsCache = query(listForeignRecords, 'listForeignRecords')
+export const listOwnRecordsCache = query(listOwnRecords, 'listOwnRecords')
+export const listConsequencesCache = query(listConsequences, 'listForeign2Records')
 

@@ -10,6 +10,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
   optionsClass?: string
   groups?: Option<TGroupId>[]
   horizontal?: boolean
+  extraPanel?: JSXElement
 }) => {
   const hasGroups = () => !!props.groups && props.groups.length > 0
   const groupsById = createMemo(() => props.groups && Object.fromEntries(props.groups.map(g => [g.id, g])))
@@ -94,6 +95,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
             </>
           )}
         </For>
+        {props.extraPanel}
       </div>
       <div
         class="flex-1 flex flex-col"
