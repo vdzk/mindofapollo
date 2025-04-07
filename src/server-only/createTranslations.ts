@@ -2,10 +2,8 @@ import { defaultLanguage, langSettings, languages } from "~/translation"
 import { onError, sql } from "./db"
 import { getUserLanguage } from "./session"
 import { SourceLanguageCode, TargetLanguageCode, Translator } from 'deepl-node'
-import dotenv from "dotenv"
 import { humanCase } from "~/utils/string"
 
-dotenv.config()
 const translator = new Translator(process.env.DEEPL_API_KEY!)
 
 export const createTranslations = async (
