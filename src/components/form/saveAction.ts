@@ -4,13 +4,13 @@ import { updateExtRecord } from "~/api/update/extRecord"
 import { updateRecord } from "~/api/update/record"
 import { insertExtRecord } from "~/api/insert/extRecord"
 import { insertRecord } from "~/api/insert/record"
-import { login } from "~/api/execute/login"
 import { listRecordsCache, getOneExtRecordByIdCache } from "~/client-only/query"
 import { LinkData } from "~/types"
 import { FormExitHandler } from "~/components/form/Form"
-import { SessionContext } from "~/SessionContext"
+import { SessionContext, SessionContextType } from "~/SessionContext"
 import { useContext } from "solid-js"
 import { isEmpty } from "~/utils/shape"
+import { updateUserSession } from "~/api/update/userSession"
 
 type ExitSettings = { getLinkData: (savedId?: number) => LinkData } | { onExit: FormExitHandler }
 
@@ -33,14 +33,14 @@ export const saveAction = action(async (
   extTableName: string | undefined,
   extRecord: DataRecord,
   userExpl: string,
-  exitSettings: ExitSettings
+  exitSettings: ExitSettings,
+  session: SessionContextType
 ) => {
   const extension = extTableName && !isEmpty(extRecord) ? {
     tableName: extTableName,
     record: extRecord
   } : undefined
-  const session = useContext(SessionContext)
-  const isSelf = () => tableName === 'person' && id === session?.userSession?.()?.userId
+  const isSelf = () => tableName === 'person' && id === session.userSession()!.userId
 
   if (id) {
     if (extension) {
@@ -53,8 +53,10 @@ export const saveAction = action(async (
     }
 
     if (isSelf()) {
-      await login(id)
-      await session?.refetch()
+      const userSession = await updateUserSession()
+      if (userSession) {
+        session.mutate(() => userSession)
+      }
     }
 
     if (hasExitHandler(exitSettings)) {

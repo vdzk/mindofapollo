@@ -7,8 +7,9 @@ import { join } from "~/api/execute/join"
 import { Button } from "~/components/buttons"
 import { login } from "~/api/execute/login"
 import { SessionContext } from "~/SessionContext"
-import { useContext } from "solid-js"
+import { createSignal, useContext } from "solid-js"
 import { defaultLanguage, Language } from "~/translation"
+import { etv } from "~/client-only/util"
 
 interface Join {
   code: string
@@ -19,13 +20,14 @@ export default function Join() {
   const navigate = useNavigate()
   const [sp] = useSearchParams() as unknown as [Join]
   const [diff, setDiff] = createStore({ name: '', language: defaultLanguage })
+  const [password, setPassword] = createSignal('')
   const onSubmit = async () => {
     const userId = await join(diff.name, diff.language as Language, sp.code)
     if (!userId) {
       console.error('join failed')
       return
     }
-    await login(userId)
+    await login(userId, password())
     session?.refetch()
     navigate('/home-page')
   }
@@ -47,6 +49,18 @@ export default function Join() {
           colName="language"
           {...{diff, setDiff}}
         />
+        <div class="font-bold">
+          Password
+        </div>
+        <div>
+          <input
+            type="password"
+            value={password()}
+            onInput={etv(setPassword)}
+            onChange={etv(setPassword)}
+            class="border rounded-md pl-1 w-full mb-2"
+          />
+        </div>
         <Button
           label="Submit"
           onClick={onSubmit}

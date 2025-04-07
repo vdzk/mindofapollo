@@ -1,9 +1,11 @@
 import { useSession } from "vinxi/http";
-import { UserSession } from "~/types";
+import { AuthRole, UserSession } from "~/types";
 import { UserActor } from "~/components/expl/types";
+import { _getRecordById } from "./select";
+import { Language } from "~/translation";
 
 // TODO: store secret in .env file
-export const getSession = () => useSession<UserSession>({password: 'secret_secret_secret_secret_secret_secret_secret_secret_secret'})
+export const getSession = () => useSession<UserSession>({ password: 'secret_secret_secret_secret_secret_secret_secret_secret_secret' })
 
 export const logout = async () => {
   const session = await getSession()
@@ -43,5 +45,25 @@ export const getUserActorUser = async (): Promise<UserActor['user']> => {
     name: session.data.userName,
     auth_role: session.data.authRole
   }
+}
+
+export const _updateUserSession = async (userId: number) => {
+  const session = await getSession()
+  const person = await _getRecordById('person', userId, ['name', 'auth_role_id', 'language'], false)
+  if (!person) return
+  const authRole = await _getRecordById(
+    'auth_role',
+    person.auth_role_id as number,
+    ['name']
+  );
+  if (!authRole) return
+  await session.update({
+    authenticated: true,
+    userId,
+    userName: person.name as string,
+    authRole: authRole.name as AuthRole,
+    language: person.language as Language
+  })
+  return session.data
 }
 

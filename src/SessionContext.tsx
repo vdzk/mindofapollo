@@ -4,11 +4,13 @@ import { useIsPublicRoute } from "./client-only/util"
 import { UserSession } from "./types"
 import { getOneUserSession } from "./api/getOne/userSession";
 
-export const SessionContext = createContext<{
+export interface SessionContextType {
   userSession: Resource<UserSession | undefined>
   refetch: (info?: unknown) => UserSession | Promise<UserSession | undefined> | null | undefined
   mutate: Setter<UserSession | undefined>
-}>();
+}
+
+export const SessionContext = createContext<SessionContextType>();
 
 export const SessionContextProvider: ParentComponent = (props) => {
   const isPublicRoute = useIsPublicRoute()
