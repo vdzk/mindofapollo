@@ -9,7 +9,7 @@ export const MoralProfileSelector: Component<{
 }> = props => {
   const profiles = createAsync(() => listRecordsCache('moral_weight_profile'))
   return (
-    <div class="ml-auto self-center">
+    <div class="lg:ml-auto lg:self-center">
       Moral weights:
       <select
         class="ml-2"
