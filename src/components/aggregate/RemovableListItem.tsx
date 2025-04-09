@@ -1,6 +1,5 @@
 import { action, json, useAction } from "@solidjs/router"
 import { Component, ComponentProps, createSignal, Show } from "solid-js"
-import { deleteById, whoCanDeleteById } from "~/api/delete/byId"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { DataRecordWithId } from "~/schema/type"
@@ -9,6 +8,7 @@ import { Link } from "../Link"
 import { NestPanel } from "../NestPanel"
 import { UserExplField } from "../form/UserExplField"
 import { getAggregateRecordsCache } from "./Aggregate"
+import { deleteById, whoCanDeleteById } from "~/api/delete/byId"
 
 const deleteAction = action(async (
   tableName: string,

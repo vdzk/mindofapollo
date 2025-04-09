@@ -1,5 +1,5 @@
 import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
-import { Component, createEffect, createSignal, Match, Show, Switch, useContext } from "solid-js"
+import { Component, createSignal, Match, Show, Switch, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
@@ -7,7 +7,7 @@ import { MasterDetail } from "~/components/MasterDetail"
 import { Link } from "~/components/Link"
 import { Button } from "~/components/buttons"
 import { componentsByName } from "~/components/componentsByName"
-import { deleteExtById, whoCanDeleteExtById } from "~/api/delete/extById"
+import { deleteById, whoCanDeleteById } from "~/api/delete/byId"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
@@ -25,7 +25,7 @@ const deleteAction = action(async (
   id: number,
   userExpl: string
 ) => {
-  await deleteExtById(tableName, id, userExpl)
+  await deleteById(tableName, id, userExpl)
   throw redirect(
     `/list-records?tableName=${tableName}`,
     // TODO: this doesn't seem to do anything
@@ -53,7 +53,7 @@ export const ShowRecord: Component<{
     useOfSelf(props.tableName, record()),
     isSelf()
   ))
-  const canDeleteExtById = () => useBelongsTo(whoCanDeleteExtById(
+  const canDeleteById = () => useBelongsTo(whoCanDeleteById(
     props.tableName,
     useOfSelf(props.tableName, record())
   ))
@@ -109,7 +109,7 @@ export const ShowRecord: Component<{
               />
             </Show>
           </div>
-          <Show when={canDeleteExtById()}>
+          <Show when={canDeleteById()}>
             <NestPanel title="Delete" class="ml-2 mb-2">
               <UserExplField value={userExpl()} onChange={setUserExpl} />
               <Button

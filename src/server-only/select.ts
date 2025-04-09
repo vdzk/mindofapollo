@@ -98,25 +98,35 @@ export const getSelectColNames = (
   return selectColNames
 }
 
+export const _getRecordsByIds = async (
+  tableName: string,
+  idColName: string,
+  ids: number[],
+  colNames?: string[],
+  withExplIds = true,
+) => {
+  if (ids.length === 0) return [] as DataRecordWithId[]
+  const records = await sql<DataRecordWithId[]>`
+    SELECT ${sql(getSelectColNames(
+      tableName, colNames, withExplIds && needsExpl(tableName)
+    ))}
+    FROM ${sql(tableName)}
+    WHERE ${sql(idColName)} IN ${sql(ids)}
+  `.catch(onError)
+  
+  await injectTranslations(tableName, records, colNames)
+  await injectVirtualValues(tableName, records, colNames)
+  return records
+}
+
 export const _getRecordById = async (
   tableName: string,
   id: number,
   colNames?: string[],
   withExplIds = true
 ) => {
-  const records = await sql<DataRecordWithId[]>`
-    SELECT ${sql(getSelectColNames(
-      tableName, colNames, withExplIds && needsExpl(tableName)
-    ))}
-    FROM ${sql(tableName)}
-    WHERE id = ${id}
-  `.catch(onError)
-  
-  if (records) {
-    await injectTranslations(tableName, records, colNames)
-    await injectVirtualValues(tableName, records, colNames)
-    return records[0] as DataRecordWithId
-  }
+  const records = await _getRecordsByIds(tableName, 'id', [id], colNames, withExplIds)
+  return records[0]
 }
 
 export const getValueById = async (tableName: string, id: number) => {

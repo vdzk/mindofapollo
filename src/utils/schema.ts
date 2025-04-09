@@ -1,6 +1,7 @@
 import { schema } from "~/schema/schema"
 import { ColumnSchema, DataRecord } from "~/schema/type"
 import { humanCase } from "./string"
+import memoizeOne from "memoize-one"
 
 export const titleColumnName = (tableName: string) => {
   let result = ''
@@ -119,3 +120,21 @@ export const getTranslatableColumns = (
 
 export const needsExpl = (tableName: string) => schema.tables[tableName].expl ?? true
 
+export const getChildFkRelations = memoizeOne(() => {
+  const relations: Record<string, [string, string][]> = {}
+  for (const tableName in schema.tables) {
+    relations[tableName] = []
+  }
+  for (const childTable in schema.tables) {
+    const tableSchema = schema.tables[childTable]
+    if (tableSchema.extendsTable) {
+      relations[tableSchema.extendsTable].push([childTable, 'id'])
+    }
+    for (const [colName, column] of Object.entries(tableSchema.columns)) {
+      if (column.type === 'fk') {
+        relations[column.fk.table].push([childTable, colName])
+      }
+    }
+  }
+  return relations
+})

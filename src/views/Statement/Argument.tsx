@@ -17,7 +17,7 @@ export const Argument: Component<{
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
   return (
-    <section class="flex flex-1">
+    <section class="flex flex-1 flex-col lg:flex-row">
       <ArgumentDetails
         record={record()}
         showMoreDetails={showMoreDetails()}

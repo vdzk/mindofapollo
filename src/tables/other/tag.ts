@@ -5,16 +5,15 @@ export const tag: TableSchema = {
   columns: {
     name: {
       type: 'varchar'
+    },
+    description: {
+      type: 'text'
     }
   },
   aggregates: {
     statements: {
       type: 'n-n',
       table: 'statement'
-    },
-    directives: {
-      type: 'n-n',
-      table: 'directive'
     }
   }
 }

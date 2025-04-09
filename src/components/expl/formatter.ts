@@ -1,7 +1,5 @@
 import { ExplData } from "./types"
-import { explDeleteById } from "~/api/delete/byId"
 import { explDeleteCrossRecord } from "~/api/delete/crossRecord"
-import { explDeleteExtById } from "~/api/delete/extById"
 import { explJoin } from "~/api/execute/join"
 import { explInsertCrossRecord } from "~/api/insert/crossRecord"
 import { explInsertExtRecord } from "~/api/insert/extRecord"
@@ -12,11 +10,13 @@ import { explUpdateRecord } from "~/api/update/record"
 import { explAttemptAggregateArguments } from "~/server-only/attemptAggregateArguments"
 import { ExplRecord } from "~/server-only/expl"
 import { humanCase } from "~/utils/string"
+import { explDeleteById } from "~/api/delete/byId"
+import { explDeleteByIds } from "~/api/delete/byIds"
 
 export const formatters: Record<string, (data: any) => ExplData> = {
   explDeleteById,
+  explDeleteByIds,
   explDeleteCrossRecord,
-  explDeleteExtById,
   explJoin,
   explInsertCrossRecord,
   explInsertExtRecord,

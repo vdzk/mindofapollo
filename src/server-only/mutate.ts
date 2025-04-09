@@ -4,13 +4,12 @@ import { schema } from "~/schema/schema"
 import { getValueTypeTableNameByColType } from "~/schema/dataTypes"
 import { getTypeByOriginId, getTypeByRecordId } from "./valueType"
 import { AddExplId } from "~/components/expl/types"
-import { splitTranslatable } from "~/utils/schema"
+import { getChildFkRelations, splitTranslatable } from "~/utils/schema"
 import { createTranslations } from "./createTranslations"
-import { _getRecordById } from "./select"
+import { _getRecordById, _getRecordsByIds } from "./select"
 import { attemptJudgeStatement } from "./attemptJudgeStatement"
 import { humanCase } from "~/utils/string"
 import { attemptAggregateArguments } from "./attemptAggregateArguments"
-
 
 // TODO: implement efficient bulk version
 export const insertValueType = async (
@@ -71,7 +70,6 @@ export const _insertRecord = async (
   `.catch(onError)
   const result = { ...record, ...explIds, id: results[0].id } as DataRecordWithId
 
-
   if (translationRequired) {
     await createTranslations(tableName, originalText, result.id)
   }
@@ -123,21 +121,57 @@ export const _updateRecord = async <T extends DataRecord>(
   return diff
 }
 
-export const _deleteById = async (
+export const deleteByIdsCascade = async (
   tableName: string,
-  id: number,
+  idColName: string,
+  ids: number[],
+  explId: number
+): Promise<Record<string, DataRecordWithId[]>> => {
+  if (ids.length === 0) return {}
+
+  const records = await _getRecordsByIds(tableName, idColName, ids)
+  if (!records.length) return {}
+
+  const recordIds = records.map(r => r.id)
+  const result: Record<string, DataRecordWithId[]> = { [tableName]: records }
+
+  const childRelations = getChildFkRelations()[tableName]
+  console.log('childRelations', childRelations)
+  for (const [childTable, colName] of childRelations) {
+    const childResults = await deleteByIdsCascade(
+      childTable, colName, recordIds, explId
+    )
+    
+    // Merge results, concatenating arrays if table already exists
+    for (const [table, deletedRecords] of Object.entries(childResults)) {
+      result[table] = result[table] 
+        ? [...result[table], ...deletedRecords]
+        : deletedRecords
+    }
+  }
+
+  await _deleteByIds(tableName, recordIds, explId)
+  
+  return result
+}
+
+export const _deleteByIds = async (
+  tableName: string,
+  ids: number[],
   explId: number
 ) => {
+  console.log('Deleting', tableName, ids)
+  if (ids.length === 0) return
   await sql`
     DELETE FROM ${sql(tableName)}
-    WHERE id = ${id}
+    WHERE id IN ${sql(ids)}
   `.catch(onError)
   await sql`
     DELETE FROM translation
     WHERE table_name = ${tableName}
-      AND record_id = ${id}
+      AND record_id IN ${sql(ids)}
   `.catch(onError)
-  await trigger('delete', tableName, id, explId)
+  await Promise.all(ids.map(id => trigger('delete', tableName, id, explId)))
 }
 
 const trigger = async (

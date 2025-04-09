@@ -10,7 +10,7 @@ export default function HomePage() {
       <div class="border-b text-center text-2xl font-bold py-6 text-gray-800 uppercase [word-spacing:6px]">
         Growing wise and transparent collaborative intelligence
       </div>
-      <div class="flex flex-1">
+      <div class="flex flex-1 flex-col lg:flex-row">
         <Statements />
         <UserSubscriptions />
         <ThingsToDoAndOther />

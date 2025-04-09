@@ -8,6 +8,7 @@
     "version": "vinxi version"
   },
   "dependencies": {
+    "@solid-primitives/media": "^2.3.0",
     "@solid-primitives/scheduled": "^1.5.0",
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.3",
@@ -16,6 +17,7 @@
     "chalk": "^5.4.1",
     "deepl-node": "^1.17.3",
     "dotenv": "^16.4.7",
+    "memoize-one": "^6.0.0",
     "openai": "^4.91.1",
     "postgres": "^3.4.5",
     "solid-js": "^1.9.5",

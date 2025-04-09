@@ -1,3 +1,4 @@
+import { createMediaQuery } from "@solid-primitives/media"
 import { For, JSXElement, Show, createMemo } from "solid-js"
 import { Option } from "~/types"
 
@@ -14,6 +15,8 @@ export const MasterDetail = <TId, TGroupId>(props: {
 }) => {
   const hasGroups = () => !!props.groups && props.groups.length > 0
   const groupsById = createMemo(() => props.groups && Object.fromEntries(props.groups.map(g => [g.id, g])))
+  const isLarge = createMediaQuery('(min-width: 1024px)')
+  const horizontal = () => props.horizontal || !isLarge()
 
   const groupedOptions = createMemo(() => {
     if (hasGroups()) {
@@ -31,7 +34,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
     const isSelected = optionid === props.selectedId
     const first = index === 0
     const last = index === optionsLength - 1
-    const hz = props.horizontal
+    const hz = horizontal()
     return {
       'cursor-default bg-yellow-600 hover:bg-yellow-600 text-white': isSelected,
       'bg-yellow-400 hover:bg-yellow-500 text-gray-900': !isSelected,
@@ -54,28 +57,31 @@ export const MasterDetail = <TId, TGroupId>(props: {
     <div 
       class="flex flex-1"
       classList={{
-        "flex-col": props.horizontal,
+        "flex-col": horizontal(),
         [props.class || '']: !!props.class
       }}
     >
       <div class={props.optionsClass} classList={{
-        "w-full flex flex-wrap mb-2 px-2": props.horizontal,
-        "shrink-0": !props.horizontal
+        "w-full flex flex-col mb-2 px-2": horizontal(),
+        "shrink-0": !horizontal()
       }}>
         <For each={Object.entries(groupedOptions())}>
           {([groupId, options]) => (
-            <>
+            <div classList={{
+              "flex flex-wrap mb-1": horizontal(),
+              "mb-0": !horizontal()
+            }}>
               <Show when={hasGroups()}>
                 <div classList={{
                   "font-medium": true,
-                  "mr-2 self-center": props.horizontal,
-                  "pb-1": !props.horizontal
+                  "mr-2 self-center": horizontal(),
+                  "pb-1": !horizontal()
                 }}>
                   {groupsById()[groupId].label}
                 </div>
               </Show>
               <div classList={{
-                "flex": props.horizontal
+                "flex flex-wrap": horizontal()
               }}>
                 <For each={options}>
                   {(option, index) => (
@@ -89,17 +95,17 @@ export const MasterDetail = <TId, TGroupId>(props: {
                   )}
                 </For>
               </div>
-              <Show when={hasGroups() && !props.horizontal}>
+              <Show when={hasGroups() && !horizontal()}>
                 <div class="h-4" />
               </Show>
-            </>
+            </div>
           )}
         </For>
         {props.extraPanel}
       </div>
       <div
         class="flex-1 flex flex-col"
-        classList={{'border-t': props.horizontal}}
+        classList={{'border-t': horizontal()}}
       >
         {props.children}
       </div>
