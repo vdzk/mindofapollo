@@ -36,9 +36,6 @@ export const listHomePageStatements = async (
 
   await injectTranslations('statement', statements)
   await injectVirtualValues('statement', statements)
-  await injectVirtualValues('directive', statements.filter( statement => 
-    statement.argument_aggregation_type_name === 'normative'
-  ))
 
   return statements
 }

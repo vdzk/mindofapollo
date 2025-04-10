@@ -9,13 +9,14 @@ export const directive: TableSchema = {
     label: {
       type: 'virtual',
       queries: {
-        deed: [
+        deeds: [
+          {startTable: 'directive', fkName: 'id'}, // needed for statement table definition that imports this query
           ['id', 'directive_id'],
           ['deed_id', [
             ['text']
           ]]
         ],
-        scope: [
+        scopes: [
           {startTable: 'directive_scope', fkName: 'directive_id'},
           ['directive_id'],
           ['include'],
@@ -28,11 +29,11 @@ export const directive: TableSchema = {
         const directives = Object.fromEntries(ids.map(
           id => [id, {deed: '', scope: [[] as string[], [] as string[]]}]
         ))
-        for (const deed of results.deed) {
+        for (const deed of results.deeds) {
           directives[deed.directive_id as number]
             .deed = deed.text as string
         }
-        for (const scope of results.scope) {
+        for (const scope of results.scopes) {
           directives[scope.directive_id as number]
             .scope[Number(scope.include)].push(scope.name as string)
         }

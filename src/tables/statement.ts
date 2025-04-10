@@ -1,5 +1,6 @@
-import { TableSchema } from "~/schema/type"
+import { TableSchema, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
+import { directive } from "./morality/directive"
 
 // Indexes corresponts to IDs in argument_aggregation_type table
 const argumentAggregationExtensonTables = ['', '', '', 'directive']
@@ -9,8 +10,28 @@ export const statement: TableSchema = {
   columns: {
     label: {
       type: 'virtual',
-      getLocal: (record) => `(${record.decided ? getPercent(record.confidence as number) : '?'}) ${record.text}`,
-      preview: true
+      queries: {
+        ...(directive.columns.label as VirtualColumnQueries).queries,
+        statements: [
+          ['id'],
+          ['decided'],
+          ['confidence'],
+          ['text'],
+          ['argument_aggregation_type_id', [
+            ['name', 'argument_aggregation_type_name']
+          ]]
+        ]
+      },
+      get: (ids, results) => {
+        const directivesLabels = (directive.columns.label as VirtualColumnQueries).get(ids, results)
+        const labels = Object.fromEntries(results.statements.map(
+          s => [s.id, s.argument_aggregation_type_name === 'normative'
+            ? directivesLabels[s.id as number]
+            : `(${s.decided ? getPercent(s.confidence as number) : '?'}) ${s.text}`
+          ]
+        ))
+        return labels
+      }
     },
     text: {
       type: 'text',
