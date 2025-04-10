@@ -5,9 +5,16 @@ import { finishExpl, setExplRecordId, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
 import { _insertRecord, _updateRecord } from "~/server-only/mutate"
 import { Language } from "~/translation"
+import bcrypt from "bcryptjs"
 
-export const join = async (name: string, language: Language, code: string) => {
+export const join = async (name: string, email: string, password: string, language: Language, code: string) => {
   "use server"
+  // Check if email already exists
+  const existingEmail = await sql`
+    SELECT user_id FROM personal_details WHERE email = ${email} LIMIT 1
+  `.catch(onError)
+  if (existingEmail?.[0]) return
+
   const invites = await sql`
     SELECT id, owner_id
     FROM invite
@@ -37,6 +44,13 @@ export const join = async (name: string, language: Language, code: string) => {
   }, explId)
   if (!person) return
   await setExplRecordId(explId, person.id)
+
+  // Create personal details record
+  const passwordHash = bcrypt.hashSync(password, 10)
+  await sql`
+    INSERT INTO personal_details (user_id, email, password_hash)
+    VALUES (${person.id}, ${email}, ${passwordHash})
+  `.catch(onError)
   
   await _updateRecord('invite', invite.id, explId, {
     person_id: person.id

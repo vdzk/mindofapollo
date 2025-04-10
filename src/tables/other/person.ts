@@ -31,12 +31,7 @@ export const person: TableSchema = {
       type: '1-n',
       table: 'moral_weight_of_person',
       column: 'owner_id'
-    },
-    person_secrets: {
-      type: '1-n',
-      table: 'person_secret',
-      column: 'id'
-    },
+    }
   },
   sections: {
     details: {
@@ -47,9 +42,9 @@ export const person: TableSchema = {
       ]
     },
     secrets: {
-      label: 'Secrets',
+      label: 'Personal',
       private: true,
-      fields: ['person_secrets']
+      component: 'PersonalDetails'
     },
     activity: {
       label: 'Activity',

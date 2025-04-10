@@ -12,6 +12,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { format } from 'sql-formatter'
+import { createPersonalDetails } from "./createPersonalDetails"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -49,6 +50,7 @@ for (const tableName in schema.tables) {
     [...createTable(tableName), ...createIndexes(tableName)]
   )
 }
+create('personal-details', createPersonalDetails())
 create('cross-tables', createCrossTables())
 create('value-type-tables', createValueTypeTables())
 create('notification-tables', createNotificationTables())

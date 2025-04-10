@@ -1,5 +1,5 @@
 import { Title } from "@solidjs/meta"
-import { createAsync, redirect, useNavigate } from "@solidjs/router"
+import { createAsync, useNavigate } from "@solidjs/router"
 import { titleColumnName } from "~/utils/schema"
 import { RecordPageTitle } from "../../components/PageTitle"
 import { useSafeParams } from "~/client-only/util"
@@ -9,6 +9,7 @@ import { createEffect } from "solid-js"
 import { buildUrl } from "~/utils/string"
 
 export default function ShowRecordRoute() {
+  console.log('ShowRecordRoute')
   const sp = useSafeParams<{
     tableName: string
     id: string

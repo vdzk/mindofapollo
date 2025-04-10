@@ -1,8 +1,8 @@
 import { DataRecord } from "~/schema/type"
 import { belongsTo, getUserSession } from "../../server-only/session"
-import { _updateRecord, injectValueTypes } from "~/server-only/mutate"
+import { _updateRecord } from "~/server-only/mutate"
 import { finishExpl, startExpl } from "~/server-only/expl"
-import { getWritableColNames, isPrivate } from "~/permissions"
+import { getWritableColNames, isPrivate, isSystem } from "~/permissions"
 import { ofSelf } from "~/server-only/ofSelf"
 import { hasOwnFields } from "~/utils/schema"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
@@ -16,11 +16,12 @@ export const whoCanUpdateRecord = (
   ofSelf = false,
   self = false
 ) => {
-  if (!hasOwnFields(tableName)) {
-    return []
-  } else if (isPrivate(tableName) && !ofSelf) {
-    return []
-  } else if (tableName === 'person' && !self) {
+  if (
+    !hasOwnFields(tableName)
+    || isPrivate(tableName) && !ofSelf
+    || tableName === 'person' && !self
+    || isSystem(tableName)
+  ) {
     return []
   } else {
     return ['invited']

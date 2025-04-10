@@ -6,10 +6,14 @@ import { ofSelf } from "~/server-only/ofSelf"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { DataRecordWithId } from "~/schema/type"
-import { isPersonal } from "~/permissions"
+import { isPersonal, isSystem } from "~/permissions"
 
 export const whoCanDeleteById = (tableName: string, ofSelf: boolean) => {
-  if (tableName === 'person' || (isPersonal(tableName) && !ofSelf)) {
+  if (
+    tableName === 'person'
+    || (isPersonal(tableName) && !ofSelf)
+    || isSystem(tableName)
+  ) {
     return []
   } else {
     return ['invited']

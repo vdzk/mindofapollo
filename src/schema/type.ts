@@ -126,6 +126,7 @@ interface Section {
 export interface TableSchema {
   plural?: string,
   private?: boolean,
+  system?: boolean, // Deleting / editing these records could break the app
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
   columns: Record<string, ColumnSchema>

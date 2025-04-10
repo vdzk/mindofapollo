@@ -6,6 +6,7 @@ export const isPersonal = (tableName: string) => !!schema.tables[tableName].colu
 export const personalTableNames = Object.keys(schema.tables)
   .filter(tableName => isPersonal(tableName))
 export const isPrivate = (tableName: string) => !!schema.tables[tableName].private
+export const isSystem = (tableName: string) => !!schema.tables[tableName].system
 
 export const tablesThatExtendByName = Object.entries(schema.tables)
   .flatMap(([_, table]) => 

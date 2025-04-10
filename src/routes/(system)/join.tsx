@@ -20,14 +20,16 @@ export default function Join() {
   const navigate = useNavigate()
   const [sp] = useSearchParams() as unknown as [Join]
   const [diff, setDiff] = createStore({ name: '', language: defaultLanguage })
+  const [email, setEmail] = createSignal('')
   const [password, setPassword] = createSignal('')
+  
   const onSubmit = async () => {
-    const userId = await join(diff.name, diff.language as Language, sp.code)
+    const userId = await join(diff.name, email().trim(), password(), diff.language as Language, sp.code)
     if (!userId) {
       console.error('join failed')
       return
     }
-    await login(userId, password())
+    await login(email().trim(), password())
     session?.refetch()
     navigate('/home-page')
   }
@@ -35,9 +37,7 @@ export default function Join() {
   return (
     <main>
       <Title>Join</Title>
-      <PageTitle>
-        Join
-      </PageTitle>
+      <PageTitle>Join</PageTitle>
       <div class="px-2 max-w-(--breakpoint-md)">
         <FormField
           tableName="person"
@@ -49,9 +49,17 @@ export default function Join() {
           colName="language"
           {...{diff, setDiff}}
         />
-        <div class="font-bold">
-          Password
+        <div class="font-bold">Email</div>
+        <div>
+          <input
+            type="email"
+            value={email()}
+            onInput={etv(setEmail)}
+            onChange={etv(setEmail)}
+            class="border rounded-md pl-1 w-full mb-2"
+          />
         </div>
+        <div class="font-bold">Password</div>
         <div>
           <input
             type="password"
@@ -64,6 +72,7 @@ export default function Join() {
         <Button
           label="Submit"
           onClick={onSubmit}
+          disabled={!diff.name || !email().trim() || !password()}
         />
       </div>
     </main>
