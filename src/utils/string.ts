@@ -1,5 +1,6 @@
 import { url } from "~/constant"
 import { getRootTableName } from "./schema";
+import { LinkData } from "~/types";
 
 export const humanCase = (str: string) => str
   .split('_')
@@ -8,6 +9,9 @@ export const humanCase = (str: string) => str
 export const firstCap = (str: string) => str.charAt(0).toUpperCase() + str.slice(1)
 
 export const nbsp = '\xa0'
+export const minus = '−'
+export const getToggleLabel = (show: boolean, label: string) =>
+  (show ? minus : '+') + ( label ? ' ' + label : '' )
 
 export const getUrl = (path: string) => url.scheme + '://' + url.host + ':' + url.port + path;
 
@@ -23,7 +27,8 @@ export const genCode = (length: number) => {
 
 export const getPercent = (x: number) => Math.round(x * 100) + '%'
 
-export const buildUrl = (route: string, params?: Record<string, any>) => {
+export const buildUrl = (linkData: LinkData) => {
+  let { route, params } = linkData
   // Rewrite link
   if (route === 'show-record' && params) {
     params.tableName = getRootTableName(params.tableName)

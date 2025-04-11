@@ -11,7 +11,8 @@ interface SharedColumnProps {
   label?: string
   preview?: boolean //Use this column to represent the whole record
   getVisibility?: (record: DataRecord) => boolean // determine if the field should be visible
-  defaultValue?: DataLiteral
+  defaultValue?: DataLiteral,
+  instructions?: string
 }
 
 export interface SimpleColumn extends SharedColumnProps {

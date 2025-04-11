@@ -4,7 +4,8 @@ export const argument_normative: TableSchema = {
   extendsTable: 'argument',
   columns: {
     text: {
-      type: 'text'
+      type: 'text',
+      lines: 6
     }
   }
 }

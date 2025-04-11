@@ -65,7 +65,7 @@ export const ArgumentJudgement: Component<{
         />
         <Show when={hasUndecided()}>
           <div class="text-sm pt-1">
-            Certaininty in some of the critical statments has not yet been decided.
+            Certainty in some of the critical statments has not yet been decided.
           </div>
         </Show>
       </div>

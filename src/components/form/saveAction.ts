@@ -7,10 +7,10 @@ import { insertRecord } from "~/api/insert/record"
 import { listRecordsCache, getOneExtRecordByIdCache } from "~/client-only/query"
 import { LinkData } from "~/types"
 import { FormExitHandler } from "~/components/form/Form"
-import { SessionContext, SessionContextType } from "~/SessionContext"
-import { useContext } from "solid-js"
+import { SessionContextType } from "~/SessionContext"
 import { isEmpty } from "~/utils/shape"
 import { updateUserSession } from "~/api/update/userSession"
+import { buildUrl } from "~/utils/string"
 
 type ExitSettings = { getLinkData: (savedId?: number) => LinkData } | { onExit: FormExitHandler }
 
@@ -23,7 +23,7 @@ const getExitUrl = (exitSettings: ExitSettings, savedId?: number) => {
     return ''
   }
   const linkData = exitSettings.getLinkData(savedId)
-  return linkData.route + (linkData.params ? '?' + new URLSearchParams(linkData.params).toString() : '')
+  return buildUrl(linkData)
 }
 
 export const saveAction = action(async (

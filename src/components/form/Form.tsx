@@ -13,6 +13,7 @@ import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
 import { UserExplField } from "./UserExplField"
 import { saveAction } from "~/components/form/saveAction"
+import { getToggleLabel, minus } from "~/utils/string"
 
 export type FormExitHandler = (savedId?: number) => void
 export type ExitSettings = { getLinkData: (savedId?: number) => LinkData }
@@ -125,7 +126,7 @@ export const Form: Component<{
       <Show when={hasAdvancedFields()}>
         <div class="py-2">
           <Button
-            label={showAdvanced() ? 'Hide advanced' : 'Show advanced'}
+            label={getToggleLabel(showAdvanced(), 'advanced')}
             onClick={() => setShowAdvanced(!showAdvanced())}
           />
         </div>

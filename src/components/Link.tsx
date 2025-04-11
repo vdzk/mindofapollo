@@ -12,7 +12,7 @@ export const Link: Component<{
   class?: string
 }> = props => {
 
-  const href = () => buildUrl(props.route, props.params)
+  const href = () => buildUrl(props)
   
   let className = 'hover:underline'
   if (props.type === 'button') className = btnStyle()

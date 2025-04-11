@@ -22,9 +22,13 @@ export default function ShowRecordRoute() {
   const navigate = useNavigate()
   createEffect(() => {
     if (sp().tableName === 'critical_statement' && record()) {
-      navigate(buildUrl('statement', {
-        argumentId: record()!.argument_id
-      }), { replace: true })
+      navigate(
+        buildUrl({
+          route: 'statement',
+          params: { argumentId: record()!.argument_id}
+        }),
+        { replace: true }
+      )
     }
   })
 

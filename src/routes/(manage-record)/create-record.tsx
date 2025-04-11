@@ -27,10 +27,7 @@ export default function CreateRecord() {
           }
         }
       } else {
-        return {
-          route: 'list-records',
-          params: { tableName: sp().tableName as string }
-        }
+        return { route: 'home-page' }
       }
     }
   }

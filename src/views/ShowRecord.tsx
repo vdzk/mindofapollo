@@ -27,8 +27,7 @@ const deleteAction = action(async (
 ) => {
   await deleteById(tableName, id, userExpl)
   throw redirect(
-    `/list-records?tableName=${tableName}`,
-    // TODO: this doesn't seem to do anything
+    '/home-page',
     { revalidate: listRecordsCache.keyFor(tableName) }
   )
 })

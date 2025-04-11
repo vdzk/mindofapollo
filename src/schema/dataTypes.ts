@@ -1,3 +1,4 @@
+import memoizeOne from "memoize-one";
 import { schema } from "./schema";
 import { CustomDataType } from "./type";
 
@@ -21,28 +22,33 @@ export const sanitizeTableName = (str: string) => str
   .replace(/^_+|_+$/g, '')        // Trim leading and trailing underscores
   .substring(0, 63);              // Truncate to 63 characters
 
-export const colType2pgType: Record<string, string> = {}
-export const pgType2valueTypeTableName: Record<string, string> = {}
-for (const tableName in schema.tables) {
-  const table = schema.tables[tableName]
-  for (const colName in table.columns) {
-    const column = table.columns[colName]
-    if (!(column.type in colType2pgType) && column.type !== 'virtual') {
-      const pgType = (column.type in customDataTypes)
-        ? customDataTypes[column.type as CustomDataType | 'fk']
-        : column.type
+export const getPgTypeDictionaries = memoizeOne(() => {
+  const colType2pgType: Record<string, string> = {}
+  const pgType2valueTypeTableName: Record<string, string> = {}
+  for (const tableName in schema.tables) {
+    const table = schema.tables[tableName]
+    for (const colName in table.columns) {
+      const column = table.columns[colName]
+      if (!(column.type in colType2pgType) && column.type !== 'virtual') {
+        const pgType = (column.type in customDataTypes)
+          ? customDataTypes[column.type as CustomDataType | 'fk']
+          : column.type
 
-      colType2pgType[column.type] = pgType
-      if (!(pgType in pgType2valueTypeTableName)) {
-        pgType2valueTypeTableName[pgType] = 'value_type_'
-          + sanitizeTableName(pgType)
+        colType2pgType[column.type] = pgType
+        if (!(pgType in pgType2valueTypeTableName)) {
+          pgType2valueTypeTableName[pgType] = 'value_type_'
+            + sanitizeTableName(pgType)
+        }
       }
     }
   }
-}
+  return { colType2pgType, pgType2valueTypeTableName }
+})
 
-export const getValueTypeTableNameByColType = (colType: string) =>  
-  pgType2valueTypeTableName[colType2pgType[colType]]
+export const getValueTypeTableNameByColType = (colType: string) => {
+  const { colType2pgType, pgType2valueTypeTableName } = getPgTypeDictionaries()
+  return pgType2valueTypeTableName[colType2pgType[colType]]
+}
 
 export const getValueTypeTableName = (tableName: string, colName: string) =>
   getValueTypeTableNameByColType(schema.tables[tableName].columns[colName].type)

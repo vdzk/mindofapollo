@@ -76,13 +76,11 @@ export const FormField: Component<{
       class="pb-2"
       classList={{ "hidden": props.hidden }}
     >
-      <label>
-        <ColumnLabel
-          tableName={props.tableName}
-          colName={props.colName}
-          label={props.label}
-        />
-      </label>
+      <ColumnLabel
+        tableName={props.tableName}
+        colName={props.colName}
+        label={props.label}
+      />
       <Switch>
         <Match when={columnType() === 'text'}>
           <TextInput

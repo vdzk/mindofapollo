@@ -6,6 +6,7 @@ import { _getRecordById } from "~/server-only/select"
 import { _insertRecord, _updateRecord } from "~/server-only/mutate"
 import { Language } from "~/translation"
 import bcrypt from "bcryptjs"
+import { getValidInviteByCode } from "~/server-only/getValidInviteByCode"
 
 export const join = async (name: string, email: string, password: string, language: Language, code: string) => {
   "use server"
@@ -15,15 +16,8 @@ export const join = async (name: string, email: string, password: string, langua
   `.catch(onError)
   if (existingEmail?.[0]) return
 
-  const invites = await sql`
-    SELECT id, owner_id
-    FROM invite
-    WHERE code = ${code}
-      AND person_id IS NULL
-    LIMIT 1
-  `.catch(onError)
-  if (!invites?.[0]) return
-  const invite = invites[0]
+  const invite = await getValidInviteByCode(code)
+  if (!invite) return
 
   const authRoleName: AuthRole = 'invited'
   const authRoles = await sql`

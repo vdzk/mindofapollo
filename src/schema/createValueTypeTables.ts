@@ -1,6 +1,6 @@
-import { pgType2valueTypeTableName } from "./dataTypes"
+import { getPgTypeDictionaries } from "./dataTypes"
 
-export const createValueTypeTables = () => Object.entries(pgType2valueTypeTableName)
+export const createValueTypeTables = () => Object.entries(getPgTypeDictionaries().pgType2valueTypeTableName)
   .map(([pgType, valueTypeTableName]) => (
     `CREATE TABLE ${valueTypeTableName} (
       id SERIAL PRIMARY KEY,

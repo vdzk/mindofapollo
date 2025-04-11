@@ -7,7 +7,7 @@ import { listRecordsCache } from "~/client-only/query"
 import { getOneIdByName } from "~/api/getOne/idByName"
 import { Button } from "../buttons"
 import { Subtitle } from "../PageTitle"
-import { humanCase, nbsp } from "~/utils/string"
+import { getToggleLabel, humanCase, nbsp } from "~/utils/string"
 import { Link } from "../Link"
 import { RecordDetails } from "../RecordDetails"
 import { whoCanInsertRecord } from "~/api/insert/record"
@@ -170,7 +170,7 @@ export const FkInput: Component<{
       </Switch>
       <Show when={props.value}>
         <Button
-          label={showRecord() ? 'collapse' : 'expand'}
+          label={getToggleLabel(showRecord(), 'details')}
           onClick={() => setShowRecord(x => !x)}
         />
       </Show>

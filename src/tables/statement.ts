@@ -1,9 +1,12 @@
-import { TableSchema, VirtualColumnQueries } from "~/schema/type"
+import { DataRecord, TableSchema, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
 import { directive } from "./morality/directive"
 
 // Indexes corresponts to IDs in argument_aggregation_type table
 const argumentAggregationExtensonTables = ['', '', '', 'directive']
+
+export const getDescriptiveStatementLabel = (s: DataRecord) =>
+  `(${s.decided ? getPercent(s.confidence as number) : '?'}) ${s.text}`
 
 export const statement: TableSchema = {
   plural: 'statements',
@@ -27,7 +30,7 @@ export const statement: TableSchema = {
         const labels = Object.fromEntries(results.statements.map(
           s => [s.id, s.argument_aggregation_type_name === 'normative'
             ? directivesLabels[s.id as number]
-            : `(${s.decided ? getPercent(s.confidence as number) : '?'}) ${s.text}`
+            : getDescriptiveStatementLabel(s)
           ]
         ))
         return labels
@@ -37,7 +40,8 @@ export const statement: TableSchema = {
       type: 'text',
       lines: 2,
       getVisibility: record => record.argument_aggregation_type_id !== argumentAggregationExtensonTables.indexOf('directive'),
-      defaultValue: ''
+      defaultValue: '',
+      instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not capialise the first word. Do not use a full stop at the end.",
     },
     argument_aggregation_type_id: {
       type: 'fk',

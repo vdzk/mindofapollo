@@ -18,7 +18,7 @@ export interface UserSession {
 }
 export interface LinkData {
   route: string
-  params: Record<string, any>
+  params?: Record<string, any>
 }
 
 export type GenericInputEvent = { target: { value: string; name: string } }

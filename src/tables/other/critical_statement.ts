@@ -1,5 +1,6 @@
 import { schema } from "~/schema/schema"
 import { DataRecord, TableSchema, VirtualColumnLocal } from "../../schema/type"
+import { getDescriptiveStatementLabel } from "../statement"
 
 export const critical_statement: TableSchema = {
   plural: 'critical statements',
@@ -18,10 +19,7 @@ export const critical_statement: TableSchema = {
       },
       get: (ids, results) => {
         const labels = Object.fromEntries(results.critical_statement.map(
-          (record: DataRecord) => [
-            record.id,
-            (schema.tables.statement.columns.label as VirtualColumnLocal).getLocal(record)
-          ]
+          (record: DataRecord) => [ record.id, getDescriptiveStatementLabel(record)]
         ))
         return labels
       }
