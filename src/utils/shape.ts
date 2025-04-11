@@ -13,4 +13,3 @@ export const pick = <T extends Record<string, any>, K extends keyof T>(
   if (key in obj) acc[key] = obj[key]
   return acc
 }, {} as Pick<T, K>)
-

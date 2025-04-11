@@ -9,7 +9,6 @@ import { createEffect } from "solid-js"
 import { buildUrl } from "~/utils/string"
 
 export default function ShowRecordRoute() {
-  console.log('ShowRecordRoute')
   const sp = useSafeParams<{
     tableName: string
     id: string

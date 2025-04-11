@@ -7,6 +7,7 @@ import { RelavantRecords } from "./RelavantRecords"
 import { Created } from "./Created"
 import { Updated } from "./Updated"
 import { Deleted } from "./Deleted"
+import { InsertedFkEntries } from "./InsertedFkEntries"
 
 interface Section {
   label: string
@@ -39,6 +40,11 @@ export const sections: Record<string, Section> = {
     label: 'Created',
     propNames: ['insertedRecords', 'insertedCrossRecord'],
     component: Created
+  },
+  added: {
+    label: 'Added',
+    propNames: ['insertedFkEntries'],
+    component: InsertedFkEntries
   },
   updated: {
     label: 'Updated',

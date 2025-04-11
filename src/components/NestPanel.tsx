@@ -1,6 +1,9 @@
 import { ParentComponent } from "solid-js";
 import { H2 } from "./PageTitle";
 
+export const nestedBgColor = (formDepth?: number) =>
+  (formDepth ?? 0) % 2 === 0 ? 'bg-orange-100' : 'bg-orange-50'
+
 export const NestPanel: ParentComponent<{
   title: string,
   class?: string

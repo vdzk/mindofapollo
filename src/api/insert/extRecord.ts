@@ -6,6 +6,7 @@ import { ExplData, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
 import { whoCanInsertRecord } from "./record"
+import { insertCrossRecords } from "~/server-only/insertCrossRecords"
 
 export const whoCanInsertExtRecord = whoCanInsertRecord
 
@@ -13,7 +14,8 @@ export const insertExtRecord = async (
   tableName: string,
   record: DataRecord,
   extTableName: string,
-  extRecord: DataRecord
+  extRecord: DataRecord,
+  linkedCrossRefs?: Record<string, number[]>
 ) => {
   "use server"
   const userId = await getUserId()
@@ -35,6 +37,14 @@ export const insertExtRecord = async (
     targetLabel: savedRecord[titleColumnName(tableName)] as string
   }
   await finishExpl(explId, data)
+  if (linkedCrossRefs) {
+    insertCrossRecords(
+      tableName,
+      savedRecord.id,
+      linkedCrossRefs,
+      { explId, label: 'created new record' }
+    )
+  }
   return savedRecord
 }
 

@@ -12,6 +12,7 @@ import { ExplRecord } from "~/server-only/expl"
 import { humanCase } from "~/utils/string"
 import { explDeleteById } from "~/api/delete/byId"
 import { explDeleteByIds } from "~/api/delete/byIds"
+import { explInsertCrossRecords } from "~/server-only/insertCrossRecords"
 
 export const formatters: Record<string, (data: any) => ExplData> = {
   explDeleteById,
@@ -19,6 +20,7 @@ export const formatters: Record<string, (data: any) => ExplData> = {
   explDeleteCrossRecord,
   explJoin,
   explInsertCrossRecord,
+  explInsertCrossRecords,
   explInsertExtRecord,
   explInsertRecord,
   explUpdateExtRecord,

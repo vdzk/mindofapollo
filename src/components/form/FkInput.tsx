@@ -1,19 +1,19 @@
 import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
 import { Component, createEffect, createSignal, For, onMount, Show, useContext, Switch, Match, createMemo } from "solid-js"
 import { ForeignKey } from "~/schema/type"
-import { Form } from "./Form"
 import { OnChangeFormat } from "./FormField"
 import { listRecordsCache } from "~/client-only/query"
 import { getOneIdByName } from "~/api/getOne/idByName"
 import { Button } from "../buttons"
-import { Subtitle } from "../PageTitle"
-import { getToggleLabel, humanCase, nbsp } from "~/utils/string"
+import { getToggleLabel, nbsp } from "~/utils/string"
 import { Link } from "../Link"
 import { RecordDetails } from "../RecordDetails"
 import { whoCanInsertRecord } from "~/api/insert/record"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { LongSelect } from "./LongSelect"
 import { Option } from "~/types"
+import { nestedBgColor } from "../NestPanel"
+import { CreateNew } from "./CreateNew"
 
 export const FkInput: Component<{
   tableName: string
@@ -27,7 +27,6 @@ export const FkInput: Component<{
   const [searchParams] = useSearchParams()
   const records = createAsync(() => listRecordsCache(props.column.fk.table))
   const [isPreset, setIsPreset] = createSignal(false)
-  const [showForm, setShowForm] = createSignal(false)
   const [showRecord, setShowRecord] = createSignal(false)
 
   const canCreateNew = () => useBelongsTo(whoCanInsertRecord(props.column.fk.table))
@@ -68,7 +67,6 @@ export const FkInput: Component<{
   const disabled = () => (!props.isNew && !!props.column.fk.extensionTables) || isPreset()
 
   const onFormExit = async (savedId?: number) => {
-    setShowForm(false)
     if (savedId) {
       await revalidate(listRecordsCache.keyFor(props.column.fk.table))
       setValue('' + savedId)
@@ -90,33 +88,14 @@ export const FkInput: Component<{
     })).sort((a, b) => a.label.localeCompare(b.label));
   })
 
-  const nestedBgColor = () => (props.formDepth ?? 0) % 2 === 0
-    ? 'bg-orange-100' : 'bg-orange-50'
-
   return (
     <>
-      <Show when={!isPreset()}>
-        <Show when={canCreateNew() && !disabled() && !showForm()}>
-          <div class="pb-1">
-            <Button
-              label="Create new"
-              onClick={() => setShowForm(true)}
-            />
-          </div>
-        </Show>
-        <Show when={showForm()}>
-          <div
-            class="rounded-md my-2 p-2"
-            classList={{ [nestedBgColor()]: true }}
-          >
-            <Subtitle>New {humanCase(props.column.fk.table)}</Subtitle>
-            <Form
-              tableName={props.column.fk.table}
-              exitSettings={{ onExit: onFormExit }}
-              depth={(props.formDepth ?? 0) + 1}
-            />
-          </div>
-        </Show>
+      <Show when={!isPreset() && canCreateNew() && !disabled()}>
+        <CreateNew
+          tableName={props.column.fk.table}
+          onFormExit={onFormExit}
+          formDepth={props.formDepth}
+        />
       </Show>
       <Switch>
         <Match when={disabled()}>
@@ -177,7 +156,7 @@ export const FkInput: Component<{
       <Show when={showRecord()}>
         <div
           class="rounded-md my-2 pt-2"
-          classList={{ [nestedBgColor()]: true }}
+          classList={{ [nestedBgColor(props.formDepth)]: true }}
         >
           <RecordDetails
             tableName={props.column.fk.table}
@@ -189,5 +168,5 @@ export const FkInput: Component<{
         </div>
       </Show>
     </>
-  );
-};
+  )
+}

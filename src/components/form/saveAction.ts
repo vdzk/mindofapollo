@@ -1,5 +1,5 @@
 import { action, redirect, revalidate } from "@solidjs/router"
-import { DataRecord, DataRecordWithId } from "~/schema/type"
+import { DataRecord, DataRecordWithId, NToNSchema } from "~/schema/type"
 import { updateExtRecord } from "~/api/update/extRecord"
 import { updateRecord } from "~/api/update/record"
 import { insertExtRecord } from "~/api/insert/extRecord"
@@ -32,6 +32,7 @@ export const saveAction = action(async (
   record: DataRecord,
   extTableName: string | undefined,
   extRecord: DataRecord,
+  linkedCrossRefs: Record<string, number[]>,
   userExpl: string,
   exitSettings: ExitSettings,
   session: SessionContextType
@@ -84,10 +85,12 @@ export const saveAction = action(async (
 
     if (extension) {
       savedRecord = await insertExtRecord(
-        tableName, record, extension.tableName, extension.record
+        tableName, record,
+        extension.tableName, extension.record,
+        linkedCrossRefs
       )
     } else {
-      savedRecord = await insertRecord(tableName, record)
+      savedRecord = await insertRecord(tableName, record, linkedCrossRefs)
     }
 
     if (hasExitHandler(exitSettings)) {

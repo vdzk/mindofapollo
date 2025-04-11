@@ -6,6 +6,7 @@ import { ExplData, UserActor } from "~/components/expl/types"
 import { needsExpl, titleColumnName } from "~/utils/schema"
 import { isPersonal, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
+import { insertCrossRecords } from "~/server-only/insertCrossRecords"
 
 export const whoCanInsertRecord = (tableName: string) => {
   if (
@@ -21,7 +22,8 @@ export const whoCanInsertRecord = (tableName: string) => {
 
 export const insertRecord = async (
   tableName: string,
-  record: DataRecord
+  record: DataRecord,
+  linkedCrossRefs?: Record<string, number[]>
 ) => {
   "use server"
   if (! await belongsTo(whoCanInsertRecord(tableName))) return
@@ -46,7 +48,14 @@ export const insertRecord = async (
     targetLabel: savedRecord[titleColumnName(tableName)] as string
   }
   await finishExpl(explId, data)
-
+  if (linkedCrossRefs) {
+    insertCrossRecords(
+      tableName,
+      savedRecord.id,
+      linkedCrossRefs,
+      { explId, label: 'created new record' }
+    )
+  }
   return savedRecord
 }
 

@@ -90,7 +90,7 @@ export const getSelectColNames = (
   const selectColNames = [
     ...getTranslatableColumns(tableName, colNames, false),
     ...(withExplIds
-      ? getExplIdColNames(colNames ?? getVirtualColNames(tableName).non)
+      ? getExplIdColNames(getVirtualColNames(tableName, colNames).non)
       : []
     )
   ]

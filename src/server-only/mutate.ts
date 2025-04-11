@@ -136,7 +136,6 @@ export const deleteByIdsCascade = async (
   const result: Record<string, DataRecordWithId[]> = { [tableName]: records }
 
   const childRelations = getChildFkRelations()[tableName]
-  console.log('childRelations', childRelations)
   for (const [childTable, colName] of childRelations) {
     const childResults = await deleteByIdsCascade(
       childTable, colName, recordIds, explId
@@ -160,7 +159,6 @@ export const _deleteByIds = async (
   ids: number[],
   explId: number
 ) => {
-  console.log('Deleting', tableName, ids)
   if (ids.length === 0) return
   await sql`
     DELETE FROM ${sql(tableName)}

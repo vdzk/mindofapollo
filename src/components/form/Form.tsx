@@ -2,7 +2,7 @@ import { useAction, useSearchParams } from "@solidjs/router"
 import { Component, ComponentProps, createEffect, createMemo, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
-import { DataRecord } from "~/schema/type"
+import { DataRecord, NToNSchema } from "~/schema/type"
 import { getExtTableName } from "~/utils/schema"
 import { createStore, reconcile } from "solid-js/store"
 import { SessionContext } from "~/SessionContext"
@@ -13,7 +13,8 @@ import { LinkData } from "~/types"
 import { isComplete } from "./isComplete"
 import { UserExplField } from "./UserExplField"
 import { saveAction } from "~/components/form/saveAction"
-import { getToggleLabel, minus } from "~/utils/string"
+import { getToggleLabel } from "~/utils/string"
+import { CrossRef } from "./CrossRef"
 
 export type FormExitHandler = (savedId?: number) => void
 export type ExitSettings = { getLinkData: (savedId?: number) => LinkData }
@@ -59,12 +60,12 @@ export const Form: Component<{
     const tableSchema = table()
     return tableSchema.advanced ? tableSchema.advanced.length > 0 : false
   }
-  const currentRecord = () => ({...props.record, ...diff})
+  const currentRecord = () => ({ ...props.record, ...diff })
   const extTableName = createMemo(() => getExtTableName(props.tableName, currentRecord()))
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
-  const pristine = () => Object.values({...diff, ...diffExt})
+  const pristine = () => Object.values({ ...diff, ...diffExt })
     .every(value => value === undefined)
   const complete = () => isComplete(
     props.tableName, diff, diffExt, colNames(),
@@ -74,7 +75,7 @@ export const Form: Component<{
   const save = useAction(saveAction)
   const onSubmit = () => save(
     props.tableName, props.id, diff,
-    extTableName(), diffExt,
+    extTableName(), diffExt, linkedCrossRefs,
     userExpl(), props.exitSettings, session!
   )
 
@@ -117,12 +118,38 @@ export const Form: Component<{
   const isVisible = (colName: string) => table().columns[colName]
     ?.getVisibility?.(currentRecord()) ?? true
 
+  const crossRefs = () => Object.entries((table().aggregates ?? {}))
+    .filter(([_, aggregate]) => aggregate.type === 'n-n' && aggregate.first)
+
+  const [linkedCrossRefs, setLinkedCrossRefs] = createStore
+    <Record<string, number[]>>(
+      Object.fromEntries(crossRefs().map(
+        ([aggregateName]) => [aggregateName, [] as number[]]
+      ))
+    )
+
   return (
     <div class="px-2 max-w-(--breakpoint-sm) pb-2">
       <For each={fieldGroups().normal}>{field =>
-        <FormField {...field} hidden={field.hidden || !isVisible(field.colName) } />
+        <FormField {...field} hidden={field.hidden || !isVisible(field.colName)} />
       }</For>
       <For each={extFields()}>{FormField}</For>
+      <Show when={!props.id && !props.depth}>
+        <For each={crossRefs()}>
+          {([aggregateName, aggregate]) => (
+            <CrossRef
+              tableName={props.tableName}
+              aggregateName={aggregateName}
+              aggregate={aggregate as NToNSchema}
+              linkedRecordIds={linkedCrossRefs[aggregateName]}
+              setLinkedRecordIds={
+                (setIds: (curIds: number[]) => number[]) =>
+                  setLinkedCrossRefs(aggregateName, setIds)
+              }
+            />
+          )}
+        </For>
+      </Show>
       <Show when={hasAdvancedFields()}>
         <div class="py-2">
           <Button
@@ -132,7 +159,7 @@ export const Form: Component<{
         </div>
       </Show>
       <For each={fieldGroups().advanced}>{field =>
-        <FormField {...field} hidden={field.hidden || !showAdvanced() } />
+        <FormField {...field} hidden={field.hidden || !showAdvanced()} />
       }</For>
       <Show when={props.id}>
         <UserExplField value={userExpl()} onChange={setUserExpl} />

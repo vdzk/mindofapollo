@@ -1,7 +1,7 @@
 import { Component, JSXElement } from "solid-js"
 import { CrossRecordData } from "~/api/insert/crossRecord"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { AuthRole } from "~/types"
+import { AuthRole, Option } from "~/types"
 
 export type UserActor = { type: 'user',
   user: {
@@ -12,6 +12,11 @@ export type UserActor = { type: 'user',
 }
 
 type SystemActor = { type: 'system' }
+
+export type FkEntries = Record<string, {
+  tableName: string,
+  options: Option<number>[]
+}>
 
 export interface ExplData {
   trigger?: { explId: number, label: string }
@@ -29,6 +34,7 @@ export interface ExplData {
     cross: CrossRecordData['cross']
     data: DataRecord
   }
+  insertedFkEntries?: FkEntries,
   diff?: ExplDiff<DataRecord>
   updatedRecords?: Record<string, (ExplDiff<DataRecord> & { id: number })[]>
   deletedRecords?: Record<string, DataRecordWithId[]>

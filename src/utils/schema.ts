@@ -111,7 +111,7 @@ export const getTranslatableColumns = (
   colNames?: string[] | null,
   isTranslatable?: boolean
 ): string[] => {
-  return (colNames ?? getVirtualColNames(tableName).non).
+  return getVirtualColNames(tableName, colNames ?? undefined).non.
     filter(colName => {
       const colIsTranslatable = translatable(tableName, colName)
       return (isTranslatable ?? true) ? colIsTranslatable : !colIsTranslatable
