@@ -12,7 +12,7 @@ export const whoCanInsertRecord = (tableName: string) => {
   if (
     tableName === 'person'
     || tablesThatExtendByName.includes(tableName)
-    || tableName === 'argument_aggregation_type'
+    || tableName === 'statement_type'
   ) {
     return []
   } else {

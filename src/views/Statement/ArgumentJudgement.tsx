@@ -11,18 +11,18 @@ import { ConditionArgument } from "./ConditionArgument"
 import { Form } from "~/components/form/Form"
 
 const judgementTableName = {
-  'evidential': 'argument_judgement',
-  'additive': 'argument_weight'
+  'descriptive': 'argument_judgement',
+  'threshold': 'argument_weight'
 }
 
 export const ArgumentJudgement: Component<{
   argumentId: number,
   firstArgOnSide: boolean,
   refreshStatementConfidence: () => void,
-  aggregationType: 'evidential' | 'additive'
+  statementType: 'descriptive' | 'threshold'
 }> = props => {
   const judgement = createAsync(() => getOneRecordByIdCache(
-    judgementTableName[props.aggregationType], props.argumentId
+    judgementTableName[props.statementType], props.argumentId
   ))
   const conditionalConfidence = createAsync(() => getOneRecordByIdCache('argument_conditional', props.argumentId))
   const canJudge = () => useBelongsTo(whoCanUpdateRecord('argument_judgement'))
@@ -101,7 +101,7 @@ export const ArgumentJudgement: Component<{
         </div>
       </Match>
       <Match when={
-        viewName() === 'judge-argument' && props.aggregationType === 'evidential'
+        viewName() === 'judge-argument' && props.statementType === 'descriptive'
       }>
         <JudgeArgument
           argumentId={props.argumentId}
@@ -111,7 +111,7 @@ export const ArgumentJudgement: Component<{
       </Match>
       <Match when={viewName() === 'judge-argument'}>
         <Form
-          tableName={judgementTableName[props.aggregationType]}
+          tableName={judgementTableName[props.statementType]}
           id={judgement()?.id}
           record={judgement()}
           preset={judgement() ? undefined : { id: props.argumentId }}
@@ -126,7 +126,7 @@ export const ArgumentJudgement: Component<{
           refreshStatementConfidence={props.refreshStatementConfidence}
         />
       </Match>
-      <Match when={viewName() === 'judgement' && props.aggregationType === 'evidential'}>
+      <Match when={viewName() === 'judgement' && props.statementType === 'descriptive'}>
         <RecordDetails
           tableName="argument_judgement"
           id={props.argumentId}
@@ -151,7 +151,7 @@ export const ArgumentJudgement: Component<{
       </Match>
       <Match when={viewName() === 'judgement'}>
         <RecordDetails
-          tableName={judgementTableName[props.aggregationType]}
+          tableName={judgementTableName[props.statementType]}
           id={props.argumentId}
         />
         {getJudgeButton()}

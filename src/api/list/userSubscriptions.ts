@@ -9,7 +9,7 @@ export const listUserSubscriptions = async () =>  {
   if (!userId) return [];
 
   const subscriptions = await sql<{
-    argument_aggregation_type_name: string; id: number; text: string; has_updates: boolean, label: string;
+    statement_type_name: string; id: number; text: string; has_updates: boolean, label: string;
 }[]>`
     SELECT 
       statement.id, 
@@ -34,7 +34,7 @@ export const listUserSubscriptions = async () =>  {
   await injectTranslations('statement', subscriptions, ['text'])
   await injectVirtualValues('statement', subscriptions)
   await injectVirtualValues('directive', subscriptions.filter( statement => 
-    statement.argument_aggregation_type_name === 'normative'
+    statement.statement_type_name === 'prescriptive'
   ))
   return subscriptions
 }

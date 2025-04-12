@@ -7,7 +7,7 @@ import { DecisionIndicator } from "~/components/DecisionIndicator"
 import { PageTitle } from "~/components/PageTitle"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { indexBy } from "~/utils/shape"
-import { calculateMoralSum } from "~/views/Statement/NormativeConclusion"
+import { calculateMoralSum } from "~/views/Statement/PrescriptiveConclusion"
 
 export default function ShowDirective() {
   const data = createAsync(listUserDirectives)

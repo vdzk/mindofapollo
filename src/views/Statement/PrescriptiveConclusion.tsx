@@ -35,7 +35,7 @@ export function calculateMoralSum(
   return { sum, overlap, weightedValues }
 }
 
-export const NormativeConclusion: Component<{
+export const PrescriptiveConclusion: Component<{
   statementId: number
   moralProfileId: number
 }> = props => {

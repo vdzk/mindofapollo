@@ -8,6 +8,7 @@ export const ColumnLabel: Component<{
   colName: string
   label?: string
   suffix?: string
+  ofInput?: boolean
 }> = (props) => {
   const [showInstructions, setShowInstructions] = createSignal(false)
 
@@ -35,7 +36,7 @@ export const ColumnLabel: Component<{
         <div class="font-bold first-letter:uppercase">
           {humanCase(labelText())}{props.suffix}
         </div>
-        <Show when={instructions()}>
+        <Show when={props.ofInput && instructions()}>
           <Button
             label={getToggleLabel(showInstructions(), 'instructions')}
             class="relative bottom-1"

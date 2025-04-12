@@ -51,6 +51,7 @@ export const Form: Component<{
     extTableName()
     setDiffExt(reconcile({}))
   })
+
   createEffect(() => !props.id && !diff.id && !('depth' in props) && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
 
   const table = () => schema.tables[props.tableName]
@@ -92,8 +93,9 @@ export const Form: Component<{
     const groups = Object.fromEntries(groupKeys.map(
       key => [key, [] as ComponentProps<typeof FormField>[]]
     ))
+    const showIdField = _table.extendsTable && !props.id && !props.preset?.id
     for (const colName of [
-      ...(_table.extendsTable ? ['id'] : []),
+      ...(showIdField ? ['id'] : []),
       ...colNames()
     ]) {
       const isAdvanced = _table.advanced?.includes(colName)

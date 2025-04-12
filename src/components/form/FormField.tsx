@@ -1,6 +1,6 @@
 import { Component, createEffect, For, Match, Show, Switch } from "solid-js"
 import { schema } from "~/schema/schema"
-import { BooleanColumn, ColumnSchema, DataLiteral, DataRecord, ForeignKey, ExtendsIdColumn, OptionColumn, TextColumn } from "~/schema/type"
+import { BooleanColumn, DataLiteral, DataRecord, ForeignKey, ExtendsIdColumn, OptionColumn, TextColumn } from "~/schema/type"
 import { FkInput } from "./FkInput"
 import { ColumnLabel } from "../ColumnLabel"
 import { createAsync, useSearchParams } from "@solidjs/router"
@@ -80,6 +80,7 @@ export const FormField: Component<{
         tableName={props.tableName}
         colName={props.colName}
         label={props.label}
+        ofInput
       />
       <Switch>
         <Match when={columnType() === 'text'}>

@@ -27,7 +27,7 @@ export default function RootStatementUpdates() {
   const statement = createAsync(async () => {
     const statement = await getOneRecordById('statement', statementId())
     if (!statement) return
-    if (statement.argument_aggregation_type_name ===  'normative') {
+    if (statement.statement_type_name ===  'prescriptive') {
       const directive = await getOneRecordById('directive', statementId())
       if (directive) {
         statement.label = directive.label

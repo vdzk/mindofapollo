@@ -15,7 +15,7 @@ import { rule } from "~/tables/other/rule"
 import { argument_judgement } from "~/tables/argument/judgement"
 import { rule_change_request } from "~/tables/other/rule_change_request"
 import { argument_conditional } from "~/tables/argument/conditional"
-import { argument_aggregation_type } from "~/tables/argument/aggregation_type"
+import { statement_type } from "~/tables/other/statement_type"
 import { argument_weight } from "~/tables/argument/weight"
 import { deed } from "~/tables/morality/deed"
 import { directive_consequence } from "~/tables/morality/directive_consequence"
@@ -47,7 +47,7 @@ export const schema: AppDataSchema = {
     auth_role,
     person,
     tag,
-    argument_aggregation_type,
+    statement_type,
     statement,
     argument_type,
     critical_question,

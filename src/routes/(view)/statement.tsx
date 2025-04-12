@@ -11,13 +11,13 @@ import { MasterDetail } from "~/components/MasterDetail"
 import { RecordPageTitle } from "~/components/PageTitle"
 import { schema } from "~/schema/schema"
 import { BooleanColumn } from "~/schema/type"
-import { ArgumentAggregationType } from "~/tables/argument/aggregation_type"
+import { StatementType } from "~/tables/other/statement_type"
 import { conclusionPlaceholder } from "~/tables/morality/directive"
 import { ShowRecord } from "~/views/ShowRecord"
 import { Argument } from "~/views/Statement/Argument"
 import { Discussion } from "~/views/Statement/Discussion"
 import { MoralProfileSelector } from "~/views/Statement/MoralProfileSelector"
-import { NormativeConclusion } from "~/views/Statement/NormativeConclusion"
+import { PrescriptiveConclusion } from "~/views/Statement/PrescriptiveConclusion"
 
 export default function Statement() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -39,10 +39,10 @@ export default function Statement() {
   const _arguments = createAsync(async () => {if (recordId()) {
     return  listForeignRecordsCache('argument', 'statement_id', recordId()!)
   }})
-  const argumentAggregationType = () => statement()?.argument_aggregation_type_name as ArgumentAggregationType | undefined
-  const isNormative = () => argumentAggregationType() === 'normative'
+  const statementType = () => statement()?.statement_type_name as StatementType | undefined
+  const isPrescriptive = () => statementType() === 'prescriptive'
   const titleText = () => (statement()?.label ?? '') as string
-  const mainTitleText = () => isNormative() ? titleText().slice(conclusionPlaceholder.length) : titleText()
+  const mainTitleText = () => isPrescriptive() ? titleText().slice(conclusionPlaceholder.length) : titleText()
   const [selectedMoralProfileId, setSelectedMoralProfileId] = createSignal(0)
 
   const argumentOptions = () => [
@@ -108,8 +108,8 @@ export default function Statement() {
         <RecordPageTitle
           tableName="statement"
           text={mainTitleText()}
-          prefix={isNormative() && recordId() 
-            ? <NormativeConclusion
+          prefix={isPrescriptive() && recordId() 
+            ? <PrescriptiveConclusion
                 statementId={recordId()!}
                 moralProfileId={selectedMoralProfileId()}
               />
@@ -122,7 +122,7 @@ export default function Statement() {
         options={[
           { id: 'arguments', label: 'Arguments' },
           { id: 'details', label: 'Details' },
-          ...(isNormative() ? [
+          ...(isPrescriptive() ? [
             { id: 'scope', label: 'Scope'}
           ] : []),
           { id: 'discussion', label: 'Discussion' }
@@ -130,7 +130,7 @@ export default function Statement() {
         selectedId={selectedSection()}
         onChange={id => setSearchParams({ tab: id })}
         horizontal
-        extraPanel={isNormative()
+        extraPanel={isPrescriptive()
           ? <MoralProfileSelector
               value={selectedMoralProfileId()}
               onChange={setSelectedMoralProfileId}
@@ -148,12 +148,12 @@ export default function Statement() {
               class="pl-2"
               optionsClass="w-56 border-r pr-2 pt-2"
             >
-              <Show when={selectedArgument() > 0 && argumentAggregationType()}>
+              <Show when={selectedArgument() > 0 && statementType()}>
                 <Argument
                   id={selectedArgument()!}
                   firstArgOnSide={selectedFirstArgOnSide()}
                   refreshStatementConfidence={refreshStatementConfidence}
-                  aggregationType={argumentAggregationType()!}
+                  statementType={statementType()!}
                 />
               </Show>
               <Show when={selectedArgument() < 0 && recordId()}>

@@ -6,13 +6,13 @@ import { ShowRecord } from "../ShowRecord"
 import { ArgumentJudgement } from "./ArgumentJudgement"
 import { Subtitle } from "~/components/PageTitle"
 import { Aggregate } from "~/components/aggregate/Aggregate"
-import { ArgumentAggregationType } from "~/tables/argument/aggregation_type"
+import { StatementType } from "~/tables/other/statement_type"
 
 export const Argument: Component<{
   id: number,
   firstArgOnSide: boolean,
   refreshStatementConfidence: () => Promise<void>,
-  aggregationType: ArgumentAggregationType
+  statementType: StatementType
 }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
@@ -47,19 +47,19 @@ export const Argument: Component<{
             </div>
             <div class="border-l flex-1">
               <Subtitle>Judgement</Subtitle>
-              <Show when={props.aggregationType === 'normative'}>
+              <Show when={props.statementType === 'prescriptive'}>
                 <Aggregate
                   tableName="argument"
                   id={props.id}
                   aggregateName="directive_consequences"
                 />
               </Show>
-              <Show when={props.aggregationType !== 'normative'}>
+              <Show when={props.statementType !== 'prescriptive'}>
                 <ArgumentJudgement
                   argumentId={props.id}
                   firstArgOnSide={props.firstArgOnSide}
                   refreshStatementConfidence={props.refreshStatementConfidence}
-                  aggregationType={props.aggregationType as Exclude<ArgumentAggregationType, 'normative'>}
+                  statementType={props.statementType as Exclude<StatementType, 'prescriptive'>}
                 />
               </Show>
             </div>

@@ -49,7 +49,8 @@ export interface WeightedArgument {
 }
 
 export const calcStatementConfidenceAdditively = (
-  weightedArguments: WeightedArgument[]
+  weightedArguments: WeightedArgument[],
+  threshold: number = 0
 ) => {
   const generators = weightedArguments.map(
     wArg => {
@@ -68,7 +69,7 @@ export const calcStatementConfidenceAdditively = (
     for (const generator of generators) {
       totalWeight += generator()
     }
-    if (totalWeight > 0) {
+    if (totalWeight > threshold) {
       hits++
     }
   }

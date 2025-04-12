@@ -2,8 +2,8 @@ import { DataRecord, TableSchema, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
 import { directive } from "./morality/directive"
 
-// Indexes corresponts to IDs in argument_aggregation_type table
-const argumentAggregationExtensonTables = ['', '', '', 'directive']
+// Indexes corresponts to IDs in statement_type table
+const statementExtensonTables = ['', '', '', 'directive']
 
 export const getDescriptiveStatementLabel = (s: DataRecord) =>
   `(${s.decided ? getPercent(s.confidence as number) : '?'}) ${s.text}`
@@ -11,8 +11,18 @@ export const getDescriptiveStatementLabel = (s: DataRecord) =>
 export const statement: TableSchema = {
   plural: 'statements',
   columns: {
+    statement_type_id: {
+      type: 'fk',
+      fk: {
+        table: 'statement_type',
+        labelColumn: 'name',
+        defaultName: 'descriptive',
+        extensionTables: statementExtensonTables
+      }
+    },
     label: {
       type: 'virtual',
+      preview: true,
       queries: {
         ...(directive.columns.label as VirtualColumnQueries).queries,
         statements: [
@@ -20,15 +30,15 @@ export const statement: TableSchema = {
           ['decided'],
           ['confidence'],
           ['text'],
-          ['argument_aggregation_type_id', [
-            ['name', 'argument_aggregation_type_name']
+          ['statement_type_id', [
+            ['name', 'statement_type_name']
           ]]
         ]
       },
       get: (ids, results) => {
         const directivesLabels = (directive.columns.label as VirtualColumnQueries).get(ids, results)
         const labels = Object.fromEntries(results.statements.map(
-          s => [s.id, s.argument_aggregation_type_name === 'normative'
+          s => [s.id, s.statement_type_name === 'prescriptive'
             ? directivesLabels[s.id as number]
             : getDescriptiveStatementLabel(s)
           ]
@@ -39,30 +49,21 @@ export const statement: TableSchema = {
     text: {
       type: 'text',
       lines: 2,
-      getVisibility: record => record.argument_aggregation_type_id !== argumentAggregationExtensonTables.indexOf('directive'),
+      getVisibility: record => record.statement_type_id !== statementExtensonTables.indexOf('directive'),
       defaultValue: '',
       instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not capialise the first word. Do not use a full stop at the end.",
     },
-    argument_aggregation_type_id: {
-      type: 'fk',
-      fk: {
-        table: 'argument_aggregation_type',
-        labelColumn: 'name',
-        defaultName: 'evidential',
-        extensionTables: argumentAggregationExtensonTables
-      }
-    },
-    argument_aggregation_type_name: {
+    statement_type_name: {
       type: 'virtual',
       queries: {
-        aggregation_types: [
+        statement_types: [
           ['id'],
-          ['argument_aggregation_type_id', [
+          ['statement_type_id', [
             ['name']
           ]]
         ],
       },
-      get: (ids, results) => Object.fromEntries(results.aggregation_types.map(
+      get: (ids, results) => Object.fromEntries(results.statement_types.map(
         result => [result.id, result.name]
       ))
     },
@@ -115,6 +116,5 @@ export const statement: TableSchema = {
     other: {
       label: 'other details'
     }
-  },
-  advanced: ['argument_aggregation_type_id']
+  }
 }
