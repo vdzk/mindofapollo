@@ -6,7 +6,7 @@ import { ShowRecord } from "../ShowRecord"
 import { ArgumentJudgement } from "./ArgumentJudgement"
 import { Subtitle } from "~/components/PageTitle"
 import { Aggregate } from "~/components/aggregate/Aggregate"
-import { StatementType } from "~/tables/other/statement_type"
+import { StatementType } from "~/tables/statement/statement_type"
 
 export const Argument: Component<{
   id: number,

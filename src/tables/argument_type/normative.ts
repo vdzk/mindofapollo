@@ -1,11 +1,12 @@
 import { TableSchema } from "../../schema/type";
+import { defautTextLines } from "../argument/argument";
 
 export const argument_normative: TableSchema = {
   extendsTable: 'argument',
   columns: {
     text: {
       type: 'text',
-      lines: 6
+      lines: defautTextLines
     }
   }
 }

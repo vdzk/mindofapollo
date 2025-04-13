@@ -68,7 +68,7 @@ export const ShowRecord: Component<{
     } else {
       options.push({ id: 'allDetails', label: 'Details' })
     }
-    if (!personalTableNames.includes(props.tableName)) {
+    if (!personalTableNames().includes(props.tableName)) {
       options.push({ id: 'history', label: 'History' })
     }
     options.push({ id: 'actions', label: 'Actions' })

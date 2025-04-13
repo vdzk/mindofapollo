@@ -24,7 +24,7 @@ export const moral_persuasion: TableSchema = {
   aggregates: {
     critiques: {
       type: '1-n',
-      table: 'presuasion_critique',
+      table: 'persuasion_critique',
       column: 'moral_persuasion_id'
     }
   }

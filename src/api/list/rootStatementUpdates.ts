@@ -24,7 +24,7 @@ export const listRootStatementUpdates = async (statementId: number) => {
       ON s.statement_id = rsu.statement_id
       AND s.person_id = ${userId}
     WHERE rsu.statement_id = ${statementId}
-      AND e.table_name NOT IN ${sql(personalTableNames)}
+      AND e.table_name NOT IN ${sql(personalTableNames())}
       AND e.user_id != ${userId}
     ORDER BY e.id DESC
     LIMIT 100

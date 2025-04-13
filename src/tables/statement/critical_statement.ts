@@ -1,5 +1,5 @@
 import { DataRecord, TableSchema } from "../../schema/type"
-import { getDescriptiveStatementLabel } from "../statement"
+import { getDescriptiveStatementLabel } from "./statement"
 
 export const critical_statement: TableSchema = {
   plural: 'critical statements',

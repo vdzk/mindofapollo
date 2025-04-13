@@ -1,7 +1,7 @@
 import { DataRecord, TableSchema } from "~/schema/type";
 import { getPercent } from "~/utils/string";
 
-export const presuasion_critique: TableSchema = {
+export const persuasion_critique: TableSchema = {
   plural: 'persuasion critiques',
   columns: {
     moral_persuasion_id: {

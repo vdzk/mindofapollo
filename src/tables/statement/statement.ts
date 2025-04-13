@@ -1,6 +1,6 @@
 import { DataRecord, TableSchema, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
-import { directive } from "./morality/directive"
+import { directive } from "../morality/directive"
 
 // Indexes corresponts to IDs in statement_type table
 const statementExtensonTables = ['', '', '', 'directive']

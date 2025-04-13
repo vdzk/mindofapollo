@@ -1,10 +1,11 @@
+import memoizeOne from "memoize-one";
 import { schema } from "./schema/schema";
 import { ColumnSchema, ForeignKey } from "./schema/type";
 import { AuthRole } from "./types";
 
 export const isPersonal = (tableName: string) => !!schema.tables[tableName].columns.owner_id
-export const personalTableNames = Object.keys(schema.tables)
-  .filter(tableName => isPersonal(tableName))
+export const personalTableNames = memoizeOne(() => Object.keys(schema.tables)
+  .filter(tableName => isPersonal(tableName)))
 export const isPrivate = (tableName: string) => !!schema.tables[tableName].private
 export const isSystem = (tableName: string) => !!schema.tables[tableName].system
 

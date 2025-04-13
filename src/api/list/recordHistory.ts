@@ -7,7 +7,7 @@ export const listRecordHistory = async (
   recordId: number
 ) => {
   "use server"
-  if (personalTableNames.includes(tableName)) return []
+  if (personalTableNames().includes(tableName)) return []
   const history = await sql<ExplRecord<any>[]>`
     SELECT *
     FROM expl 

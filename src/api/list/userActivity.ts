@@ -11,7 +11,7 @@ export const listUserActivity = async (
     SELECT *
     FROM expl 
     WHERE user_id = ${userId}
-      AND table_name NOT IN ${sql(personalTableNames)}
+      AND table_name NOT IN ${sql(personalTableNames())}
     ORDER BY id DESC
   `.catch(onError)
   return activity
