@@ -52,7 +52,8 @@ export const directive: TableSchema = {
       fk: {
         table: 'deed',
         labelColumn: 'text'
-      }
+      },
+      instructions: 'After saving the statement, please visit the "Scope" tab and select people categories to which this directive applies.'
     }
   },
   aggregates: {

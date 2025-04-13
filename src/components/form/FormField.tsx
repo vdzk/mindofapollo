@@ -10,6 +10,7 @@ import { TextInput } from "./TextInput"
 import { listOriginTypes } from "~/api/list/originTypes"
 import { titleColumnName } from "~/utils/schema"
 import { humanCase } from "~/utils/string"
+import { ProportionInput } from "./ProportionInput"
 
 const getCurrent = (colName: string, diff: DataRecord, record?: DataRecord) =>
   diff[colName] ?? record?.[colName]
@@ -176,6 +177,14 @@ export const FormField: Component<{
             isNew={isNew()}
             formDepth={props.formDepth}
             {...{ onChangeFormat }}
+          />
+        </Match>
+        <Match when={columnType() === 'proportion'}>
+          <ProportionInput
+            value={value() as string | undefined}
+            onChange={onChange}
+            tableName={props.tableName}
+            colName={props.colName}
           />
         </Match>
         <Match when={columnType() === undefined}>

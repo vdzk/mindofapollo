@@ -1,5 +1,4 @@
-import { schema } from "~/schema/schema"
-import { DataRecord, TableSchema, VirtualColumnLocal } from "../../schema/type"
+import { DataRecord, TableSchema } from "../../schema/type"
 import { getDescriptiveStatementLabel } from "../statement"
 
 export const critical_statement: TableSchema = {

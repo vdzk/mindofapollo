@@ -7,7 +7,8 @@ export const tag: TableSchema = {
       type: 'varchar'
     },
     description: {
-      type: 'text'
+      type: 'text',
+      defaultValue: ''
     }
   },
   aggregates: {

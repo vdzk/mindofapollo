@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createMemo, createSignal, Match, Show, Switch } from "solid-js"
+import { Component, createEffect, createMemo, createSignal, Match, Show, Switch } from "solid-js"
 import { hasUndecidedCriticalStatement } from "~/api/has/undecidedCriticalStatement"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { Button } from "~/components/buttons"
@@ -36,6 +36,13 @@ export const ArgumentJudgement: Component<{
     setConfirmedPreJudgementCheck(false)
     props.refreshStatementConfidence()
   }
+
+  createEffect(() => {
+    props.argumentId
+    setConfirmedPreJudgementCheck(false)
+    setWantsToJudge(false)
+    setWantsToCondition(false)
+  })
 
   const viewName = createMemo(() => {
     if (wantsToJudge()) {

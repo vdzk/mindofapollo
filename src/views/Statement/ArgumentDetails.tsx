@@ -50,7 +50,7 @@ export const ArgumentDetails: Component<{
               />
             )}
           </For>
-          <div class="px-2 pt-2 flex gap-2">
+          <div class="px-2 pt-2 pb-2 flex gap-2">
             <Show when={canUpdateRecord()}>
               <Button
                 label="Edit"

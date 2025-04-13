@@ -27,7 +27,7 @@ const getSummaryStr = (expl: ExplData) => {
 
 export const getExplData = (explRecord: ExplRecord<any>) => {
   const formatter = formatters['expl' + firstCap(explRecord.action)]
-  return formatter ? formatter(explRecord.data) : fallbackFormatter(explRecord)
+  return (formatter && explRecord.data) ? formatter(explRecord.data) : fallbackFormatter(explRecord)
 }
 
 export const getExplActionStr = (explRecord: ExplRecord<any>) =>

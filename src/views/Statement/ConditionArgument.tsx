@@ -24,7 +24,7 @@ export const ConditionArgument: Component<{
       />
       <div class="px-2 font-bold">Instructions</div>
       <div class="px-2 pb-2">
-        Imagine that all of the arguments listed above this one on the same pro/con side have failed. How much confidence in the conclusion will this argument bring in that case?
+        Imagine that all of the arguments listed above this one on the same pro/con side have failed. How much confidence in the conclusion will this argument bring in that case? It should be less than the isolated confidence.
       </div>
       <Form
         tableName="argument_conditional"
