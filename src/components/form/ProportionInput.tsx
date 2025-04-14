@@ -1,7 +1,10 @@
 import { debounce } from "@solid-primitives/scheduled"
 import { Component, createMemo } from "solid-js"
-import { percentageDecimals, proportionDecimals } from "~/client-only/util"
+import { proportionDecimals } from "~/util-no-circle"
 import { GenericInputEvent } from "~/types"
+
+
+export const percentageDecimals = proportionDecimals - Math.log10(100);
 
 export const ProportionInput: Component<{
   value: string | undefined

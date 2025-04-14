@@ -10,4 +10,6 @@ export const sqlStr = (strings: TemplateStringsArray, ...values: any[]) => {
   }
   
   return result;
-}
+};
+export const proportionPrecision = 6;
+export const proportionDecimals = proportionPrecision - 1;

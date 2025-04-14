@@ -20,8 +20,3 @@ export const useSafeParams = <T,>(paramNames: string[]) => {
 }
 
 export const etv = (fn: (val: string, name: string) => void) => (event: { target: { value: string; name: string; }; }) => fn(event.target.value, event.target.name);
-
-export const proportionPrecision = 6
-export const proportionDecimals = proportionPrecision - 1
-export const percentageDecimals = proportionDecimals - Math.log10(100)
-

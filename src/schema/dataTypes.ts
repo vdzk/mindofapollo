@@ -1,11 +1,11 @@
 import memoizeOne from "memoize-one";
 import { schema } from "./schema";
 import { CustomDataType } from "./type";
-import { proportionPrecision } from "~/client-only/util";
+import { proportionDecimals, proportionPrecision } from "~/util-no-circle";
 
 export const customDataTypes: Record<CustomDataType | 'fk', string> = {
   fk: 'integer',
-  proportion: `numeric(${proportionPrecision}, ${proportionPrecision - 1})`,
+  proportion: `numeric(${proportionPrecision}, ${proportionDecimals})`,
   weight: 'numeric(9, 2)',
   link_url: 'varchar',
   link_title: 'varchar',
