@@ -10,7 +10,7 @@ import { argument_explanation } from './explanation'
 import { argument_feasibility } from './feasibility'
 import { argument_induction } from './induction'
 import { argument_normative } from './normative'
-import { argument_pragmaic } from './pragmatic'
+import { argument_pragmatic } from './pragmatic'
 import { argument_obvious } from './obvious'
 import { argument_other } from './other'
 import { argument_inability_and_scale } from './inability_and_scale'
@@ -29,7 +29,7 @@ export const argumentTypeTables = {
   argument_induction,
   argument_inability_and_scale,
   argument_normative,
-  argument_pragmaic,
+  argument_pragmatic,
   argument_obvious,
   argument_other
 }

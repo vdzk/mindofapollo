@@ -9,10 +9,10 @@ import { statementTables } from "~/tables/statement"
 
 export const schema: AppDataSchema = {
   tables: {
+    ...statementTables,
     ...argumentTables,
     ...argumentTypeTables,
     ...moralityTables,
-    ...otherTables,
-    ...statementTables
+    ...otherTables
   }
 }
