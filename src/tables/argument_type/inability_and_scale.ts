@@ -1,7 +1,7 @@
 import { TableSchema } from "../../schema/type";
 import { defautTextLines } from "../argument/argument";
 
-export const argument_comparison: TableSchema = {
+export const argument_inability_and_scale: TableSchema = {
   extendsTable: 'argument',
   columns: {
     text: {

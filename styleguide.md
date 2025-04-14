@@ -1,1 +1,2 @@
 If a function in a "use server" file starts with "_" it must not be called from the client. It must only be called from other internal server functions. This is because this function doesn't do authorisation.
+Exporting variables that reply on imported schema sometimes cause SSR error: schema is undefined. That's why they should be wrapped in memoizeOne function.

@@ -1,6 +1,6 @@
 import { TableSchema } from "../../schema/type"
 
-export const argumentTypes = ['authority', 'analogy', 'other', 'explanation', 'epistemic', 'deduction', 'comparison', 'example', 'obvious', 'normative'] as const
+export const argumentTypes = ['authority', 'analogy', 'other', 'explanation', 'epistemic', 'deduction', 'inability_and_scale', 'example', 'obvious', 'pragmatic', 'induction', 'definition', 'causal', 'normative', 'contradiction', 'feasibility'] as const
 
 export const argument_type: TableSchema = {
   plural: 'argument types',
@@ -11,7 +11,8 @@ export const argument_type: TableSchema = {
       preview: true
     },
     description: {
-      type: 'text'
+      type: 'text',
+      lines: 4
     }
   },
   aggregates: {

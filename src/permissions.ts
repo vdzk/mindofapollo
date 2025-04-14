@@ -9,7 +9,7 @@ export const personalTableNames = memoizeOne(() => Object.keys(schema.tables)
 export const isPrivate = (tableName: string) => !!schema.tables[tableName].private
 export const isSystem = (tableName: string) => !!schema.tables[tableName].system
 
-export const tablesThatExtendByName = Object.entries(schema.tables)
+export const tablesThatExtendByName = memoizeOne(() => Object.entries(schema.tables)
   .flatMap(([_, table]) => 
     Object.values(table.columns)
       .filter(column => 
@@ -18,7 +18,8 @@ export const tablesThatExtendByName = Object.entries(schema.tables)
       )
       .map(column => (column as ForeignKey).fk.table)
   )
-  .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
+  .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
+)
 
 const getAccessibleColNames = (
   tableName: string,

@@ -11,7 +11,7 @@ import { insertCrossRecords } from "~/server-only/insertCrossRecords"
 export const whoCanInsertRecord = (tableName: string) => {
   if (
     tableName === 'person'
-    || tablesThatExtendByName.includes(tableName)
+    || tablesThatExtendByName().includes(tableName)
     || tableName === 'statement_type'
   ) {
     return []
