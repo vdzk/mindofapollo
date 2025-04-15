@@ -10,7 +10,7 @@ import { FormExitHandler } from "~/components/form/Form"
 import { SessionContextType } from "~/SessionContext"
 import { isEmpty } from "~/utils/shape"
 import { updateUserSession } from "~/api/update/userSession"
-import { buildUrl } from "~/utils/string"
+import { buildUrl } from "~/utils/schema"
 
 type ExitSettings = { getLinkData: (savedId?: number) => LinkData } | { onExit: FormExitHandler }
 

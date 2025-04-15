@@ -10,7 +10,7 @@ export const argument: TableSchema = {
       type: 'fk',
       fk: {
         table: 'statement',
-        labelColumn: 'text'
+        labelColumn: 'label'
       }
     },
     pro: {

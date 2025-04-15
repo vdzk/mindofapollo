@@ -6,7 +6,7 @@ import { useSafeParams } from "~/client-only/util"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { ShowRecord } from "~/views/ShowRecord"
 import { createEffect } from "solid-js"
-import { buildUrl } from "~/utils/string"
+import { buildUrl } from "~/utils/schema"
 
 export default function ShowRecordRoute() {
   const sp = useSafeParams<{

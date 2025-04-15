@@ -15,5 +15,12 @@ export const critical_question: TableSchema = {
       type: 'varchar',
       preview: true
     }
+  },
+  aggregates: {
+    statement_examples: {
+      type: '1-n',
+      table: 'critical_statement_example',
+      column: 'critical_question_id'
+    }
   }
 }

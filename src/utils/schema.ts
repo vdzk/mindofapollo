@@ -2,6 +2,7 @@ import { schema } from "~/schema/schema"
 import { ColumnSchema, DataRecord } from "~/schema/type"
 import { humanCase } from "./string"
 import memoizeOne from "memoize-one"
+import { LinkData } from "~/types"
 
 export const titleColumnName = (tableName: string) => {
   let result = ''
@@ -138,3 +139,25 @@ export const getChildFkRelations = memoizeOne(() => {
   }
   return relations
 })
+export const buildUrl = (linkData: LinkData) => {
+  let { route, params } = linkData;
+  // Rewrite link
+  if (route === 'show-record' && params) {
+    params.tableName = getRootTableName(params.tableName);
+    if (params?.tableName === 'statement') {
+      route = 'statement';
+      params = { id: params.id };
+    } else if (params?.tableName === 'argument') {
+      route = 'statement';
+      params = { argumentId: params.id };
+    }
+  }
+
+  let url = '/' + route;
+  if (params) {
+    url += '?' + Object.entries(params)
+      .map(([k, v]) => k + '=' + v)
+      .join('&');
+  }
+  return url;
+};

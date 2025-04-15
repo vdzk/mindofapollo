@@ -1,7 +1,7 @@
 import { Component, JSXElement } from "solid-js"
 import { DataLiteral } from "~/schema/type"
 import { btnStyle } from "./buttons"
-import { buildUrl } from "~/utils/string"
+import { buildUrl } from "~/utils/schema"
 
 export const Link: Component<{
   params?: Record<string, any>

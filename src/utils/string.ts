@@ -1,6 +1,4 @@
 import { url } from "~/constant"
-import { getRootTableName } from "./schema";
-import { LinkData } from "~/types";
 
 export const humanCase = (str: string) => str
   .split('_')
@@ -26,29 +24,6 @@ export const genCode = (length: number) => {
 }
 
 export const getPercent = (x: number) => Math.round(x * 100) + '%'
-
-export const buildUrl = (linkData: LinkData) => {
-  let { route, params } = linkData
-  // Rewrite link
-  if (route === 'show-record' && params) {
-    params.tableName = getRootTableName(params.tableName)
-    if (params?.tableName === 'statement') {
-      route = 'statement'
-      params = { id: params.id }
-    } else if (params?.tableName === 'argument') {
-      route = 'statement'
-      params = { argumentId: params.id }
-    }
-  }
-
-  let url = '/' + route
-  if (params) {
-    url += '?' + Object.entries(params)
-      .map(([k, v]) => k + '=' + v)
-      .join('&')
-  }
-  return url
-}
 
 // Format date for display as "YYYY-MM-DD"
 export const formatDate = (date: Date) => {
