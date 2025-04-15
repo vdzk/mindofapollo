@@ -9,6 +9,7 @@ import { ExternalLink, Link } from "./Link";
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listOriginTypes } from "~/api/list/originTypes"
 import { isPersonal } from "~/permissions"
+import { FkDetails } from "./FkDetails"
 
 const FkValue: Component<{
   column: ForeignKey,
@@ -108,6 +109,13 @@ export const DisplayValue: Component<DisplayValue> = props => {
       <Show when={explId() && !isPersonal(props.tableName) && props.showExplLink !== false}>
         {' '}
         <ExplLink explId={explId() as number} />
+      </Show>
+      <Show when={columnType() === 'fk' && value()}>
+        <span class="inline-block w-1" />
+        <FkDetails
+          fk={(column() as ForeignKey).fk}
+          fkId={value() as number}
+        />
       </Show>
     </>
   )

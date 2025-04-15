@@ -18,6 +18,7 @@ import { Argument } from "~/views/Statement/Argument"
 import { Discussion } from "~/views/Statement/Discussion"
 import { MoralProfileSelector } from "~/views/Statement/MoralProfileSelector"
 import { PrescriptiveConclusion } from "~/views/Statement/PrescriptiveConclusion"
+import { CreateArgument } from "~/views/Statement/CreateArgument"
 
 export default function Statement() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -157,17 +158,11 @@ export default function Statement() {
                 />
               </Show>
               <Show when={selectedArgument() < 0 && recordId()}>
-                <div class="pt-2">
-                  <Form
-                    tableName="argument"
-                    preset={{
-                      statement_id: recordId()!,
-                      pro: selectedArgument() === -1 
-                    }}
-                    exitSettings={{ onExit: id => setSearchParams({ argumentId: id }) }}
-                    hideColumns={['statement_id', 'pro']}
-                  />
-                </div>
+                <CreateArgument
+                  statementId={recordId()!}
+                  pro={selectedArgument() === -1}
+                  onExit={id => setSearchParams({ argumentId: id })}
+                />
               </Show>
             </MasterDetail>
           </Match>

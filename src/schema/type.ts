@@ -107,6 +107,7 @@ export interface OneToNSchema extends SharedAggregateProps{
   column: string
   splitByColumn?: string
   filterSplitBy?: string // both parent and split tables should have this column and only overlapping entries will be shown
+  hideEmptySections?: boolean // hide sections with no records
 }
 
 export interface NToNSchema extends SharedAggregateProps {

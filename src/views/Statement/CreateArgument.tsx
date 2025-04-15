@@ -1,0 +1,121 @@
+import { createAsync } from "@solidjs/router"
+import { Component, createMemo, createSignal, For, Show } from "solid-js"
+import { getOneRecordByIdCache, listForeignRecordsCache, listRecordsCache } from "~/client-only/query"
+import { Button } from "~/components/buttons"
+import { Detail } from "~/components/details"
+import { Form } from "~/components/form/Form"
+import { MasterDetail } from "~/components/MasterDetail"
+import { H2, Subtitle } from "~/components/PageTitle"
+import { firstCap, humanCase } from "~/utils/string"
+
+export const CreateArgument: Component<{
+  statementId: number,
+  pro: boolean,
+  onExit: (id?: number) => void
+}> = props => {
+  const [selectedArgumentTypeId, setSelectedArgumentTypeId] = createSignal<number | undefined>()
+  const [argumentTypeId, setArgumentTypeId] = createSignal<number | undefined>()
+  const argumentTypes = createAsync(() => listRecordsCache('argument_type'))
+  const argumentType = createAsync(async () => selectedArgumentTypeId()
+    ? getOneRecordByIdCache('argument_type', selectedArgumentTypeId()!)
+    : undefined
+  )
+  const examples = createAsync(async () => selectedArgumentTypeId()
+    ? listForeignRecordsCache('argument_type_example', 'argument_type_id', selectedArgumentTypeId()!)
+    : undefined
+  )
+  const options = createMemo(() => (argumentTypes() ?? []).map(type => ({
+    id: type.id,
+    label: firstCap(humanCase(type.name as string))
+  })).sort((a, b) => a.label.localeCompare(b.label)))
+  const onFormExit = (id?: number) => {
+    if (id) {
+      props.onExit(id)
+    } else {
+      setArgumentTypeId(undefined)
+    }
+  }
+  return (
+    <div class="flex-1 flex">
+      <div class="flex-1">
+        <Subtitle>Temporary draft</Subtitle>
+        <div class="px-2">
+          (optional) Write the argument in your own words before making it more formal.
+          <textarea class="border w-full pl-1" rows={10}>
+
+          </textarea>
+          This draft will not be saved.
+        </div>
+      </div>
+      <Show when={!argumentTypeId()}>
+        <div class="flex-3 border-l">
+          <Subtitle>What type of argument is it?</Subtitle>
+          <MasterDetail
+            options={options()}
+            selectedId={selectedArgumentTypeId()}
+            onChange={setSelectedArgumentTypeId}
+            class="pl-2"
+          >
+            <Show when={argumentType() && examples()}>
+              <Detail
+                tableName="argument_type"
+                colName="description"
+                record={argumentType()!}
+              />
+              <Show when={examples()!.length > 0}>
+              <H2>Examples</H2>
+                <table class="ml-2">
+                  <thead>
+                    <tr class="text-left">
+                      <th class="pr-2 pb-2 border-b">Argument</th>
+                      <th class="pr-2 pb-2 border-b">Conclusion</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <For each={examples()}>
+                      {example => (
+                        <tr>
+                          <td class="pr-2 py-2 border-b">
+                            {example.argument}
+                          </td>
+                          <td class="pr-2 py-2 border-b">
+                            {example.conclusion}
+                          </td>
+                        </tr>
+                      )}
+                    </For>
+                  </tbody>
+                </table>
+              </Show>
+              <div class="pt-4 px-2 pb-2">
+                <Button
+                  label="Select"
+                  onClick={() => setArgumentTypeId(selectedArgumentTypeId())}
+                />
+                <span class="inline-block w-2" />
+                <Button
+                  label="Cancel"
+                  onClick={() => props.onExit()}
+                />
+              </div>
+            </Show>
+          </MasterDetail>
+        </div>
+      </Show>
+      <Show when={argumentTypeId()}>
+        <div class="border-l flex-3 pt-2">
+          <Form
+            tableName="argument"
+            preset={{
+              statement_id: props.statementId,
+              argument_type_id: argumentTypeId()!,
+              pro: props.pro
+            }}
+            exitSettings={{ onExit: onFormExit }}
+            hideColumns={['statement_id', 'pro']}
+          />
+        </div>
+      </Show>
+    </div>
+  )
+}

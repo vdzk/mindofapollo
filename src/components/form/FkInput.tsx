@@ -1,19 +1,17 @@
 import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
-import { Component, createEffect, createSignal, For, onMount, Show, useContext, Switch, Match, createMemo } from "solid-js"
+import { Component, createEffect, createSignal, For, onMount, Show, Switch, Match, createMemo } from "solid-js"
 import { ForeignKey } from "~/schema/type"
 import { OnChangeFormat } from "./FormField"
 import { listRecordsCache } from "~/client-only/query"
 import { getOneIdByName } from "~/api/getOne/idByName"
-import { Button } from "../buttons"
-import { getToggleLabel, nbsp } from "~/utils/string"
+import { nbsp } from "~/utils/string"
 import { Link } from "../Link"
-import { RecordDetails } from "../RecordDetails"
 import { whoCanInsertRecord } from "~/api/insert/record"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { LongSelect } from "./LongSelect"
 import { Option } from "~/types"
-import { nestedBgColor } from "../NestPanel"
 import { CreateNew } from "./CreateNew"
+import { FkDetails } from "../FkDetails"
 
 export const FkInput: Component<{
   tableName: string
@@ -27,7 +25,6 @@ export const FkInput: Component<{
   const [searchParams] = useSearchParams()
   const records = createAsync(() => listRecordsCache(props.column.fk.table))
   const [isPreset, setIsPreset] = createSignal(false)
-  const [showRecord, setShowRecord] = createSignal(false)
 
   const canCreateNew = () => useBelongsTo(whoCanInsertRecord(props.column.fk.table))
 
@@ -148,24 +145,11 @@ export const FkInput: Component<{
         </Match>
       </Switch>
       <Show when={props.value}>
-        <Button
-          label={getToggleLabel(showRecord(), 'details')}
-          onClick={() => setShowRecord(x => !x)}
+        <FkDetails
+          fk={props.column.fk}
+          fkId={props.value!}
+          depth={props.formDepth}
         />
-      </Show>
-      <Show when={showRecord()}>
-        <div
-          class="rounded-md my-2 pt-2"
-          classList={{ [nestedBgColor(props.formDepth)]: true }}
-        >
-          <RecordDetails
-            tableName={props.column.fk.table}
-            id={props.value!}
-            showAggregates={false}
-            showExplLinks={false}
-            displayColumn={(colName) => colName !== props.column.fk.labelColumn}
-          />
-        </div>
       </Show>
     </>
   )

@@ -10,6 +10,7 @@ import { Subtitle } from "~/components/PageTitle"
 import { schema } from "~/schema/schema"
 import { DataRecordWithId } from "~/schema/type"
 import { getExtTableName } from "~/utils/schema"
+import { getToggleLabel } from "~/utils/string"
 
 export const ArgumentDetails: Component<{
   record?: DataRecordWithId
@@ -41,6 +42,11 @@ export const ArgumentDetails: Component<{
           />
         </Show>
         <Show when={!showForm()}>
+          <Detail
+            tableName="argument"
+            colName="argument_type_id"
+            record={props.record!}
+          />
           <For each={Object.keys(schema.tables[extTableName()!].columns)}>
             {colName => (
               <Detail
@@ -57,7 +63,7 @@ export const ArgumentDetails: Component<{
                 onClick={() => setShowForm(true)}
               />
               <Button
-                label={props.showMoreDetails ? "Show less" : "Show more"}
+                label={getToggleLabel(props.showMoreDetails, 'details')}
                 onClick={() => props.setShowMoreDetails(!props.showMoreDetails)}
               />
             </Show>
