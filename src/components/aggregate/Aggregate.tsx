@@ -70,23 +70,28 @@ export const Aggregate: Component<{
       id: props.id,
       aggregateTable,
       aggregate,
-      records
+      records: records()
     }
 
+    let sections
     if (aggregate.type === '1-n') {
       if (aggregate.splitByColumn) {
         const splitColumn = aggregateTable.columns[aggregate.splitByColumn]
         if (splitColumn.type === 'boolean') {
-          return splitBoolean(aggregatorProps)
+          sections = splitBoolean(aggregatorProps)
         } else if (splitColumn.type === 'fk') {
-          return splitFk({ ...aggregatorProps, splitRecords })
+          sections = splitFk({ ...aggregatorProps, splitRecords: splitRecords() })
         }
       } else {
-        return simpleList(aggregatorProps)
+        sections = simpleList(aggregatorProps)
       }
     } else {
-      return crossList(aggregatorProps)
+      sections = crossList(aggregatorProps)
     }
+    if (sections && aggregate.type === '1-n' && aggregate.hideEmptySections) {
+      sections = sections.filter(section => section.records?.length)
+    }
+    return sections
   })
 
   return (

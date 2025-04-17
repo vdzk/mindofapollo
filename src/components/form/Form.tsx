@@ -26,6 +26,7 @@ export const Form: Component<{
   id?: number
   record?: DataRecord
   hideColumns?: string[]
+  disableColumns?: string[]
   preset?: DataRecord
   depth?: number
 }> = (props) => {
@@ -102,7 +103,8 @@ export const Form: Component<{
       const hidden = hideColumns?.includes(colName)
       groups[isAdvanced ? 'advanced' : 'normal'].push({
         tableName, colName, record, diff, setDiff,
-        hidden, formDepth: depth
+        hidden, formDepth: depth,
+        disabled: props.disableColumns && props.disableColumns.includes(colName)
       })
     }
     return groups

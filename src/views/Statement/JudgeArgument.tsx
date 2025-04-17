@@ -1,4 +1,4 @@
-import { Component, createSignal, For, Show } from "solid-js"
+import { Component, createSignal, For, Setter, Show } from "solid-js"
 import { createStore } from "solid-js/store"
 import { FormField } from "~/components/form/FormField"
 import { schema } from "~/schema/schema"
@@ -11,6 +11,8 @@ import { H2 } from "~/components/PageTitle"
 import { insertRecord } from "~/api/insert/record"
 import { updateRecord } from "~/api/update/record"
 import { UserExplField } from "~/components/form/UserExplField"
+import { getToggleLabel } from "~/utils/string"
+import { ConfidenceCriteria } from "./ConfidenceCriteria"
 
 const judgeArgumentAction = action(async (
   argumentId: number,
@@ -31,12 +33,17 @@ const judgeArgumentAction = action(async (
 })
 
 export const JudgeArgument: Component<{
-  argumentId: number,
-  onExit: () => void,
+  argumentId: number
+  argumentTypeId: number
+  onExit: () => void
   judgement?: DataRecordWithId
+  showExamples: boolean
+  setShowExamples: Setter<boolean>
 }> = props => {
   const [diff, setDiff] = createStore<DataRecord>({})
   const [userExpl, setUserExpl] = createSignal('')
+  const [showCriteria, setShowCriteria] = createSignal(false)
+
   const newJudgementColNames = () => Object
     .keys(schema.tables.argument_judgement.columns)
     .filter(colName => colName !== 'label')
@@ -60,6 +67,19 @@ export const JudgeArgument: Component<{
         />
         <div class="border-t"/>
         <H2>New Judgement</H2>
+      </Show>
+      <div class="px-2 pb-3 flex justify-between">
+        <Button
+          label={getToggleLabel(showCriteria(), 'confidence scale & criteria')}
+          onClick={() => setShowCriteria(x => !x)}
+        />
+        <Button
+          label={getToggleLabel(props.showExamples, 'examples')}
+          onClick={() => props.setShowExamples(x => !x)}
+        />
+      </div>
+      <Show when={showCriteria()}>
+        <ConfidenceCriteria argumentTypeId={props.argumentTypeId} /> 
       </Show>
       <div class="px-2 pb-2">
         <For each={newJudgementColNames()}>

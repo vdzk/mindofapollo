@@ -13,6 +13,7 @@ export const ProportionInput: Component<{
   colName: string
   min?: number
   max?: number
+  disabled?: boolean
 }> = (props) => {
   const proportion = () => props.value ? parseFloat(props.value) : NaN
   const displayValue = createMemo(() => isNaN(proportion())
@@ -50,6 +51,7 @@ export const ProportionInput: Component<{
         onChange={onUpdate}
         class="pl-1 w-16 border"
         autocomplete="off"
+        disabled={props.disabled}
       />
       <span class="ml-1">%</span>
     </>

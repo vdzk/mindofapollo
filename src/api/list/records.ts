@@ -8,7 +8,8 @@ import { schema } from "../../schema/schema";
 
 export const listRecords = async (
   tableName: string,
-  childStatementId?: number
+  childStatementId?: number | null,
+  ids?: number[]
 ) => {
   "use server"
   let filterClause
@@ -22,6 +23,8 @@ export const listRecords = async (
       JOIN critical_statement cs ON cs.argument_id = a.id
       WHERE cs.statement_id = ${childStatementId}
     `
+  } else if (ids && ids.length > 0) {
+    filterClause = sql`WHERE t.id IN ${sql(ids)}`
   } else {
     filterClause = sql``
   }  

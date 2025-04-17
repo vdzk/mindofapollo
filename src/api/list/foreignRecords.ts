@@ -7,7 +7,7 @@ import { injectTranslations } from "~/server-only/injectTranslations";
 export const listForeignRecords = async (
   tableName: string,
   fkName: string,
-  fkId: number
+  fkId: number | null
 ) => {
   "use server"
   const { extendedByTable } = schema.tables[tableName]
@@ -17,7 +17,10 @@ export const listForeignRecords = async (
       SELECT *, t.id
       FROM ${sql(tableName)} t
       LEFT JOIN ${sql(extendedByTable)} e ON e.id = t.id
-      WHERE t.${sql(fkName)} = ${fkId}
+      WHERE ${fkId === null
+        ? sql`t.${sql(fkName)} IS NULL`
+        : sql`t.${sql(fkName)} = ${fkId}`
+      }
       ORDER BY t.id
     `.catch(onError)
     await injectTranslations(extendedByTable, records)
@@ -26,7 +29,10 @@ export const listForeignRecords = async (
     records = await sql<DataRecordWithId[]>`
       SELECT *
       FROM ${sql(tableName)}
-      WHERE ${sql(fkName)} = ${fkId}
+      WHERE ${fkId === null
+        ? sql`${sql(fkName)} IS NULL`
+        : sql`${sql(fkName)} = ${fkId}`
+      }
       ORDER BY id
     `.catch(onError)
   }

@@ -6,6 +6,7 @@ import { Detail } from "~/components/details"
 import { Form } from "~/components/form/Form"
 import { MasterDetail } from "~/components/MasterDetail"
 import { H2, Subtitle } from "~/components/PageTitle"
+import { tableStyle } from "~/components/table"
 import { firstCap, humanCase } from "~/utils/string"
 
 export const CreateArgument: Component<{
@@ -66,19 +67,19 @@ export const CreateArgument: Component<{
               <H2>Examples</H2>
                 <table class="ml-2">
                   <thead>
-                    <tr class="text-left">
-                      <th class="pr-2 pb-2 border-b">Argument</th>
-                      <th class="pr-2 pb-2 border-b">Conclusion</th>
+                    <tr class={tableStyle.tHeadTr}>
+                      <th class={tableStyle.th}>Argument</th>
+                      <th class={tableStyle.th}>Conclusion</th>
                     </tr>
                   </thead>
                   <tbody>
                     <For each={examples()}>
                       {example => (
                         <tr>
-                          <td class="pr-2 py-2 border-b">
+                          <td class={tableStyle.td}>
                             {example.argument}
                           </td>
-                          <td class="pr-2 py-2 border-b">
+                          <td class={tableStyle.td}>
                             {example.conclusion}
                           </td>
                         </tr>

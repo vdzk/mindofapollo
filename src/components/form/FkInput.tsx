@@ -21,6 +21,7 @@ export const FkInput: Component<{
   isNew: boolean
   onChangeFormat: OnChangeFormat
   formDepth?: number
+  disabled?: boolean
 }> = (props) => {
   const [searchParams] = useSearchParams()
   const records = createAsync(() => listRecordsCache(props.column.fk.table))
@@ -61,7 +62,9 @@ export const FkInput: Component<{
     }
   })
 
-  const disabled = () => (!props.isNew && !!props.column.fk.extensionTables) || isPreset()
+  const disabled = () => props.disabled
+    ||(!props.isNew && !!props.column.fk.extensionTables)
+    || isPreset()
 
   const onFormExit = async (savedId?: number) => {
     if (savedId) {

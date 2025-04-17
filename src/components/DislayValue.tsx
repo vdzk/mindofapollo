@@ -88,7 +88,7 @@ export const DisplayValue: Component<DisplayValue> = props => {
           </Switch>
         </Match>
         <Match when={columnType() === 'proportion'}>
-          {value() ? getPercent(value() as number) : nbsp}
+          {(value() || value() === 0) ? getPercent(value() as number) : nbsp}
         </Match>
         <Match when={columnType() === 'link_url'}>
           <ExternalLink href={value() as string} />
@@ -111,7 +111,7 @@ export const DisplayValue: Component<DisplayValue> = props => {
         <ExplLink explId={explId() as number} />
       </Show>
       <Show when={columnType() === 'fk' && value()}>
-        <span class="inline-block w-1" />
+        <span class="inline-block w-2" />
         <FkDetails
           fk={(column() as ForeignKey).fk}
           fkId={value() as number}

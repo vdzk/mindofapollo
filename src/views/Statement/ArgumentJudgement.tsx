@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createEffect, createMemo, createSignal, Match, Show, Switch } from "solid-js"
+import { Component, createEffect, createMemo, createSignal, Match, Setter, Show, Switch } from "solid-js"
 import { hasUndecidedCriticalStatement } from "~/api/has/undecidedCriticalStatement"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { Button } from "~/components/buttons"
@@ -17,9 +17,12 @@ const judgementTableName = {
 
 export const ArgumentJudgement: Component<{
   argumentId: number,
+  argumentTypeId: number,
   firstArgOnSide: boolean,
   refreshStatementConfidence: () => void,
-  statementType: 'descriptive' | 'threshold'
+  statementType: 'descriptive' | 'threshold',
+  showExamples: boolean
+  setShowExamples: Setter<boolean>
 }> = props => {
   const judgement = createAsync(() => getOneRecordByIdCache(
     judgementTableName[props.statementType], props.argumentId
@@ -112,8 +115,11 @@ export const ArgumentJudgement: Component<{
       }>
         <JudgeArgument
           argumentId={props.argumentId}
+          argumentTypeId={props.argumentTypeId}
           onExit={onJudgeArgumentExit}
           judgement={judgement()}
+          showExamples={props.showExamples}
+          setShowExamples={props.setShowExamples}
         />
       </Match>
       <Match when={viewName() === 'judge-argument'}>

@@ -42,10 +42,7 @@ export const critical_statement: TableSchema = {
       type: 'fk',
       fk: {
         table: 'statement',
-        labelColumn: 'text',
-        getLabel: (record: DataRecord) => record.decided
-          ? `(c: ${record.confidence}) ${record.text}`
-          : record.text as string
+        labelColumn: 'label'
       }
     }
   }

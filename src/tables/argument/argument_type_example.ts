@@ -7,7 +7,8 @@ export const argument_type_example: TableSchema = {
       type: 'fk',
       fk: {
         table: 'argument_type',
-        labelColumn: 'name'
+        labelColumn: 'name',
+        optional: true
       }
     },
     argument: {

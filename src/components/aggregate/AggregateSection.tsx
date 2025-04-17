@@ -11,8 +11,8 @@ import { RemovableListItem } from "./RemovableListItem"
 import { Link } from "../Link"
 
 export interface AggregateSectionSettings {
-  title: string;
-  records: () => DataRecordWithId[] | undefined;
+  title: string
+  records?: DataRecordWithId[]
   controls?: JSXElement
   splitById?: number
 }
@@ -113,7 +113,7 @@ export const AggregateSection: Component<{
           <Form {...getFormProps()} />
         </div>
       </Show>
-      <For each={props.section.records()}>
+      <For each={props.section.records}>
         {(record) => (
           <div class="px-2">
             <RemovableListItem

@@ -9,7 +9,7 @@ export const firstCap = (str: string) => str.charAt(0).toUpperCase() + str.slice
 export const nbsp = '\xa0'
 export const minus = '−'
 export const getToggleLabel = (show: boolean, label: string) =>
-  (show ? minus : '+') + ( label ? ' ' + label : '' )
+  (show ? '˄' : '˅') + ( label ? ' ' + label : '' )
 
 export const getUrl = (path: string) => url.scheme + '://' + url.host + ':' + url.port + path;
 

@@ -10,8 +10,8 @@ export type Aggregator = (props: {
   id: number
   aggregateTable: TableSchema
   aggregate: AggregateSchema
-  records: () => DataRecordWithId[] | undefined,
-  splitRecords?: () => DataRecord[] | undefined,
+  records?: DataRecordWithId[],
+  splitRecords?: DataRecord[],
 }) => AggregateSectionSettings[]
 
 export const simpleList: Aggregator = (props) => [{
@@ -48,7 +48,7 @@ export const splitBoolean: Aggregator = (props) => {
     const label = splitColumn.optionLabels?.[value ? 1 : 0]
     result.push({
       title: label + ' ' + props.aggregateTable.plural,
-      records: () => props.records()
+      records: props.records
         ?.filter(r => r[splitColumnName] === value)
     })
   }
@@ -61,9 +61,9 @@ export const splitFk: Aggregator = (props) => {
   const splitColumn = props.aggregateTable.columns[splitColumnName] as ForeignKey
   const splitTitleColumnName = titleColumnName(splitColumn.fk.table)
 
-  return (props.splitRecords?.() ?? []).map(record => ({
+  return (props.splitRecords ?? []).map(record => ({
     title: record[splitTitleColumnName] as string,
-    records: () => props.records()
+    records: props.records
       ?.filter(r => r[splitColumnName] === record.id),
     splitById: record.id as number
   }))

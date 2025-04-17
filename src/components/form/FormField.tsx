@@ -27,6 +27,7 @@ export const FormField: Component<{
   setDiff: SetStoreFunction<DataRecord>
   hidden?: boolean
   formDepth?: number
+  disabled?: boolean
 }> = (props) => {
   const table = () => schema.tables[props.tableName]
   const column = () => props.colName === 'id'
@@ -91,6 +92,7 @@ export const FormField: Component<{
             tableName={props.tableName}
             colName={props.colName}
             lines={(column() as TextColumn).lines ?? 2}
+            disabled={props.disabled}
           />
         </Match>
         <Match when={columnType() === 'boolean'}>
@@ -100,6 +102,7 @@ export const FormField: Component<{
                 name={props.colName}
                 class="max-w-full"
                 onChange={onChangeFormat(x => x === 'true')}
+                disabled={props.disabled}
               >
                 <Show when={value() === undefined}>
                   <option></option>
@@ -130,6 +133,7 @@ export const FormField: Component<{
                 type="checkbox"
                 checked={!!value()}
                 onChange={event => updateDiffValue(props.colName, event.target.checked)}
+                disabled={props.disabled}
               />
             </Match>
           </Switch>
@@ -139,6 +143,7 @@ export const FormField: Component<{
             name={props.colName}
             class="max-w-full"
             {...{ onChange }}
+            disabled={props.disabled}
           >
             <Show when={value() === undefined}>
               <option></option>
@@ -166,6 +171,7 @@ export const FormField: Component<{
             isNew={isNew()}
             formDepth={props.formDepth}
             {...{ onChangeFormat }}
+            disabled={props.disabled}
           />
         </Match>
         <Match when={columnType() === 'fk'}>
@@ -177,6 +183,7 @@ export const FormField: Component<{
             isNew={isNew()}
             formDepth={props.formDepth}
             {...{ onChangeFormat }}
+            disabled={props.disabled}
           />
         </Match>
         <Match when={columnType() === 'proportion'}>
@@ -185,6 +192,7 @@ export const FormField: Component<{
             onChange={onChange}
             tableName={props.tableName}
             colName={props.colName}
+            disabled={props.disabled}
           />
         </Match>
         <Match when={columnType() === undefined}>
@@ -196,6 +204,7 @@ export const FormField: Component<{
             onChange={onChange}
             tableName={props.tableName}
             colName={props.colName}
+            disabled={props.disabled}
           />
         </Match>
       </Switch>

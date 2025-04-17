@@ -1,6 +1,11 @@
 import { DataRecord } from "~/schema/type"
 
-export const indexBy = (records: DataRecord[], colName: string) => Object.fromEntries(records.map(record => [record[colName], record]))
+export const indexBy = (
+  records: DataRecord[],
+  colName: string
+): Record<string | number, DataRecord> => Object.fromEntries(
+  records.map(record => [record[colName], record])
+)
 
 export const getAllKeys = (objects: (Record<string, any> | undefined)[]) => objects.map(obj => obj ? Object.keys(obj) : []).flat()
 
