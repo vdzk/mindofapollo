@@ -9,7 +9,6 @@ import { Aggregate } from "~/components/aggregate/Aggregate"
 import { StatementType } from "~/tables/statement/statement_type"
 import { CriticalQuestions } from "./CriticalQuestions"
 import { JudgeExamples } from "./JudgementExamples"
-import { create } from "~/schema/createDbSchema"
 
 export const Argument: Component<{
   id: number,

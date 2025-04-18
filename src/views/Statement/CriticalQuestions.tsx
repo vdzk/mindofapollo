@@ -46,7 +46,7 @@ export const CriticalQuestions: Component<{
             aggregateName="critical_statements"
           />
           <Button
-            label="Add a critical statement"
+            label="Add"
             onClick={() => {
               setWishedToSelect(true)
               setView('select')
