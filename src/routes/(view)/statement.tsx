@@ -87,7 +87,7 @@ export default function Statement() {
     <main class="relative flex-1 flex flex-col">
       <Title>{titleText()}</Title>
       <Show when={(parentStatements()?.length ?? 0) > 0}>
-        <div class="flex flex-row-reverse z-10 absolute top-0 right-0 max-w-full">
+        <div class="flex flex-col lg:flex-row-reverse z-10 lg:absolute top-0 right-0 max-w-full">
           <For each={parentStatements()}>
             {parentStatement => (
               <Link
@@ -146,7 +146,7 @@ export default function Statement() {
               groups={argumentGroups}
               selectedId={selectedArgument()}
               onChange={id => setSearchParams({ argumentId: id })}
-              class="pl-2"
+              class="lg:pl-2"
               optionsClass="w-56 border-r pr-2 pt-2"
             >
               <Show when={selectedArgument() > 0 && statementType()}>

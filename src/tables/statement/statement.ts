@@ -48,7 +48,7 @@ export const statement: TableSchema = {
     },
     text: {
       type: 'text',
-      lines: 2,
+      lines: 4,
       getVisibility: record => record.statement_type_id !== statementExtensonTables.indexOf('directive'),
       defaultValue: '',
       instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not capialise the first word. Do not use a full stop at the end.",

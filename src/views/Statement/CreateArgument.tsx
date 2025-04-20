@@ -37,7 +37,7 @@ export const CreateArgument: Component<{
     }
   }
   return (
-    <div class="flex-1 flex">
+    <div class="flex-1 flex flex-col lg:flex-row">
       <div class="flex-1">
         <Subtitle>Temporary draft</Subtitle>
         <div class="px-2">

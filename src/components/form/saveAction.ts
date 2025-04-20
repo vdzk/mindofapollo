@@ -1,5 +1,5 @@
-import { action, redirect, revalidate } from "@solidjs/router"
-import { DataRecord, DataRecordWithId, NToNSchema } from "~/schema/type"
+import { action, json, redirect } from "@solidjs/router"
+import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { updateExtRecord } from "~/api/update/extRecord"
 import { updateRecord } from "~/api/update/record"
 import { insertExtRecord } from "~/api/insert/extRecord"
@@ -61,13 +61,17 @@ export const saveAction = action(async (
     }
 
     if (hasExitHandler(exitSettings)) {
-      revalidate([
-        listRecordsCache.keyFor(tableName),
-        'getRecords' + tableName + id,
-        getOneExtRecordByIdCache.keyFor(tableName, id)
-      ])
       exitSettings.onExit(id)
-      return
+      return json(
+        { ok: true },
+        {
+          revalidate: [
+            listRecordsCache.keyFor(tableName),
+            'getRecords' + tableName + id,
+            getOneExtRecordByIdCache.keyFor(tableName, id)
+          ]
+        }
+      )
     } else {
       throw redirect(
         getExitUrl(exitSettings, id),
@@ -94,9 +98,10 @@ export const saveAction = action(async (
     }
 
     if (hasExitHandler(exitSettings)) {
-      revalidate([listRecordsCache.keyFor(tableName)])
       exitSettings.onExit(savedRecord?.id)
-      return
+      return json({ ok: true }, {
+        revalidate: [listRecordsCache.keyFor(tableName)]
+      })
     } else {
       throw redirect(getExitUrl(exitSettings, savedRecord?.id))
     }

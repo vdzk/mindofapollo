@@ -11,6 +11,7 @@ export const argument_grading_example: TableSchema = {
       }
     },
     grade: {
+      label: 'confidence',
       type: 'proportion'
     },
     argument: {

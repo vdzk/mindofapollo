@@ -131,7 +131,6 @@ export const injectTranslations = async (
     `.catch(onError)
   }
 
-
   // Organize translations by table_name, column_name, and record_id
   const trObj: Record<string, Record<string, Record<number, string>>> = {}
   for (const {

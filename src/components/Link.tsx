@@ -36,7 +36,7 @@ export const ExternalLink: Component<{
       href={props.href}
       target="_blank"
       rel="noreferrer"
-      class={props.className || "text-sky-800"}
+      class={props.className || "text-sky-800 break-all"}
     >
       {displayText}
     </a>

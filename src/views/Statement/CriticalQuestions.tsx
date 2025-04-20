@@ -30,7 +30,7 @@ export const CriticalQuestions: Component<{
     [...typeQuestions() ?? [], ...generalQuestions() ?? []], 'id'
   ))
   createEffect(() => {
-    props.argumentTypeId
+    props.argumentId
     setView('list')
     setWishedToSelect(false)
     setSelectedQuestionId(undefined)

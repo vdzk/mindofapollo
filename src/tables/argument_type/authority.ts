@@ -8,7 +8,8 @@ export const argument_authority: TableSchema = {
       type: 'text'
     },
     quote: {
-      type: 'text'
+      type: 'text',
+      lines: 6
     },
     source_title: {
       type: 'link_title'
