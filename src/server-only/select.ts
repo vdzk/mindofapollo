@@ -50,33 +50,35 @@ export const getVirtualValuesByQueries = async (
 export const getVirtualValuesByLocal = (
   tableName: string,
   colNames: string[],
-  records: DataRecordWithId[]
+  records: DataRecordWithId[],
+  mainIdColName: string
 ) => Object.fromEntries(colNames.map(colName => [
   colName,
   Object.fromEntries(records.map(record => [
-    record.id,
+    record[mainIdColName] as number,
     (schema.tables[tableName].columns[colName] as VirtualColumnLocal)
-      .getLocal(record)
+      .getLocal({...record, id: record[mainIdColName] as number})
   ])) as Record<number, string>
 ]))
 
 export const injectVirtualValues = async (
   tableName: string,
   records?: DataRecordWithId[] | RowList<Row[]>,
-  colNames?: string[]
+  colNames?: string[],
+  mainIdColName = 'id'
 ) => {
   const virtualColNames = getVirtualColNames(tableName, colNames)
 
   if (virtualColNames.all.length > 0 && records && records.length > 0) {
-    const ids = records.map(record => record.id as number)
+    const ids = records.map(record => record[mainIdColName] as number)
     const virtualValues = (await Promise.all([
       getVirtualValuesByQueries(tableName, virtualColNames.queries, ids),
       getVirtualValuesByServerFn(tableName, virtualColNames.serverFn, ids),
-      getVirtualValuesByLocal(tableName, virtualColNames.local, records as DataRecordWithId[])
+      getVirtualValuesByLocal(tableName, virtualColNames.local, records as DataRecordWithId[], mainIdColName)
     ])).reduce((acc, cur) => ({ ...acc, ...cur }), {})
     for (const record of records) {
       for (const colName of virtualColNames.all) {
-        record[colName] = virtualValues[colName][record.id]
+        record[colName] = virtualValues[colName][record[mainIdColName] as number]
       }
     }
   }

@@ -2,6 +2,7 @@ import { onError, sql } from "~/server-only/db"
 import { schema } from "~/schema/schema"
 import { DataRecordWithId, ForeignKey } from "~/schema/type"
 import { injectTranslations } from "~/server-only/injectTranslations";
+import { injectVirtualValues } from "~/server-only/select";
 
 export const listForeignHopRecords = async (
     tableName: string,  // the target table
@@ -22,5 +23,6 @@ export const listForeignHopRecords = async (
       ORDER BY tMain.id
     `.catch(onError)
     await injectTranslations(extColumn.fk.table, results, null, undefined, hopColName)
+    await injectVirtualValues(extColumn.fk.table, results, undefined, hopColName)
     return results
 };

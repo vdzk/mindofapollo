@@ -1,12 +1,9 @@
-import { DataRecord, TableSchema, VirtualColumnQueries } from "~/schema/type"
+import { TableSchema, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
 import { directive } from "../morality/directive"
 
 // Indexes corresponts to IDs in statement_type table
 const statementExtensonTables = ['', '', '', 'directive']
-
-export const getDescriptiveStatementLabel = (s: DataRecord) =>
-  `(${s.decided ? getPercent(s.confidence as number) : '?'}) ${s.text}`
 
 export const statement: TableSchema = {
   plural: 'statements',
@@ -40,7 +37,7 @@ export const statement: TableSchema = {
         const labels = Object.fromEntries(results.statements.map(
           s => [s.id, s.statement_type_name === 'prescriptive'
             ? directivesLabels[s.id as number]
-            : getDescriptiveStatementLabel(s)
+            : `(${s.decided ? getPercent(s.confidence as number) : '?'}) ${s.text}`
           ]
         ))
         return labels

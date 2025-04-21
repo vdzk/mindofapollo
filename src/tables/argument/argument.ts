@@ -1,4 +1,4 @@
-import { TableSchema } from "../../schema/type";
+import { TableSchema } from "../../schema/type"
 import { argumentTypes } from "./type"
 
 export const defautTextLines = 10

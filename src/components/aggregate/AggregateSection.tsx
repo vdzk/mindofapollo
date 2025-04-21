@@ -91,6 +91,15 @@ export const AggregateSection: Component<{
     }
   }
 
+  const getItemText = (record: DataRecordWithId) => {
+    const _titleColumn = titleColumn()
+    if (_titleColumn.type === 'fk') {
+      return record[_titleColumn.fk.labelColumn] as string
+    } else {
+      return record[titleColName()] as string
+    }
+  }
+
   return (
     <section class="pb-2">
       <div class="px-2">
@@ -122,7 +131,7 @@ export const AggregateSection: Component<{
               aggregateName={props.aggregateName}
               itemTable={props.aggregate.table}
               item={record}
-              text={record[titleColName()] as string}
+              text={getItemText(record)}
               linkProps={getLinkProps(record)}
               hideControls={!!props.section.controls}
             />
