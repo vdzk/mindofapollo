@@ -13,6 +13,7 @@ interface SharedColumnProps {
   getVisibility?: (record: DataRecord) => boolean // determine if the field should be visible
   defaultValue?: DataLiteral,
   instructions?: string
+  isPathLink?: boolean
 }
 
 export interface SimpleColumn extends SharedColumnProps {
@@ -67,7 +68,7 @@ export interface VirtualColumnServerFn extends SharedColumnProps {
 }
 
 export interface VirtualColumnLocal extends SharedColumnProps {
-  type: 'virtual',
+  type: 'virtual'
   getLocal: (record: DataRecord) => string
 }
 

@@ -1,5 +1,3 @@
-import { url } from "~/constant"
-
 export const humanCase = (str: string) => str
   .split('_')
   .join(' ')
@@ -10,8 +8,6 @@ export const nbsp = '\xa0'
 export const minus = '−'
 export const getToggleLabel = (show: boolean, label: string) =>
   (show ? '˄' : '˅') + ( label ? ' ' + label : '' )
-
-export const getUrl = (path: string) => url.scheme + '://' + url.host + ':' + url.port + path;
 
 export const genCode = (length: number) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

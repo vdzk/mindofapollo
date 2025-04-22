@@ -19,6 +19,8 @@ import { firstCap } from "~/utils/string"
 import { listRecordsCache } from "~/client-only/query"
 import { NestPanel } from "~/components/NestPanel"
 import { UserExplField } from "~/components/form/UserExplField"
+import { Form } from "~/components/form/Form"
+import { Subtitle } from "~/components/PageTitle"
 
 const deleteAction = action(async (
   tableName: string,
@@ -71,7 +73,12 @@ export const ShowRecord: Component<{
     if (!personalTableNames().includes(props.tableName)) {
       options.push({ id: 'history', label: 'History' })
     }
-    options.push({ id: 'actions', label: 'Actions' })
+    if (canUpdateRecord()) {
+      options.push({ id: 'edit', label: 'Edit' })
+    }
+    if (canDeleteById()) {
+      options.push({ id: 'delete', label: 'Delete' })
+    }
     const filteredOptions = props.hideSections ? options.filter(option => !props.hideSections?.includes(option.id)) : options
     return filteredOptions
   }
@@ -79,6 +86,8 @@ export const ShowRecord: Component<{
   const sectionParamName = () => `${props.tableName}-section`
 
   const selectedSection = () => (searchParams[sectionParamName()] as string | undefined) ?? sectionOptions()[0].id
+
+  const setSectionId = (sectionId?: string) => setSearchParams({ [sectionParamName()]: sectionId })
 
   const getCurrentComponent = () => {
     const section = schema.tables[props.tableName].sections?.[selectedSection()]
@@ -89,7 +98,7 @@ export const ShowRecord: Component<{
     <MasterDetail
       options={sectionOptions()}
       selectedId={selectedSection()}
-      onChange={(sectionId) => setSearchParams({ [sectionParamName()]: sectionId })}
+      onChange={setSectionId}
       class={props.horizontalSections ? '' : 'px-2'}
       horizontal={props.horizontalSections}
     >
@@ -97,26 +106,23 @@ export const ShowRecord: Component<{
         <div class="h-2" />
       </Show>
       <Switch>
-        <Match when={selectedSection() === 'actions'}>
-          <div class="px-2 flex gap-2 pb-2">
-            <Show when={canUpdateRecord()}>
-              <Link
-                route="edit-record"
-                params={{ tableName: props.tableName, id: props.id }}
-                type="button"
-                label="Edit"
-              />
-            </Show>
+        <Match when={selectedSection() === 'edit'}>
+          <Form
+            tableName={props.tableName}
+            id={props.id}
+            record={record()}
+            exitSettings={{ onExit: () => setSectionId() }}
+          />
+        </Match>
+        <Match when={selectedSection() === 'delete'}>
+          <Subtitle>Delete</Subtitle>
+          <div class="px-2 max-w-(--breakpoint-sm)">
+            <UserExplField value={userExpl()} onChange={setUserExpl} />
+            <Button
+              label="Delete"
+              onClick={onDelete}
+            />
           </div>
-          <Show when={canDeleteById()}>
-            <NestPanel title="Delete" class="ml-2 mb-2">
-              <UserExplField value={userExpl()} onChange={setUserExpl} />
-              <Button
-                label="Delete"
-                onClick={onDelete}
-              />
-            </NestPanel>
-          </Show>
         </Match>
         <Match when={selectedSection() === 'history'}>
           <RecordHistory tableName={props.tableName} id={props.id} />

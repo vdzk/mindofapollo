@@ -1,4 +1,4 @@
-import { Component, Match, Show, Suspense, Switch } from "solid-js"
+import { Component, createMemo, Match, Show, Suspense, Switch } from "solid-js"
 import { BooleanColumn, DataRecord, ForeignKey, SimpleColumn } from "~/schema/type"
 import { createAsync } from "@solidjs/router"
 import { getPercent } from "~/utils/string"
@@ -41,9 +41,10 @@ export interface DisplayValue {
 }
 
 export const DisplayValue: Component<DisplayValue> = props => {
-  const column = () => props.colName === 'id'
+  const column = createMemo(() => props.colName === 'id'
     ? { type: 'integer' } as SimpleColumn
     : schema.tables[props.tableName].columns[props.colName]
+  )
   const value = () => props.record[props.colName]
 
   const originTypes = createAsync(async () => {
@@ -90,8 +91,8 @@ export const DisplayValue: Component<DisplayValue> = props => {
         <Match when={columnType() === 'proportion'}>
           {(value() || value() === 0) ? getPercent(value() as number) : nbsp}
         </Match>
-        <Match when={columnType() === 'link_url'}>
-          <ExternalLink href={value() as string} />
+        <Match when={columnType() === 'link_url' || column().isPathLink}>
+          <ExternalLink href={(column().isPathLink ? window.location.origin : '') + (value() as string)} />
         </Match>
         <Match when>
           <span class="whitespace-pre-line">

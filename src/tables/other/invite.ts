@@ -1,5 +1,5 @@
 import { TableSchema } from "~/schema/type";
-import { genCode, getUrl } from "~/utils/string";
+import { genCode } from "~/utils/string";
 
 export const invite: TableSchema = {
   plural: 'invites',
@@ -11,7 +11,8 @@ export const invite: TableSchema = {
     },
     link: {
       type: 'virtual',
-      getLocal: record => getUrl(`/join?code=${record.code}`)
+      getLocal: record => `/join?code=${record.code}`,
+      isPathLink: true
     },
     owner_id: {
       type: 'fk',

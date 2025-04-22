@@ -41,7 +41,7 @@ export const directive: TableSchema = {
           id => {
             const {deed, scope: [exclude, include]} = directives[id]
             return [id,
-              `${conclusionPlaceholder}${include.join(' ,')}${exclude.length > 0 ? ' who is not a ' + exclude.join(' ,') : ''} should ${deed}`]
+              `${conclusionPlaceholder}${include.join(' and ')}${exclude.length > 0 ? ' (except ' + exclude.join(' and ') + ')' : ''} should ${deed}`]
           }
         ))
         return labels

@@ -51,7 +51,7 @@ export const Argument: Component<{
                 argumentTypeId={argumentTypeId()!}
                 argumentId={props.id}
               />
-              <div class="border-l flex-1">
+              <div class="border-l flex-1 min-w-0">
                 <Subtitle>Judgement</Subtitle>
                 <Show when={props.statementType === 'prescriptive'}>
                   <Aggregate

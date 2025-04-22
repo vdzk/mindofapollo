@@ -28,6 +28,7 @@ export const FormField: Component<{
   hidden?: boolean
   formDepth?: number
   disabled?: boolean
+  onCreatedNew?: () => void
 }> = (props) => {
   const table = () => schema.tables[props.tableName]
   const column = () => props.colName === 'id'
@@ -172,6 +173,7 @@ export const FormField: Component<{
             formDepth={props.formDepth}
             {...{ onChangeFormat }}
             disabled={props.disabled}
+            onCreatedNew={props.onCreatedNew}
           />
         </Match>
         <Match when={columnType() === 'fk'}>
@@ -184,6 +186,7 @@ export const FormField: Component<{
             formDepth={props.formDepth}
             {...{ onChangeFormat }}
             disabled={props.disabled}
+            onCreatedNew={props.onCreatedNew}
           />
         </Match>
         <Match when={columnType() === 'proportion'}>

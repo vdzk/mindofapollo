@@ -22,6 +22,7 @@ export const FkInput: Component<{
   onChangeFormat: OnChangeFormat
   formDepth?: number
   disabled?: boolean
+  onCreatedNew?: () => void
 }> = (props) => {
   const [searchParams] = useSearchParams()
   const records = createAsync(() => listRecordsCache(props.column.fk.table))
@@ -70,6 +71,7 @@ export const FkInput: Component<{
     if (savedId) {
       await revalidate(listRecordsCache.keyFor(props.column.fk.table))
       setValue('' + savedId)
+      props.onCreatedNew?.()
     }
   }
 

@@ -2,7 +2,7 @@ import { useAction, useSearchParams } from "@solidjs/router"
 import { Component, ComponentProps, createEffect, createMemo, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
-import { DataRecord, NToNSchema } from "~/schema/type"
+import { DataLiteral, DataRecord, NToNSchema } from "~/schema/type"
 import { getExtTableName } from "~/utils/schema"
 import { createStore, reconcile } from "solid-js/store"
 import { SessionContext } from "~/SessionContext"
@@ -55,6 +55,26 @@ export const Form: Component<{
 
   createEffect(() => !props.id && !diff.id && !('depth' in props) && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
 
+  // Set default values
+  createEffect(() => {
+    const defaultDiff: Record<string, DataLiteral> = {}
+    if (!props.id) {
+      const columns = schema.tables[props.tableName].columns
+      for (const colName in columns) {
+        const column = columns[colName]
+        if (
+          column.defaultValue !== undefined
+          && (!props.preset || !(colName in props.preset))
+        ) {
+          defaultDiff[colName] = column.defaultValue
+        }
+      }
+      setDiff(defaultDiff)
+    }
+  })
+
+          
+
   const table = () => schema.tables[props.tableName]
   const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
 
@@ -81,6 +101,19 @@ export const Form: Component<{
     userExpl(), props.exitSettings, session!
   )
 
+  // If there is nothing else to save don't make the user press save again
+  const onCreatedNew = (colName: string) => {
+    if (
+      complete()
+      && visibleCols().length === 1
+      && visibleCols()[0] === colName
+      && extFields().length === 0
+      && crossRefs().length === 0
+    ) {
+      onSubmit()
+    }
+  }
+
   const handleCancel = () => {
     if (hasExitHandler(props.exitSettings)) {
       props.exitSettings.onExit()
@@ -104,7 +137,8 @@ export const Form: Component<{
       groups[isAdvanced ? 'advanced' : 'normal'].push({
         tableName, colName, record, diff, setDiff,
         hidden, formDepth: depth,
-        disabled: props.disableColumns && props.disableColumns.includes(colName)
+        disabled: props.disableColumns && props.disableColumns.includes(colName),
+        onCreatedNew: () => onCreatedNew(colName),
       })
     }
     return groups
@@ -122,6 +156,11 @@ export const Form: Component<{
   const isVisible = (colName: string) => table().columns[colName]
     ?.getVisibility?.(currentRecord()) ?? true
 
+  const visibleCols = createMemo(() => {
+    const fields = Object.values(fieldGroups()).flat()
+    return fields.filter(field => isVisible(field.colName) && !field.hidden).map(field => field.colName)
+  })
+
   const crossRefs = () => Object.entries((table().aggregates ?? {}))
     .filter(([_, aggregate]) => aggregate.type === 'n-n' && aggregate.first)
 
@@ -135,7 +174,7 @@ export const Form: Component<{
   return (
     <div class="px-2 max-w-(--breakpoint-sm) pb-2">
       <For each={fieldGroups().normal}>{field =>
-        <FormField {...field} hidden={field.hidden || !isVisible(field.colName)} />
+        <FormField {...field} hidden={!visibleCols().includes(field.colName)} />
       }</For>
       <For each={extFields()}>{FormField}</For>
       <Show when={!props.id && !props.depth}>
@@ -163,7 +202,7 @@ export const Form: Component<{
         </div>
       </Show>
       <For each={fieldGroups().advanced}>{field =>
-        <FormField {...field} hidden={field.hidden || !showAdvanced()} />
+        <FormField {...field} hidden={!visibleCols().includes(field.colName) || !showAdvanced()} />
       }</For>
       <Show when={props.id}>
         <UserExplField value={userExpl()} onChange={setUserExpl} />

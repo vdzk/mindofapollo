@@ -36,7 +36,7 @@ export const CriticalQuestions: Component<{
     setSelectedQuestionId(undefined)
   })
   return (
-    <div class="flex-1 border-l">
+    <div class="flex-1 min-w-0 border-l">
       <Switch>
         <Match when={view() === 'list'}>
           <Subtitle>Critical Questions</Subtitle>

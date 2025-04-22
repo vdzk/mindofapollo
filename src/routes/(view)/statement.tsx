@@ -83,6 +83,13 @@ export default function Statement() {
   // TODO: do this inside attemptJudgeStatement
   const refreshStatementConfidence = () => revalidate(getOneExtRecordByIdCache.keyFor('statement', recordId()!))
 
+  const onFormExit = (id?: number) => {
+    if (id) {
+      revalidate(listForeignRecordsCache.keyFor('argument', 'statement_id', recordId()!))
+    }
+    setSearchParams({ argumentId: id })
+  }
+
   return (
     <main class="relative flex-1 flex flex-col">
       <Title>{titleText()}</Title>
@@ -161,7 +168,7 @@ export default function Statement() {
                 <CreateArgument
                   statementId={recordId()!}
                   pro={selectedArgument() === -1}
-                  onExit={id => setSearchParams({ argumentId: id })}
+                  onExit={onFormExit}
                 />
               </Show>
             </MasterDetail>
@@ -181,6 +188,9 @@ export default function Statement() {
               id={recordId()!}
               aggregateName="people_categories"
             />
+            <div class="p-2">
+              Note: please refresh the page to see the scope changes reflected in the statement above.
+            </div>
           </Match>
           <Match when={selectedSection() === 'discussion' && recordId()}>
             <Discussion statementId={recordId()!} />

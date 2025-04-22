@@ -30,7 +30,7 @@ export const ArgumentDetails: Component<{
   }
 
   return (
-    <div class="flex-1">
+    <div class="flex-1 min-w-0">
       <Subtitle>Details</Subtitle>
       <Show when={props.record && extTableName()}>
         <Show when={showForm()}>

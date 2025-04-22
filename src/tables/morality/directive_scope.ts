@@ -33,7 +33,10 @@ export const directive_scope: TableSchema = {
       }
     },
     include: {
-      type: 'boolean'
+      label: 'Include or exclude the category from the prescription',
+      type: 'boolean',
+      defaultValue: true,
+      optionLabels: ['Exclude', 'Include']
     }
   }
 }
