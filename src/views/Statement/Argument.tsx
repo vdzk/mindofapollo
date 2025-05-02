@@ -1,7 +1,7 @@
-import { createAsync } from "@solidjs/router"
+import { createAsync, revalidate } from "@solidjs/router"
 import { Component, createEffect, createSignal, Match, Show, Switch } from "solid-js"
 import { ArgumentDetails } from "./ArgumentDetails"
-import { getOneExtRecordByIdCache } from "~/client-only/query"
+import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
 import { ShowRecord } from "../ShowRecord"
 import { ArgumentJudgement } from "./ArgumentJudgement"
 import { Subtitle } from "~/components/PageTitle"
@@ -9,6 +9,8 @@ import { Aggregate } from "~/components/aggregate/Aggregate"
 import { StatementType } from "~/tables/statement/statement_type"
 import { CriticalQuestions } from "./CriticalQuestions"
 import { JudgeExamples } from "./JudgementExamples"
+import { ToggleWrap } from "~/components/ToggleWrap"
+import { Form } from "~/components/form/Form"
 
 export const Argument: Component<{
   id: number,
@@ -17,9 +19,17 @@ export const Argument: Component<{
   statementType: StatementType
 }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
+  const [showForm, setShowForm] = createSignal(false)
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
   const [showExamples, setShowExamples] = createSignal(false)
+  const [collapsedJudgement, setCollapsedJudgement] = createSignal(true)
   const argumentTypeId = () => record()?.argument_type_id as number | undefined
+  const onFormExit = () => {
+    setShowForm(false)
+    revalidate([
+      listForeignRecordsCache.keyFor('argument', 'statement_id', record()!.statement_id as number)
+    ])
+  }
   createEffect(() => {
     props.id
     setShowMoreDetails(false)
@@ -30,12 +40,14 @@ export const Argument: Component<{
       <section class="flex flex-1 flex-col lg:flex-row">
         <ArgumentDetails
           record={record()}
+          showForm={showForm()}
+          setShowForm={setShowForm}
           showMoreDetails={showMoreDetails()}
           setShowMoreDetails={setShowMoreDetails}
         />
         <Switch>
           <Match when={showMoreDetails()}>
-            <div class="flex-2 border-l">
+            <div class="flex-6 border-l">
               <div class="h-2" />
               <ShowRecord
                 tableName="argument"
@@ -45,14 +57,29 @@ export const Argument: Component<{
               />
             </div>
           </Match>
-          <Match when={!showMoreDetails() && argumentTypeId()}>
-            <>
-              <CriticalQuestions
-                argumentTypeId={argumentTypeId()!}
-                argumentId={props.id}
+          <Match when={showForm() && record()}>
+            <div class="flex-6 border-l pt-2">
+              <Form
+                tableName={'argument'}
+                exitSettings={{ onExit: onFormExit }}
+                id={props.id}
+                record={record()!}
               />
-              <div class="border-l flex-1 min-w-0">
+            </div>
+          </Match>
+          <Match when={argumentTypeId()}>
+            <CriticalQuestions
+              argumentTypeId={argumentTypeId()!}
+              argumentId={props.id}
+            />
+            <div class="border-l flex-3 min-w-0">
+              <ToggleWrap
+                collapsed={collapsedJudgement()}
+                setCollapsed={setCollapsedJudgement}
+              >
                 <Subtitle>Judgement</Subtitle>
+              </ToggleWrap>
+              <Show when={!collapsedJudgement()}>
                 <Show when={props.statementType === 'prescriptive'}>
                   <Aggregate
                     tableName="argument"
@@ -71,8 +98,8 @@ export const Argument: Component<{
                     setShowExamples={setShowExamples}
                   />
                 </Show>
-              </div>
-            </>
+              </Show>
+            </div>
           </Match>
         </Switch>
       </section >

@@ -7,7 +7,7 @@ export const firstCap = (str: string) => str.charAt(0).toUpperCase() + str.slice
 export const nbsp = '\xa0'
 export const minus = '−'
 export const getToggleLabel = (show: boolean, label: string) =>
-  (show ? '˄' : '˅') + ( label ? ' ' + label : '' )
+  (show ? '▴' : '▾') + ( label ? ' ' + label : '' )
 
 export const genCode = (length: number) => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

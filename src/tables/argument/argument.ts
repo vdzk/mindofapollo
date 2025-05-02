@@ -1,7 +1,7 @@
 import { TableSchema } from "../../schema/type"
 import { argumentTypes } from "./type"
 
-export const defautTextLines = 10
+export const defautTextLines = 5
 
 export const argument: TableSchema = {
   plural: 'arguments',

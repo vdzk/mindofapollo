@@ -7,7 +7,7 @@ import { Form } from "~/components/form/Form"
 import { MasterDetail } from "~/components/MasterDetail"
 import { H2, Subtitle } from "~/components/PageTitle"
 import { tableStyle } from "~/components/table"
-import { firstCap, humanCase } from "~/utils/string"
+import { firstCap, getToggleLabel, humanCase } from "~/utils/string"
 
 export const CreateArgument: Component<{
   statementId: number,
@@ -15,6 +15,7 @@ export const CreateArgument: Component<{
   onExit: (id?: number) => void
 }> = props => {
   const [selectedArgumentTypeId, setSelectedArgumentTypeId] = createSignal<number | undefined>()
+  const [showExamples, setShowExamples] = createSignal(false)
   const [argumentTypeId, setArgumentTypeId] = createSignal<number | undefined>()
   const argumentTypes = createAsync(() => listRecordsCache('argument_type'))
   const argumentType = createAsync(async () => selectedArgumentTypeId()
@@ -57,15 +58,15 @@ export const CreateArgument: Component<{
             onChange={setSelectedArgumentTypeId}
             class="pl-2"
           >
-            <Show when={argumentType() && examples()}>
+            <Show when={argumentType()}>
               <Detail
                 tableName="argument_type"
                 colName="description"
                 record={argumentType()!}
               />
-              <Show when={examples()!.length > 0}>
-              <H2>Examples</H2>
-                <table class="ml-2">
+              <Show when={showExamples()}>
+                <H2>Examples</H2>
+                <table class="ml-2 mb-4">
                   <thead>
                     <tr class={tableStyle.tHeadTr}>
                       <th class={tableStyle.th}>Argument</th>
@@ -88,11 +89,18 @@ export const CreateArgument: Component<{
                   </tbody>
                 </table>
               </Show>
-              <div class="pt-4 px-2 pb-2">
+              <div class="px-2 pb-2">
                 <Button
                   label="Select"
                   onClick={() => setArgumentTypeId(selectedArgumentTypeId())}
                 />
+                <Show when={examples()?.length ?? 0 > 0}>
+                  <span class="inline-block w-2" />
+                  <Button
+                    label={getToggleLabel(showExamples(), 'examples')}
+                    onClick={() => setShowExamples(x => !x)}
+                  />
+                </Show>
                 <span class="inline-block w-2" />
                 <Button
                   label="Cancel"
