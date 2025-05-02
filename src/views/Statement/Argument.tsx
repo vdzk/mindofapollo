@@ -32,6 +32,8 @@ export const Argument: Component<{
   }
   createEffect(() => {
     props.id
+    setShowForm(false)
+    setCollapsedJudgement(true)
     setShowMoreDetails(false)
     setShowExamples(false)
   })

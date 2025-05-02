@@ -187,8 +187,12 @@ const Derivation: Component<ExplJudgeStatementData> = data => {
       <Subtitle>Result</Subtitle>
       <div class="px-2 max-w-(--breakpoint-sm)">
         The system applied the statement confidence formula to the confidences above.
-        <br/>You can test it out in the{' '}
-        <Link label="confidence calculator" route="confidence-calculator" />.
+        <br/>You can test it out in the confidence calculator:{' '}
+        <Link
+          type="button"
+          label="Open"
+          route="confidence-calculator"
+        />
       </div>
       <div class="px-2 font-bold pt-2">
         {getPercent(data.diff!.after.confidence as number)}

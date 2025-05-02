@@ -10,7 +10,7 @@ export default function ListSandboxes() {
       <div class="px-2">
         <Link 
           route="confidence-calculator" 
-          label="Confidence calculator" 
+          label="Descriptive statement confidence calculator" 
           type="button" 
         />
       </div>

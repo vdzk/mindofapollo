@@ -8,7 +8,6 @@ import { Subtitle } from "~/components/PageTitle"
 import { CriticalQuestionSelector } from "./CriticalQuestionSelector"
 import { CriticalStatementExamples } from "./CriticalStatementExamples"
 import { indexBy } from "~/utils/shape"
-import { getToggleLabel } from "~/utils/string"
 import { ToggleWrap } from "~/components/ToggleWrap"
 
 export const CriticalQuestions: Component<{
@@ -34,6 +33,7 @@ export const CriticalQuestions: Component<{
   ))
   createEffect(() => {
     props.argumentId
+    setCollapsed(true)
     setView('list')
     setWishedToSelect(false)
     setSelectedQuestionId(undefined)

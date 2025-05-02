@@ -5,75 +5,84 @@ import { PageTitle } from "~/components/PageTitle";
 import { calcStatementConfidence } from "~/compute";
 import { etv } from "~/client-only/util";
 import { Button } from "~/components/buttons";
+import { tableStyle } from "~/components/table";
+import { debounce } from "@solid-primitives/scheduled";
 
 export default function ConfidenceCalculator() {
-  const [statements, setStatements] = createStore<[number[], number[]][]>([])
+  const [statements, setStatements] = createStore<[number[], number[]][]>([[[], []]])
+  const onChange = (i: number, pro: number, value: string) => {
+    let strenghts: number[] = []
+    const trimmedValue = value.trim()
+    if (trimmedValue !== '') {
+      strenghts = trimmedValue.split(' ').map((s) => parseFloat(s) / 100)
+      setStatements(i, pro, [])
+    }
+    setStatements(i, pro, strenghts)
+  }
+  const onInput = debounce(onChange, 500)
 
   return (
     <main>
-      <Title>Confidence calculator</Title>
-      <PageTitle>Confidence calculator</PageTitle>
-      <div class="px-2">Note: all values are in %</div>
-      <div class="flex">
-        <For each={statements}>
-          {(statement, statementIndex) => (
-            <div class="px-2 border-r">
-              <Button
-                label="XX"
-                onClick={() => setStatements(
-                  (statements) => statements.filter((s, index) => index !== statementIndex())
-                )}
-                tooltip="remove statement"
-              />
-              <br/>
-              <For each={[1, 0]}>
-                {pro => (
-                  <div>
-                    <div>{pro ? 'Pro' : 'Con'}</div>
-                    <For each={statement[pro]}>
-                      {(argumentConfidence, acIndex) => (
-                        <div>
-                          <input
-                            class="w-8"
-                            value={argumentConfidence * 100}
-                            onChange={etv(val => setStatements(
-                              statementIndex(), pro, acIndex(), parseFloat(val) / 100)
-                            )}
-                          />
-                          <br/>
-                          <Button
-                            label="X"
-                            onClick={() => setStatements(
-                              statementIndex(), pro, (acs) => acs.filter((ac, index) => index !== acIndex())
-                            )}
-                            tooltip="remove argument"
-                          />
-                        </div>
-                      )}
-                    </For>
-                    <Button
-                      label="+"
-                      onClick={() => setStatements(
-                        statementIndex(), pro, statement[pro].length, 0
-                      )}
-                      tooltip={`add ${pro ? 'pro' : 'con'} argument`}
-                    />
-                  </div>
+      <Title>Descriptive statement confidence calculator</Title>
+      <PageTitle>Descriptive statement confidence calculator</PageTitle>
+      <div class="px-2 pt-2">
+        <table>
+          <thead>
+            <tr class={tableStyle.tHeadTr}>
+              <For each={[
+                'Pro arguments strengths (%)',
+                'Con arguments strengths (%)',
+                'Statement confidence (%)',
+                ''
+              ]}>
+                {header => (
+                  <th class={tableStyle.th}>{header}</th>
                 )}
               </For>
-              <span title="confidence">
-                {(calcStatementConfidence(statement) * 100).toFixed(1)}
-              </span>
-            </div>
-          )}
-        </For>
-        <Button
-          label="++"
-          onClick={() => setStatements(
-            statements.length, [[], []]
-          )}
-          tooltip="add statement"
-        />
+            </tr>
+          </thead>
+          <tbody>
+            <For each={statements}>
+              {(statement, i) => (
+                <tr>
+                  <For each={[1, 0]}>
+                    {pro => (
+                      <td class={tableStyle.td}>
+                        <input
+                          class="pl-1"
+                          placeholder="80 5.5 33.3"
+                          type="text"
+                          onChange={etv(val => onChange(i(), pro, val))}
+                          onInput={etv(val => onInput(i(), pro, val))}
+                        />
+                      </td>
+                    )}
+                  </For>
+                  <td class={tableStyle.td}>
+                    {(calcStatementConfidence(statement) * 100).toFixed(1)}
+                  </td>
+                  <td class={tableStyle.td}>
+                    <Button
+                      label="X"
+                      onClick={() => setStatements(
+                        (statements) => statements.filter((s, index) => index !== i())
+                      )}
+                      tooltip="remove statement"
+                    />
+                  </td>
+                </tr>
+              )}
+            </For>
+          </tbody>
+        </table>
+        <div class="pt-2">
+          <Button
+            label="Add statement"
+            onClick={() => setStatements(
+              statements.length, [[], []]
+            )}
+          />
+        </div>
       </div>
     </main>
   )

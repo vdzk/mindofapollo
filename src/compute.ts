@@ -1,22 +1,53 @@
-const getAllFailProb = (confidences: number[]) =>
-  confidences.reduce((product, c) => product * (1 - c), 1)
 
-export const calcStatementConfidence = (argConfidences: [number[], number[]]) => {
-  // Scenario 1: pro side tries to succeed
-  const pAllProFail = getAllFailProb(argConfidences[1])
-  const pAllConFail = getAllFailProb(argConfidences[0])
-  // const pProTrySuccess = (1 - pAllProFail) * pAllConFail
 
-  // Scenario 2: con side tries to succeed
-  // const pConTrySuccess = (1 - pAllConFail) * pAllProFail
+// Requirements for calcStatementConfidence c():
+// c([[x/2, x/2], [x]]]) > 0.5
+// c([[x], [1]]) = 1  for x < 1
+// c([[1], [x]]) = 0  for x < 1
+// c([[x], [y]]) < c([[], [y]])
+// c(a, b) + c(b, a) = 1
 
-  // Flip a coin beween the two scenarios
-  // const pProWin = (pProTrySuccess + (1 - pConTrySuccess)) / 2
+const inRange = (x: number) => x >= 0 && x <= 1
 
-  // Use algebra to substitute and simplify the formula above 
-  const pProWin = (1 - pAllProFail + pAllConFail) / 2
+export function calcStatementConfidence(
+  [consRaw, prosRaw]: [number[], number[]]
+): number {
+  const pros = prosRaw.filter(inRange)
+  const cons = consRaw.filter(inRange)
 
-  return pProWin
+  // s = 1 ⇒ absolute certainty
+  const proCertain = pros.some(s => s === 1)
+  const conCertain = cons.some(s => s === 1)
+  if (proCertain && conCertain) return 0.5
+  if (proCertain) return 1
+  if (conCertain) return 0
+
+/* --------------------------------------------------------------
+   From individual strengths to a single confidence score
+   --------------------------------------------------------------
+   1. Weight of one argument        w(s) = −ln(1 − s)
+        • 0 ≤ s < 1  →  0 ≤ w < ∞      (stronger s ⇒ larger weight)
+        • Interprets an argument as “information against its own failure”.
+        • Weights add because information in nats is additive.
+
+   2. Net evidence                  diff = Σ w(pros) − Σ w(cons)
+        • Positive diff → pros dominate, negative → cons dominate.
+
+   3. Probability                   p = 1 / (1 + e^(−diff))
+        • Logistic turns log-odds into a bounded 0–1 probability.
+        • Symmetric: swapping pros/cons flips p ↔ 1 − p.
+        • |diff| → ∞ pushes p to 0 or 1 automatically.
+
+   Assumptions: arguments are independent; prior belief is 0.5.
+   -------------------------------------------------------------- */
+
+  const weight = (s: number) => -Math.log(1 - s)
+
+  const diff =
+    pros.reduce((sum, s) => sum + weight(s), 0) -
+    cons.reduce((sum, s) => sum + weight(s), 0)
+
+  return 1 / (1 + Math.exp(-diff))
 }
 
 function createTriangularRandomGenerator(a: number, m: number, b: number) {
