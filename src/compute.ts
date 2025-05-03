@@ -6,8 +6,13 @@
 // c([[1], [x]]) = 0  for x < 1
 // c([[x], [y]]) < c([[], [y]])
 // c(a, b) + c(b, a) = 1
+// as soon as the strength of any con argument edges ever closer to absolute certainty (1.0), the overall confidence in the statement must slide smoothly and monotonically toward 0—-we’re after a continuous “approaches 0” behaviour, not a one-off hard cut only when the strength is exactly 1.
+// confidence raises linearly with argument strength
 
 const inRange = (x: number) => x >= 0 && x <= 1
+
+const calcProbSuccess = (strengths: number[]) =>
+  1 - strengths.reduce((prod, strength) => prod * (1 - strength), 1)
 
 export function calcStatementConfidence(
   [consRaw, prosRaw]: [number[], number[]]
@@ -15,58 +20,50 @@ export function calcStatementConfidence(
   const pros = prosRaw.filter(inRange)
   const cons = consRaw.filter(inRange)
 
-  // s = 1 ⇒ absolute certainty
-  const proCertain = pros.some(s => s === 1)
-  const conCertain = cons.some(s => s === 1)
-  if (proCertain && conCertain) return 0.5
-  if (proCertain) return 1
-  if (conCertain) return 0
+  const P = calcProbSuccess(pros)
+  const C = calcProbSuccess(cons)
 
-/* --------------------------------------------------------------
-   From individual strengths to a single confidence score
-   --------------------------------------------------------------
-   1. Weight of one argument        w(s) = −ln(1 − s)
-        • 0 ≤ s < 1  →  0 ≤ w < ∞      (stronger s ⇒ larger weight)
-        • Interprets an argument as “information against its own failure”.
-        • Weights add because information in nats is additive.
+  // unmatched certainty rules
+  if (P === 1 && C < 1) return 1
+  if (C === 1 && P < 1) return 0
+  if (P === 1 && C === 1) return 0.5
 
-   2. Net evidence                  diff = Σ w(pros) − Σ w(cons)
-        • Positive diff → pros dominate, negative → cons dominate.
+  /*
+    Step 1: start with the obvious antisymmetric core
+    h₀ = P – C
+    (swapping P↔C flips the sign, nice and simple).
 
-   3. Probability                   p = 1 / (1 + e^(−diff))
-        • Logistic turns log-odds into a bounded 0–1 probability.
-        • Symmetric: swapping pros/cons flips p ↔ 1 − p.
-        • |diff| → ∞ pushes p to 0 or 1 automatically.
+    Problem:  If the con side becomes virtually certain ( C → 1 ) while the pro side is still less than certain ( P < 1 ), the simple difference h₀ = P − C tends toward P − 1, which is still above −1.
+      So confidence bottoms out above 0.
+      We want it to slide all the way to 0.
 
-   Assumptions: arguments are independent; prior belief is 0.5.
-   -------------------------------------------------------------- */
+    Step 2: scale the difference by a factor that
+      • is 1 when the other side is silent   (keeps linear rise)
+      • grows as P and C grow together       (lets near-certainty dominate)
+      • stays symmetric                      (g(P,C)=g(C,P))
+  */
 
-  const weight = (s: number) => -Math.log(1 - s)
-
-  const diff =
-    pros.reduce((sum, s) => sum + weight(s), 0) -
-    cons.reduce((sum, s) => sum + weight(s), 0)
-
-  return 1 / (1 + Math.exp(-diff))
+  const h = (P - C) / (1 - P * C)      // antisymmetric, bounded in [–1,1]
+  return 0.5 + 0.5 * h                 // 0 ≤ confidence ≤ 1
 }
 
 function createTriangularRandomGenerator(a: number, m: number, b: number) {
   // Pre-calculate constants
-  const range = b - a;
-  const leftRange = m - a;
-  const rightRange = b - m;
-  const modeFactor = leftRange / range;
+  const range = b - a
+  const leftRange = m - a
+  const rightRange = b - m
+  const modeFactor = leftRange / range
 
   // Return a function that generates random samples
-  return function() {
-      const u = Math.random();
-      if (u < modeFactor) {
-          // Sample from the lower segment
-          return a + Math.sqrt(u * range * leftRange);
-      } else {
-          // Sample from the upper segment
-          return b - Math.sqrt((1 - u) * range * rightRange);
-      }
+  return function () {
+    const u = Math.random()
+    if (u < modeFactor) {
+      // Sample from the lower segment
+      return a + Math.sqrt(u * range * leftRange)
+    } else {
+      // Sample from the upper segment
+      return b - Math.sqrt((1 - u) * range * rightRange)
+    }
   };
 }
 
