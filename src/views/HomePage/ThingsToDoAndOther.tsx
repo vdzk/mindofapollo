@@ -19,9 +19,9 @@ export default function ThingsToDoAndOther() {
               route: "chat"
             },
             {
-              label: "Request rule change",
-              route: 'create-record',
-              params: { tableName: 'rule_change_request' }
+              label: "Issues",
+              route: 'list-records',
+              params: { tableName: 'issue' }
             },
             {
               label: "Your directives",

@@ -2,7 +2,7 @@ import { humanCase } from "~/utils/string"
 import { addExplIds } from "~/utils/expl"
 import { xName } from "~/utils/schema"
 import { titleColumnName } from "~/utils/schema"
-import { getUserId, getUserActorUser } from "~/server-only/session"
+import { getUserId, getUserActorUser, belongsTo } from "~/server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { _getRecordById } from "~/server-only/select"
@@ -17,13 +17,23 @@ export interface CrossRecordMutateProps {
   b_id: number
 }
 
+export const whoCanInsertCrossRecord = (tableName: string, self: boolean) => {
+  if (tableName === 'person' && !self) {
+    return []
+  } else {
+    return ['invited']
+  }
+}
+
 export const insertCrossRecord = async (params: CrossRecordMutateProps) => {
   "use server"
   const userId = await getUserId()
-  const tableName = xName(params.a, params.b, params.first)
-
   const firstTableName = params.first ? params.a : params.b
   const firstId = params.first ? params.a_id : params.b_id
+
+  if (! await belongsTo(whoCanInsertCrossRecord(
+    firstTableName, firstId === userId
+  ))) return
 
   const explId = await startExpl(userId, 'insertCrossRecord', 1, firstTableName, firstId)
   const record = {
@@ -31,6 +41,7 @@ export const insertCrossRecord = async (params: CrossRecordMutateProps) => {
     [`${params.b}_id`]: params.b_id
   }
 
+  const tableName = xName(params.a, params.b, params.first)
   const result = await sql`
     INSERT INTO ${sql(tableName)} ${sql(addExplIds(record, explId))}
     RETURNING *
@@ -98,7 +109,7 @@ export interface CrossRecordData {
 }
 
 export const createCrossRecordExplData = (
-  data: CrossRecordData, 
+  data: CrossRecordData,
   actionFn: (crossStr: string) => string,
   recordActionProp: string
 ): ExplData => {
@@ -120,9 +131,9 @@ export const createCrossRecordExplData = (
   }
 }
 
-export const explInsertCrossRecord = (data: CrossRecordData): ExplData => 
+export const explInsertCrossRecord = (data: CrossRecordData): ExplData =>
   createCrossRecordExplData(
-    data, 
+    data,
     (crossStr) => `added ${crossStr} to`,
     'insertedCrossRecord'
   )

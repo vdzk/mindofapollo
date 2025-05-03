@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { action, createAsync, json, revalidate, useAction } from "@solidjs/router"
-import { For, Show, createSignal } from "solid-js"
+import { For, Show, createSignal, useContext } from "solid-js"
 import { RecordPageTitle } from "~/components/PageTitle"
 import { firstCap, humanCase } from "~/utils/string"
 import { pluralTableName } from "~/utils/schema"
@@ -13,11 +13,12 @@ import { getOneRecordById } from "~/api/getOne/recordById"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { deleteCrossRecord, whoCanDeleteCrossRecord } from "~/api/delete/crossRecord"
 import { UserExplField } from "~/components/form/UserExplField"
-import { CrossRecordMutateProps, insertCrossRecord } from "~/api/insert/crossRecord"
+import { CrossRecordMutateProps, insertCrossRecord, whoCanInsertCrossRecord } from "~/api/insert/crossRecord"
 import { NestPanel } from "~/components/NestPanel"
 import { RecordSelect } from "../../components/form/RecordSelect"
 import { CreateNew } from "~/components/form/CreateNew"
 import { whoCanInsertRecord } from "~/api/insert/record"
+import { SessionContext } from "~/SessionContext"
 
 const insertCrossRecordAction = action(
   async (props: CrossRecordMutateProps) => {
@@ -59,7 +60,9 @@ export default function EditCrossRef() {
   const [selectedAddId, setSelectedAddId] = createSignal<string>('')
   const [selectedRemoveId, setSelectedRemoveId] = createSignal<string>('')
   const [userExpl, setUserExpl] = createSignal('')
+  const session = useContext(SessionContext)
 
+  const self = () => sp().a === 'person' && id() === session?.userSession()!.userId
   const aRecord = createAsync(() => getOneRecordById(sp().a, id()))
   const linkedRecords = createAsync(() => listCrossRecordsCache(sp().b, sp().a, id(), first()))
   const allRecords = createAsync(() => listRecordsCache(sp().b))
@@ -67,6 +70,7 @@ export default function EditCrossRef() {
   const linkedRecordIds = () => linkedRecords()?.map(lr => lr.id)
   const unlinkedRecords = () => allRecords()?.filter(r => !linkedRecordIds()?.includes(r.id))
 
+  const canInsertCrossRecord = () => first() && useBelongsTo(whoCanInsertCrossRecord(sp().a, self()))
   const insertCrossRecordRun = useAction(insertCrossRecordAction)
 
   const getInsertParams = (b_id: number) => ({
@@ -88,8 +92,7 @@ export default function EditCrossRef() {
     insertCrossRecordRun(getInsertParams(parseInt(selectedAddId())))
   }
 
-  const canDeleteCrossRecord = () => useBelongsTo(whoCanDeleteCrossRecord(
-    first() ? sp().a : sp().b))
+  const canDeleteCrossRecord = () => first() && useBelongsTo(whoCanDeleteCrossRecord(sp().a, self()))
   const deleteCrossRecord = useAction(deleteCrossRecordAction)
 
   const onDelete = () => {
@@ -121,27 +124,29 @@ export default function EditCrossRef() {
           )}
         </For>
       </div>
-      <NestPanel title={`Add ${humanCase(sp().b)}`} class="ml-2 mb-2">
-        <Show when={canCreateNew()}>
-          <CreateNew
-            tableName={sp().b}
-            onFormExit={onFormExit}
-            formDepth={1}
+      <Show when={canInsertCrossRecord()}>
+        <NestPanel title={`Add ${humanCase(sp().b)}`} class="ml-2 mb-2">
+          <Show when={canCreateNew()}>
+            <CreateNew
+              tableName={sp().b}
+              onFormExit={onFormExit}
+              formDepth={1}
+            />
+          </Show>
+          <RecordSelect
+            selectedId={selectedAddId()}
+            setSelectedId={setSelectedAddId}
+            records={unlinkedRecords()}
+            labelField={bColName}
+            canCreateNew={canCreateNew()}
           />
-        </Show>
-        <RecordSelect
-          selectedId={selectedAddId()}
-          setSelectedId={setSelectedAddId}
-          records={unlinkedRecords()}
-          labelField={bColName}
-          canCreateNew={canCreateNew()}
-        />
-        <Button
-          label="Add"
-          onClick={onAdd}
-          class="ml-2"
-        />
-      </NestPanel>
+          <Button
+            label="Add"
+            onClick={onAdd}
+            class="ml-2"
+          />
+        </NestPanel>
+      </Show>
       <Show when={canDeleteCrossRecord()}>
         <NestPanel title={`Remove ${humanCase(sp().b)}`} class="ml-2 mb-2">
           <UserExplField value={userExpl()} onChange={setUserExpl} />

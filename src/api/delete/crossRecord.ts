@@ -1,32 +1,25 @@
 import { onError, sql } from "~/server-only/db";
 import { xName } from "~/utils/schema";
 import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session";
-import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData } from "../insert/crossRecord";
+import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData, whoCanInsertCrossRecord } from "../insert/crossRecord";
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { ExplData } from "~/components/expl/types";
 import { _getRecordById } from "~/server-only/select";
 
-export const whoCanDeleteCrossRecord = (tableName: string) => {
-  if (tableName === 'person') {
-    return []
-  } else {
-    return ['invited']
-  }
-}
+export const whoCanDeleteCrossRecord = whoCanInsertCrossRecord
 
 export const deleteCrossRecord = async (params: CrossRecordMutateProps, userExpl: string) => {
   "use server"
-  if (! await belongsTo(whoCanDeleteCrossRecord(
-    params.first ? params.a : params.b
-  ))) return
-
   const userId = await getUserId()
-  const tableName = xName(params.a, params.b, params.first)
-
   const firstTableName = params.first ? params.a : params.b
   const firstId = params.first ? params.a_id : params.b_id
 
+  if (! await belongsTo(whoCanDeleteCrossRecord(
+    firstTableName, firstId === userId
+  ))) return
+
   const explId = await startExpl(userId, 'deleteCrossRecord', 1, firstTableName, firstId)
+  const tableName = xName(params.a, params.b, params.first)
   const result = await sql`
     DELETE FROM ${sql(tableName)}
     WHERE ${sql(params.a + '_id')} = ${params.a_id}

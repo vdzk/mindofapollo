@@ -73,7 +73,7 @@ export default function ListRecords() {
           </div>
         )}</For>
       </section>
-      <section class="px-2">
+      <section class="px-2 pb-2">
         <Show when={canInsertRecord()}>
           <Switch>
             <Match when={table().createRecord}>
