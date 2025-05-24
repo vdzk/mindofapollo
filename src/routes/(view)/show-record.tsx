@@ -1,12 +1,12 @@
 import { Title } from "@solidjs/meta"
-import { createAsync, useNavigate } from "@solidjs/router"
+import { createAsync } from "@solidjs/router"
 import { titleColumnName } from "~/utils/schema"
-import { RecordPageTitle } from "../../components/PageTitle"
+import { PageTitle, RecordPageTitle } from "../../components/PageTitle"
 import { useSafeParams } from "~/client-only/util"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { ShowRecord } from "~/views/ShowRecord"
-import { createEffect } from "solid-js"
-import { buildUrl } from "~/utils/schema"
+import { Show } from "solid-js"
+import { Link } from "~/components/Link"
 
 export default function ShowRecordRoute() {
   const sp = useSafeParams<{
@@ -17,25 +17,35 @@ export default function ShowRecordRoute() {
   const record = createAsync(() => getOneExtRecordById(sp().tableName, recordId()))
   const titleColName = () => titleColumnName(sp().tableName)
   const titleText = () => (record()?.[titleColName()] ?? '') as string
-  
-  const navigate = useNavigate()
-  createEffect(() => {
-    if (sp().tableName === 'critical_statement' && record()) {
-      navigate(
-        buildUrl({
-          route: 'statement',
-          params: { argumentId: record()!.argument_id}
-        }),
-        { replace: true }
-      )
-    }
-  })
 
   return (
-    <main>
-      <Title>{titleText()}</Title>
-      <RecordPageTitle tableName={sp().tableName} text={titleText()} />
-      <ShowRecord tableName={sp().tableName} id={recordId()} />
-    </main>
+    <>
+      <Show when={sp().tableName !== 'critical_statement'}>
+        <main>
+          <Title>{titleText()}</Title>
+          <RecordPageTitle tableName={sp().tableName} text={titleText()} />
+          <ShowRecord tableName={sp().tableName} id={recordId()} />
+        </main>
+      </Show>
+      <Show when={sp().tableName === 'critical_statement'}>
+        <main>
+          <Title>Critical statement redirect</Title>
+          <PageTitle>Critical statement redirect</PageTitle>
+          <div class="px-2">
+            <div class="pb-2">
+              Please open the critical questions on the argument page to see the critical statements.
+            </div>
+            <Link
+              type="button"
+              label="View the argument"
+              route="statement"
+              params={{
+                argumentId: record()?.argument_id
+              }}
+            />
+          </div>
+        </main>
+      </Show>
+    </>
   )
 }
