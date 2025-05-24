@@ -68,7 +68,7 @@ export const JudgeArgument: Component<{
         <div class="border-t"/>
         <H2>New Judgement</H2>
       </Show>
-      <div class="px-2 pb-3 flex justify-between">
+      <div class="px-2 pb-3 flex justify-between flex-wrap gap-2">
         <Button
           label={getToggleLabel(showCriteria(), 'confidence scale & criteria')}
           onClick={() => setShowCriteria(x => !x)}
