@@ -1,5 +1,6 @@
 import { Links } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"
+import { CurrentTaskBtn } from "./CurrentTaskBtn"
 
 export default function ThingsToDoAndOther() {
   return (
@@ -50,6 +51,7 @@ export default function ThingsToDoAndOther() {
             }
           ]}
         />
+        <CurrentTaskBtn />
       </div>
     </div>
   )

@@ -7,6 +7,7 @@ import { needsExpl, titleColumnName } from "~/utils/schema"
 import { isPersonal, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
 import { insertCrossRecords } from "~/server-only/insertCrossRecords"
+import { schema } from "~/schema/schema"
 
 export const whoCanInsertRecord = (tableName: string) => {
   if (
@@ -40,12 +41,26 @@ export const insertRecord = async (
   if (!savedRecord || !explId) return
   await setExplRecordId(explId, savedRecord.id)
 
+  const titleColName = titleColumnName(tableName)
+  const titleColumn = schema.tables[tableName].columns[titleColName]
+  let targetLabel: string
+  if (titleColumn.type === 'fk') {
+    const titleRecord = await _getRecordById(
+      titleColumn.fk.table,
+      savedRecord[titleColName] as number,
+      [titleColumn.fk.labelColumn]
+    )
+    targetLabel = titleRecord[titleColumn.fk.labelColumn] as string
+  } else {
+    targetLabel = savedRecord[titleColName] as string
+  }
+
   const user = await getUserActorUser()
   const data: InsertRecordData = {
     tableName,
     record: savedRecord,
     user,
-    targetLabel: savedRecord[titleColumnName(tableName)] as string
+    targetLabel
   }
   await finishExpl(explId, data)
   if (linkedCrossRefs) {

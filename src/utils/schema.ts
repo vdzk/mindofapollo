@@ -21,10 +21,12 @@ export const titleColumnName = (tableName: string) => {
 
 export const getExtTableName = (
   tableName: string,
-  record?: DataRecord
+  record?: DataRecord,
+  optionalExtEnabled?: boolean
 ) => {
-  if (!record) return
   const tableSchema = schema.tables[tableName]
+  if (optionalExtEnabled) return tableSchema.optionallyExtendedByTable
+  if (!record) return
   for (const [colName, column] of Object.entries(tableSchema.columns)) {
     if (column.type === 'fk') {
       const { extensionTables } = column.fk

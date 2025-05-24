@@ -132,6 +132,7 @@ export interface TableSchema {
   system?: boolean, // Deleting / editing these records could break the app
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
+  optionallyExtendedByTable?: string, // This table can be extended by another table
   columns: Record<string, ColumnSchema>
   aggregates?: Record<string, AggregateSchema>
   createRecord?: () => DataRecord // Generate new records automatically

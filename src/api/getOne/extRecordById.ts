@@ -29,7 +29,7 @@ export const getOneExtRecordById = async (tableName: string, id: number) => {
     }
   }
 
-  const extTableName = getExtTableName(tableName, result)
+  const extTableName = getExtTableName(tableName, result, true)
   if (extTableName) {
     const extResult = await _getRecordById(extTableName, id)
     return {...result, ...extResult}

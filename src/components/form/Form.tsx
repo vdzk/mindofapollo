@@ -36,7 +36,7 @@ export const Form: Component<{
   const [diffExt, setDiffExt] = createStore<DataRecord>({})
   const [showAdvanced, setShowAdvanced] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
-
+  const [optionalExtEnabled, setOptionalExtEnabled] = createSignal(false)
 
   const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
     return 'onExit' in exit
@@ -83,9 +83,25 @@ export const Form: Component<{
     return tableSchema.advanced ? tableSchema.advanced.length > 0 : false
   }
   const currentRecord = () => ({ ...props.record, ...diff })
-  const extTableName = createMemo(() => getExtTableName(props.tableName, currentRecord()))
+  const extTableName = createMemo(() => getExtTableName(props.tableName, currentRecord(), optionalExtEnabled()))
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
+
+  // Set optional ext default values
+  createEffect(() => {
+    if (!props.id && optionalExtEnabled()) {
+      const _extColumns = extColumns()
+      for (const colName in _extColumns) {
+        const column = _extColumns[colName]
+        if (
+          column.defaultValue !== undefined
+          && (!props.preset || !(colName in props.preset))
+        ) {
+          setDiffExt(colName, column.defaultValue)
+        }
+      }
+    }
+  })
 
   const pristine = () => Object.values({ ...diff, ...diffExt })
     .every(value => value === undefined)
@@ -102,6 +118,7 @@ export const Form: Component<{
   )
 
   // If there is nothing else to save don't make the user press save again
+  // TODO: check that this actually works
   const onCreatedNew = (colName: string) => {
     if (
       complete()
@@ -192,6 +209,12 @@ export const Form: Component<{
             />
           )}
         </For>
+      </Show>
+      <Show when={table().optionallyExtendedByTable}>
+        <Button
+          label={getToggleLabel(optionalExtEnabled(), table().optionallyExtendedByTable!)}
+          onClick={() => setOptionalExtEnabled(x => !x)}
+        />
       </Show>
       <Show when={hasAdvancedFields()}>
         <div class="py-2">
