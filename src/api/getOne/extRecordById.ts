@@ -14,7 +14,7 @@ export const getOneExtRecordById = async (tableName: string, id: number) => {
   if (! await belongsTo(whoCanGetOneExtRecordById(
     tableName, await ofSelf(tableName, id)
   ))) return
-  const { columns } = schema.tables[tableName]
+  const { columns, optionallyExtendedByTable } = schema.tables[tableName]
   const result = await _getRecordById(tableName, id)
   if (!result) return
 
@@ -29,7 +29,7 @@ export const getOneExtRecordById = async (tableName: string, id: number) => {
     }
   }
 
-  const extTableName = getExtTableName(tableName, result, true)
+  const extTableName = getExtTableName(tableName, result, !!optionallyExtendedByTable)
   if (extTableName) {
     const extResult = await _getRecordById(extTableName, id)
     return {...result, ...extResult}
