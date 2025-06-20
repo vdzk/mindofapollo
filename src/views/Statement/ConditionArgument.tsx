@@ -7,11 +7,9 @@ export const ConditionArgument: Component<{
   judgement: DataRecordWithId,
   conditionalConfidence?: DataRecordWithId,
   setWantsToCondition: Setter<boolean>
-  refreshStatementConfidence: () => void
 }> = props => {
   const onExit = () => {
     props.setWantsToCondition(false)
-    props.refreshStatementConfidence()
   }
 
   return (

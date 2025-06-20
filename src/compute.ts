@@ -11,7 +11,7 @@
 
 const inRange = (x: number) => x >= 0 && x <= 1
 
-const calcProbSuccess = (strengths: number[]) =>
+export const calcProbSuccess = (strengths: number[]) =>
   1 - strengths.reduce((prod, strength) => prod * (1 - strength), 1)
 
 export function calcStatementConfidence(

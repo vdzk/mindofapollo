@@ -1,6 +1,7 @@
 import { TableSchema } from "../../schema/type"
 import { argumentTypes } from "./type"
 
+export const argumentSideLabels = ['Con', 'Pro'] as const
 export const defautTextLines = 5
 
 export const argument: TableSchema = {
@@ -16,11 +17,12 @@ export const argument: TableSchema = {
     pro: {
       type: 'boolean',
       label: 'side',
-      optionLabels: ['Con', 'Pro']
+      optionLabels: argumentSideLabels
     },
     title: {
-      type: 'varchar',
-      preview: true
+      type: 'text',
+      preview: true,
+      lines: 3
     },
     argument_type_id: {
       type: 'fk',

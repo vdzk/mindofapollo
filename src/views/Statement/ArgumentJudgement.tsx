@@ -18,8 +18,6 @@ const judgementTableName = {
 export const ArgumentJudgement: Component<{
   argumentId: number,
   argumentTypeId: number,
-  firstArgOnSide: boolean,
-  refreshStatementConfidence: () => void,
   statementType: 'descriptive' | 'threshold',
   showExamples: boolean
   setShowExamples: Setter<boolean>
@@ -37,7 +35,6 @@ export const ArgumentJudgement: Component<{
   const onJudgeArgumentExit = () => {
     setWantsToJudge(false)
     setConfirmedPreJudgementCheck(false)
-    props.refreshStatementConfidence()
   }
 
   createEffect(() => {
@@ -136,7 +133,6 @@ export const ArgumentJudgement: Component<{
           judgement={judgement()!}
           conditionalConfidence={conditionalConfidence()}
           setWantsToCondition={setWantsToCondition}
-          refreshStatementConfidence={props.refreshStatementConfidence}
         />
       </Match>
       <Match when={viewName() === 'judgement' && props.statementType === 'descriptive'}>
@@ -153,7 +149,7 @@ export const ArgumentJudgement: Component<{
             id={props.argumentId}
           />
         </Show>
-        <Show when={canCondition() && !props.firstArgOnSide}>
+        <Show when={canCondition()}>
           <div class="px-2">
             <Button
               label={`${conditionalConfidence() ? "Edit" : "Apply"} conditional confidence`}

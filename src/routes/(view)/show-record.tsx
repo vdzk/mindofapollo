@@ -38,9 +38,9 @@ export default function ShowRecordRoute() {
             <Link
               type="button"
               label="View the argument"
-              route="statement"
+              route="argument"
               params={{
-                argumentId: record()?.argument_id
+                id: record()?.argument_id
               }}
             />
           </div>

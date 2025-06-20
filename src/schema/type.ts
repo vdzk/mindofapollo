@@ -22,7 +22,7 @@ export interface SimpleColumn extends SharedColumnProps {
 
 export interface BooleanColumn extends SharedColumnProps {
   type: 'boolean'
-  optionLabels?: [string, string]
+  optionLabels?: readonly [string, string]
 }
 
 export interface TextColumn extends SharedColumnProps {

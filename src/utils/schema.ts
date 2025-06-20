@@ -145,13 +145,10 @@ export const buildUrl = (linkData: LinkData) => {
   let { route, params } = linkData;
   // Rewrite link
   if (route === 'show-record' && params) {
-    params.tableName = getRootTableName(params.tableName);
-    if (params?.tableName === 'statement') {
-      route = 'statement';
-      params = { id: params.id };
-    } else if (params?.tableName === 'argument') {
-      route = 'statement';
-      params = { argumentId: params.id };
+    params.tableName = getRootTableName(params.tableName)
+    if (['statement', 'argument'].includes(params.tableName)) {
+      route = params.tableName
+      params = { id: params.id }
     }
   }
 

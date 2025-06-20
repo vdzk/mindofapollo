@@ -1,4 +1,5 @@
 import { TableSchema } from "~/schema/type";
+import { argumentSideLabels } from "../argument/argument";
 
 export const moral_persuasion: TableSchema = {
   columns: {
@@ -15,7 +16,7 @@ export const moral_persuasion: TableSchema = {
     pro: {
       type: 'boolean',
       label: 'side',
-      optionLabels: ['Con', 'Pro']
+      optionLabels: argumentSideLabels
     },
     text: {
       type: 'text'

@@ -19,7 +19,9 @@ export const genCode = (length: number) => {
   return code
 }
 
-export const getPercent = (x: number) => Math.round(x * 100) + '%'
+export const getPercent = (x?: number) => typeof x === 'number'
+  ? Math.round(x * 100) + '%'
+  : '?'
 
 // Format date for display as "YYYY-MM-DD"
 export const formatDate = (date: Date) => {

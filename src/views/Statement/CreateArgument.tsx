@@ -11,7 +11,6 @@ import { firstCap, getToggleLabel, humanCase } from "~/utils/string"
 
 export const CreateArgument: Component<{
   statementId: number,
-  pro: boolean,
   onExit: (id?: number) => void
 }> = props => {
   const [selectedArgumentTypeId, setSelectedArgumentTypeId] = createSignal<number | undefined>()
@@ -117,8 +116,7 @@ export const CreateArgument: Component<{
             tableName="argument"
             preset={{
               statement_id: props.statementId,
-              argument_type_id: argumentTypeId()!,
-              pro: props.pro
+              argument_type_id: argumentTypeId()!
             }}
             exitSettings={{ onExit: onFormExit }}
             hideColumns={['statement_id', 'pro']}

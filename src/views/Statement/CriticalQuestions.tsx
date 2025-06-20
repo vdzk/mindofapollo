@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createEffect, createMemo, createSignal, Match, Show, Switch } from "solid-js"
+import { Component, createMemo, createSignal, Match, Switch } from "solid-js"
 import { listForeignRecordsCache } from "~/client-only/query"
 import { Aggregate } from "~/components/aggregate/Aggregate"
 import { Button } from "~/components/buttons"
@@ -8,14 +8,12 @@ import { Subtitle } from "~/components/PageTitle"
 import { CriticalQuestionSelector } from "./CriticalQuestionSelector"
 import { CriticalStatementExamples } from "./CriticalStatementExamples"
 import { indexBy } from "~/utils/shape"
-import { ToggleWrap } from "~/components/ToggleWrap"
 
 export const CriticalQuestions: Component<{
   argumentTypeId: number
   argumentId: number
 }> = props => {
   const [view, setView] = createSignal<'list' | 'select' | 'examples' | 'create'>('list')
-  const [collapsed, setCollapsed] = createSignal(true)
   const [wishedToSelect, setWishedToSelect] = createSignal(false)
   const [selectedQuestionId, setSelectedQuestionId] = createSignal<number | undefined>()
   const typeQuestions = createAsync(async () => wishedToSelect()
@@ -31,24 +29,12 @@ export const CriticalQuestions: Component<{
   const questionsById = createMemo(() => indexBy(
     [...typeQuestions() ?? [], ...generalQuestions() ?? []], 'id'
   ))
-  createEffect(() => {
-    props.argumentId
-    setCollapsed(true)
-    setView('list')
-    setWishedToSelect(false)
-    setSelectedQuestionId(undefined)
-  })
   return (
-    <div class="flex-3 min-w-0 border-l">
+    <div class="flex-2 min-w-0 border-l">
       <Switch>
         <Match when={view() === 'list'}>
-          <ToggleWrap
-            collapsed={collapsed()}
-            setCollapsed={setCollapsed}
-          >
-            <Subtitle>Critical Questions</Subtitle>
-          </ToggleWrap>
-          <Show when={!collapsed()}>
+          <Subtitle>Critical Questions</Subtitle>
+          <div class="border-t h-3" />
             <Aggregate
               tableName="argument"
               id={props.argumentId}
@@ -62,7 +48,6 @@ export const CriticalQuestions: Component<{
               }}
               class="ml-2"
             />
-          </Show>
         </Match>
         <Match when={view() === 'select'}>
           <CriticalQuestionSelector
