@@ -1,5 +1,5 @@
 import { createAsync, revalidate } from "@solidjs/router"
-import { Component, createEffect, createSignal, Match, Show, Switch } from "solid-js"
+import { Component, createSignal, Match, Show, Switch } from "solid-js"
 import { ArgumentDetails } from "./ArgumentDetails"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
 import { ShowRecord } from "../ShowRecord"

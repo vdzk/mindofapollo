@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createEffect, createMemo, createSignal, For, Show } from "solid-js"
+import { Component, createMemo, createSignal, For, Show } from "solid-js"
 import { listArgumentsCache } from "~/client-only/query"
 import { Aggregate } from "~/components/aggregate/Aggregate"
 import { Link } from "~/components/Link"
@@ -34,7 +34,7 @@ export const Arguments: Component<{ statementId: number }> = props => {
   })
 
   return (
-    <div class="flex-1 flex">
+    <div class="flex-1 max-w-2xl">
       <For each={[true, false]}>
         {pro => (
           <div class="p-2 flex-1">
@@ -65,11 +65,13 @@ export const Arguments: Component<{ statementId: number }> = props => {
                       </span>
                     </div>
                     <Show when={argument.id === selectedArg()}>
-                      <Aggregate
-                        tableName="argument"
-                        id={argument.id}
-                        aggregateName="critical_statements"
-                      />
+                      <div class="pl-6">
+                        <Aggregate
+                          tableName="argument"
+                          id={argument.id}
+                          aggregateName="critical_statements"
+                        />
+                      </div>
                     </Show>
                   </div>
                 </div>

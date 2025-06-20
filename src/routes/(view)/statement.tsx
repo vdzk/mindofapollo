@@ -57,7 +57,7 @@ export default function Statement() {
           </For>
         </div>
       </Show>
-      <div class="min-h-[128px] flex items-center">
+      <div class="min-h-[128px] flex items-center max-w-5xl">
         <RecordPageTitle
           tableName="statement"
           text={mainTitleText()}
