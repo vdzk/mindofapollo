@@ -35,6 +35,10 @@ export interface OptionColumn extends SharedColumnProps {
   options: readonly string[]
 }
 
+export interface JsonbColumn extends SharedColumnProps {
+  type: 'jsonb'
+}
+
 // NOTE: A lot of code is requered to implement this column type. Perhaps a simpler approach can be found.
 export interface ValueTypeIdColumn extends SharedColumnProps {
   type: 'value_type_id',
@@ -89,7 +93,7 @@ export interface ExtendsIdColumn extends SharedColumnProps {
   type: 'extends_id'
 }
 
-export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | ExtendsIdColumn | OptionColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
+export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | ExtendsIdColumn | OptionColumn | JsonbColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
   readOnly?: true // ordinarily, this field should not be edited directly
   unique?: true
 }

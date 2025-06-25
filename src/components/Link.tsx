@@ -3,22 +3,28 @@ import { DataLiteral } from "~/schema/type"
 import { btnStyle } from "./buttons"
 import { buildUrl } from "~/utils/schema"
 
+export const linkStyles = {
+  default: 'hover:underline',
+  block: 'block px-1.5 border border-transparent hover:border-gray-600 rounded',
+  fragment: 'hover:bg-yellow-200 h-full py-1',
+  button: btnStyle(),
+  logo: 'font-bold',
+  faded: 'text-gray-500'
+}
+
 export const Link: Component<{
   params?: Record<string, any>
   label?: DataLiteral | JSXElement
   route: string,
-  type?: 'button' | 'logo' | 'faded',
+  type?: 'button' | 'fragment' | 'block' | 'logo' | 'faded',
   tooltip?: string
   class?: string
+  block?: boolean
 }> = props => {
 
   const href = () => buildUrl(props)
   
-  let className = 'hover:underline'
-  if (props.type === 'button') className = btnStyle()
-  if (props.type === 'logo') className = 'font-bold'
-  if (props.type === 'faded') className = 'text-gray-500'
-
+  let className = linkStyles[props.type ?? 'default']
   if (props.class) className += ' ' + props.class
   
   return <a href={href()} title={props.tooltip} class={className}>{props.label}</a>

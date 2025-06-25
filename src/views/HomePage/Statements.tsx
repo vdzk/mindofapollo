@@ -39,8 +39,8 @@ export default function Statements() {
                 <div class="flex items-center gap-2">
                   <Link
                     label={statement.label}
-                    route="show-record"
-                    params={{
+                    route={featured() ? 'dialogue' : 'show-record'}
+                    params={featured() ? {id: statement.id} : {
                       tableName: statement.directive ? 'directive' : 'statement',
                       id: statement.id
                     }}

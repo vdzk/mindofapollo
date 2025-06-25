@@ -1,4 +1,5 @@
 import { TableSchema } from "../../schema/type"
+import { chat_text } from "../statement/statement"
 import { argumentTypes } from "./type"
 
 export const argumentSideLabels = ['Con', 'Pro'] as const
@@ -24,6 +25,7 @@ export const argument: TableSchema = {
       preview: true,
       lines: 3
     },
+    chat_text,
     argument_type_id: {
       type: 'fk',
       fk: {

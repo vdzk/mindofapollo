@@ -5,6 +5,12 @@ import { directive } from "../morality/directive"
 // Indexes corresponts to IDs in statement_type table
 const statementExtensonTables = ['', '', '', 'directive']
 
+export const chat_text = {
+  type: 'text',
+  lines: 4,
+  instructions: "Used together with other chat texts to generate a chat conversation log between two opposing sides."
+} as const
+
 export const statement: TableSchema = {
   plural: 'statements',
   columns: {
@@ -50,6 +56,7 @@ export const statement: TableSchema = {
       defaultValue: '',
       instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not capialise the first word. Do not use a full stop at the end.",
     },
+    chat_text,
     statement_type_name: {
       type: 'virtual',
       queries: {

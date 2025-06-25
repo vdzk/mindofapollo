@@ -2,7 +2,7 @@ import { createAsync } from "@solidjs/router"
 import { Component, createMemo, createSignal, For, Show } from "solid-js"
 import { listArgumentsCache } from "~/client-only/query"
 import { Aggregate } from "~/components/aggregate/Aggregate"
-import { Link } from "~/components/Link"
+import { Link, linkStyles } from "~/components/Link"
 import { calcProbSuccess } from "~/compute"
 import { argumentSideLabels } from "~/tables/argument/argument"
 import { getPercent } from "~/utils/string"
@@ -56,7 +56,7 @@ export const Arguments: Component<{ statementId: number }> = props => {
                   />
                   <div>
                     <div
-                      class="cursor-pointer px-1.5 border border-transparent hover:border-gray-600 rounded"
+                      class={"cursor-pointer " + linkStyles.block}
                       onClick={() => toggleSelectedArg(argument.id)}
                     >
                       {argument.title}
