@@ -1,5 +1,5 @@
 
-import { Argument } from "~/views/Statement/Argument"
+import { Argument } from "~/views/Argument/Argument"
 import { useSafeParams } from "~/client-only/util"
 
 export default function ArgumentPage() {
