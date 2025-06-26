@@ -4,7 +4,6 @@ import { invite } from './invite'
 import { person } from './person'
 import { issue } from './issue'
 import { task } from './task'
-import { dialogue_page } from './dialogue_page'
 
 export const otherTables = {
   auth_role,
@@ -12,6 +11,5 @@ export const otherTables = {
   invite,
   person,
   issue,
-  task,
-  dialogue_page
+  task
 }

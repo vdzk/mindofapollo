@@ -6,6 +6,7 @@ import { MasterDetail } from "~/components/MasterDetail"
 import { Subtitle } from "~/components/PageTitle"
 import { setSubscriptionAction } from "~/client-only/action"
 import { Button } from "~/components/buttons"
+import { withDialogueStatementId } from "~/constant"
 
 export default function Statements() {
   const tags = createAsync(() => listRecordsCache('tag'))
@@ -35,27 +36,32 @@ export default function Statements() {
         >
           <div class="pt-1 pl-2">
             <For each={statements()}>
-              {statement => (
-                <div class="flex items-center gap-2">
-                  <Link
-                    label={statement.label}
-                    route={featured() ? 'dialogue' : 'show-record'}
-                    params={featured() ? {id: statement.id} : {
-                      tableName: statement.directive ? 'directive' : 'statement',
-                      id: statement.id
-                    }}
-                    class="flex-1"
-                  />
-                  {!statement.directive && (
-                    <Button
-                      label={statement.subscribed ? 'unsub' : 'sub'}
-                      onClick={() => setSubscription(statement.id, !statement.subscribed)}
-                      leading={5}
-                      class="text-sm"
+              {statement => {
+                const { id, directive, subscribed, label } = statement
+                const hasDialogue = id === withDialogueStatementId
+                const linkParams: Record<string, any> = { id }
+                if (!hasDialogue) {
+                  linkParams.tableName = directive ? 'directive' : 'statement'
+                }
+                return (
+                  <div class="flex items-center gap-2">
+                    <Link
+                      label={label}
+                      route={hasDialogue ? 'dialogue' : 'show-record'}
+                      params={linkParams}
+                      class="flex-1"
                     />
-                  )}
-                </div>
-              )}
+                    {!directive && (
+                      <Button
+                        label={subscribed ? 'unsub' : 'sub'}
+                        onClick={() => setSubscription(id, !subscribed)}
+                        leading={5}
+                        class="text-sm"
+                      />
+                    )}
+                  </div>
+                )
+              }}
             </For>
           </div>
         </MasterDetail>

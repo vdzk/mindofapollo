@@ -1,17 +1,12 @@
 import { chatFragementHosts } from "~/constant"
+import { messages } from "~/dialogue_messages"
 import { onError, sql } from "~/server-only/db"
 import { injectTranslations } from "~/server-only/injectTranslations"
 
 export type ChatFragmentHost = (typeof chatFragementHosts)[number]
 
-export const getOneDialoguePage = async (pageId: number) => {
+export const getOneDialoguePage = async () => {
   "use server"
-  const results = await sql`
-    SELECT messages
-    FROM dialogue_page
-    WHERE id = ${pageId}
-  `.catch(onError)
-  const messages = results[0].messages
   const records: Record<ChatFragmentHost, {id: number}[]> = {argument: [], statement: []}
   for (const message of messages) {
     for (const fragment of message.fragments) {
