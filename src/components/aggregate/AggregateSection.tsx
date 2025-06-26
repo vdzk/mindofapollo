@@ -70,15 +70,8 @@ export const AggregateSection: Component<{
         params: {
           tableName: sameTable ? props.aggregate.table : _titleColumn.fk.table,
           id: sameTable ? props.id : record[titleColName()]
-        }
-      }
-    } else if (props.aggregate.viewLink) {
-      return {
-        route: props.aggregate.viewLink.route,
-        params: {
-          [props.aggregate.viewLink.idParamName]:
-            record[props.aggregate.viewLink.idParamSource]
-        }
+        },
+        type: props.aggregate.linkType
       }
     } else {
       return {
@@ -102,8 +95,8 @@ export const AggregateSection: Component<{
 
   return (
     <section class="pb-2">
-      <div class="px-2">
-        <span class="font-bold pr-2">{props.section.title}</span>
+      <div class="px-2 flex gap-2">
+        <span class="font-bold flex-1">{props.section.title}</span>
         <Show when={session?.userSession()?.authenticated}>
           <Show when={props.section.controls}>
             {props.section.controls}
@@ -113,6 +106,7 @@ export const AggregateSection: Component<{
               label={showForm() ? "−" : "+"}
               onClick={() => setShowForm(x => !x)}
               tooltip={showForm() ? "cancel" : "add"}
+              class="self-start"
             />
           </Show>
         </Show>

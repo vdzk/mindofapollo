@@ -44,11 +44,7 @@ export const argument: TableSchema = {
       splitByColumn: 'critical_question_id',
       filterSplitBy: 'argument_type_id',
       hideEmptySections: true,
-      viewLink: {
-        route: 'statement',
-        idParamName: 'id',
-        idParamSource: 'statement_id'
-      }
+      linkType: 'block'
     },
     judgements: {
       type: '1-n',

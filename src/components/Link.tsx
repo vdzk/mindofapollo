@@ -2,10 +2,11 @@ import { Component, JSXElement } from "solid-js"
 import { DataLiteral } from "~/schema/type"
 import { btnStyle } from "./buttons"
 import { buildUrl } from "~/utils/schema"
+import { LinkType } from "~/types"
 
 export const linkStyles = {
   default: 'hover:underline',
-  block: 'block px-1.5 border border-transparent hover:border-gray-600 rounded',
+  block: 'block px-1.5 border border-transparent border-l-gray-600 rounded hover:border-gray-600',
   fragment: 'hover:bg-yellow-200 h-full py-1',
   button: btnStyle(),
   logo: 'font-bold',
@@ -16,10 +17,9 @@ export const Link: Component<{
   params?: Record<string, any>
   label?: DataLiteral | JSXElement
   route: string,
-  type?: 'button' | 'fragment' | 'block' | 'logo' | 'faded',
+  type?: LinkType,
   tooltip?: string
   class?: string
-  block?: boolean
 }> = props => {
 
   const href = () => buildUrl(props)

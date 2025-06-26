@@ -4,6 +4,7 @@ import { whoCanUpdateRecord } from "~/api/update/record"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { Button } from "~/components/buttons"
 import { Detail } from "~/components/details"
+import { Link } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"
 import { schema } from "~/schema/schema"
 import { DataRecordWithId } from "~/schema/type"
@@ -32,7 +33,12 @@ export const ArgumentDetails: Component<{
       <div class="border-t h-3" />
       <div class="font-bold px-2">Claim</div>
       <div class="px-2 pb-2">
-        {props.statement?.text ?? props.statement?.label}
+        <Link
+          route="statement"
+          params={{ id: props.statement?.id}}
+          label={props.statement?.text ?? props.statement?.label}
+          type="block"
+        />
       </div>
       <div class="font-bold px-2">
         {argumentSideLabels[Number(props.record?.pro)]} Argument

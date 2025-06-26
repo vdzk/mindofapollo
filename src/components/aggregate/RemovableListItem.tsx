@@ -42,7 +42,7 @@ export const RemovableListItem: Component<{
   const canDeleteById = () => useBelongsTo(whoCanDeleteById(
     props.itemTable,
     useOfSelf(props.itemTable, props.item)
-  ));
+  ))
 
   const _delete = useAction(deleteAction);
   const onDelete = () => _delete(
@@ -52,7 +52,7 @@ export const RemovableListItem: Component<{
     props.itemTable,
     props.item.id,
     userExpl()
-  );
+  )
 
   return (
     <>
@@ -74,22 +74,21 @@ export const RemovableListItem: Component<{
         </NestPanel>
       </Show>
       <Show when={!showDelete()}>
-        <span class="leading-5 mb-1 inline-block">
+        <div class="flex my-1">
           <Link
             label={props.text}
-            class="py-0.5"
+            class="flex-1"
             {...props.linkProps}
           />
-          <span class="mr-2" />
           <Show when={canDeleteById() && !props.hideControls}>
             <Button
               label="X"
               onClick={() => setShowDelete(true)}
               tooltip="Remove"
-              class="text-sm"
+              class="text-sm self-start ml-1"
             />
           </Show>
-        </span>
+        </div>
       </Show>
     </>
   )

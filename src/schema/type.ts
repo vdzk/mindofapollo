@@ -1,4 +1,5 @@
 import { VqColumn } from "~/server-only/queryVirtualColumn"
+import { LinkType } from "~/types"
 
 export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id' | 'table_name' | 'column_name'
 export type DataLiteral = string | number | boolean | null
@@ -99,16 +100,12 @@ export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignK
 }
 
 interface SharedAggregateProps {
-  viewLink?: {  // custom link to view the record
-    route: string
-    idParamName: string
-    idParamSource: string
-  }
+  table: string
+  linkType?: LinkType
 }
 
 export interface OneToNSchema extends SharedAggregateProps{
   type: '1-n'
-  table: string
   column: string
   splitByColumn?: string
   filterSplitBy?: string // both parent and split tables should have this column and only overlapping entries will be shown
@@ -117,7 +114,6 @@ export interface OneToNSchema extends SharedAggregateProps{
 
 export interface NToNSchema extends SharedAggregateProps {
   type: 'n-n'
-  table: string
   first?: boolean // should the parent table appear first in the name of the cross table. Exactly one of the table pair should have this param set to true!
 }
 
