@@ -111,11 +111,19 @@ export const statement: TableSchema = {
   sections: {
     arguments: {
       label: 'arguments',
-      fields: ['arguments']
+      component: 'Arguments'
+    },
+    createArgument: {
+      label: '➕ argument',
+      component: 'CreateArgument'
     },
     evaluation: {
       label: 'evaluation',
       fields: ['statement_approvals', 'decided', 'confidence'],
+    },
+    discussion: {
+      label: 'discussion',
+      component: 'Discussion'
     },
     other: {
       label: 'other details'

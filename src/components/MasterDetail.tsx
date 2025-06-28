@@ -11,6 +11,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
   optionsClass?: string
   groups?: Option<TGroupId>[]
   horizontal?: boolean
+  pills?: boolean
   extraPanel?: JSXElement
 }) => {
   const hasGroups = () => !!props.groups && props.groups.length > 0
@@ -35,13 +36,17 @@ export const MasterDetail = <TId, TGroupId>(props: {
     const first = index === 0
     const last = index === optionsLength - 1
     const hz = horizontal()
+    const isPills = props.pills
+    
     return {
       'cursor-default bg-yellow-600 hover:bg-yellow-600 text-white': isSelected,
       'bg-yellow-400 hover:bg-yellow-500 text-gray-900': !isSelected,
-      'rounded-l-md': hz && first,
-      'rounded-r-md': hz && last,
-      'rounded-t-md': !hz && first,
-      'rounded-b-md': !hz && last
+      'rounded-md': isPills,
+      'rounded-l-md': !isPills && hz && first,
+      'rounded-r-md': !isPills && hz && last,
+      'rounded-t-md': !isPills && !hz && first,
+      'rounded-b-md': !isPills && !hz && last,
+      'm-1': isPills
     }
   }
 
@@ -63,7 +68,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
     >
       <div class={props.optionsClass} classList={{
         "w-full flex flex-col lg:flex-row mb-2 px-2": horizontal(),
-        "shrink-0": !horizontal()
+        "shrink-0": !horizontal() && !props.pills,
       }}>
         <For each={Object.entries(groupedOptions())}>
           {([groupId, options]) => (
@@ -81,7 +86,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
                 </div>
               </Show>
               <div classList={{
-                "flex flex-wrap": horizontal()
+                "flex flex-wrap": horizontal() || props.pills
               }}>
                 <For each={options}>
                   {(option, index) => (

@@ -3,7 +3,7 @@ import { chat_text } from "../statement/statement"
 import { argumentTypes } from "./type"
 
 export const argumentSideLabels = ['Con', 'Pro'] as const
-export const defautTextLines = 5
+export const defaultTextLines = 5
 
 export const argument: TableSchema = {
   plural: 'arguments',
@@ -21,9 +21,10 @@ export const argument: TableSchema = {
       optionLabels: argumentSideLabels
     },
     title: {
+      label: 'short version of the argument',
       type: 'text',
       preview: true,
-      lines: 3
+      lines: 2
     },
     chat_text,
     argument_type_id: {

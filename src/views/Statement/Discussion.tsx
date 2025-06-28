@@ -5,8 +5,8 @@ import { Button } from "~/components/buttons"
 import { TextInput } from "~/components/form/TextInput"
 import { Link } from "~/components/Link"
 
-export const Discussion: Component<{ statementId: number }> = props => {
-  const [messages, { refetch }] = createResource(() => listForeignRecords('statement_discussion_message', 'statement_id', props.statementId))
+export const Discussion: Component<{ id: number }> = props => {
+  const [messages, { refetch }] = createResource(() => listForeignRecords('statement_discussion_message', 'statement_id', props.id))
   const [newMessage, setNewMessage] = createSignal("")
   const [sending, setSending] = createSignal(false)
 
@@ -17,7 +17,7 @@ export const Discussion: Component<{ statementId: number }> = props => {
     try {
       await insertRecord('statement_discussion_message', {
         text: newMessage(),
-        statement_id: props.statementId
+        statement_id: props.id
       })
       setNewMessage("")
       refetch()
