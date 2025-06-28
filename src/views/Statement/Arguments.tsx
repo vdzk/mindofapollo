@@ -1,6 +1,6 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createMemo, For } from "solid-js"
-import { listArgumentsCache } from "~/client-only/query"
+import { Component, createMemo, For, Show } from "solid-js"
+import { listArgumentsCache, listForeignCrossRecordsCache } from "~/client-only/query"
 import { Link } from "~/components/Link"
 import { calcProbSuccess } from "~/compute"
 import { argumentSideLabels } from "~/tables/argument/argument"
@@ -8,7 +8,12 @@ import { getPercent } from "~/utils/string"
 
 export const Arguments: Component<{ id: number }> = props => {
   const _arguments = createAsync(async () => listArgumentsCache(props.id))
-
+  const parentArguments = createAsync(async () => listForeignCrossRecordsCache(
+    'critical_statement',
+    'statement_id',
+    'argument_id',
+    props.id
+  ))
 
   const sideProbs = createMemo(() => {
     const sideUnknown = [false, false]
@@ -33,8 +38,8 @@ export const Arguments: Component<{ id: number }> = props => {
     <div class="flex-1 max-w-2xl">
       <For each={[true, false]}>
         {pro => (
-          <div class="p-2 flex-1">
-            <h2 class="text-xl font-semibold py-2">
+          <div class="px-2 pb-4">
+            <h2 class="text-xl font-bold pb-2">
               {`[${getPercent(sideProbs()[Number(pro)])}] ${argumentSideLabels[Number(pro)]}`}
             </h2>
             <For each={_arguments()?.filter(arg => arg.pro === pro)}>
@@ -42,7 +47,7 @@ export const Arguments: Component<{ id: number }> = props => {
                 <Link
                   route="argument"
                   params={{ id: argument.id }}
-                  class="min-w-10 mr-1"
+                  class="min-w-10 mb-1"
                   type="block"
                   label={
                     <div class="flex gap-2">
@@ -61,6 +66,24 @@ export const Arguments: Component<{ id: number }> = props => {
           </div>
         )}
       </For >
+      <Show when={(parentArguments()?.length ?? 0) > 0}>
+        <div class="px-2 pb-4">
+          <h2 class="text-xl font-bold pb-2">
+            Used In
+          </h2>
+          <For each={parentArguments()}>
+            {parentArgument => (
+              <Link
+                route="argument"
+                params={{ id: parentArgument.id }}
+                type="block"
+                class="mb-1"
+                label={parentArgument.title}
+              />
+            )}
+          </For>
+        </div>
+      </Show>
     </div >
   )
 }

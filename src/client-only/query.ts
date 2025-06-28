@@ -10,6 +10,7 @@ import { getOneRecordById } from "~/api/getOne/recordById"
 import { listOwnRecords } from "~/api/list/ownRecords"
 import { listConsequences } from "~/api/list/consequences"
 import { listArguments } from "~/api/list/arguments"
+import { listForeignCrossRecords } from "~/api/list/foreignCrossRecords"
 
 export const listForeignHopRecordsCache = query(listForeignHopRecords, 'listForeignHopRecords')
 export const listCrossRecordsCache = query(listCrossRecords, 'listCrossRecords')
@@ -22,4 +23,5 @@ export const listForeignRecordsCache = query(listForeignRecords, 'listForeignRec
 export const listOwnRecordsCache = query(listOwnRecords, 'listOwnRecords')
 export const listConsequencesCache = query(listConsequences, 'listForeign2Records')
 export const listArgumentsCache = query(listArguments, 'listArguments')
+export const listForeignCrossRecordsCache = query(listForeignCrossRecords, 'listForeignCrossRecords')
 
