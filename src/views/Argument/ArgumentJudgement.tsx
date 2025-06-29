@@ -80,7 +80,7 @@ export const ArgumentJudgement: Component<{
   return (
     <Switch>
       <Match when={viewName() === 'no-judgement'}>
-        <div class="px-2 pb-2">
+        <div class="px-2 py-2">
           The argument has not been judged yet.
         </div>
         {getJudgeButton()}
@@ -156,6 +156,7 @@ export const ArgumentJudgement: Component<{
         </Show>
       </Match>
       <Match when={viewName() === 'judgement'}>
+        <div class="h-2" />
         <RecordDetails
           tableName={judgementTableName[props.statementType]}
           id={props.argumentId}

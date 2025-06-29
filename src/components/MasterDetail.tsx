@@ -6,7 +6,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
   options: Option<TId, TGroupId>[]
   selectedId?: TId
   onChange: (id?: TId) => void
-  children: JSXElement
+  children?: JSXElement
   class?: string
   optionsClass?: string
   groups?: Option<TGroupId>[]
@@ -41,11 +41,10 @@ export const MasterDetail = <TId, TGroupId>(props: {
     return {
       'cursor-default bg-yellow-600 hover:bg-yellow-600 text-white': isSelected,
       'bg-yellow-400 hover:bg-yellow-500 text-gray-900': !isSelected,
-      'rounded-md': isPills,
-      'rounded-l-md': !isPills && hz && first,
-      'rounded-r-md': !isPills && hz && last,
-      'rounded-t-md': !isPills && !hz && first,
-      'rounded-b-md': !isPills && !hz && last,
+      'rounded-l-md': isPills || hz && first,
+      'rounded-r-md': isPills || hz && last,
+      'rounded-t-md': isPills || !hz && first,
+      'rounded-b-md': isPills || !hz && last,
       'm-1': isPills
     }
   }
@@ -108,12 +107,14 @@ export const MasterDetail = <TId, TGroupId>(props: {
         </For>
         {props.extraPanel}
       </div>
-      <div
-        class="flex-1 flex flex-col"
-        classList={{'border-t': horizontal()}}
-      >
-        {props.children}
-      </div>
+      <Show when={props.children}>
+        <div
+          class="flex-1 flex flex-col"
+          classList={{'border-t': horizontal()}}
+        >
+          {props.children}
+        </div>
+      </Show>
     </div>
   )
 }

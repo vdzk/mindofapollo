@@ -1,12 +1,11 @@
-import { action, createAsync, redirect, useAction, useSearchParams } from "@solidjs/router"
-import { Component, createSignal, Match, Show, Switch, useContext } from "solid-js"
+import { createAsync, useSearchParams } from "@solidjs/router"
+import { Component, Match, Show, Switch, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
 import { MasterDetail } from "~/components/MasterDetail"
-import { Button } from "~/components/buttons"
 import { componentsByName } from "~/components/componentsByName"
-import { deleteById, whoCanDeleteById } from "~/api/delete/byId"
+import { whoCanDeleteById } from "~/api/delete/byId"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { useOfSelf } from "~/client-only/useOfSelf"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
@@ -15,22 +14,8 @@ import { SessionContext } from "~/SessionContext"
 import { RecordHistory } from "~/components/RecordHistory"
 import { personalTableNames } from "~/permissions"
 import { firstCap } from "~/utils/string"
-import { listRecordsCache } from "~/client-only/query"
-import { UserExplField } from "~/components/form/UserExplField"
 import { Form } from "~/components/form/Form"
-import { Subtitle } from "~/components/PageTitle"
-
-const deleteAction = action(async (
-  tableName: string,
-  id: number,
-  userExpl: string
-) => {
-  await deleteById(tableName, id, userExpl)
-  throw redirect(
-    '/home-page',
-    { revalidate: listRecordsCache.keyFor(tableName) }
-  )
-})
+import { DeleteRecord } from "~/components/form/DeleteRecord"
 
 export const ShowRecord: Component<{
   tableName: string
@@ -40,10 +25,6 @@ export const ShowRecord: Component<{
 }> = props => {
   const [searchParams, setSearchParams] = useSearchParams()
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
-
-  const [userExpl, setUserExpl] = createSignal('')
-  const _delete = useAction(deleteAction)
-  const onDelete = () => _delete(props.tableName, props.id, userExpl())
   const session = useContext(SessionContext)
   const isSelf = () => props.id === session?.userSession?.()?.userId
 
@@ -113,14 +94,7 @@ export const ShowRecord: Component<{
           />
         </Match>
         <Match when={selectedSection() === 'delete'}>
-          <Subtitle>Delete</Subtitle>
-          <div class="px-2 max-w-(--breakpoint-sm)">
-            <UserExplField value={userExpl()} onChange={setUserExpl} />
-            <Button
-              label="Delete"
-              onClick={onDelete}
-            />
-          </div>
+          <DeleteRecord tableName={props.tableName} id={props.id} />
         </Match>
         <Match when={selectedSection() === 'history'}>
           <RecordHistory tableName={props.tableName} id={props.id} />

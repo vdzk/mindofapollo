@@ -1,8 +1,7 @@
-import { createAsync, revalidate } from "@solidjs/router"
+import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
 import { Component, createSignal, Match, Show, Switch } from "solid-js"
 import { ArgumentDetails } from "./ArgumentDetails"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
-import { ShowRecord } from "../ShowRecord"
 import { ArgumentJudgement } from "./ArgumentJudgement"
 import { H2, Subtitle } from "~/components/PageTitle"
 import { Aggregate } from "~/components/aggregate/Aggregate"
@@ -14,59 +13,88 @@ import { getOneRecordByChildId } from "~/api/getOne/recordByChildId"
 import { Button } from "~/components/buttons"
 import { getToggleLabel } from "~/utils/string"
 import { ConfidenceCriteria } from "./ConfidenceCriteria"
+import { MasterDetail } from "~/components/MasterDetail"
+import { RecordHistory } from "~/components/RecordHistory"
+import { useBelongsTo } from "~/client-only/useBelongsTo"
+import { whoCanDeleteById } from "~/api/delete/byId"
+import { whoCanUpdateRecord } from "~/api/update/record"
+import { DeleteRecord } from "~/components/form/DeleteRecord"
 
-export const Argument: Component<{
-  id: number
-}> = props => {
+export const Argument: Component<{ id: number }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
-
   const statement = createAsync(async () => getOneRecordByChildId('statement', 'argument', props.id))
   const statementType = () => statement()?.statement_type_name as StatementType | undefined
-  const [showForm, setShowForm] = createSignal(false)
-  const [showMoreDetails, setShowMoreDetails] = createSignal(false)
+
+  const [searchParams, setSearchParams] = useSearchParams()
   const [showHowToJudge, setShowHowToJudge] = createSignal(false)
   const argumentTypeId = () => record()?.argument_type_id as number | undefined
   const onFormExit = () => {
-    setShowForm(false)
+    setSearchParams({ tab: null })
     revalidate([
       listForeignRecordsCache.keyFor('argument', 'statement_id', record()!.statement_id as number)
     ])
   }
+  const canDelete = () => useBelongsTo(whoCanDeleteById(
+    'argument', false
+  ))
+  const canUpdate = () => useBelongsTo(whoCanUpdateRecord(
+    'argument', false, false
+  ))
+  const tabOptions = () => {
+    const options = [
+      { id: 'analysis', label: 'Analysis' },
+      { id: 'history', label: 'History' }
+    ]
+    if (canUpdate()) {
+      options.push({ id: 'edit', label: 'Edit' })
+    }
+    if (canDelete()) {
+      options.push({ id: 'delete', label: 'Delete' })
+    }
+    return options
+  }
   return (
     <>
       <section class="flex flex-1 flex-col lg:flex-row">
-        <ArgumentDetails
-          id={props.id}
-          record={record()}
-          statement={statement()}
-          showForm={showForm()}
-          setShowForm={setShowForm}
-          showMoreDetails={showMoreDetails()}
-          setShowMoreDetails={setShowMoreDetails}
-        />
+        <div class="flex-3 min-w-0">
+          <ArgumentDetails
+            id={props.id}
+            record={record()}
+            statement={statement()}
+          />
+          <MasterDetail
+            horizontal
+            options={tabOptions()}
+            selectedId={searchParams.tab || 'analysis'}
+            onChange={id => setSearchParams({ tab: id })}
+            optionsClass="pt-2"
+          />
+        </div>
         <Switch>
-          <Match when={showMoreDetails()}>
-            <div class="flex-5 border-l">
-              <div class="h-2" />
-              <ShowRecord
-                tableName="argument"
-                id={props.id}
-                hideSections={['details', 'criticism']}
-                horizontalSections
-              />
-            </div>
-          </Match>
-          <Match when={showForm() && record()}>
+          <Match when={searchParams.tab === 'edit' && record()}>
             <div class="flex-5 border-l pt-2">
               <Form
-                tableName={'argument'}
+                tableName="argument"
                 exitSettings={{ onExit: onFormExit }}
                 id={props.id}
                 record={record()!}
               />
             </div>
           </Match>
-          <Match when={argumentTypeId()}>
+          <Match when={searchParams.tab === 'history'}>
+            <div class="flex-5 border-l pt-2">
+              <RecordHistory tableName="argument" id={props.id} />
+            </div>
+          </Match>
+          <Match when={searchParams.tab === 'delete'}>
+            <div class="flex-5 border-l pt-2">
+              <DeleteRecord tableName="argument" id={props.id} />
+            </div>
+          </Match>
+          <Match when={
+            (!searchParams.tab || searchParams.tab === 'analysis')
+            && argumentTypeId()
+          }>
             <CriticalQuestions
               argumentTypeId={argumentTypeId()!}
               argumentId={props.id}
@@ -87,7 +115,7 @@ export const Argument: Component<{
                 <H2>Confidence crieria</H2>
                 <div class="p-2 pt-0 border-b">
                   0% = this argument doesn't change confidence in the claim
-                  <br/>
+                  <br />
                   100% = this argument gives me absolute confidence in the claim
                 </div>
                 <ConfidenceCriteria argumentTypeId={argumentTypeId()!} />
@@ -97,6 +125,7 @@ export const Argument: Component<{
                 !showHowToJudge()
                 && statementType() === 'prescriptive'
               }>
+                <div class="h-2" />
                 <Aggregate
                   tableName="argument"
                   id={props.id}
