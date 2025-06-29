@@ -21,9 +21,7 @@ export const argument_judgement: TableSchema = {
     },
     isolated_confidence: {
       type: 'proportion',
-      label: 'confidence',
-      instructions: '0% = this argument doesn\'t change confidence in the conclusion; ' +
-        '100% = this argument gives me absolute confidence in the conclusion'
+      label: 'confidence'
     },
     isolated_explanation: {
       type: 'text',

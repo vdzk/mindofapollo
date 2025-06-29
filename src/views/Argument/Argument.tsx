@@ -4,13 +4,16 @@ import { ArgumentDetails } from "./ArgumentDetails"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
 import { ShowRecord } from "../ShowRecord"
 import { ArgumentJudgement } from "./ArgumentJudgement"
-import { Subtitle } from "~/components/PageTitle"
+import { H2, Subtitle } from "~/components/PageTitle"
 import { Aggregate } from "~/components/aggregate/Aggregate"
 import { StatementType } from "~/tables/statement/statement_type"
 import { CriticalQuestions } from "./CriticalQuestions"
 import { JudgeExamples } from "./JudgementExamples"
 import { Form } from "~/components/form/Form"
 import { getOneRecordByChildId } from "~/api/getOne/recordByChildId"
+import { Button } from "~/components/buttons"
+import { getToggleLabel } from "~/utils/string"
+import { ConfidenceCriteria } from "./ConfidenceCriteria"
 
 export const Argument: Component<{
   id: number
@@ -21,7 +24,7 @@ export const Argument: Component<{
   const statementType = () => statement()?.statement_type_name as StatementType | undefined
   const [showForm, setShowForm] = createSignal(false)
   const [showMoreDetails, setShowMoreDetails] = createSignal(false)
-  const [showExamples, setShowExamples] = createSignal(false)
+  const [showHowToJudge, setShowHowToJudge] = createSignal(false)
   const argumentTypeId = () => record()?.argument_type_id as number | undefined
   const onFormExit = () => {
     setShowForm(false)
@@ -69,16 +72,41 @@ export const Argument: Component<{
               argumentId={props.id}
             />
             <div class="border-l flex-3 min-w-0">
-              <Subtitle>Judgement</Subtitle>
-              <div class="border-t h-3" />
-              <Show when={statementType() === 'prescriptive'}>
+              <div class="flex justify-between border-b">
+                <Subtitle>Judgement</Subtitle>
+                <Button
+                  label={getToggleLabel(showHowToJudge(), 'instructions')}
+                  onClick={() => setShowHowToJudge(x => !x)}
+                  class="self-center mx-2"
+                />
+              </div>
+              <Show when={
+                showHowToJudge()
+                && statementType() === 'descriptive'
+              }>
+                <H2>Confidence crieria</H2>
+                <div class="p-2 pt-0 border-b">
+                  0% = this argument doesn't change confidence in the claim
+                  <br/>
+                  100% = this argument gives me absolute confidence in the claim
+                </div>
+                <ConfidenceCriteria argumentTypeId={argumentTypeId()!} />
+                <JudgeExamples argumentTypeId={argumentTypeId()!} />
+              </Show>
+              <Show when={
+                !showHowToJudge()
+                && statementType() === 'prescriptive'
+              }>
                 <Aggregate
                   tableName="argument"
                   id={props.id}
                   aggregateName="directive_consequences"
                 />
               </Show>
-              <Show when={statementType() && (statementType() !== 'prescriptive')}>
+              <Show when={
+                !showHowToJudge() && statementType()
+                && (statementType() !== 'prescriptive')
+              }>
                 <ArgumentJudgement
                   argumentId={props.id}
                   argumentTypeId={argumentTypeId()!}
@@ -87,17 +115,12 @@ export const Argument: Component<{
                       StatementType, 'prescriptive'
                     >
                   }
-                  showExamples={showExamples()}
-                  setShowExamples={setShowExamples}
                 />
               </Show>
             </div>
           </Match>
         </Switch>
       </section >
-      <Show when={showExamples()}>
-        <JudgeExamples argumentTypeId={argumentTypeId()!} />
-      </Show>
     </>
   )
 }

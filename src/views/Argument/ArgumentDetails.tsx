@@ -9,6 +9,7 @@ import { Subtitle } from "~/components/PageTitle"
 import { schema } from "~/schema/schema"
 import { DataRecordWithId } from "~/schema/type"
 import { argumentSideLabels } from "~/tables/argument/argument"
+import { argumentTypes } from "~/tables/argument/type"
 import { getExtTableName } from "~/utils/schema"
 import { getToggleLabel } from "~/utils/string"
 
@@ -25,11 +26,14 @@ export const ArgumentDetails: Component<{
     ? getExtTableName('argument', props.record) : undefined
   const canUpdateRecord = () => useBelongsTo(
     whoCanUpdateRecord('argument', false, false))
+  const argTypeName = () => props.record
+    ? argumentTypes[props.record.argument_type_id as number - 1]
+    : ''
 
   return (
     <div class="flex-3 min-w-0">
       <Title>{props.record?.title}</Title>
-      <Subtitle>Argument</Subtitle>
+      <Subtitle>Argument ({argTypeName()})</Subtitle>
       <div class="border-t h-3" />
       <div class="font-bold px-2">Claim</div>
       <div class="px-2 pb-2">

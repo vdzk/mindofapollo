@@ -3,6 +3,7 @@ import { createAsync } from "@solidjs/router"
 import { Component, For, Show, Suspense } from "solid-js"
 import { listForeignRecordsCache } from "~/client-only/query"
 import { Detail } from "~/components/details"
+import { H2 } from "~/components/PageTitle"
 import { tableStyle } from "~/components/table"
 import { DataRecordWithId } from "~/schema/type"
 import { getPercent } from "~/utils/string"
@@ -13,7 +14,7 @@ const ExamplesTable: Component<{ examples: DataRecordWithId[] }> = props => {
       <thead>
         <tr class={tableStyle.tHeadTr}>
           <For each={
-            ['Argument Examples', 'Conclusion', 'Explanation', 'Confidence']
+            ['Argument', 'Conclusion', 'Explanation', 'Conf.']
           }>{(header, i) => (
             <th class={tableStyle.th + (i() === 0 ? ' pl-2' : '')}>
               {header}
@@ -69,20 +70,24 @@ export const JudgeExamples: Component<{ argumentTypeId: number }> = props => {
   ))
   const isLarge = createMediaQuery('(min-width: 1024px)')
   return (
-    <div class="border-t">
-      <Suspense>
-        <Show when={examples() && examples()!.length > 0}>
-          <Show when={isLarge()}>
-            <ExamplesTable examples={examples()!} />
+    <>
+      <div class="h-2" />
+      <H2>Judgement Examples</H2>
+      <div class="border-t">
+        <Suspense>
+          <Show when={examples() && examples()!.length > 0}>
+            <Show when={isLarge()}>
+              <ExamplesTable examples={examples()!} />
+            </Show>
+            <Show when={!isLarge()}>
+              <ExamplesList examples={examples()!} />
+            </Show>
           </Show>
-          <Show when={!isLarge()}>
-            <ExamplesList examples={examples()!} />
+          <Show when={examples() && examples()!.length === 0}>
+            <div class="px-2">No examples are available.</div>
           </Show>
-        </Show>
-        <Show when={examples() && examples()!.length === 0}>
-          <div class="px-2">No examples are available.</div>
-        </Show>
-      </Suspense>
-    </div>
+        </Suspense>
+      </div>
+    </>
   )
 }

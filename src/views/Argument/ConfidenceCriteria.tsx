@@ -16,7 +16,7 @@ export const ConfidenceCriteria: Component<{
       <table class="mt-2 mb-2">
         <thead>
           <tr class={tableStyle.tHeadTr}>
-            <th class={tableStyle.th + ' pl-2'}>Range</th>
+            <th class={tableStyle.th + ' pl-2 min-w-30'}>Conf. Range</th>
             <th class={tableStyle.th}>Description</th>
           </tr>
         </thead>
@@ -25,8 +25,8 @@ export const ConfidenceCriteria: Component<{
             {criterion => (
               <tr>
                 <td class={tableStyle.td + ' pl-2'}>
-                  {getPercent(criterion.min_value as number)}⤸
-                  <br />
+                  {getPercent(criterion.min_value as number)}
+                  {' - '}
                   {getPercent(criterion.max_value as number)}
                 </td>
                 <td class={tableStyle.td}>

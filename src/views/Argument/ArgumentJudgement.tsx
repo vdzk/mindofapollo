@@ -18,9 +18,7 @@ const judgementTableName = {
 export const ArgumentJudgement: Component<{
   argumentId: number,
   argumentTypeId: number,
-  statementType: 'descriptive' | 'threshold',
-  showExamples: boolean
-  setShowExamples: Setter<boolean>
+  statementType: 'descriptive' | 'threshold'
 }> = props => {
   const judgement = createAsync(() => getOneRecordByIdCache(
     judgementTableName[props.statementType], props.argumentId
@@ -115,8 +113,6 @@ export const ArgumentJudgement: Component<{
           argumentTypeId={props.argumentTypeId}
           onExit={onJudgeArgumentExit}
           judgement={judgement()}
-          showExamples={props.showExamples}
-          setShowExamples={props.setShowExamples}
         />
       </Match>
       <Match when={viewName() === 'judge-argument'}>
@@ -136,6 +132,7 @@ export const ArgumentJudgement: Component<{
         />
       </Match>
       <Match when={viewName() === 'judgement' && props.statementType === 'descriptive'}>
+        <div class="h-2" />
         <RecordDetails
           tableName="argument_judgement"
           id={props.argumentId}
