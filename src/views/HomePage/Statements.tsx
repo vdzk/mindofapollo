@@ -14,7 +14,7 @@ export default function Statements() {
   const authenticated = () => !!session?.userSession()?.authenticated
   const tags = createAsync(() => listRecordsCache('tag'))
 
-  const featuredOption = { id: -1, label: 'featured' }
+  const featuredOption = { id: -1, label: '⭐ featured ⭐' }
   const tagOptions = () => tags()?.map(
     tag => ({ id: tag.id, label: tag.name as string })
   ) ?? []
