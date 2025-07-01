@@ -104,7 +104,7 @@ export const CreateArgument: Component<{
               argument_type_id: selectedArgumentTypeId()!
             }}
             exitSettings={{ onExit: onFormExit }}
-            hideColumns={['statement_id', 'argument_type_id', 'chat_text']}
+            hideColumns={['statement_id', 'argument_type_id']}
           />
         </div>
       </Show>

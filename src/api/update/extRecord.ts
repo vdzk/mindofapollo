@@ -1,10 +1,11 @@
 import { DataRecord } from "~/schema/type"
 import { _updateRecord } from "../../server-only/mutate"
 import { startExpl, finishExpl } from "~/server-only/expl"
-import { getUserSession, getUserActorUser } from "../../server-only/session"
+import { getUserActorUser, getUserSession } from "../../server-only/session"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
+import { authorisedUpdate } from "./record"
 
 export const updateExtRecord = async (
   tableName: string,
@@ -15,8 +16,11 @@ export const updateExtRecord = async (
   userExpl: string
 ) => {
   "use server"
-  const userSession = await getUserSession()
-  const explId = await startExpl(userSession.userId, 'updateExtRecord', 1, tableName, id)
+
+  const {userId, authRole} = await getUserSession()
+  if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return 
+
+  const explId = await startExpl(userId, 'updateExtRecord', 1, tableName, id)
   const [recordDiff, extRecordDiff] = await Promise.all([
     _updateRecord(tableName, id, explId, record),
     _updateRecord(extTableName, id, explId, extRecord),
@@ -60,8 +64,8 @@ export const explUpdateExtRecord = (data: UpdateExtRecordData): ExplData => ({
     label: data.targetLabel
   },
   updatedRecords: {
-    [data.tableName]: [{...data.record, id: data.id}],
-    [data.extTableName]: [{...data.extRecord, id: data.id}]
+    [data.tableName]: [{ ...data.record, id: data.id }],
+    [data.extTableName]: [{ ...data.extRecord, id: data.id }]
   },
   userExpl: data.userExpl
 })

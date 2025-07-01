@@ -1,5 +1,5 @@
 import { createAsync, useAction } from "@solidjs/router"
-import { createSignal, For, Show } from "solid-js"
+import { createSignal, For, Show, useContext } from "solid-js"
 import { getHomePageStatementsCache, listRecordsCache } from "~/client-only/query"
 import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
@@ -7,8 +7,11 @@ import { Subtitle } from "~/components/PageTitle"
 import { setSubscriptionAction } from "~/client-only/action"
 import { Button } from "~/components/buttons"
 import { withDialogueStatementId } from "~/constant"
+import { SessionContext } from "~/SessionContext"
 
 export default function Statements() {
+  const session = useContext(SessionContext)
+  const authenticated = () => !!session?.userSession()?.authenticated
   const tags = createAsync(() => listRecordsCache('tag'))
 
   const featuredOption = { id: -1, label: 'featured' }
@@ -51,7 +54,7 @@ export default function Statements() {
                       params={linkParams}
                       class="flex-1"
                     />
-                    {!directive && (
+                    {authenticated() && !directive && (
                       <Button
                         label={subscribed ? 'unsub' : 'sub'}
                         onClick={() => setSubscription(id, !subscribed)}
@@ -66,23 +69,25 @@ export default function Statements() {
           </div>
         </MasterDetail>
       </div>
-      <div class="px-2 mt-3 pb-6">
-        <Links
-          type="button"
-          links={[
-            {
-              label: "Show all",
-              route: "list-records",
-              params: { tableName: 'statement' }
-            },
-            {
-              label: "Add new",
-              route: "create-record",
-              params: { tableName: 'statement' }
-            }
-          ]}
-        />
-      </div>
+      <Show when={authenticated()}>
+        <div class="px-2 mt-3 pb-6">
+          <Links
+            type="button"
+            links={[
+              {
+                label: "Show all",
+                route: "list-records",
+                params: { tableName: 'statement' }
+              },
+              {
+                label: "Add new",
+                route: "create-record",
+                params: { tableName: 'statement' }
+              }
+            ]}
+          />
+        </div>
+      </Show>
     </div>
   )
 }

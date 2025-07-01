@@ -1,7 +1,6 @@
 import { createAsync, useNavigate } from "@solidjs/router"
-import { Component, Match, Show, Switch, useContext } from "solid-js"
+import { Component, Match, Switch, useContext } from "solid-js"
 import { Link } from "./Link"
-import { useIsPublicRoute } from "~/client-only/util"
 import { doLogout } from "~/api/execute/logout"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { SessionContext } from "~/SessionContext"
@@ -10,8 +9,7 @@ import { Button } from "./buttons"
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
   const navigate = useNavigate()
-  const isPublicRoute = useIsPublicRoute()
-  const user = createAsync(async () => session?.userSession()
+  const user = createAsync(async () => session?.userSession()?.userId
     ? getOneRecordById('person', session!.userSession()!.userId)
     : undefined
   )
@@ -22,33 +20,31 @@ export const TopNav: Component = () => {
     navigate('/')
   }
   return (
-    <Show when={!isPublicRoute()}>
-      <nav class="border-b flex justify-between">
-        <div class="px-2 py-0.5 flex items-center">
-          <Link route="home-page" label="APOLLO" type="logo" />
-          <span class="inline-block w-2" />
-          <Link route="search" label="Search" type="button" />
-        </div>
-        <div class="px-2 py-0.5">
-          <Switch>
-            <Match when={session!.userSession()?.authenticated}>
-              <Link
-                route="show-record"
-                params={{ tableName: 'person', id: session!.userSession()!.userId }}
-                label={user()?.name}
-              />
-              <span class="inline-block w-2" />
-              <Button
-                label="Logout"
-                onClick={onLogout}
-              />
-            </Match>
-            <Match when>
-              <Link route="login" label="Login" type="button" />
-            </Match>
-          </Switch>
-        </div>
-      </nav>
-    </Show>
+    <nav class="border-b flex justify-between">
+      <div class="px-2 py-0.5 flex items-center">
+        <Link route="home-page" label="APOLLO" type="logo" />
+        <span class="inline-block w-2" />
+        <Link route="search" label="Search" type="button" />
+      </div>
+      <div class="px-2 py-0.5">
+        <Switch>
+          <Match when={session!.userSession()?.authenticated}>
+            <Link
+              route="show-record"
+              params={{ tableName: 'person', id: session!.userSession()!.userId }}
+              label={user()?.name}
+            />
+            <span class="inline-block w-2" />
+            <Button
+              label="Logout"
+              onClick={onLogout}
+            />
+          </Match>
+          <Match when>
+            <Link route="login" label="Login" type="button" />
+          </Match>
+        </Switch>
+      </div>
+    </nav>
   )
 }

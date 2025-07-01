@@ -1,11 +1,8 @@
 import { onError, sql } from "~/server-only/db"
-import { getUserSession } from "~/server-only/session"
 import { defaultLanguage } from "~/translation"
 
 export const listChatMessages = async () => {
   "use server";
-  const userSession = await getUserSession();
-  if (!userSession?.authenticated) return [];
   const messages = await sql`
     SELECT
       m.id, m.text, m.user_id, m.timestamp,

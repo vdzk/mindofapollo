@@ -6,6 +6,8 @@ import { getUserId } from "~/server-only/session"
 
 export const listOwnRecords = async (tableName: string) => {
   "use server"
+  const userId = await getUserId()
+  if (!userId) return []
   const records = await sql<DataRecordWithId[]>`
     SELECT *
     FROM ${sql(tableName)}

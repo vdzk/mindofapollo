@@ -13,6 +13,8 @@ export const listRecords = async (
   let filterClause
   let selectClause = sql`t.*`
   if (isPersonal(tableName) && (schema.tables[tableName].private ?? true)) {
+    const userId = await getUserId()
+    if (!userId) return []
     filterClause = sql`WHERE owner_id = ${await getUserId()}`
   } else {
     filterClause = sql``

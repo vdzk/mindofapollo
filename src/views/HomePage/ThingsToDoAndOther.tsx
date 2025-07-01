@@ -1,8 +1,12 @@
 import { Links } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"
 import { CurrentTaskBtn } from "./CurrentTaskBtn"
+import { SessionContext } from "~/SessionContext"
+import { Show, useContext } from "solid-js"
 
 export default function ThingsToDoAndOther() {
+  const session = useContext(SessionContext)
+  const authenticated = () => !!session?.userSession?.()?.authenticated
   return (
     <div class="flex-2 border-l pt-2">
       <Subtitle>Things to do</Subtitle>
@@ -24,10 +28,12 @@ export default function ThingsToDoAndOther() {
               route: 'list-records',
               params: { tableName: 'issue' }
             },
-            {
-              label: "Your directives",
-              route: "show-directive"
-            }
+            ...(authenticated() ? [
+              {
+                label: "Your directives",
+                route: "show-directive"
+              }
+            ] : [])
           ]}
         />
       </div>
@@ -51,7 +57,10 @@ export default function ThingsToDoAndOther() {
             }
           ]}
         />
-        <CurrentTaskBtn />
+        <Show when={authenticated()}>
+          <span class="w-2 inline-block" />
+          <CurrentTaskBtn />
+        </Show>
       </div>
     </div>
   )

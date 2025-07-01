@@ -1,11 +1,5 @@
-import { useLocation, useSearchParams } from "@solidjs/router";
-import { Accessor, createEffect, createSignal } from "solid-js";
-import { publicRoutes } from "~/constant";
-
-export const useIsPublicRoute = () => {
-  const location = useLocation()
-  return () => publicRoutes.includes(location.pathname)
-}
+import { useSearchParams } from "@solidjs/router"
+import { Accessor, createEffect, createSignal } from "solid-js"
 
 // Fixes the problem of parmas unloading too early
 export const useSafeParams = <T,>(paramNames: string[]) => {

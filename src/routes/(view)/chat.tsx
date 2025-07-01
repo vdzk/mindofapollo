@@ -1,13 +1,15 @@
 import { Title } from "@solidjs/meta"
 import { PageTitle } from "~/components/PageTitle"
-import { createSignal, For, Show, onMount, createResource, createEffect, on } from "solid-js"
+import { createSignal, For, Show, onMount, createResource, createEffect, on, useContext } from "solid-js"
 import { Button } from "~/components/buttons"
 import { TextInput } from "~/components/form/TextInput"
 import { submitChatMessage } from "~/api/submit/chatMessage"
 import { listChatMessages } from "~/api/list/chatMessages"
 import { Link } from "~/components/Link"
+import { SessionContext } from "~/SessionContext"
 
 export default function Chat() {
+  const session = useContext(SessionContext)
   const [messages, { refetch }] = createResource(listChatMessages)
   const [newMessage, setNewMessage] = createSignal("")
   const [sending, setSending] = createSignal(false)
@@ -105,25 +107,26 @@ export default function Chat() {
               </Show>
             </Show>
           </div>
-          
-          <div class="border-t p-4 flex gap-2">
-            <div class="flex-1">
-              <TextInput
-                value={newMessage()}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Type a message..."
+          <Show when={session?.userSession?.()?.authenticated}>
+            <div class="border-t p-4 flex gap-2">
+              <div class="flex-1">
+                <TextInput
+                  value={newMessage()}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Type a message..."
+                  disabled={sending()}
+                  tableName="chat_message"
+                  colName="text"
+                />
+              </div>
+              <Button
+                label={sending() ? "Sending..." : "Send"}
+                onClick={sendMessage}
                 disabled={sending()}
-                tableName="chat_message"
-                colName="text"
               />
             </div>
-            <Button
-              label={sending() ? "Sending..." : "Send"}
-              onClick={sendMessage}
-              disabled={sending()}
-            />
-          </div>
+          </Show>
         </div>
       </div>
     </main>

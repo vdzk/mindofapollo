@@ -2,12 +2,13 @@ import { belongsTo } from "~/server-only/session"
 import { isPrivate } from "~/permissions";
 import { _getRecordById } from "~/server-only/select";
 import { ofSelf } from "~/server-only/ofSelf";
+import { AuthRole } from "~/types";
 
-export const whoCanGetOneRecordById = (tableName: string, ofSelf: boolean) => {
+export const whoCanGetOneRecordById = (tableName: string, ofSelf: boolean): AuthRole[] => {
   if (isPrivate(tableName) && !ofSelf) {
     return []
   } else {
-    return ['invited']
+    return ['invited', 'anonymous']
   }
 }
 

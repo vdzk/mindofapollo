@@ -5,6 +5,7 @@ import { onError, sql } from "./db"
 export const ofSelf = async (tableName: string, recordId: number) => {
   if (!isPersonal(tableName)) return false
   const userId = await getUserId()
+  if (!userId) return false
   const result = await sql`
     SELECT 1
     FROM ${sql(tableName)}

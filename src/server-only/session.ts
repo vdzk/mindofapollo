@@ -24,7 +24,7 @@ export const getUserSession = async () => {
 
 export const getAuthRole = async () => {
   const session = await getSession()
-  return session.data.authRole
+  return session.data.authRole ?? 'anonymous'
 }
 
 export const getUserLanguage = async () => {

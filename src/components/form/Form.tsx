@@ -73,7 +73,7 @@ export const Form: Component<{
     }
   })
 
-          
+
 
   const table = () => schema.tables[props.tableName]
   const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
@@ -231,11 +231,13 @@ export const Form: Component<{
         <UserExplField value={userExpl()} onChange={setUserExpl} />
       </Show>
       <div class="pt-2">
-        <Button
-          label="Save"
-          onClick={onSubmit}
-          disabled={pristine() || !complete()}
-        />
+        <Show when={session?.userSession?.()?.authenticated}>
+          <Button
+            label="Save"
+            onClick={onSubmit}
+            disabled={pristine() || !complete()}
+          />
+        </Show>
         <span class="inline-block w-2" />
         <Switch>
           <Match when={hasExitHandler(props.exitSettings)}>

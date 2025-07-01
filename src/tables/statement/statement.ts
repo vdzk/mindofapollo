@@ -1,14 +1,15 @@
-import { TableSchema, VirtualColumnQueries } from "~/schema/type"
+import { TableSchema, TextColumn, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
 import { directive } from "../morality/directive"
 
 // Indexes corresponts to IDs in statement_type table
 const statementExtensonTables = ['', '', '', 'directive']
 
-export const chat_text = {
+export const chat_text: TextColumn = {
   type: 'text',
   lines: 4,
-  instructions: "Used together with other chat texts to generate a chat conversation log between two opposing sides."
+  instructions: "Used together with other chat texts to generate a chat conversation log between two opposing sides.",
+  getVisibility: (record) => !!record.id,
 } as const
 
 export const statement: TableSchema = {

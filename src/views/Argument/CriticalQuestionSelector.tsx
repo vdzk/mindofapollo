@@ -1,7 +1,8 @@
-import { Component, For } from "solid-js"
+import { Component, For, Show, useContext } from "solid-js"
 import { Button } from "~/components/buttons";
 import { H2, Subtitle } from "~/components/PageTitle"
 import { DataRecordWithId } from "~/schema/type"
+import { SessionContext } from "~/SessionContext";
 
 const QuestionsSection: Component<{
   title: string;
@@ -37,6 +38,7 @@ export const CriticalQuestionSelector: Component<{
   generalQuestions?: DataRecordWithId[]
   typeQuestions?: DataRecordWithId[]
 }> = (props) => {
+  const session = useContext(SessionContext)
   return (
     <>
       <Subtitle>Select a critical question</Subtitle>
@@ -53,11 +55,13 @@ export const CriticalQuestionSelector: Component<{
         )}
       </For>
       <div class="px-2 flex gap-2">
-        <Button
-          label="Next"
-          onClick={() => props.setView('create')}
-          disabled={!props.selectedQuestionId}
-        />
+        <Show when={session?.userSession?.()?.authenticated}>
+          <Button
+            label="Next"
+            onClick={() => props.setView('create')}
+            disabled={!props.selectedQuestionId}
+          />
+        </Show>
         <Button
           label="Examples"
           onClick={() => props.setView('examples')}

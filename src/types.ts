@@ -6,7 +6,7 @@ export type Option<TId, TGroupId = any> = {
   groupId?: TGroupId; // Optional group identifier with independent type
 }
 
-export const authRoles = ['admin', 'invited'] as const;
+export const authRoles = ['admin', 'invited', 'anonymous'] as const;
 export type AuthRole = typeof authRoles[number];
 
 export interface UserSession {

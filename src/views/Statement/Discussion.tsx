@@ -1,11 +1,13 @@
-import { Component, createResource, createSignal, For } from "solid-js"
+import { Component, createResource, createSignal, For, Show, useContext } from "solid-js"
 import { insertRecord } from "~/api/insert/record"
 import { listForeignRecords } from "~/api/list/foreignRecords"
 import { Button } from "~/components/buttons"
 import { TextInput } from "~/components/form/TextInput"
 import { Link } from "~/components/Link"
+import { SessionContext } from "~/SessionContext"
 
 export const Discussion: Component<{ id: number }> = props => {
+  const session = useContext(SessionContext)
   const [messages, { refetch }] = createResource(() => listForeignRecords('statement_discussion_message', 'statement_id', props.id))
   const [newMessage, setNewMessage] = createSignal("")
   const [sending, setSending] = createSignal(false)
@@ -49,24 +51,26 @@ export const Discussion: Component<{ id: number }> = props => {
           </div>
         )}
       </For>
-      <div class="border-t p-2 flex gap-2">
-        <div class="flex-1">
-          <TextInput
-            value={newMessage()}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
+      <Show when={session?.userSession()?.authenticated}>
+        <div class="border-t p-2 flex gap-2">
+          <div class="flex-1">
+            <TextInput
+              value={newMessage()}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Type a message..."
+              disabled={sending()}
+              tableName="chat_message"
+              colName="text"
+            />
+          </div>
+          <Button
+            label={sending() ? "Sending..." : "Send"}
+            onClick={sendMessage}
             disabled={sending()}
-            tableName="chat_message"
-            colName="text"
           />
         </div>
-        <Button
-          label={sending() ? "Sending..." : "Send"}
-          onClick={sendMessage}
-          disabled={sending()}
-        />
-      </div>
+      </Show>
     </>
   )
 }

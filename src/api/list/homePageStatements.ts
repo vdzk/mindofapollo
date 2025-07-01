@@ -12,12 +12,14 @@ export const listHomePageStatements = async (
   const userId = await getUserId()
 
   // Common subscription subquery
-  const subscriptionSubquery = sql`(
+  const subscriptionSubquery = userId
+  ? sql`(
     SELECT subscribed
     FROM subscription 
     WHERE person_id = ${userId}
       AND statement_id = s.id
   ) AS subscribed`
+  : sql`FALSE AS subscribed`
 
   // Statement query - with condition based on featured or tagId
   const whereClause = featured 
