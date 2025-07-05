@@ -10,7 +10,7 @@ import { tableStyle } from "~/components/table"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { SessionContext } from "~/SessionContext"
 import { indexBy } from "~/utils/shape"
-import { calculateMoralSum } from "~/views/Statement/PrescriptiveConclusion"
+import { calcMoralSum } from "~/calc/moralSum"
 
 export default function ShowDirective() {
   const data = createAsync(listUserDirectives)
@@ -50,7 +50,7 @@ export default function ShowDirective() {
         column_type: dirConc.ext.column_type
       }));
 
-      const result = calculateMoralSum(processedConcs, moralWeights()!);
+      const result = calcMoralSum(processedConcs, moralWeights()!);
       directive.sum = result.overlap ? result.sum : null;
 
       // Assign the weighted values directly from the calculation result

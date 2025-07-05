@@ -122,6 +122,14 @@ export const Argument: Component<{ id: number }> = props => {
                 <JudgeExamples argumentTypeId={argumentTypeId()!} />
               </Show>
               <Show when={
+                showHowToJudge()
+                && statementType() !== 'descriptive'
+              }>
+                <div class="p-2">
+                  There are no instructions for this type of argument yet.
+                </div>
+              </Show>
+              <Show when={
                 !showHowToJudge()
                 && statementType() === 'prescriptive'
               }>

@@ -22,6 +22,7 @@ export const ShowRecord: Component<{
   id: number
   hideSections?: string[]
   horizontalSections?: boolean
+  tabData?: Record<string, any>
 }> = props => {
   const [searchParams, setSearchParams] = useSearchParams()
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
@@ -100,7 +101,11 @@ export const ShowRecord: Component<{
           <RecordHistory tableName={props.tableName} id={props.id} />
         </Match>
         <Match when={getCurrentComponent()}>
-          <Dynamic component={getCurrentComponent()} id={props.id} />
+          <Dynamic
+            component={getCurrentComponent()}
+            id={props.id}
+            tabData={props.tabData}
+          />
         </Match>
         <Match when>
           <RecordDetails

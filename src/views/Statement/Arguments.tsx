@@ -1,13 +1,23 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createMemo, For, Show } from "solid-js"
+import { Component, createMemo, For, Match, Show, Switch } from "solid-js"
 import { listArgumentsCache, listForeignCrossRecordsCache } from "~/client-only/query"
 import { Link } from "~/components/Link"
-import { calcProbSuccess } from "~/compute"
-import { DataRecord, DataRecordWithId } from "~/schema/type"
+import { calcProbSuccess } from "~/calc/statementConfidence"
+import { DataRecordWithId } from "~/schema/type"
 import { argumentSideLabels } from "~/tables/argument/argument"
 import { getPercent } from "~/utils/string"
+import { indexBy } from "~/utils/shape"
 
-export const Arguments: Component<{ id: number }> = props => {
+export const Arguments: Component<{
+  id: number,
+  tabData?: {
+    moralData?: {
+      sideSums: [number, number],
+      consequences: DataRecordWithId[],
+      weightedValues: Record<number, number>,
+    }
+  }
+}> = props => {
   const argsData = createAsync(async () => listArgumentsCache(props.id))
   const parentArguments = createAsync(async () => listForeignCrossRecordsCache(
     'critical_statement',
@@ -18,8 +28,13 @@ export const Arguments: Component<{ id: number }> = props => {
 
   const args = () => argsData()?.arguments ?? []
   const isThreshold = () => argsData()?.statement_type_name === 'threshold'
+  const isPrescriptive = () => argsData()?.statement_type_name === 'prescriptive'
 
-  const sideProbs = createMemo(() => {
+  const sideScores = createMemo(() => {
+    if (isPrescriptive()) {
+      const sideSums = props.tabData?.moralData?.sideSums ?? [0, 0]
+      return [-sideSums[0], sideSums[1]]
+    }
     const sideUnknown = [false, false]
     const sideStrengths: [number[], number[]] = [[], []]
     for (const arg of args()) {
@@ -32,10 +47,10 @@ export const Arguments: Component<{ id: number }> = props => {
         sideUnknown[i] = true
       }
     }
-    return [0, 1].map(i => sideUnknown[i]
+    return [0, 1].map(i => getPercent(sideUnknown[i]
       ? undefined
       : calcProbSuccess(sideStrengths[i])
-    )
+    ))
   })
 
   const getStrengthStr = (argument: DataRecordWithId) => {
@@ -52,6 +67,30 @@ export const Arguments: Component<{ id: number }> = props => {
     }
   }
 
+  const concsByArgumentId = createMemo(() => {
+    if (!props.tabData?.moralData) return {}
+    const { consequences, weightedValues } = props.tabData.moralData
+    const result: Record<number, {
+      moral_good: string,
+      value: any,
+      unit: string,
+      weightedValue: number,
+    }[]> = {}
+    for (const conc of consequences) {
+      const argumentId = conc.argument_id as number
+      if (!result[argumentId]) {
+        result[argumentId] = []
+      }
+      result[argumentId].push({
+        moral_good: conc.moral_good as string,
+        value: conc.value,
+        unit: conc.unit as string,
+        weightedValue: (conc.pro ? 1 : -1) * (weightedValues[conc.id] ?? 0),
+      })
+    }
+    return result
+  })
+
   return (
     <div class="flex-1 max-w-2xl">
       <For each={[true, false]}>
@@ -59,7 +98,7 @@ export const Arguments: Component<{ id: number }> = props => {
           <div class="px-2 pb-4">
             <h2 class="text-xl font-bold pb-2">
               <Show when={!isThreshold()}>
-                [{getPercent(sideProbs()[Number(pro)])}]
+                [{sideScores()[Number(pro)]}]{' '}
               </Show>
               {argumentSideLabels[Number(pro)]}
             </h2>
@@ -71,12 +110,31 @@ export const Arguments: Component<{ id: number }> = props => {
                   class="min-w-10 mb-1"
                   type="block"
                   label={
-                    <div class="flex gap-2">
-                      <div class={isThreshold() ? 'font-mono' : ''}>
-                        [{getStrengthStr(argument)}]
-                      </div>
-                      <div class="flex-1">{argument.title}</div>
-                    </div>
+                    <Switch>
+                      <Match when={isPrescriptive()}>
+                        <div class="pl-12">{argument.title}</div>
+                        <For each={concsByArgumentId()[argument.id]}>
+                          {consequence => (
+                            <div class="flex gap-2">
+                              <div class="min-w-10">[{consequence.weightedValue}]</div>
+                              <div class="flex-1">
+                                {consequence.moral_good}:
+                                {' '}{consequence.value + ''}
+                                {' '}{consequence.unit}
+                              </div>
+                            </div>
+                          )}
+                        </For>
+                      </Match>
+                      <Match when={!isPrescriptive()}>
+                        <div class="flex gap-2">
+                          <div class={isThreshold() ? 'font-mono' : ''}>
+                            [{getStrengthStr(argument)}]
+                          </div>
+                          <div class="flex-1">{argument.title}</div>
+                        </div>
+                      </Match>
+                    </Switch>
                   }
                 />
               )}

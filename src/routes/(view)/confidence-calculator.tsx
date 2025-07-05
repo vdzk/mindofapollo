@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { For } from "solid-js";
 import { createStore } from "solid-js/store";
 import { PageTitle } from "~/components/PageTitle";
-import { calcStatementConfidence } from "~/compute";
+import { calcStatementConfidence } from "~/calc/statementConfidence";
 import { etv } from "~/client-only/util";
 import { Button } from "~/components/buttons";
 import { tableStyle } from "~/components/table";

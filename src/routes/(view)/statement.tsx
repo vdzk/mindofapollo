@@ -1,14 +1,15 @@
 import { Title } from "@solidjs/meta"
 import { createAsync } from "@solidjs/router"
-import { createSignal, For, Show } from "solid-js"
+import { createEffect, createSignal, For, Show } from "solid-js"
 import { getOneExtRecordByIdCache } from "~/client-only/query"
 import { RecordPageTitle } from "~/components/PageTitle"
 import { StatementType } from "~/tables/statement/statement_type"
 import { conclusionPlaceholder } from "~/tables/morality/directive"
 import { ShowRecord } from "~/views/ShowRecord"
 import { MoralProfileSelector } from "~/views/Statement/MoralProfileSelector"
-import { PrescriptiveConclusion } from "~/views/Statement/PrescriptiveConclusion"
+import { getStatementMoralData } from "~/views/Statement/getStatementMoralData"
 import { useSafeParams } from "~/client-only/util"
+import { DecisionIndicator } from "~/components/DecisionIndicator"
 
 export default function Statement() {
   const sp = useSafeParams<{ id: number }>(['id'])
@@ -18,6 +19,10 @@ export default function Statement() {
   const titleText = () => (statement()?.label ?? '') as string
   const mainTitleText = () => isPrescriptive() ? titleText().slice(conclusionPlaceholder.length) : titleText()
   const [selectedMoralProfileId, setSelectedMoralProfileId] = createSignal(0)
+  const moralData = createAsync(async () => isPrescriptive()
+    ? getStatementMoralData(sp().id, selectedMoralProfileId())
+    : undefined
+  )
 
   return (
     <main class="relative flex-1 flex flex-col">
@@ -26,11 +31,8 @@ export default function Statement() {
         <RecordPageTitle
           tableName="statement"
           text={mainTitleText()}
-          prefix={isPrescriptive() && sp().id
-            ? <PrescriptiveConclusion
-              statementId={sp().id}
-              moralProfileId={selectedMoralProfileId()}
-            />
+          prefix={isPrescriptive() && sp().id && moralData()
+            ? <DecisionIndicator score={moralData()!.overlap ? moralData()!.sum : null} />
             : undefined
           }
         />
@@ -44,6 +46,7 @@ export default function Statement() {
       <ShowRecord
         tableName="statement"
         id={sp().id}
+        tabData={{moralData: moralData()}}
       />
     </main>
   )

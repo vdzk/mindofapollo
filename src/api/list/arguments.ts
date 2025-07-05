@@ -3,7 +3,6 @@ import { onError, sql } from "~/server-only/db"
 import { injectTranslations } from "~/server-only/injectTranslations"
 import { _getRecordById } from "~/server-only/select"
 
-
 export const listArguments = async (statementId: number) => {
   "use server"
   const statement = await _getRecordById('statement', statementId, ['statement_type_name'])

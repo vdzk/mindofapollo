@@ -3,7 +3,7 @@ import { _updateRecord } from "~/server-only/mutate"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { ExplData } from "~/components/expl/types"
 import { DataRecord, DataRecordWithId } from "~/schema/type"
-import { calcStatementConfidenceAdditively } from "~/compute"
+import { calcStatementConfidenceAdditively } from "~/calc/statementConfidenceAdditively"
 import { getWeightedArguments } from "~/server-only/getWeightedArguments"
 import { _getRecordById } from "~/server-only/select"
 

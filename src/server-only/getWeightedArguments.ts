@@ -1,4 +1,4 @@
-import { WeightedArgument } from "~/compute";
+import { WeightedArgument } from "~/calc/statementConfidenceAdditively";
 import { onError, sql } from "~/server-only/db";
 import { injectTranslations } from "./injectTranslations";
 import { DataRecordWithId } from "~/schema/type";

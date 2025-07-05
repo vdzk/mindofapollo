@@ -1,6 +1,6 @@
 import { _updateRecord } from "~/server-only/mutate"
 import { onError, sql } from "~/server-only/db"
-import { calcStatementConfidence } from "~/compute"
+import { calcStatementConfidence } from "~/calc/statementConfidence"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { AddExplId, ExplData } from "~/components/expl/types"
 import { getPercent } from "~/utils/string"

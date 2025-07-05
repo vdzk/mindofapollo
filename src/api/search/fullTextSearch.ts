@@ -1,6 +1,6 @@
 import { onError, sql } from "~/server-only/db"
 import { getUserLanguage } from "~/server-only/session"
-import {  langSettings } from "~/translation"
+import {  langSettings, languages } from "~/translation"
 
 export interface SearchResult {
   table_name: string;
@@ -17,12 +17,7 @@ export const fullTextSearch = async (query: string): Promise<SearchResult[]> => 
   }
 
   // Get user's language from session and provide a fallback
-  const language = await getUserLanguage()
-
-  // Ensure we have a valid language setting
-  if (!language) {
-    return []
-  }
+  const language = (await getUserLanguage()) ?? languages[0]
 
   // Sanitized query string
   const searchQuery = query.trim()
