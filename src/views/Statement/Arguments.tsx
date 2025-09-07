@@ -6,7 +6,6 @@ import { calcProbSuccess } from "~/calc/statementConfidence"
 import { DataRecordWithId } from "~/schema/type"
 import { argumentSideLabels } from "~/tables/argument/argument"
 import { getPercent } from "~/utils/string"
-import { indexBy } from "~/utils/shape"
 
 export const Arguments: Component<{
   id: number,
@@ -33,7 +32,7 @@ export const Arguments: Component<{
   const sideScores = createMemo(() => {
     if (isPrescriptive()) {
       const sideSums = props.tabData?.moralData?.sideSums ?? [0, 0]
-      return [-sideSums[0], sideSums[1]]
+      return [-sideSums[0], sideSums[1]].map(Math.round)
     }
     const sideUnknown = [false, false]
     const sideStrengths: [number[], number[]] = [[], []]
@@ -116,9 +115,11 @@ export const Arguments: Component<{
                         <For each={concsByArgumentId()[argument.id]}>
                           {consequence => (
                             <div class="flex gap-2">
-                              <div class="min-w-10">[{consequence.weightedValue}]</div>
+                              <div class="min-w-10">[{Math.round(consequence.weightedValue)}]</div>
                               <div class="flex-1">
-                                {consequence.moral_good}:
+                                <span class="font-bold">
+                                  {consequence.moral_good}:
+                                </span>
                                 {' '}{consequence.value + ''}
                                 {' '}{consequence.unit}
                               </div>

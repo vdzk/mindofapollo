@@ -45,6 +45,7 @@ export const ShowRecord: Component<{
     if (sections) {
       for (const [key, section] of Object.entries(sections)) {
         if (section.private && !isSelf()) continue
+        if (section.getVisibility && (!record() || !section.getVisibility(record()!))) continue
         options.push({ id: key, label: firstCap(section.label) })
       }
     } else {

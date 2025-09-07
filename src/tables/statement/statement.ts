@@ -10,6 +10,7 @@ export const chat_text: TextColumn = {
   lines: 4,
   instructions: "Used together with other chat texts to generate a chat conversation log between two opposing sides.",
   getVisibility: (record) => !!record.id,
+  defaultValue: ''
 } as const
 
 export const statement: TableSchema = {
@@ -117,6 +118,11 @@ export const statement: TableSchema = {
     createArgument: {
       label: '➕ argument',
       component: 'CreateArgument'
+    },
+    scope: {
+      label: 'scope',
+      component: 'DirectiveScope',
+      getVisibility: (record) => record.statement_type_name === 'prescriptive'
     },
     evaluation: {
       label: 'evaluation',

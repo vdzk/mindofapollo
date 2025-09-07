@@ -2,6 +2,7 @@ import { createAsync } from "@solidjs/router"
 import { Component, For } from "solid-js"
 import { listRecordsCache } from "~/client-only/query"
 import { etv } from "~/client-only/util"
+import { NestPanel } from "~/components/NestPanel"
 
 export const MoralProfileSelector: Component<{
   value: number,
@@ -9,8 +10,10 @@ export const MoralProfileSelector: Component<{
 }> = props => {
   const profiles = createAsync(() => listRecordsCache('moral_weight_profile'))
   return (
-    <div class="px-2 py-2">
-      Moral weights:
+    <NestPanel class="mx-2 pt-2 mb-2">
+      <span class="font-bold">
+        Moral profile:
+      </span>
       <select
         class="ml-2"
         onChange={etv(valueStr => props.onChange(parseInt(valueStr)))}
@@ -19,7 +22,7 @@ export const MoralProfileSelector: Component<{
           value={0}
           selected={props.value === 0}
         >
-          your moral weights
+          my moral profile
         </option>
         <For each={profiles()}>
           {profile => (
@@ -32,6 +35,6 @@ export const MoralProfileSelector: Component<{
           )}
         </For>
       </select>
-    </div>
+    </NestPanel>
   )
 }

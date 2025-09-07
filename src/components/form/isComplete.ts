@@ -14,39 +14,39 @@ export const isComplete = (
   const checks = [
     { table: tableName, columns: colNames, diffRecord: diff }
   ]
-  
+
   // Add extension table check if it exists
   if (extTableName) {
-    checks.push({ 
-      table: extTableName, 
-      columns: extColNames, 
-      diffRecord: diffExt 
+    checks.push({
+      table: extTableName,
+      columns: extColNames,
+      diffRecord: diffExt
     })
   }
-  
+
   // Check all tables and columns
   for (const check of checks) {
     for (const colName of check.columns) {
       const columnDef = schema.tables[check.table].columns[colName];
       const diffValue = check.diffRecord[colName];
-      
+
       // Skip this column if any of these conditions are true (column is complete):
       if ('defaultValue' in columnDef) continue
       if (columnDef.type === 'virtual') continue
       if (columnDef.type === 'fk' && columnDef.fk.optional) continue
-      
+
       // Diff has a non-null, non-undefined value
       if (diffValue !== undefined && diffValue !== null) continue
-      
+
       // No diff but record has a value
-      if (diffValue === undefined && record && 
-          record[colName] !== null && record[colName] !== undefined) continue
+      if (diffValue === undefined && record &&
+        record[colName] !== null && record[colName] !== undefined) continue
 
       // If we get here, the column is incomplete
       return false
     }
   }
-  
+
   // All checks passed, the form is complete
   return true
 };

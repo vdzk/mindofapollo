@@ -69,7 +69,7 @@ export const RecordDetails: Component<{
     : []
   
   return (
-    <>
+    <div class="max-w-xl">
       <For each={details()}>
         {detail => <Detail {...detail} showExplLink={props.showExplLinks} />}
       </For>
@@ -82,6 +82,6 @@ export const RecordDetails: Component<{
           />}
         </For>
       </Show>
-    </>
+    </div>
   );
 }

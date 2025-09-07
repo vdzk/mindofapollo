@@ -3,7 +3,7 @@ import { LinkType } from "~/types"
 
 export type CustomDataType = 'proportion' | 'weight' | 'link_url' | 'link_title' | 'option' | 'value_type_id' | 'table_name' | 'column_name'
 export type DataLiteral = string | number | boolean | null
-export type ColumnType = 'boolean' | 'integer'
+export type ColumnType = 'boolean' | 'integer' | 'weight'
 
 export interface DataRecord {[column: string]: DataLiteral }
 export type DataRecordWithId = DataRecord & {id: number}
@@ -124,6 +124,7 @@ interface Section {
   private?: true,
   fields?: string[]
   component?: string
+  getVisibility?: (record: DataRecordWithId) => boolean
 }
 
 export interface TableSchema {

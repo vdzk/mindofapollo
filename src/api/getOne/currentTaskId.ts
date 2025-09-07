@@ -11,7 +11,6 @@ export const getOneCurrentTaskId = async () => {
     ORDER BY id ASC
     LIMIT 1
   `.catch(onError)
-
   if (inProgressTask) return inProgressTask?.id
 
   const [nextUpTask] = await sql`
@@ -21,6 +20,14 @@ export const getOneCurrentTaskId = async () => {
     ORDER BY id ASC
     LIMIT 1
   `.catch(onError)
-
   if (nextUpTask) return nextUpTask?.id
+
+  const [closedBetaRelTask] = await sql`
+    SELECT id
+    FROM task
+    WHERE project_stage = 'closed β rel.'
+    ORDER BY id ASC
+    LIMIT 1
+  `.catch(onError)
+  if (closedBetaRelTask) return closedBetaRelTask?.id
 }

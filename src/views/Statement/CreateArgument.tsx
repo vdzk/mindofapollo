@@ -31,6 +31,7 @@ export const CreateArgument: Component<{
   const onFormExit = (id?: number) => {
     if (id) {
       revalidate(listForeignRecordsCache.keyFor('argument', 'statement_id', props.id))
+      setSelectedArgumentTypeId()
     } else {
       setSelectedArgumentTypeId(undefined)
     }

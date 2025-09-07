@@ -15,14 +15,14 @@ export function calcMoralSum(
     const moralWeight = weighsByGoodId[consequence.moral_good_id as number]
     if (!moralWeight) continue
     overlap = true
-    const weight = parseFloat(moralWeight.weight as string)
+    const weight = moralWeight.weight as number
     const colType = consequence.column_type
     let weightedValue = 0
     if (colType === 'boolean') {
       if (consequence.value) {
         weightedValue = weight
       }
-    } else if (colType === 'integer') {
+    } else if (colType === 'integer' || colType === 'weight') {
       weightedValue = weight * (consequence.value as number)
     }
     sum += weightedValue

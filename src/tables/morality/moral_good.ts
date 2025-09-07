@@ -21,6 +21,10 @@ export const moral_good: TableSchema = {
     name: {
       type: 'varchar',
     },
+    description: {
+      type: 'text',
+      lines: 6
+    },
     unit_id: {
       type: 'fk',
       fk: {

@@ -7,13 +7,15 @@ export const unit: TableSchema = {
       type: 'varchar'
     },
     description: {
-      type: 'text'
+      type: 'text',
+      lines: 6
     },
     column_type: {
       type: 'option',
       options: [
         'boolean',
-        'integer'
+        'integer',
+        'weight'
       ] as ColumnType[]
     }
   }

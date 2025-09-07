@@ -9,13 +9,13 @@ import { Updated } from "./Updated"
 import { Deleted } from "./Deleted"
 import { InsertedFkEntries } from "./InsertedFkEntries"
 
-interface Section {
+interface ExplSection {
   label: string
   propNames: (keyof ExplData)[]
   component: Component<ExplData>
 }
 
-export const sections: Record<string, Section> = {
+export const sections: Record<string, ExplSection> = {
   details: {
     label: 'Details',
     propNames: ['trigger', 'actor', 'action', 'target', 'userExpl' ],

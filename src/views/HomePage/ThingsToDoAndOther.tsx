@@ -38,7 +38,7 @@ export default function ThingsToDoAndOther() {
         />
       </div>
       <Subtitle>Other</Subtitle>
-      <div class="px-2">
+      <div class="px-2 pb-4">
         <Links
           type="button"
           links={[
@@ -61,6 +61,18 @@ export default function ThingsToDoAndOther() {
           <span class="w-2 inline-block" />
           <CurrentTaskBtn />
         </Show>
+      </div>
+      <Subtitle>Intro Video</Subtitle>
+      <div style="display: flex; justify-content: center;">
+        <iframe
+          style="aspect-ratio: 3 / 2; width: 100% !important;"
+          src="https://www.youtube-nocookie.com/embed/LU36JGwA6HQ?si=2XLcFVosOFCSLGCZ"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
   )

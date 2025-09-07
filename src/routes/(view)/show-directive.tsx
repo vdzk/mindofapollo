@@ -50,13 +50,8 @@ export default function ShowDirective() {
         column_type: dirConc.ext.column_type
       }));
 
-      const result = calcMoralSum(processedConcs, moralWeights()!);
-      directive.sum = result.overlap ? result.sum : null;
-
-      // Assign the weighted values directly from the calculation result
-      for (const dirConc of directive.concs!) {
-        dirConc.weightedValue = result.weightedValues[dirConc.id as number]
-      }
+      const result = calcMoralSum(processedConcs, moralWeights()!)
+      directive.sum = result.overlap ? result.sum : null
     }
     return directives
   }
@@ -86,7 +81,7 @@ export default function ShowDirective() {
           <table class="mx-2">
             <tbody>
               <tr class={tableStyle.tHeadTr}>
-                <For each={['Deed', 'Moral factors', 'Total', 'Verdict']}>
+                <For each={['Deed', 'Total', 'Verdict']}>
                   {header => (
                     <th class={tableStyle.th}>{header}</th>
                   )}
@@ -96,25 +91,15 @@ export default function ShowDirective() {
                 {(directive) => (
                   <tr>
                     <td class={tableStyle.td}>
-                      <a
-                        class="hover:underline"
-                        href={`/show-record?tableName=directive&id=${directive.id}`}
-                      >
-                        {directive.text}
-                      </a>
-                    </td>
-                    <td class={tableStyle.td}>
-                      <For each={directive.concs}>
-                        {dirConc => (
-                          <span>
-                            {`(${dirConc.ext.moral_good} ${dirConc.weightedValue ?? 'n/a'}) `}
-                          </span>
-                        )}
-                      </For>
+                      <Link
+                        label={directive.text}
+                        route="show-record"
+                        params={{ tableName: 'directive', id: directive.id }}
+                      />
                     </td>
                     <td class={tableStyle.td}>
                       {directive.sum !== null ? (
-                        <span>{directive.sum}</span>
+                        <span>{Math.round(directive.sum as number)}</span>
                       ) : (
                         <span class="text-gray-500">n/a</span>
                       )}
