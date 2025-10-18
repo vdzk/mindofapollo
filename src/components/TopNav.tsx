@@ -24,7 +24,7 @@ export const TopNav: Component = () => {
   return (
     <nav class="border-b flex justify-between flex-wrap">
       <div class="px-2 py-0.5 flex items-center">
-        <Link route="home-page" label="APOLLO" type="logo" />
+        <Link route="home-page" label="MIND OF APOLLO" type="logo" />
         <span class="inline-block w-2" />
         <Link route="search" label="Search" type="button" />
       </div>

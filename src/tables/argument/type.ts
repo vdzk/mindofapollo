@@ -2,7 +2,7 @@ import { TableSchema } from "../../schema/type"
 
 export const argumentTypes = [
   'authority', 'analogy', 'other', 'explanation', 'epistemic', 'deduction',
-  'extrapolation', 'example', 'obvious', 'pragmatic', 'induction',
+  'extrapolation', 'example', 'obvious', 'pragmatic', 'induction', 'statistical',
   'definition', 'causal', 'normative', 'contradiction', 'feasibility'
 ] as const
 
