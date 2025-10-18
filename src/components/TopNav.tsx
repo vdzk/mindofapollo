@@ -49,8 +49,9 @@ export const TopNav: Component = () => {
               onClick={onLogout}
             />
           </Match>
-          <Match when>
+          <Match when={!authenticated()}>
             <span class="flex gap-2">
+              <Link route="donate" label="Donate" type="button" />
               <a
                 href={joinWebsiteUrl + '/signup'}
                 class={btnStyle()}

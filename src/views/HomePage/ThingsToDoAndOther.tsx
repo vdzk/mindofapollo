@@ -1,4 +1,4 @@
-import { Links } from "~/components/Link"
+import { ExternalLink, Links } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"
 import { CurrentTaskBtn } from "./CurrentTaskBtn"
 import { SessionContext } from "~/SessionContext"
@@ -62,17 +62,26 @@ export default function ThingsToDoAndOther() {
           <CurrentTaskBtn />
         </Show>
       </div>
-      <Subtitle>Intro Video</Subtitle>
-      <div style="display: flex; justify-content: center;">
-        <iframe
-          style="aspect-ratio: 3 / 2; width: 100% !important;"
-          src="https://www.youtube-nocookie.com/embed/LU36JGwA6HQ?si=2XLcFVosOFCSLGCZ"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
+      <Show when={!authenticated()}>
+        <Subtitle>Intro Video</Subtitle>
+        <div style="display: flex; justify-content: center;" class="pb-4">
+          <iframe
+            style="aspect-ratio: 3 / 2; width: 100% !important;"
+            src="https://www.youtube-nocookie.com/embed/LU36JGwA6HQ?si=2XLcFVosOFCSLGCZ"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </Show>
+      <Subtitle>Source Code</Subtitle>
+      <div class="px-2 pb-4">
+        <ExternalLink
+          href="https://github.com/Mind-of-Apollo/apollo/tree/main"
+          label="GitHub Repository"
+        />
       </div>
     </div>
   )
