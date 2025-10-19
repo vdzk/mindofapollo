@@ -33,7 +33,7 @@ export const Link: Component<{
 export const ExternalLink: Component<{
   href: string
   label?: string
-  className?: string
+  class?: string
 }> = props => {
   const displayText = props.label || props.href?.replace(/^(https?:\/\/)?(www\.)?/, '')
   
@@ -42,7 +42,7 @@ export const ExternalLink: Component<{
       href={props.href}
       target="_blank"
       rel="noreferrer"
-      class={props.className || "text-sky-800 break-all"}
+      class={"text-sky-800 break-all " + props.class}
     >
       {displayText}
     </a>

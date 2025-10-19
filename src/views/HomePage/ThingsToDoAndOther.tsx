@@ -62,20 +62,19 @@ export default function ThingsToDoAndOther() {
           <CurrentTaskBtn />
         </Show>
       </div>
-      <Show when={!authenticated()}>
-        <Subtitle>Intro Video</Subtitle>
-        <div style="display: flex; justify-content: center;" class="pb-4">
-          <iframe
-            style="aspect-ratio: 3 / 2; width: 100% !important;"
-            src="https://www.youtube-nocookie.com/embed/LU36JGwA6HQ?si=2XLcFVosOFCSLGCZ"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-          ></iframe>
-        </div>
-      </Show>
+      <Subtitle>Videos</Subtitle>
+      <div class="px-2">
+        <ExternalLink
+          label="▶️ Introducing Mind of Apollo (27 min)"
+          href="https://www.youtube.com/watch?v=LU36JGwA6HQ"
+          class="block"
+        />
+        <ExternalLink
+          label="▶️ Quick Start Guide for Editors (9 min)"
+          href="https://www.youtube.com/watch?v=OEx4yj1nsPk"
+          class="block"
+        />
+      </div>
       <Subtitle>Source Code</Subtitle>
       <div class="px-2 pb-4">
         <ExternalLink
