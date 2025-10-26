@@ -7,6 +7,17 @@ export const task: TableSchema = {
   plural: 'tasks',
   extendsTable: 'issue',
   columns: {
+    title: {
+      type: 'virtual',
+      queries: {
+        issues: [
+          {startTable: 'issue', fkName: 'id'},
+          ['id'],
+          ['title']
+        ]
+      },
+      get: (_, results) => Object.fromEntries(results.issues.map(issue => [issue.id, issue.title]))
+    },
     status: {
       type: 'option',
       options: [

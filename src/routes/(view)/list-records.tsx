@@ -15,6 +15,7 @@ import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { deleteByIds, whoCanDeleteByIds } from "~/api/delete/byIds"
 import { NestPanel } from "~/components/NestPanel"
 import { UserExplField } from "~/components/form/UserExplField"
+import { Filters } from "~/views/Filters"
 
 export default function ListRecords() {
   const sp = useSafeParams<{tableName: string}>(['tableName'])
@@ -46,6 +47,7 @@ export default function ListRecords() {
       <PageTitle>
         {title()}
       </PageTitle>
+      <Filters tableName={sp().tableName}/>
       <section class="pb-2">
         <For each={records()}>{(record) => (
           <div class="px-2 flex items-center gap-2">

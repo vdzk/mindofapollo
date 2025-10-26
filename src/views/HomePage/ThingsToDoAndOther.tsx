@@ -1,4 +1,4 @@
-import { ExternalLink, Links } from "~/components/Link"
+import { ExternalLink, Link, Links } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"
 import { CurrentTaskBtn } from "./CurrentTaskBtn"
 import { SessionContext } from "~/SessionContext"
@@ -58,6 +58,13 @@ export default function ThingsToDoAndOther() {
           ]}
         />
         <Show when={authenticated()}>
+          <span class="w-2 inline-block" />
+          <Link
+            type="button"
+            label="Tasks"
+            route="list-records"
+            params={ {tableName: 'task'} }
+          />
           <span class="w-2 inline-block" />
           <CurrentTaskBtn />
         </Show>

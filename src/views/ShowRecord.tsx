@@ -1,5 +1,5 @@
 import { createAsync, useSearchParams } from "@solidjs/router"
-import { Component, createEffect, Match, Show, Switch, useContext } from "solid-js"
+import { Component, Match, Show, Switch, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
