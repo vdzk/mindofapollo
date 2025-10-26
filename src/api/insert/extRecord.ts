@@ -1,12 +1,13 @@
 import { DataRecord, DataRecordWithId } from "~/schema/type"
 import { _insertRecord } from "../../server-only/mutate"
 import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
-import { getUserId, getUserActorUser } from "../../server-only/session"
+import { getUserId, getUserActorUser, belongsTo } from "../../server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
 import { whoCanInsertRecord } from "./record"
 import { insertCrossRecords } from "~/server-only/insertCrossRecords"
+import { allowedTableContent } from "~/server-only/moderate"
 
 export const whoCanInsertExtRecord = whoCanInsertRecord
 
@@ -18,6 +19,9 @@ export const insertExtRecord = async (
   linkedCrossRefs?: Record<string, number[]>
 ) => {
   "use server"
+  if (! await belongsTo(whoCanInsertExtRecord(tableName))) return
+  if (! await allowedTableContent(tableName, record)) return
+  if (! await allowedTableContent(extTableName, extRecord)) return
   const userId = await getUserId()
   const explId = await startExpl(userId, 'insertExtRecord', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)

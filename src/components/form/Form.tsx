@@ -37,6 +37,7 @@ export const Form: Component<{
   const [showAdvanced, setShowAdvanced] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
   const [optionalExtEnabled, setOptionalExtEnabled] = createSignal(false)
+  const [saving, setSaving] = createSignal(false)
 
   const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
     return 'onExit' in exit
@@ -111,11 +112,16 @@ export const Form: Component<{
   )
 
   const save = useAction(saveAction)
-  const onSubmit = () => save(
-    props.tableName, props.id, diff,
-    extTableName(), diffExt, linkedCrossRefs,
-    userExpl(), props.exitSettings, session!
-  )
+  const onSubmit = async () => {
+    setSaving(true)
+    const result = await save(
+      props.tableName, props.id, diff,
+      extTableName(), diffExt, linkedCrossRefs,
+      userExpl(), props.exitSettings, session!
+    )
+    setSaving(false)
+    return result
+  }
 
   // If there is nothing else to save don't make the user press save again
   // TODO: check that this actually works
@@ -233,9 +239,9 @@ export const Form: Component<{
       <div class="pt-2">
         <Show when={session?.userSession?.()?.authenticated}>
           <Button
-            label="Save"
+            label={saving() ? "Saving…" : "Save"}
             onClick={onSubmit}
-            disabled={pristine() || !complete()}
+            disabled={pristine() || !complete() || saving()}
           />
         </Show>
         <span class="inline-block w-2" />

@@ -6,6 +6,7 @@ import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
 import { authorisedUpdate } from "./record"
+import { allowedTableContent } from "~/server-only/moderate"
 
 export const updateExtRecord = async (
   tableName: string,
@@ -18,7 +19,8 @@ export const updateExtRecord = async (
   "use server"
 
   const {userId, authRole} = await getUserSession()
-  if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return 
+  if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return
+  if (! await allowedTableContent(tableName, record)) return
 
   const explId = await startExpl(userId, 'updateExtRecord', 1, tableName, id)
   const [recordDiff, extRecordDiff] = await Promise.all([

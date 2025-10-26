@@ -8,6 +8,7 @@ import { isPersonal, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
 import { insertCrossRecords } from "~/server-only/insertCrossRecords"
 import { schema } from "~/schema/schema"
+import { allowedTableContent } from "~/server-only/moderate"
 
 export const whoCanInsertRecord = (tableName: string) => {
   if (
@@ -28,6 +29,7 @@ export const insertRecord = async (
 ) => {
   "use server"
   if (! await belongsTo(whoCanInsertRecord(tableName))) return
+  if (! await allowedTableContent(tableName, record)) return
   const userId = await getUserId()
 
   if (isPersonal(tableName)) {
