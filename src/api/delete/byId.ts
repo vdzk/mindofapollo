@@ -7,6 +7,7 @@ import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { DataRecordWithId } from "~/schema/type"
 import { isPersonal, isSystem } from "~/permissions"
+import { canReviseOwnRecentEntry } from "~/server-only/canReviseOwnRecentEntry"
 
 export const whoCanDeleteById = (tableName: string, ofSelf: boolean) => {
   if (
@@ -22,12 +23,14 @@ export const whoCanDeleteById = (tableName: string, ofSelf: boolean) => {
 
 export const deleteById = async (tableName: string, id: number, userExpl: string) => {
   "use server"
+  const userId = await getUserId()
+
   if (! await belongsTo(whoCanDeleteById(
     tableName,
     await ofSelf(tableName, id)
   ))) return
+  if (! await canReviseOwnRecentEntry(userId, tableName, id)) return
   
-  const userId = await getUserId()
   const record = await _getRecordById(tableName, id)
   if (!record) return
 

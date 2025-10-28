@@ -9,8 +9,21 @@ export default function ThingsToDoAndOther() {
   const authenticated = () => !!session?.userSession?.()?.authenticated
   return (
     <div class="flex-2 border-l pt-2">
-      <Subtitle>Things to do</Subtitle>
+      <Subtitle>Videos</Subtitle>
       <div class="px-2 pb-4">
+        <ExternalLink
+          label="▶️ Introducing Mind of Apollo (27 min)"
+          href="https://www.youtube.com/watch?v=LU36JGwA6HQ"
+          class="block"
+        />
+        <ExternalLink
+          label="▶️ Quick Start Guide for Editors (9 min)"
+          href="https://www.youtube.com/watch?v=OEx4yj1nsPk"
+          class="block"
+        />
+      </div>
+      <Subtitle>Things to do</Subtitle>
+      <div class="px-2">
         <Links
           type="button"
           links={[
@@ -69,18 +82,10 @@ export default function ThingsToDoAndOther() {
           <CurrentTaskBtn />
         </Show>
       </div>
-      <Subtitle>Videos</Subtitle>
-      <div class="px-2">
-        <ExternalLink
-          label="▶️ Introducing Mind of Apollo (27 min)"
-          href="https://www.youtube.com/watch?v=LU36JGwA6HQ"
-          class="block"
-        />
-        <ExternalLink
-          label="▶️ Quick Start Guide for Editors (9 min)"
-          href="https://www.youtube.com/watch?v=OEx4yj1nsPk"
-          class="block"
-        />
+      <Subtitle>Your Permissions</Subtitle>
+      <div class="px-2 pb-4">
+        You can create new entries, as well as update or delete any entries you’ve created within the past 24 hours.
+        <br/>As the platform’s permission system evolves, and as you continue to create high-quality entries, additional permissions will be granted.
       </div>
       <Subtitle>Source Code</Subtitle>
       <div class="px-2 pb-4">

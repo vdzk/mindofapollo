@@ -12,6 +12,7 @@ import { _getRecordById } from "~/server-only/select"
 import { printError } from "../../server-only/db"
 import { AuthRole } from "~/types"
 import { allowedTableContent } from "~/server-only/moderate"
+import { canReviseOwnRecentEntry } from "~/server-only/canReviseOwnRecentEntry"
 
 export const whoCanUpdateRecord = (
   tableName: string,
@@ -62,6 +63,7 @@ export const updateRecord = async (
   "use server"
   const {userId, authRole} = await getUserSession()
   if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return
+  if (! await canReviseOwnRecentEntry(userId, tableName, id)) return
   if (! await allowedTableContent(tableName, record)) return
   const explId = await startExpl(userId, 'updateRecord', 1, tableName, id)
   const diff = await _updateRecord(tableName, id, explId, record)

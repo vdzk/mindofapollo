@@ -7,6 +7,7 @@ import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
 import { authorisedUpdate } from "./record"
 import { allowedTableContent } from "~/server-only/moderate"
+import { canReviseOwnRecentEntry } from "~/server-only/canReviseOwnRecentEntry"
 
 export const updateExtRecord = async (
   tableName: string,
@@ -20,6 +21,7 @@ export const updateExtRecord = async (
 
   const {userId, authRole} = await getUserSession()
   if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return
+  if (! await canReviseOwnRecentEntry(userId, tableName, id)) return
   if (! await allowedTableContent(tableName, record)) return
 
   const explId = await startExpl(userId, 'updateExtRecord', 1, tableName, id)

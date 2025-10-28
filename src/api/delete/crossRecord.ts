@@ -1,12 +1,18 @@
 import { onError, sql } from "~/server-only/db";
 import { xName } from "~/utils/schema";
 import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session";
-import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData, whoCanInsertCrossRecord } from "../insert/crossRecord";
+import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData } from "../insert/crossRecord";
 import { finishExpl, startExpl } from "~/server-only/expl";
 import { ExplData } from "~/components/expl/types";
 import { _getRecordById } from "~/server-only/select";
 
-export const whoCanDeleteCrossRecord = whoCanInsertCrossRecord
+export const whoCanDeleteCrossRecord = (tableName: string, self: boolean) => {
+  if (tableName === 'person' && self) {
+    return ['invited']
+  } else {
+    return []
+  }
+}
 
 export const deleteCrossRecord = async (params: CrossRecordMutateProps, userExpl: string) => {
   "use server"
