@@ -4,8 +4,9 @@ import { UserActor } from "~/components/expl/types";
 import { _getRecordById } from "./select";
 import { Language } from "~/translation";
 
-// TODO: store secret in .env file
-export const getSession = () => useSession<UserSession>({ password: 'secret_secret_secret_secret_secret_secret_secret_secret_secret' })
+export const getSession = () => useSession<UserSession>({
+  password: process.env.SESSION_PASSWORD!
+})
 
 export const logout = async () => {
   const session = await getSession()

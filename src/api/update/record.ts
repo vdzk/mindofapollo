@@ -65,6 +65,7 @@ export const updateRecord = async (
   if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return
   if (! await canReviseOwnRecentEntry(userId, tableName, id)) return
   if (! await allowedTableContent(tableName, record)) return
+  
   const explId = await startExpl(userId, 'updateRecord', 1, tableName, id)
   const diff = await _updateRecord(tableName, id, explId, record)
   const user = await getUserActorUser()

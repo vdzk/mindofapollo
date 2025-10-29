@@ -3,11 +3,11 @@ import postgres from "postgres"
 
 // TODO: move config into .env file
 export const sql = postgres({
-  host: "46.101.91.238",
-  port: 5433,
-  database: "apollo",
-  username: "postgres",
-  password: 'hNuC88zc6nue',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : undefined,
+  database: process.env.DB_NAME,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
   debug: true,
   onnotice: notice => console.log(chalk.green('NOTICE'), notice.message),
   types: {

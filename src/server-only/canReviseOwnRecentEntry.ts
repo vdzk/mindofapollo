@@ -8,6 +8,7 @@ export const canReviseOwnRecentEntry = async (
 ) => {
   const authRole = await getAuthRole()
   if (authRole === 'admin') return true
+  if (tableName === 'person' && recordId === userId) return true
   
   const result = await sql`
     SELECT 1
