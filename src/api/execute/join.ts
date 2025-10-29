@@ -7,8 +7,9 @@ import { _insertRecord, _updateRecord } from "~/server-only/mutate"
 import { Language } from "~/translation"
 import bcrypt from "bcryptjs"
 import { getValidInviteByCode } from "~/server-only/getValidInviteByCode"
+import { openRegistration } from "~/constant"
 
-export const join = async (name: string, email: string, password: string, language: Language, code: string) => {
+export const join = async (name: string, email: string, password: string, language: Language, code?: string) => {
   "use server"
   // Check if email already exists
   const existingEmail = await sql`
@@ -16,8 +17,19 @@ export const join = async (name: string, email: string, password: string, langua
   `.catch(onError)
   if (existingEmail?.[0]) return
 
-  const invite = await getValidInviteByCode(code)
-  if (!invite) return
+
+  let invite
+  if (!openRegistration) {
+    if (!code) return
+    invite = await getValidInviteByCode(code)
+    if (!invite) return
+  } else {
+    const adminUserId = 5
+    invite = {
+      owner_id: adminUserId
+    }
+  }
+
 
   const authRoleName: AuthRole = 'invited'
   const authRoles = await sql`
@@ -46,9 +58,11 @@ export const join = async (name: string, email: string, password: string, langua
     VALUES (${person.id}, ${email}, ${passwordHash})
   `.catch(onError)
   
-  await _updateRecord('invite', invite.id, explId, {
-    person_id: person.id
-  })
+  if (!openRegistration) {
+    await _updateRecord('invite', invite.id, explId, {
+      person_id: person.id
+    })
+  }
 
   const inviterRecord = await _getRecordById('person', invite.owner_id, ['id', 'name', 'auth_role_id'], false)
 

@@ -11,6 +11,7 @@ import { createSignal, Show, useContext } from "solid-js"
 import { defaultLanguage, Language } from "~/translation"
 import { etv } from "~/client-only/util"
 import { isValidInvite } from "~/api/is/validInvite"
+import { openRegistration } from "~/constant"
 
 interface Join {
   code: string
@@ -23,7 +24,9 @@ export default function Join() {
   const [diff, setDiff] = createStore({ name: '', language: defaultLanguage })
   const [email, setEmail] = createSignal('')
   const [password, setPassword] = createSignal('')
-  const _isValidInvite = createAsync(() => isValidInvite(sp.code))
+  const _isValidInvite = openRegistration
+    ? () => true
+    : createAsync(() => isValidInvite(sp.code))
 
   const onSubmit = async () => {
     const userId = await join(diff.name, email().trim(), password(), diff.language as Language, sp.code)

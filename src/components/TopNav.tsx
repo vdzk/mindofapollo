@@ -5,7 +5,7 @@ import { doLogout } from "~/api/execute/logout"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { SessionContext } from "~/SessionContext"
 import { btnStyle, Button } from "./buttons"
-import { joinWebsiteUrl } from "~/constant"
+import { joinWebsiteUrl, openRegistration } from "~/constant"
 
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
@@ -28,13 +28,6 @@ export const TopNav: Component = () => {
         <span class="inline-block w-2" />
         <Link route="search" label="Search" type="button" />
       </div>
-      <Show when={!authenticated()}>
-        <div class="px-2 py-0.5 max-sm:order-last max-sm:w-full max-sm:flex max-sm:justify-center">
-          <a href={joinWebsiteUrl} class={btnStyle()}>
-            Learn about the Mind of Apollo
-          </a>
-        </div>
-      </Show>
       <div class="px-2 py-0.5">
         <Switch>
           <Match when={authenticated()}>
@@ -52,12 +45,17 @@ export const TopNav: Component = () => {
           <Match when={!authenticated()}>
             <span class="flex gap-2">
               <Link route="donate" label="Donate" type="button" />
-              <a
-                href={joinWebsiteUrl + '/signup'}
-                class={btnStyle()}
-              >
-                Sign Up
-              </a>
+              <Show when={openRegistration}>
+                <Link route="join" label="Join" type="button" />
+              </Show>
+              <Show when={!openRegistration}>
+                <a
+                  href={joinWebsiteUrl + '/signup'}
+                  class={btnStyle()}
+                >
+                  Sign Up
+                </a>
+              </Show>
               <Link route="login" label="Login" type="button" />
             </span>
           </Match>

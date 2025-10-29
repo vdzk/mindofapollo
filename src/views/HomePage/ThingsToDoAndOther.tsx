@@ -3,14 +3,20 @@ import { Subtitle } from "~/components/PageTitle"
 import { CurrentTaskBtn } from "./CurrentTaskBtn"
 import { SessionContext } from "~/SessionContext"
 import { Show, useContext } from "solid-js"
+import { openRegistration } from "~/constant"
 
 export default function ThingsToDoAndOther() {
   const session = useContext(SessionContext)
   const authenticated = () => !!session?.userSession?.()?.authenticated
   return (
     <div class="flex-2 border-l pt-2">
-      <Subtitle>Videos</Subtitle>
+      <Subtitle>Learn</Subtitle>
       <div class="px-2 pb-4">
+        <ExternalLink
+          label="📖 Mind of Apollo Explained"
+          href="/about.html"
+          class="block"
+        />
         <ExternalLink
           label="▶️ Introducing Mind of Apollo (27 min)"
           href="https://www.youtube.com/watch?v=LU36JGwA6HQ"
@@ -27,11 +33,13 @@ export default function ThingsToDoAndOther() {
         <Links
           type="button"
           links={[
-            {
-              label: "Invites",
-              route: "list-records",
-              params: { tableName: 'invite' }
-            },
+            ...(openRegistration ? [] : [
+              {
+                label: "Invites",
+                route: "list-records",
+                params: { tableName: 'invite' }
+              }
+            ]),
             {
               label: "Chat",
               route: "chat"
@@ -76,17 +84,19 @@ export default function ThingsToDoAndOther() {
             type="button"
             label="Tasks"
             route="list-records"
-            params={ {tableName: 'task'} }
+            params={{ tableName: 'task' }}
           />
           <span class="w-2 inline-block" />
           <CurrentTaskBtn />
         </Show>
       </div>
-      <Subtitle>Your Permissions</Subtitle>
-      <div class="px-2 pb-4">
-        You can create new entries, as well as update or delete any entries you’ve created within the past 24 hours.
-        <br/>As the platform’s permission system evolves, and as you continue to create high-quality entries, additional permissions will be granted.
-      </div>
+      <Show when={authenticated()}>
+        <Subtitle>Your Permissions</Subtitle>
+        <div class="px-2 pb-4 text-sm">
+          You can create new entries, as well as update or delete any entries you've created within the past 24 hours.
+          As the platform's permission system evolves, and as you continue to create high-quality entries, additional permissions will be granted.
+        </div>
+      </Show>
       <Subtitle>Source Code</Subtitle>
       <div class="px-2 pb-4">
         <ExternalLink
