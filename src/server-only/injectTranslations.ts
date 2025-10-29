@@ -80,10 +80,26 @@ export const injectTranslations = async (
   
   if (missingLangs.length > 0) {
     //Request translation
-    const newTr = await Promise.all(missingLangs.map(sourceLang => {
+    const newTr = await Promise.all(missingLangs.map(async (sourceLang) => {
       const { iso_639_1, regionCode } = langSettings[userLang]
-      return translator.translateText(
-        missingTr[sourceLang],
+      
+      // Filter out empty strings and keep track of indices
+      const textsToTranslate: string[] = []
+      const indexMap: number[] = []
+      missingTr[sourceLang].forEach((text, index) => {
+        if (text && text.trim() !== '') {
+          textsToTranslate.push(text)
+          indexMap.push(index)
+        }
+      })
+      
+      // If no valid texts to translate, return empty array
+      if (textsToTranslate.length === 0) {
+        return { translations: [], indexMap: [] }
+      }
+      
+      const translations = await translator.translateText(
+        textsToTranslate,
         langSettings[sourceLang as Language].iso_639_1 as SourceLanguageCode,
         (regionCode ?? iso_639_1) as TargetLanguageCode,
         {
@@ -92,13 +108,16 @@ export const injectTranslations = async (
           modelType: 'prefer_quality_optimized'
         }
       ).catch(onError)
+      
+      return { translations, indexMap }
     }))
 
     //Fill in translations
     for (let langIndex = 0; langIndex < missingLangs.length; langIndex++) {
-      const texts = newTr[langIndex]
-      for (let i = 0; i < texts.length; i++) {
-        incompleteRecords[missingLangs[langIndex]][i].newText = texts[i].text
+      const { translations, indexMap } = newTr[langIndex]
+      for (let i = 0; i < translations.length; i++) {
+        const originalIndex = indexMap[i]
+        incompleteRecords[missingLangs[langIndex]][originalIndex].newText = translations[i].text
       }
     }
 
@@ -119,16 +138,18 @@ export const injectTranslations = async (
       }
     }
   
-    // Save new translations (without waiting)
-    sql`
-      UPDATE translation t
-      SET ${sql(userLang)} = v.new_text
-      FROM ( VALUES ${sql(updateValues)})
-        AS v(table_name, column_name, record_id, new_text)
-      WHERE t.table_name = v.table_name
-        AND t.column_name = v.column_name
-        AND t.record_id = (v.record_id)::integer
-    `.catch(onError)
+    // Save new translations (without waiting) - only if there are values to update
+    if (updateValues.length > 0) {
+      sql`
+        UPDATE translation t
+        SET ${sql(userLang)} = v.new_text
+        FROM ( VALUES ${sql(updateValues)})
+          AS v(table_name, column_name, record_id, new_text)
+        WHERE t.table_name = v.table_name
+          AND t.column_name = v.column_name
+          AND t.record_id = (v.record_id)::integer
+      `.catch(onError)
+    }
   }
 
   // Organize translations by table_name, column_name, and record_id
