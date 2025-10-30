@@ -100,7 +100,7 @@ export default function ThingsToDoAndOther() {
       <Subtitle>Source Code</Subtitle>
       <div class="px-2 pb-4">
         <ExternalLink
-          href="https://github.com/Mind-of-Apollo/apollo/tree/main"
+          href="https://github.com/vdzk/mindofapollo"
           label="GitHub Repository"
         />
       </div>
