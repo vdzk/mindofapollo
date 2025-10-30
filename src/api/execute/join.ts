@@ -8,6 +8,7 @@ import { Language } from "~/translation"
 import bcrypt from "bcryptjs"
 import { getValidInviteByCode } from "~/server-only/getValidInviteByCode"
 import { openRegistration } from "~/constant"
+import { allowedTextContent } from "~/server-only/moderate"
 
 export const join = async (name: string, email: string, password: string, language: Language, code?: string) => {
   "use server"
@@ -30,7 +31,6 @@ export const join = async (name: string, email: string, password: string, langua
     }
   }
 
-
   const authRoleName: AuthRole = 'invited'
   const authRoles = await sql`
     SELECT id 
@@ -40,6 +40,9 @@ export const join = async (name: string, email: string, password: string, langua
   `.catch(onError)
   if (!authRoles?.[0]) return
   const authRole = authRoles[0]
+
+  // Check if the name is allowed
+  if (! await allowedTextContent(name)) return
 
   const explId = await startExpl(invite.owner_id, 'join', 1, 'person', null)
 
