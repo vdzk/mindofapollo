@@ -5,7 +5,25 @@ import { onError, sql } from "./db"
 import { defaultLanguage, langSettings, Language, languages } from "~/translation"
 import { SourceLanguageCode, TargetLanguageCode, Translator } from "deepl-node"
 
-const translator = new Translator(process.env.DEEPL_API_KEY!)
+const mockTranslator = {
+  translateText: async (
+    texts: string | string[],
+    _sourceLang: SourceLanguageCode,
+    targetLang: TargetLanguageCode,
+    _options?: any
+  ) => {
+    const textsArray = Array.isArray(texts) ? texts : [texts]
+    const targetCode = targetLang.toLowerCase().split('-')[0]
+    return textsArray.map(text => ({
+      text: `${targetCode}: ${text}`
+    }))
+  }
+}
+
+// TODO: warn if translation API key is not set
+const translator = process.env.DEEPL_API_KEY 
+  ? new Translator(process.env.DEEPL_API_KEY)
+  : mockTranslator
 
 export interface TranslatedColumn {
   tableName: string

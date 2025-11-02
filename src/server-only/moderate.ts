@@ -1,7 +1,10 @@
 import { DataRecord } from "~/schema/type"
 import { splitTranslatable } from "~/utils/schema"
 import OpenAI from "openai"
-const llm = new OpenAI()
+
+const llmMock = { responses: { create: () => ({ output_text: 'No'})} }
+// TODO: warn if OPENAI_API_KEY is not set
+const llm = process.env.OPENAI_API_KEY ? new OpenAI() : llmMock
 
 export const allowedTextContent = async (text: string) => {
   const response = await llm.responses.create({

@@ -5,7 +5,8 @@ import { _getRecordById } from "./select";
 import { Language } from "~/translation";
 
 export const getSession = () => useSession<UserSession>({
-  password: process.env.SESSION_PASSWORD!
+  // TODO: warn if the session password is not set
+  password: process.env.SESSION_PASSWORD ?? "0".repeat(32)
 })
 
 export const logout = async () => {
