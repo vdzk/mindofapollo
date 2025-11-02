@@ -1,6 +1,15 @@
 ## About
 [📖 Mind of Apollo Explained](https://mindofapollo.org/about.html)
 
+## Architecture
+### Tech Stack
+PostgreSQL, NodeJS, TypeScript, SolidStart, SolidJS, Tailwind
+
+### Shared Table Definitions
+This is a CRUD app full of web forms, and its architecture is optimized for that. Central to this application are table definitions that are stored in `src/tables`. Not only is the DB schema generated from them, but also API endpoints, DB queries, authorization, and UI views are mostly generic and pull all of the domain knowledge dynamically from the shared table definitions. In effect, the application is split into two parts: (1) storage of domain knowledge and (2) domain-agnostic generic code.
+
+The main benefit of this approach is that the code is a lot more DRY. As a result, the code stays internally consistent and it's faster to read and modify. Potential downsides are that the code is more abstract, and the application allows for less customization and fine-tuning or requires breaking the abstraction to achieve it.  
+
 ## Local Setup
 ### Prerequisites
 * Node.js v22.14.0 (LTS)

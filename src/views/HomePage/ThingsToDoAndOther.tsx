@@ -96,6 +96,8 @@ export default function ThingsToDoAndOther() {
         <div class="px-2 pb-4 text-sm">
           You can create new entries, as well as update or delete any entries you've created within the past 24 hours.
           As the platform's permission system evolves, and as you continue to create high-quality entries, additional permissions will be granted.
+          <br/><br/>
+          If your changes aren't being applied, it's likely due to insufficient permissions or automatic content moderation. Sorry for the lack of error messages.
         </div>
       </Show>
       <Subtitle>Source Code</Subtitle>
