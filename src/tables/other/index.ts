@@ -4,6 +4,8 @@ import { invite } from './invite'
 import { person } from './person'
 import { issue } from './issue'
 import { task } from './task'
+import { forum_thread } from './forum_thread'
+import { forum_post } from './forum_post'
 
 export const otherTables = {
   auth_role,
@@ -11,5 +13,7 @@ export const otherTables = {
   invite,
   person,
   issue,
-  task
+  task,
+  forum_thread,
+  forum_post
 }
