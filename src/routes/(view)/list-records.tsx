@@ -22,7 +22,16 @@ export default function ListRecords() {
   const [selectedIds, setSelectedIds] = createSignal<number[]>([])
   const [userExpl, setUserExpl] = createSignal('')
 
+  const [filters, setFilters] = createSignal<Record<string, string>>({})
   const records = createAsync(() => listRecordsCache(sp().tableName))
+  const filteredRecords = () => records()?.filter(record => {
+    for (const colName in filters()) {
+      if (record[colName] !== filters()[colName]) {
+        return false
+      }
+    }
+    return true
+  })
   const title = () => firstCap(pluralTableName(sp().tableName))
   const table = () => schema.tables[sp().tableName]
 
@@ -47,9 +56,13 @@ export default function ListRecords() {
       <PageTitle>
         {title()}
       </PageTitle>
-      <Filters tableName={sp().tableName}/>
+      <Filters
+        tableName={sp().tableName}
+        filters={filters()}
+        setFilters={setFilters}
+      />
       <section class="pb-2">
-        <For each={records()}>{(record) => (
+        <For each={filteredRecords()}>{(record) => (
           <div class="px-2 flex items-center gap-2">
             <Show when={canDeleteByIds()}>
               <input
