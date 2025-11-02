@@ -10,6 +10,7 @@ export type StatementType = typeof statementTypes[number];
 
 export const statement_type: TableSchema = {
   plural: 'statement types',
+  seed: true,
   columns: {
     name: {
       type: 'option',

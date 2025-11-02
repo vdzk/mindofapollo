@@ -4,6 +4,7 @@ import { authRoles } from "~/types";
 export const auth_role: TableSchema = {
   plural: 'auth. roles',
   system: true,
+  seed: true,
   columns: {
     name: {
       type: 'option',

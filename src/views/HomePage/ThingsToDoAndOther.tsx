@@ -8,6 +8,7 @@ import { openRegistration } from "~/constant"
 export default function ThingsToDoAndOther() {
   const session = useContext(SessionContext)
   const authenticated = () => !!session?.userSession?.()?.authenticated
+  const invited = () => session?.userSession?.()?.authRole === 'invited'
   return (
     <div class="flex-2 border-l pt-2">
       <Subtitle>Learn</Subtitle>
@@ -90,7 +91,7 @@ export default function ThingsToDoAndOther() {
           <CurrentTaskBtn />
         </Show>
       </div>
-      <Show when={authenticated()}>
+      <Show when={invited()}>
         <Subtitle>Your Permissions</Subtitle>
         <div class="px-2 pb-4 text-sm">
           You can create new entries, as well as update or delete any entries you've created within the past 24 hours.

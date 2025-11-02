@@ -8,6 +8,7 @@ export const argumentTypes = [
 
 export const argument_type: TableSchema = {
   plural: 'argument types',
+  seed: true,
   columns: {
     name: {
       type: 'option',
