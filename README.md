@@ -18,7 +18,7 @@ The main benefit of this approach is that the code is a lot more DRY. As a resul
 * pg-schema-diff
 
 ### Commands to run
-Please replace "your_db_password" with your actual DB password
+Please replace `your_db_password` with your actual DB password
 ```
 git clone https://github.com/vdzk/mindofapollo.git
 cd mindofapollo
