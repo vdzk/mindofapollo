@@ -1,5 +1,8 @@
 import chalk from "chalk";
 import postgres from "postgres"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 // TODO: move config into .env file
 export const sql = postgres({
@@ -25,7 +28,9 @@ export const printError = (...data: any[]) => console.log(chalk.red('ERROR'), ..
 export const onError = (error: Error & { [key: string]: any }) => {
   if (error.name === 'PostgresError') {
     console.log()
-    console.log(error.query.trim().replaceAll(/\n\s+/g, '\n'))
+    if (error.query) {
+      console.log(error.query.trim().replaceAll(/\n\s+/g, '\n'))
+    }
     if (error.parameters && error.parameters.length > 0) {
       console.log(error.parameters)
     }

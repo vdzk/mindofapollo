@@ -7,8 +7,9 @@ import { _insertRecord, _updateRecord } from "~/server-only/mutate"
 import { Language } from "~/translation"
 import bcrypt from "bcryptjs"
 import { getValidInviteByCode } from "~/server-only/getValidInviteByCode"
-import { openRegistration } from "~/constant"
+import { adminUserId, openRegistration } from "~/constant"
 import { allowedTextContent } from "~/server-only/moderate"
+import { hashPassword } from "~/server-only/crypt"
 
 export const join = async (name: string, email: string, password: string, language: Language, code?: string) => {
   "use server"
@@ -25,7 +26,6 @@ export const join = async (name: string, email: string, password: string, langua
     invite = await getValidInviteByCode(code)
     if (!invite) return
   } else {
-    const adminUserId = 5
     invite = {
       owner_id: adminUserId
     }
@@ -55,10 +55,9 @@ export const join = async (name: string, email: string, password: string, langua
   await setExplRecordId(explId, person.id)
 
   // Create personal details record
-  const passwordHash = bcrypt.hashSync(password, 10)
   await sql`
     INSERT INTO personal_details (user_id, email, password_hash)
-    VALUES (${person.id}, ${email}, ${passwordHash})
+    VALUES (${person.id}, ${email}, ${hashPassword(password)})
   `.catch(onError)
   
   if (!openRegistration) {

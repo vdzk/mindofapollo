@@ -131,6 +131,7 @@ export interface TableSchema {
   plural?: string,
   private?: boolean,
   system?: boolean, // Deleting / editing these records could break the app
+  seed?: boolean, // DB seed should include rows from this table
   extendsTable?: string, // This table extends another table with its columns
   extendedByTable?: string, // This table is extended by another table
   optionallyExtendedByTable?: string, // This table can be extended by another table
