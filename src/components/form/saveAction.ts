@@ -26,6 +26,14 @@ const getExitUrl = (exitSettings: ExitSettings, savedId?: number) => {
   return buildUrl(linkData)
 }
 
+export const getErrorResponse = (error: unknown) => {
+  if (error instanceof Error) {
+    return json({ error: error.message }, { revalidate: 'nothing' })
+  } else {
+    return json({ error: 'Unknown error: ' + String(error) })
+  }
+}
+
 export const saveAction = action(async (
   tableName: string,
   id: number | undefined,
@@ -44,13 +52,17 @@ export const saveAction = action(async (
   const isSelf = () => tableName === 'person' && id === session.userSession()!.userId
 
   if (id) {
-    if (extension) {
-      await updateExtRecord(
-        tableName, id, record,
-        extension.tableName, extension.record, userExpl
-      )
-    } else {
-      await updateRecord(tableName, id, record, userExpl)
+    try {
+      if (extension) {
+        await updateExtRecord(
+          tableName, id, record,
+          extension.tableName, extension.record, userExpl
+        )
+      } else {
+        await updateRecord(tableName, id, record, userExpl)
+      }
+    } catch (error) {
+      return getErrorResponse(error)
     }
 
     if (isSelf()) {
@@ -86,15 +98,18 @@ export const saveAction = action(async (
     }
   } else {
     let savedRecord: DataRecordWithId | undefined
-
-    if (extension) {
-      savedRecord = await insertExtRecord(
-        tableName, record,
-        extension.tableName, extension.record,
-        linkedCrossRefs
-      )
-    } else {
-      savedRecord = await insertRecord(tableName, record, linkedCrossRefs)
+    try {
+      if (extension) {
+        savedRecord = await insertExtRecord(
+          tableName, record,
+          extension.tableName, extension.record,
+          linkedCrossRefs
+        )
+      } else {
+        savedRecord = await insertRecord(tableName, record, linkedCrossRefs)
+      }
+    } catch (error) {
+      return getErrorResponse(error)
     }
 
     if (hasExitHandler(exitSettings)) {

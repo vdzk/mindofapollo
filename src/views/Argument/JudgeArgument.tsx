@@ -11,6 +11,7 @@ import { H2 } from "~/components/PageTitle"
 import { insertRecord } from "~/api/insert/record"
 import { updateRecord } from "~/api/update/record"
 import { UserExplField } from "~/components/form/UserExplField"
+import { getErrorResponse } from "~/components/form/saveAction"
 
 const judgeArgumentAction = action(async (
   argumentId: number,
@@ -18,12 +19,16 @@ const judgeArgumentAction = action(async (
   exists: boolean,
   userExpl: string
 ) => {
-  if (exists) {
-    await updateRecord('argument_judgement', argumentId, diff, userExpl)
-  } else {
-    await insertRecord('argument_judgement', { ...diff, id: argumentId })
+  try {
+    if (exists) {
+      await updateRecord('argument_judgement', argumentId, diff, userExpl)
+    } else {
+      await insertRecord('argument_judgement', { ...diff, id: argumentId })
+    }
+  } catch (error) {
+    return getErrorResponse(error)
   }
-  return json('ok', {
+  return json({ ok: true }, {
     revalidate: [
       getOneRecordByIdCache.keyFor('argument_judgement', argumentId)
     ]
@@ -38,6 +43,8 @@ export const JudgeArgument: Component<{
 }> = props => {
   const [diff, setDiff] = createStore<DataRecord>({})
   const [userExpl, setUserExpl] = createSignal('')
+  const [saving, setSaving] = createSignal(false)
+  const [saveError, setSaveError] = createSignal('')
 
   const newJudgementColNames = () => Object
     .keys(schema.tables.argument_judgement.columns)
@@ -46,8 +53,15 @@ export const JudgeArgument: Component<{
   const exists = () => !!props.judgement
 
   const onSubmit = async () => {
-    await judgeArgument(props.argumentId, diff, exists(), userExpl())
-    props.onExit()
+    setSaveError('')
+    setSaving(true)
+    const response = await judgeArgument(props.argumentId, diff, exists(), userExpl())
+    if ('error' in response) {
+      setSaveError(response.error)
+      setSaving(false)
+    } else {
+      props.onExit()
+    }
   }
 
   return (
@@ -59,7 +73,7 @@ export const JudgeArgument: Component<{
           id={props.judgement!.id}
           displayColumn={colName => colName !== 'label'}
         />
-        <div class="border-t"/>
+        <div class="border-t" />
         <H2>New Judgement</H2>
       </Show>
       <div class="px-2 pb-2">
@@ -74,9 +88,12 @@ export const JudgeArgument: Component<{
         <Show when={exists()}>
           <UserExplField value={userExpl()} onChange={setUserExpl} />
         </Show>
-        <div class="pt-2 flex gap-2">
+        <div class="pb-2 text-yellow-600">
+          {saveError()}
+        </div>
+        <div class="flex gap-2">
           <Button
-            label="Submit"
+            label={saving() ? 'Saving…' : "Submit"}
             onClick={onSubmit}
           />
           <Button

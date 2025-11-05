@@ -3,12 +3,14 @@ import { schema } from "~/schema/schema"
 import { DataRecordWithId, ForeignKey } from "~/schema/type"
 import { injectTranslations } from "~/server-only/injectTranslations";
 import { injectVirtualValues } from "~/server-only/select";
+import { injectPermissions } from "~/server-only/permissions";
 
 export const listForeignHopRecords = async (
     tableName: string,  // the target table
     fkName: string,
     fkId: number,
-    hopColName: string  // final table
+    hopColName: string,  // final table
+    withPermissions?: boolean
 ) => {
     "use server"
     const extColumn = schema.tables[tableName].columns[hopColName] as ForeignKey
@@ -24,5 +26,6 @@ export const listForeignHopRecords = async (
     `.catch(onError)
     await injectTranslations(extColumn.fk.table, results, null, undefined, hopColName)
     await injectVirtualValues(extColumn.fk.table, results, undefined, hopColName)
+    if (withPermissions) await injectPermissions(extColumn.fk.table, results)
     return results
 };

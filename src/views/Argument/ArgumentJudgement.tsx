@@ -6,9 +6,9 @@ import { Button } from "~/components/buttons"
 import { JudgeArgument } from "./JudgeArgument"
 import { RecordDetails } from "~/components/RecordDetails"
 import { getOneRecordByIdCache } from "~/client-only/query"
-import { whoCanUpdateRecord } from "~/api/update/record"
 import { ConditionArgument } from "./ConditionArgument"
 import { Form } from "~/components/form/Form"
+import { whoCanInsertRecord } from "~/api/insert/record"
 
 const judgementTableName = {
   'descriptive': 'argument_judgement',
@@ -21,11 +21,17 @@ export const ArgumentJudgement: Component<{
   statementType: 'descriptive' | 'threshold'
 }> = props => {
   const judgement = createAsync(() => getOneRecordByIdCache(
-    judgementTableName[props.statementType], props.argumentId
+    judgementTableName[props.statementType], props.argumentId, true
   ))
-  const conditionalConfidence = createAsync(() => getOneRecordByIdCache('argument_conditional', props.argumentId))
-  const canJudge = () => useBelongsTo(whoCanUpdateRecord('argument_judgement'))
-  const canCondition = () => useBelongsTo(whoCanUpdateRecord('argument_conditional'))
+  const conditionalConfidence = createAsync(() => getOneRecordByIdCache(
+    'argument_conditional', props.argumentId, true
+  ))
+  const canJudge = () => judgement()
+    ? judgement()!.canUpdate
+    : useBelongsTo(whoCanInsertRecord('argument_judgement'))
+  const canCondition = () => conditionalConfidence()
+    ? conditionalConfidence()!.canUpdate
+    : useBelongsTo(whoCanInsertRecord('argument_conditional'))
   const [wantsToJudge, setWantsToJudge] = createSignal(false)
   const [wantsToCondition, setWantsToCondition] = createSignal(false)
   const [confirmedPreJudgementCheck, setConfirmedPreJudgementCheck] = createSignal(false)

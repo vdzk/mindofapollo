@@ -29,7 +29,9 @@ export const insertRecord = async (
 ) => {
   "use server"
   if (! await belongsTo(whoCanInsertRecord(tableName))) return
-  if (! await allowedTableContent(tableName, record)) return
+  if (! await allowedTableContent(tableName, record)) {
+    throw new Error('You content didn\'t pass the filter.')
+  }
   const userId = await getUserId()
 
   if (isPersonal(tableName)) {

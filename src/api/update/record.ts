@@ -1,10 +1,8 @@
 import { DataRecord } from "~/schema/type"
-import { belongsTo, getUserSession } from "../../server-only/session"
+import { getUserSession } from "../../server-only/session"
 import { _updateRecord } from "~/server-only/mutate"
 import { finishExpl, startExpl } from "~/server-only/expl"
-import { getWritableColNames, isPrivate, isSystem } from "~/permissions"
-import { ofSelf } from "~/server-only/ofSelf"
-import { hasOwnFields } from "~/utils/schema"
+import { getWritableColNames } from "~/permissions"
 import { ExplData, ExplDiff, UserActor } from "~/components/expl/types"
 import { titleColumnName } from "~/utils/schema"
 import { getUserActorUser } from "../../server-only/session"
@@ -12,36 +10,16 @@ import { _getRecordById } from "~/server-only/select"
 import { printError } from "../../server-only/db"
 import { AuthRole } from "~/types"
 import { allowedTableContent } from "~/server-only/moderate"
-import { canReviseOwnRecentEntry } from "~/server-only/canReviseOwnRecentEntry"
-
-export const whoCanUpdateRecord = (
-  tableName: string,
-  ofSelf = false,
-  self = false
-) => {
-  if (
-    !hasOwnFields(tableName)
-    || isPrivate(tableName) && !ofSelf
-    || tableName === 'person' && !self
-    || isSystem(tableName)
-  ) {
-    return []
-  } else {
-    return ['invited']
-  }
-}
+import { canUpdate } from "~/server-only/permissions"
 
 export const authorisedUpdate = async (
   tableName: string,
   id: number,
   record: DataRecord,
-  userId: number,
   authRole: AuthRole
 ) => {
   "use server" // This is a hack to avoid vinxi blowing up. It should not be called from the client.
-  if (! await belongsTo(whoCanUpdateRecord(
-    tableName, await ofSelf(tableName, id), userId === id
-  ))) return false
+  if (! await canUpdate(tableName, [id])) return false
 
   const writableColNames = getWritableColNames(tableName, authRole)
   const forbiddenColumn = Object.keys(record)
@@ -62,9 +40,10 @@ export const updateRecord = async (
 ) => {
   "use server"
   const {userId, authRole} = await getUserSession()
-  if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return
-  if (! await canReviseOwnRecentEntry(userId, tableName, id)) return
-  if (! await allowedTableContent(tableName, record)) return
+  if (!(await authorisedUpdate(tableName, id, record, authRole))) return
+  if (! await allowedTableContent(tableName, record)) {
+    throw new Error('You content didn\'t pass the filter.')
+  }
   
   const explId = await startExpl(userId, 'updateRecord', 1, tableName, id)
   const diff = await _updateRecord(tableName, id, explId, record)

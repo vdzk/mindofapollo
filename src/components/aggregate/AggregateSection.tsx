@@ -128,6 +128,7 @@ export const AggregateSection: Component<{
               text={getItemText(record)}
               linkProps={getLinkProps(record)}
               hideControls={!!props.section.controls}
+              canDelete={record.canDelete as boolean}
             />
           </div>
         )}

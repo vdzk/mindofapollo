@@ -15,13 +15,10 @@ import { getToggleLabel } from "~/utils/string"
 import { ConfidenceCriteria } from "./ConfidenceCriteria"
 import { MasterDetail } from "~/components/MasterDetail"
 import { RecordHistory } from "~/components/RecordHistory"
-import { useBelongsTo } from "~/client-only/useBelongsTo"
-import { whoCanDeleteById } from "~/api/delete/byId"
-import { whoCanUpdateRecord } from "~/api/update/record"
 import { DeleteRecord } from "~/components/form/DeleteRecord"
 
 export const Argument: Component<{ id: number }> = props => {
-  const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id))
+  const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id, true))
   const statement = createAsync(async () => getOneRecordByChildId('statement', 'argument', props.id))
   const statementType = () => statement()?.statement_type_name as StatementType | undefined
 
@@ -34,21 +31,15 @@ export const Argument: Component<{ id: number }> = props => {
       listForeignRecordsCache.keyFor('argument', 'statement_id', record()!.statement_id as number)
     ])
   }
-  const canDelete = () => useBelongsTo(whoCanDeleteById(
-    'argument', false
-  ))
-  const canUpdate = () => useBelongsTo(whoCanUpdateRecord(
-    'argument', false, false
-  ))
   const tabOptions = () => {
     const options = [
       { id: 'analysis', label: 'Analysis' },
       { id: 'history', label: 'History' }
     ]
-    if (canUpdate()) {
+    if (record()?.canUpdate) {
       options.push({ id: 'edit', label: 'Edit' })
     }
-    if (canDelete()) {
+    if (record()?.canDelete) {
       options.push({ id: 'delete', label: 'Delete' })
     }
     return options

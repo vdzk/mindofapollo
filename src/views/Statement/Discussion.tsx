@@ -11,10 +11,11 @@ export const Discussion: Component<{ id: number }> = props => {
   const [messages, { refetch }] = createResource(() => listForeignRecords('statement_discussion_message', 'statement_id', props.id))
   const [newMessage, setNewMessage] = createSignal("")
   const [sending, setSending] = createSignal(false)
+  const [saveError, setSaveError] = createSignal('')
 
   const sendMessage = async () => {
     if (!newMessage().trim() || sending()) return
-
+    setSaveError('')
     setSending(true)
     try {
       await insertRecord('statement_discussion_message', {
@@ -23,6 +24,8 @@ export const Discussion: Component<{ id: number }> = props => {
       })
       setNewMessage("")
       refetch()
+    } catch (error) {
+      setSaveError((error as Error).message)
     } finally {
       setSending(false)
     }
@@ -71,6 +74,9 @@ export const Discussion: Component<{ id: number }> = props => {
           />
         </div>
       </Show>
+      <div class="text-right text-yellow-600">
+        {saveError()}
+      </div>
     </>
   )
 }

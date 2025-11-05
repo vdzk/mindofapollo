@@ -7,7 +7,6 @@ import { titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
 import { authorisedUpdate } from "./record"
 import { allowedTableContent } from "~/server-only/moderate"
-import { canReviseOwnRecentEntry } from "~/server-only/canReviseOwnRecentEntry"
 
 export const updateExtRecord = async (
   tableName: string,
@@ -20,9 +19,13 @@ export const updateExtRecord = async (
   "use server"
 
   const {userId, authRole} = await getUserSession()
-  if (!(await authorisedUpdate(tableName, id, record, userId, authRole))) return
-  if (! await canReviseOwnRecentEntry(userId, tableName, id)) return
-  if (! await allowedTableContent(tableName, record)) return
+  if (!(await authorisedUpdate(tableName, id, record, authRole))) return
+  if (! await allowedTableContent(tableName, record)) {
+    throw new Error('You content didn\'t pass the filter.')
+  }
+  if (! await allowedTableContent(extTableName, extRecord)) {
+    throw new Error('You content didn\'t pass the filter.')
+  }
 
   const explId = await startExpl(userId, 'updateExtRecord', 1, tableName, id)
   const [recordDiff, extRecordDiff] = await Promise.all([

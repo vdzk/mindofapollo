@@ -1,14 +1,12 @@
 import { action, json, useAction } from "@solidjs/router"
 import { Component, ComponentProps, createSignal, Show } from "solid-js"
-import { useBelongsTo } from "~/client-only/useBelongsTo"
-import { useOfSelf } from "~/client-only/useOfSelf"
 import { DataRecordWithId } from "~/schema/type"
 import { Button } from "../buttons"
 import { Link } from "../Link"
 import { NestPanel } from "../NestPanel"
 import { UserExplField } from "../form/UserExplField"
 import { getAggregateRecordsCache } from "./Aggregate"
-import { deleteById, whoCanDeleteById } from "~/api/delete/byId"
+import { deleteById } from "~/api/delete/byId"
 
 const deleteAction = action(async (
   tableName: string,
@@ -34,15 +32,11 @@ export const RemovableListItem: Component<{
   item: DataRecordWithId
   text: string
   linkProps: ComponentProps<typeof Link>
+  canDelete: boolean
   hideControls?: boolean
 }> = (props) => {
   const [showDelete, setShowDelete] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
-
-  const canDeleteById = () => useBelongsTo(whoCanDeleteById(
-    props.itemTable,
-    useOfSelf(props.itemTable, props.item)
-  ))
 
   const _delete = useAction(deleteAction);
   const onDelete = () => _delete(
@@ -80,7 +74,7 @@ export const RemovableListItem: Component<{
             class="flex-1"
             {...props.linkProps}
           />
-          <Show when={canDeleteById() && !props.hideControls}>
+          <Show when={props.canDelete && !props.hideControls}>
             <Button
               label="X"
               onClick={() => setShowDelete(true)}

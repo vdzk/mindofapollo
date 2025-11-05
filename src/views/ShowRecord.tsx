@@ -5,11 +5,7 @@ import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
 import { MasterDetail } from "~/components/MasterDetail"
 import { componentsByName } from "~/components/componentsByName"
-import { whoCanDeleteById } from "~/api/delete/byId"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
-import { useOfSelf } from "~/client-only/useOfSelf"
-import { useBelongsTo } from "~/client-only/useBelongsTo"
-import { whoCanUpdateRecord } from "~/api/update/record"
 import { SessionContext } from "~/SessionContext"
 import { RecordHistory } from "~/components/RecordHistory"
 import { personalTableNames } from "~/permissions"
@@ -25,19 +21,9 @@ export const ShowRecord: Component<{
   tabData?: Record<string, any>
 }> = props => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const record = createAsync(() => getOneExtRecordById(props.tableName, props.id))
+  const record = createAsync(() => getOneExtRecordById(props.tableName, props.id, true))
   const session = useContext(SessionContext)
   const isSelf = () => props.id === session?.userSession?.()?.userId
-
-  const canUpdateRecord = () => useBelongsTo(whoCanUpdateRecord(
-    props.tableName,
-    useOfSelf(props.tableName, record()),
-    isSelf()
-  ))
-  const canDeleteById = () => useBelongsTo(whoCanDeleteById(
-    props.tableName,
-    useOfSelf(props.tableName, record())
-  ))
 
   const sectionOptions = () => {
     const options = []
@@ -54,10 +40,10 @@ export const ShowRecord: Component<{
     if (!personalTableNames().includes(props.tableName)) {
       options.push({ id: 'history', label: 'History' })
     }
-    if (canUpdateRecord()) {
+    if (record()?.canUpdate) {
       options.push({ id: 'edit', label: 'Edit' })
     }
-    if (canDeleteById()) {
+    if (record()?.canDelete) {
       options.push({ id: 'delete', label: 'Delete' })
     }
     const filteredOptions = props.hideSections ? options.filter(option => !props.hideSections?.includes(option.id)) : options

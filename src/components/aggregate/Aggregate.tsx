@@ -21,9 +21,9 @@ const getAggregateRecords = (
   const titleColumn = () => schema.tables[aggregate.table].columns[titleColName]
   if (aggregate.type === '1-n') {
     if (titleColumn().type === 'fk') {
-      return listForeignHopRecordsCache(aggregate.table, aggregate.column, id, titleColName)
+      return listForeignHopRecordsCache(aggregate.table, aggregate.column, id, titleColName, true)
     } else {
-      return listForeignRecords(aggregate.table, aggregate.column, id)
+      return listForeignRecords(aggregate.table, aggregate.column, id, true)
     }
   } else {
     return listCrossRecords(aggregate.table, tableName, id, !!aggregate.first)

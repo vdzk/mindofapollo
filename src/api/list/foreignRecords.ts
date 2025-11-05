@@ -3,11 +3,13 @@ import { schema } from "~/schema/schema"
 import { injectVirtualValues } from "~/server-only/select"
 import { DataRecordWithId } from "~/schema/type";
 import { injectTranslations } from "~/server-only/injectTranslations";
+import { injectPermissions } from "~/server-only/permissions";
 
 export const listForeignRecords = async (
   tableName: string,
   fkName: string,
-  fkId: number | null
+  fkId: number | null,
+  withPermissions?: boolean
 ) => {
   "use server"
   const { extendedByTable } = schema.tables[tableName]
@@ -38,5 +40,6 @@ export const listForeignRecords = async (
   }
   await injectTranslations(tableName, records)
   await injectVirtualValues(tableName, records)
+  if (withPermissions) await injectPermissions(tableName, records)
   return records as unknown as DataRecordWithId[]
 };

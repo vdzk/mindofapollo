@@ -6,10 +6,15 @@ import { getExtTableName } from "~/utils/schema"
 import { whoCanGetOneRecordById } from "./recordById"
 import { belongsTo } from "~/server-only/session"
 import { ofSelf } from "~/server-only/ofSelf"
+import { injectPermissions } from "~/server-only/permissions"
 
 export const whoCanGetOneExtRecordById = (tableName: string, ofSelf: boolean) => whoCanGetOneRecordById(tableName, ofSelf)
 
-export const getOneExtRecordById = async (tableName: string, id: number) => {
+export const getOneExtRecordById = async (
+  tableName: string,
+  id: number,
+  withPermissions?: boolean
+) => {
   "use server"
   if (! await belongsTo(whoCanGetOneExtRecordById(
     tableName, await ofSelf(tableName, id)
@@ -28,6 +33,8 @@ export const getOneExtRecordById = async (tableName: string, id: number) => {
       result[colName] = value
     }
   }
+
+  if (withPermissions) await injectPermissions(tableName, [result])
 
   const extTableName = getExtTableName(tableName, result, !!optionallyExtendedByTable)
   if (extTableName) {

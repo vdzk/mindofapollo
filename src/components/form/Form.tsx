@@ -38,6 +38,7 @@ export const Form: Component<{
   const [userExpl, setUserExpl] = createSignal('')
   const [optionalExtEnabled, setOptionalExtEnabled] = createSignal(false)
   const [saving, setSaving] = createSignal(false)
+  const [saveError, setSaveError] = createSignal('')
 
   const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
     return 'onExit' in exit
@@ -113,6 +114,7 @@ export const Form: Component<{
 
   const save = useAction(saveAction)
   const onSubmit = async () => {
+    setSaveError('')
     setSaving(true)
     const result = await save(
       props.tableName, props.id, diff,
@@ -120,7 +122,9 @@ export const Form: Component<{
       userExpl(), props.exitSettings, session!
     )
     setSaving(false)
-    return result
+    if ('error' in result) {
+      setSaveError(result.error)
+    }
   }
 
   // If there is nothing else to save don't make the user press save again
@@ -235,6 +239,11 @@ export const Form: Component<{
       }</For>
       <Show when={props.id}>
         <UserExplField value={userExpl()} onChange={setUserExpl} />
+      </Show>
+      <Show when={saveError()}>
+        <div class="pt-2 text-yellow-600">
+          {saveError()}
+        </div>
       </Show>
       <div class="pt-2">
         <Show when={session?.userSession?.()?.authenticated}>

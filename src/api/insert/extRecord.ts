@@ -20,8 +20,12 @@ export const insertExtRecord = async (
 ) => {
   "use server"
   if (! await belongsTo(whoCanInsertExtRecord(tableName))) return
-  if (! await allowedTableContent(tableName, record)) return
-  if (! await allowedTableContent(extTableName, extRecord)) return
+  if (! await allowedTableContent(tableName, record)) {
+    throw new Error('You content didn\'t pass the filter.')
+  }
+  if (! await allowedTableContent(extTableName, extRecord)) {
+    throw new Error('You content didn\'t pass the filter.')
+  }
   const userId = await getUserId()
   const explId = await startExpl(userId, 'insertExtRecord', 1, tableName, null);
   const result = await _insertRecord(tableName, record, explId)

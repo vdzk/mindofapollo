@@ -3,7 +3,6 @@ import { TableSchema } from "~/schema/type";
 export const statement_discussion_message: TableSchema = {
   plural: 'statement discussion messages',
   expl: false,
-  private: false,
   columns: {
     text: {
       type: 'text',

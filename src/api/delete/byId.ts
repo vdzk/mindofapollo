@@ -1,39 +1,20 @@
 import { deleteByIdsCascade } from "../../server-only/mutate"
 import { _getRecordById } from "../../server-only/select"
 import { titleColumnName } from "~/utils/schema"
-import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session"
-import { ofSelf } from "~/server-only/ofSelf"
+import { getUserId, getUserActorUser } from "~/server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { finishExpl, startExpl } from "~/server-only/expl"
 import { DataRecordWithId } from "~/schema/type"
-import { isPersonal, isSystem } from "~/permissions"
-import { canReviseOwnRecentEntry } from "~/server-only/canReviseOwnRecentEntry"
-
-export const whoCanDeleteById = (tableName: string, ofSelf: boolean) => {
-  if (
-    tableName === 'person'
-    || (isPersonal(tableName) && !ofSelf)
-    || isSystem(tableName)
-  ) {
-    return []
-  } else {
-    return ['invited']
-  }
-}
+import { canDelete } from "~/server-only/permissions"
 
 export const deleteById = async (tableName: string, id: number, userExpl: string) => {
   "use server"
-  const userId = await getUserId()
-
-  if (! await belongsTo(whoCanDeleteById(
-    tableName,
-    await ofSelf(tableName, id)
-  ))) return
-  if (! await canReviseOwnRecentEntry(userId, tableName, id)) return
+  if (! await canDelete(tableName, [id])) return
   
   const record = await _getRecordById(tableName, id)
   if (!record) return
 
+  const userId = await getUserId()
   const explId = await startExpl(userId, 'deleteById', 1, tableName, id)
   const deletedRecords = await deleteByIdsCascade(tableName, 'id', [id], explId)
 
