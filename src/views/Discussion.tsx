@@ -5,10 +5,12 @@ import { Button } from "~/components/buttons"
 import { TextInput } from "~/components/form/TextInput"
 import { Link } from "~/components/Link"
 import { SessionContext } from "~/SessionContext"
+import { DiscussionParams } from "~/schema/type"
 
-export const Discussion: Component<{ id: number }> = props => {
+export const Discussion: Component<{ id: number, tabData: {discussion: DiscussionParams} }> = props => {
+  const { tableName, fkName, textColName, userNameColName } = props.tabData.discussion
   const session = useContext(SessionContext)
-  const [messages, { refetch }] = createResource(() => listForeignRecords('statement_discussion_message', 'statement_id', props.id))
+  const [messages, { refetch }] = createResource(() => listForeignRecords(tableName, fkName, props.id))
   const [newMessage, setNewMessage] = createSignal("")
   const [sending, setSending] = createSignal(false)
   const [saveError, setSaveError] = createSignal('')
@@ -18,9 +20,9 @@ export const Discussion: Component<{ id: number }> = props => {
     setSaveError('')
     setSending(true)
     try {
-      await insertRecord('statement_discussion_message', {
-        text: newMessage(),
-        statement_id: props.id
+      await insertRecord(tableName, {
+        [textColName]: newMessage(),
+        [fkName]: props.id
       })
       setNewMessage("")
       refetch()
@@ -48,7 +50,7 @@ export const Discussion: Component<{ id: number }> = props => {
               route="show-record"
               params={{ tableName: 'person', id: message.owner_id }}
               class="font-bold"
-              label={message.user_name + ':'}
+              label={message[userNameColName] + ':'}
             />
             <div class="flex-1">{message.text}</div>
           </div>

@@ -3,6 +3,24 @@ import { TableSchema } from "~/schema/type";
 export const forum_post: TableSchema = {
   plural: 'Forum posts',
   columns: {
+    text: {
+      type: 'text',
+      lines: 5
+    },
+    user_name: {
+      type: 'virtual',
+      queries: {
+        users: [
+          ['id', 'message_id'],
+          ['owner_id', [
+            ['name']
+          ]]
+        ]
+      },
+      get: (ids, records) => Object.fromEntries(records.users.map(
+        user => [user.message_id, user.name]
+      ))
+    },
     thread_id: {
       type: 'fk',
       label: 'thread',
@@ -18,26 +36,6 @@ export const forum_post: TableSchema = {
         table: 'person',
         labelColumn: 'name'
       }
-    },
-    text: {
-      type: 'text',
-      lines: 5
-    },
-    label: {
-      type: 'virtual',
-      preview: true,
-      queries: {
-        posts: [
-          ['id'],
-          ['text'],
-          ['owner_id', [
-            ['name', 'author']
-          ]]
-        ]
-      },
-      get: (ids, results) => Object.fromEntries(results.posts.map(
-        post => [post.id, `[${post.author}]: ${post.text}`]
-      ))
     }
   }
 }

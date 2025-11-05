@@ -127,6 +127,14 @@ interface Section {
   getVisibility?: (record: DataRecordWithId) => boolean
 }
 
+export interface DiscussionParams {
+  tableName: string
+  fkName: string
+  textColName: string
+  userNameColName: string
+  showFirst?: boolean
+}
+
 export interface TableSchema {
   plural?: string,
   private?: boolean,
@@ -140,6 +148,7 @@ export interface TableSchema {
   createRecord?: () => DataRecord // Generate new records automatically
   sections?: Record<string, Section>
   advanced?: string[] // Columns that are not shown by default when editing
+  discussion?: DiscussionParams // A discussion can be attached to every row
   translate?: boolean // Should the records be translated
   expl?: boolean // Should the record changes be explained
 }

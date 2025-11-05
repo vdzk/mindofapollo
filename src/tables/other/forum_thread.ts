@@ -7,11 +7,11 @@ export const forum_thread: TableSchema = {
       type: 'varchar'
     }
   },
-  aggregates: {
-    posts: {
-      type: '1-n',
-      table: 'forum_post',
-      column: 'thread_id'
-    }
+  discussion: {
+    tableName: 'forum_post',
+    fkName: 'thread_id',
+    textColName: 'text',
+    userNameColName: 'user_name',
+    showFirst: true
   }
 }

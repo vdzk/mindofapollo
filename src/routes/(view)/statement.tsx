@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { createAsync } from "@solidjs/router"
-import { createEffect, createSignal, Show } from "solid-js"
+import { createSignal, Show } from "solid-js"
 import { getOneExtRecordByIdCache } from "~/client-only/query"
 import { RecordPageTitle } from "~/components/PageTitle"
 import { StatementType } from "~/tables/statement/statement_type"

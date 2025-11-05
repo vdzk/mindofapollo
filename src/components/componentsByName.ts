@@ -4,7 +4,6 @@ import { RecordHistory } from "./RecordHistory";
 import { PersonalDetails } from "./PersonalDetails";
 import { Arguments } from "~/views/Statement/Arguments";
 import { CreateArgument } from "~/views/Statement/CreateArgument";
-import { Discussion } from "~/views/Statement/Discussion";
 import { DirectiveScope } from "~/views/Statement/DirectiveScope";
 
 type ComponentsByName = {
@@ -17,6 +16,5 @@ export const componentsByName: ComponentsByName = {
   PersonalDetails,
   DirectiveScope,
   Arguments,
-  CreateArgument,
-  Discussion
+  CreateArgument
 };

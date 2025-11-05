@@ -12,6 +12,7 @@ import { personalTableNames } from "~/permissions"
 import { firstCap } from "~/utils/string"
 import { Form } from "~/components/form/Form"
 import { DeleteRecord } from "~/components/form/DeleteRecord"
+import { Discussion } from "./Discussion"
 
 export const ShowRecord: Component<{
   tableName: string
@@ -24,10 +25,10 @@ export const ShowRecord: Component<{
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id, true))
   const session = useContext(SessionContext)
   const isSelf = () => props.id === session?.userSession?.()?.userId
+  const { sections, discussion } = schema.tables[props.tableName]
 
   const sectionOptions = () => {
     const options = []
-    const { sections } = schema.tables[props.tableName]
     if (sections) {
       for (const [key, section] of Object.entries(sections)) {
         if (section.private && !isSelf()) continue
@@ -36,6 +37,14 @@ export const ShowRecord: Component<{
       }
     } else {
       options.push({ id: 'allDetails', label: 'Details' })
+    }
+    if (discussion) {
+      const option = { id: 'discussion', label: 'Discussion' }
+      if (discussion.showFirst) {
+        options.unshift(option)
+      } else {
+        options.push(option)
+      }
     }
     if (!personalTableNames().includes(props.tableName)) {
       options.push({ id: 'history', label: 'History' })
@@ -86,6 +95,12 @@ export const ShowRecord: Component<{
         </Match>
         <Match when={selectedSection() === 'history'}>
           <RecordHistory tableName={props.tableName} id={props.id} />
+        </Match>
+        <Match when={selectedSection() === 'discussion'}>
+          <Discussion
+            id={props.id}
+            tabData={{discussion: discussion!}}
+          />
         </Match>
         <Match when={getCurrentComponent()}>
           <Dynamic

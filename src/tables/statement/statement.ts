@@ -128,12 +128,14 @@ export const statement: TableSchema = {
       label: 'evaluation',
       fields: ['statement_approvals', 'decided', 'confidence'],
     },
-    discussion: {
-      label: 'discussion',
-      component: 'Discussion'
-    },
     other: {
       label: 'other details'
     }
+  },
+  discussion: {
+    tableName: 'statement_discussion_message',
+    fkName: 'statement_id',
+    textColName: 'text',
+    userNameColName: 'user_name'
   }
 }
