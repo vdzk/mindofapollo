@@ -6,6 +6,7 @@ import { getOneRecordById } from "~/api/getOne/recordById"
 import { SessionContext } from "~/SessionContext"
 import { btnStyle, Button } from "./buttons"
 import { joinWebsiteUrl, openRegistration } from "~/constant"
+import { createMediaQuery } from "@solid-primitives/media"
 
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
@@ -15,6 +16,7 @@ export const TopNav: Component = () => {
     ? getOneRecordById('person', session!.userSession()!.userId)
     : undefined
   )
+  const smallScreen = createMediaQuery('(max-width: 480px)')
 
   const onLogout = async () => {
     await doLogout()
@@ -26,7 +28,11 @@ export const TopNav: Component = () => {
       <div class="px-2 py-0.5 flex items-center">
         <Link route="home-page" label="MIND OF APOLLO" type="logo" />
         <span class="inline-block w-2" />
-        <Link route="search" label="Search" type="button" />
+        <Link
+          route="search"
+          label={smallScreen() ? '🔎' : "Search"}
+          type="button"
+        />
       </div>
       <div class="px-2 py-0.5">
         <Switch>
@@ -38,15 +44,23 @@ export const TopNav: Component = () => {
             />
             <span class="inline-block w-2" />
             <Button
-              label="Logout"
+              label={smallScreen() ? '🚪' : "Logout"}
               onClick={onLogout}
             />
           </Match>
           <Match when={!authenticated()}>
             <span class="flex gap-2">
-              <Link route="donate" label="Donate" type="button" />
+              <Link
+                route="donate"
+                  label={smallScreen() ? '🎁' : "Donate"}
+                type="button"
+              />
               <Show when={openRegistration}>
-                <Link route="join" label="Join" type="button" />
+                <Link
+                  route="join"
+                  label={smallScreen() ? '👤➕' : "Join"}
+                  type="button"
+                />
               </Show>
               <Show when={!openRegistration}>
                 <a
@@ -56,7 +70,11 @@ export const TopNav: Component = () => {
                   Sign Up
                 </a>
               </Show>
-              <Link route="login" label="Login" type="button" />
+              <Link
+                route="login"
+                label={smallScreen() ? '🔑' : "Login"}
+                type="button"
+              />
             </span>
           </Match>
         </Switch>

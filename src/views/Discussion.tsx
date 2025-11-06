@@ -45,14 +45,14 @@ export const Discussion: Component<{ id: number, tabData: {discussion: Discussio
         <div class="p-2 text-gray-500">No messages yet.</div>
       }>
         {message => (
-          <div class="flex gap-2 px-2">
+          <div class="px-2">
             <Link
               route="show-record"
               params={{ tableName: 'person', id: message.owner_id }}
-              class="font-bold"
+              class="font-bold pr-2"
               label={message[userNameColName] + ':'}
             />
-            <div class="flex-1">{message.text}</div>
+            <span>{message.text}</span>
           </div>
         )}
       </For>

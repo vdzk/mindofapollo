@@ -59,6 +59,7 @@ export const Argument: Component<{ id: number }> = props => {
             selectedId={searchParams.tab || 'analysis'}
             onChange={id => setSearchParams({ tab: id })}
             optionsClass="pt-2"
+            class="px-2"
           />
         </div>
         <Switch>

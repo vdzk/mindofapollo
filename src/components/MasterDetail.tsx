@@ -18,6 +18,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
   const groupsById = createMemo(() => props.groups && Object.fromEntries(props.groups.map(g => [g.id, g])))
   const isLarge = createMediaQuery('(min-width: 1024px)')
   const horizontal = () => props.horizontal || !isLarge()
+  const isPills = () => props.pills || !isLarge()
 
   const groupedOptions = createMemo(() => {
     if (hasGroups()) {
@@ -36,16 +37,15 @@ export const MasterDetail = <TId, TGroupId>(props: {
     const first = index === 0
     const last = index === optionsLength - 1
     const hz = horizontal()
-    const isPills = props.pills
     
     return {
       'cursor-default bg-yellow-600 hover:bg-yellow-600 text-white': isSelected,
       'bg-yellow-400 hover:bg-yellow-500 text-gray-900': !isSelected,
-      'rounded-l-md': isPills || hz && first,
-      'rounded-r-md': isPills || hz && last,
-      'rounded-t-md': isPills || !hz && first,
-      'rounded-b-md': isPills || !hz && last,
-      'm-1': isPills
+      'rounded-l-md': isPills() || hz && first,
+      'rounded-r-md': isPills() || hz && last,
+      'rounded-t-md': isPills() || !hz && first,
+      'rounded-b-md': isPills() || !hz && last,
+      'm-1': isPills()
     }
   }
 
@@ -66,8 +66,8 @@ export const MasterDetail = <TId, TGroupId>(props: {
       }}
     >
       <div class={props.optionsClass} classList={{
-        "w-full flex flex-col lg:flex-row mb-2 px-2": horizontal(),
-        "shrink-0": !horizontal() && !props.pills,
+        "w-full flex flex-col lg:flex-row mb-2": horizontal(),
+        "shrink-0": !horizontal() && !isPills(),
       }}>
         <For each={Object.entries(groupedOptions())}>
           {([groupId, options]) => (
@@ -75,7 +75,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
               "flex flex-wrap mb-1": horizontal(),
               "mb-0": !horizontal()
             }}>
-              <Show when={hasGroups()}>
+              <Show when={hasGroups() && groupsById()[groupId].label}>
                 <div classList={{
                   "font-medium": true,
                   "mr-2 self-center": horizontal(),
@@ -85,7 +85,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
                 </div>
               </Show>
               <div classList={{
-                "flex flex-wrap": horizontal() || props.pills
+                "flex flex-wrap": horizontal() || isPills()
               }}>
                 <For each={options}>
                   {(option, index) => (

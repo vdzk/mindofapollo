@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png">
   <title>Mind of Apollo Explained</title>
   <style>
@@ -138,6 +139,35 @@
 
     a:hover {
       text-decoration: underline;
+    }
+
+    /* Improve mobile layout */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column; /* Stack elements vertically */
+      }
+
+      .warm {
+        width: 100%;
+        height: 6px; /* horizontal bar instead of a vertical one */
+      }
+
+      main {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      .subhead {
+        font-size: 1.1em;
+      }
+
+      p, summary {
+        max-width: 100%; /* allow full width on mobile */
+        font-size: 1em;
+      }
     }
   </style>
 </head>
@@ -491,7 +521,7 @@
       </details>
       <details id="26">
         <summary>How do I get access?</summary>
-        <p></p>
+        <p>The registration is currently <b>open!</b> <a href="https://mindofapollo.org/join">Please register here.</a></p>
       </details>
       <details id="27">
         <summary>I watched the video and have some questions.</summary>
