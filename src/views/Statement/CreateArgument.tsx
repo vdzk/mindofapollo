@@ -1,3 +1,4 @@
+import { createMediaQuery } from "@solid-primitives/media"
 import { createAsync, revalidate } from "@solidjs/router"
 import { Component, createMemo, createSignal, For, Show } from "solid-js"
 import { getOneRecordByIdCache, listForeignRecordsCache, listRecordsCache } from "~/client-only/query"
@@ -36,9 +37,10 @@ export const CreateArgument: Component<{
       setSelectedArgumentTypeId(undefined)
     }
   }
+  const isLarge = createMediaQuery('(min-width: 1200px)')
   return (
-    <div class="flex-1 flex">
-      <div class="max-w-(--breakpoint-md) shrink-0 grow-0">
+    <div class="flex-1 flex" classList={{'flex-col': !isLarge()}}>
+      <div classList={{ "max-w-(--breakpoint-md) shrink-0 grow-0" : isLarge()}}>
         <div class="font-bold px-2">Temporary draft (optional)</div>
         <div class="px-2">
           Write the argument in your own words before making it more formal. This draft will not be saved.
@@ -50,7 +52,7 @@ export const CreateArgument: Component<{
           selectedId={selectedArgumentTypeId()}
           onChange={setSelectedArgumentTypeId}
           class="pl-1"
-          optionsClass="max-w-[428px]"
+          optionsClass="max-w-[428px] pb-4"
           pills
         >
           <Show when={argumentType()}>

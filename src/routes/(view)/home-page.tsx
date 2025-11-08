@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <main class="flex-1 flex flex-col">
       <Title>Home Page</Title>
-      <div class="border-b text-center text-2xl font-bold py-6 text-gray-800 uppercase [word-spacing:6px]">
+      <div class="border-b text-center text-2xl font-bold py-6 text-gray-800 uppercase [word-spacing:6px] px-2">
         Growing a collective rational reasoner
       </div>
       <div class="flex flex-1 flex-col lg:flex-row">
