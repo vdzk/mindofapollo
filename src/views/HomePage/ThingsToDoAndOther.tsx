@@ -35,6 +35,11 @@ export default function ThingsToDoAndOther() {
           type="button"
           links={[
             {
+              label: 'Bet & Persuade',
+              route: 'create-record',
+              params: { tableName: 'bet' }
+            },
+            {
               label: "Forum",
               route: 'list-records',
               params: { tableName: 'forum_thread' }

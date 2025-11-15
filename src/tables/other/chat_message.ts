@@ -1,4 +1,4 @@
-import { TableSchema } from "~/schema/type";
+import { TableSchema } from "~/schema/type"
 
 export const chat_message: TableSchema = {
   translate: false,

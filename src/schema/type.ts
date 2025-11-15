@@ -18,7 +18,7 @@ interface SharedColumnProps {
 }
 
 export interface SimpleColumn extends SharedColumnProps {
-  type: 'integer' | 'varchar' | 'proportion' | 'weight' | 'link_url' | 'link_title' | 'table_name' | 'column_name'
+  type: 'integer' | 'varchar' | 'date' | 'proportion' | 'weight' | 'link_url' | 'link_title' | 'table_name' | 'column_name'
 }
 
 export interface BooleanColumn extends SharedColumnProps {
@@ -40,7 +40,7 @@ export interface JsonbColumn extends SharedColumnProps {
   type: 'jsonb'
 }
 
-// NOTE: A lot of code is requered to implement this column type. Perhaps a simpler approach can be found.
+// NOTE: A lot of code is required to implement this column type. Perhaps a simpler approach can be found.
 export interface ValueTypeIdColumn extends SharedColumnProps {
   type: 'value_type_id',
   typeOriginColumn: string,
@@ -82,7 +82,8 @@ export interface ForeignKey extends SharedColumnProps {
   fk: {
     table: string 
     labelColumn: string
-    extensionTables?: string[] // Choose extension table by appending the array element corresponding to the referenced id to the table name
+    extensionTables?: string[] // choose extension table corresponding to the referenced id
+    extensionColumn?: string // instead of FK id, use id in remote FK column
     getLabel?: (record: DataRecord) => string // Generate label from the foreign record,
     defaultName?: string // the FK value should be set to id corresponding to this name by default
     optional?: boolean  // Foreign key can be NULL

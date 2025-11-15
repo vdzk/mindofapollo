@@ -15,6 +15,11 @@ export const person: TableSchema = {
       },
       readOnly: true
     },
+    debate_credits: {
+      type: 'integer',
+      readOnly: true,
+      defaultValue: 100
+    },
     language: {
       type: 'option',
       options: languages,

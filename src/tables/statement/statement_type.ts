@@ -1,10 +1,10 @@
-import { TableSchema } from "../../schema/type";
+import { TableSchema } from "../../schema/type"
 
 const statementTypes = [
   'descriptive',
   'threshold',
   'prescriptive'
-] as const;
+] as const
 
 export type StatementType = typeof statementTypes[number];
 

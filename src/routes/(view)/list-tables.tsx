@@ -11,6 +11,7 @@ import { argumentTypeTables } from '~/tables/argument_type'
 import { moralityTables } from '~/tables/morality'
 import { otherTables } from '~/tables/other'
 import { statementTables } from '~/tables/statement'
+import { betTables } from "~/tables/bet";
 
 const tableCategories = {
   statement: Object.keys(statementTables),
@@ -19,6 +20,8 @@ const tableCategories = {
   morality: Object.keys(moralityTables),
   other: Object.keys(otherTables)
 } as const
+
+const hiddenTables = Object.keys(betTables)
 
 function TableList(props: { tables: string[], title: string }) {
   const getLabel = (tableName: string) => {
@@ -54,6 +57,7 @@ export default function ListTables() {
       console.error(`Table ${tableName} not found in schema`)
       return false
     }
+    if (hiddenTables.includes(tableName)) return false
     return tableSchema.columns[titleColumnName(tableName)]?.type !== 'fk'
   }
 

@@ -5,7 +5,6 @@ import { SessionContext } from "~/SessionContext"
 import { login } from "~/api/execute/login"
 import { etv } from "~/client-only/util"
 import { Button } from "~/components/buttons"
-import { openRegistration } from "~/constant"
 
 export default function Login() {
   const session = useContext(SessionContext)
@@ -22,7 +21,7 @@ export default function Login() {
   }
 
   return (
-    <main class="flex items-center justify-center h-screen">
+    <main class="flex-1 flex items-center justify-center">
       <Title>Login</Title>
       <div>
         <div>
