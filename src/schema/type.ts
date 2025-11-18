@@ -77,6 +77,11 @@ export interface VirtualColumnLocal extends SharedColumnProps {
   getLocal: (record: DataRecord) => string
 }
 
+export interface VirtualColumnFromForeignKey extends SharedColumnProps {
+  type: 'virtual'
+  fkColName: string
+}
+
 export interface ForeignKey extends SharedColumnProps {
   type: 'fk'
   fk: {
@@ -95,7 +100,7 @@ export interface ExtendsIdColumn extends SharedColumnProps {
   type: 'extends_id'
 }
 
-export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | ExtendsIdColumn | OptionColumn | JsonbColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal) & {
+export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | ExtendsIdColumn | OptionColumn | JsonbColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal | VirtualColumnFromForeignKey) & {
   readOnly?: true // ordinarily, this field should not be edited directly
   unique?: true
 }

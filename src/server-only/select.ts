@@ -1,5 +1,5 @@
 import { onError, sql } from "./db"
-import { DataLiteral, DataRecordWithId, VirtualColumnLocal, VirtualColumnQueries, VqSettings } from "~/schema/type"
+import { DataLiteral, DataRecordWithId, ForeignKey, VirtualColumnFromForeignKey, VirtualColumnLocal, VirtualColumnQueries, VqSettings } from "~/schema/type"
 import { getExplIdColNames } from "~/utils/expl"
 import { resolveEntries } from "~/utils/async"
 import { getTranslatableColumns, getVirtualColNames, needsExpl } from "~/utils/schema"
@@ -8,6 +8,7 @@ import { getVirtualValuesByServerFn } from "./virtualColumns"
 import { schema } from "~/schema/schema"
 import { injectTranslations } from "./injectTranslations"
 import { queryVirtualColumn, VqColumn } from "./queryVirtualColumn"
+import { indexBy } from "~/utils/shape"
 
 export const getVirtualValuesByQueries = async (
   tableName: string,
@@ -61,6 +62,25 @@ export const getVirtualValuesByLocal = (
   ])) as Record<number, string>
 ]))
 
+export const getVirtualValuesByForeignKey = async (
+  tableName: string,
+  colNames: string[],
+  records: DataRecordWithId[]
+) => {
+  const { columns } = schema.tables[tableName]
+  const virtualValues: Record<string, Record<number, string>> = {}
+  // TODO: run queries for different columns in parallel 
+  for (const colName of colNames) {
+    const { fkColName } = columns[colName] as VirtualColumnFromForeignKey
+    const fkIds = records.map(record => record[fkColName]) as number[]
+    const { fk } = columns[fkColName] as ForeignKey
+    const fkRecords = await _getRecordsByIds(fk.table, 'id', fkIds, [fk.labelColumn])
+    const fkRecordsById = indexBy(fkRecords, 'id')
+    virtualValues[colName] = Object.fromEntries(records.map(record => [record.id, fkRecordsById[record[fkColName] as number][fk.labelColumn] as string]))
+  }
+  return virtualValues
+}
+
 export const injectVirtualValues = async (
   tableName: string,
   records?: DataRecordWithId[] | RowList<Row[]>,
@@ -74,7 +94,8 @@ export const injectVirtualValues = async (
     const virtualValues = (await Promise.all([
       getVirtualValuesByQueries(tableName, virtualColNames.queries, ids),
       getVirtualValuesByServerFn(tableName, virtualColNames.serverFn, ids),
-      getVirtualValuesByLocal(tableName, virtualColNames.local, records as DataRecordWithId[], mainIdColName)
+      getVirtualValuesByLocal(tableName, virtualColNames.local, records as DataRecordWithId[], mainIdColName),
+      getVirtualValuesByForeignKey(tableName, virtualColNames.foreignKey, records as DataRecordWithId[])
     ])).reduce((acc, cur) => ({ ...acc, ...cur }), {})
     for (const record of records) {
       for (const colName of virtualColNames.all) {

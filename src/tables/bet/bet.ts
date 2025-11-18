@@ -13,6 +13,10 @@ export const bet: TableSchema = {
         labelColumn: 'name'
       }
     },
+    creator_name: {
+      type: 'virtual',
+      fkColName: 'creator_id',
+    },
     statement_id: {
       type: 'fk',
       fk: {
@@ -21,7 +25,11 @@ export const bet: TableSchema = {
         extensionColumn: 'statement_type_id',
         extensionTables: ['', 'bet_confidence', 'bet_confidence', 'bet_net_value']
       },
-      instructions: 'Select a statement the will the subject of the competition.',
+      instructions: 'Select a statement the will the subject of the competition.'
+    },
+    statement_label: {
+      type: 'virtual',
+      fkColName: 'statement_id',
       preview: true
     },
     creator_above: {

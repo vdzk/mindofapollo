@@ -63,6 +63,7 @@ export const getVirtualColNames = (tableName: string, colNames?: string[]) => {
   const queries = []
   const serverFn = []
   const local = []
+  const foreignKey = []
   const non = ['id']
   const { columns } = schema.tables[tableName]
   for (const colName in columns) {
@@ -74,6 +75,8 @@ export const getVirtualColNames = (tableName: string, colNames?: string[]) => {
         serverFn.push(colName)
       } else if ('getLocal' in column) {
         local.push(colName)
+      } else if ('fkColName' in column) {
+        foreignKey.push(colName)
       } else {
         queries.push(colName)
       }
@@ -81,7 +84,7 @@ export const getVirtualColNames = (tableName: string, colNames?: string[]) => {
       non.push(colName)
     }
   }
-  return { all, non, queries, serverFn, local }
+  return { all, non, queries, serverFn, local, foreignKey }
 }
 
 export const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] : [b, a]).join('_x_')

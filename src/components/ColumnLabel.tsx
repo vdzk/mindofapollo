@@ -39,7 +39,7 @@ export const ColumnLabel: Component<{
         <Show when={props.ofInput && instructions()}>
           <Button
             label={getToggleLabel(showInstructions(), 'instructions')}
-            class="relative bottom-1"
+            class="relative bottom-1 ml-2"
             onClick={() => setShowInstructions(x => !x)}
           />
         </Show>
