@@ -1,5 +1,5 @@
 import { schema } from "~/schema/schema"
-import { ColumnSchema, DataRecord } from "~/schema/type"
+import { ColumnSchema, DataRecord, ForeignKey } from "~/schema/type"
 import { humanCase } from "./string"
 import memoizeOne from "memoize-one"
 import { LinkData } from "~/types"
@@ -19,22 +19,30 @@ export const titleColumnName = (tableName: string) => {
   return result
 }
 
+export const getExtTableSelectorColName = (tableName: string) => {
+  const tableSchema = schema.tables[tableName]
+  for (const colName in tableSchema.columns) {
+    const column = tableSchema.columns[colName]
+    if (column.type === 'fk' && column.fk.extensionTables) {
+      return colName
+    }
+  }
+}
+
 export const getExtTableName = (
   tableName: string,
   record?: DataRecord,
-  optionalExtEnabled?: boolean
+  optionalExtEnabled?: boolean,
+  extensionTableIndex?: number
 ) => {
   const tableSchema = schema.tables[tableName]
   if (optionalExtEnabled) return tableSchema.optionallyExtendedByTable
   if (!record) return
-  for (const [colName, column] of Object.entries(tableSchema.columns)) {
-    if (column.type === 'fk') {
-      const { extensionTables } = column.fk
-      if (extensionTables) {
-        return extensionTables[record[colName] as number] || undefined
-      }
-    }
-  }
+  const colName = getExtTableSelectorColName(tableName)
+  if (!colName) return
+  const column = tableSchema.columns[colName] as ForeignKey
+  const extTableIndex = extensionTableIndex ?? record[colName] as number
+  return column.fk.extensionTables![extTableIndex]
 }
 
 export const getRootTableName = (tableName: string): string => {

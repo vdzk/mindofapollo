@@ -3,9 +3,9 @@ import { _insertRecord } from "../../server-only/mutate"
 import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
 import { getUserId, getUserActorUser, belongsTo } from "../../server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
-import { titleColumnName } from "~/utils/schema"
+import { needsExpl, titleColumnName } from "~/utils/schema"
 import { _getRecordById } from "~/server-only/select"
-import { whoCanInsertRecord } from "./record"
+import { injectUserId, whoCanInsertRecord } from "./record"
 import { insertCrossRecords } from "~/server-only/insertCrossRecords"
 import { allowedTableContent } from "~/server-only/moderate"
 
@@ -27,13 +27,19 @@ export const insertExtRecord = async (
     throw new Error('You content didn\'t pass the filter.')
   }
   const userId = await getUserId()
-  const explId = await startExpl(userId, 'insertExtRecord', 1, tableName, null);
+  injectUserId(record, userId, tableName)
+  let explId = null
+  if (needsExpl(tableName)) {
+    explId = await startExpl(userId, 'insertExtRecord', 1, tableName, null)
+  }
   const result = await _insertRecord(tableName, record, explId)
   const { id } = result
   const savedRecord = await _getRecordById(tableName, id)
   if (!savedRecord) return
   const extResult = await _insertRecord(extTableName, {id, ...extRecord}, explId)
-  await setExplRecordId(explId, id)
+  if (explId) {
+    await setExplRecordId(explId, id)
+  }
 
   const user = await getUserActorUser()
   const data: InsertExtRecordData = {
@@ -44,14 +50,16 @@ export const insertExtRecord = async (
     user,
     targetLabel: savedRecord[titleColumnName(tableName)] as string
   }
-  await finishExpl(explId, data)
-  if (linkedCrossRefs) {
-    insertCrossRecords(
-      tableName,
-      savedRecord.id,
-      linkedCrossRefs,
-      { explId, label: 'created new record' }
-    )
+  if (explId) {
+    await finishExpl(explId, data)
+    if (linkedCrossRefs) {
+      insertCrossRecords(
+        tableName,
+        savedRecord.id,
+        linkedCrossRefs,
+        { explId, label: 'created new record' }
+      )
+    }
   }
   return savedRecord
 }

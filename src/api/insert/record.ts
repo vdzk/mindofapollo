@@ -4,7 +4,7 @@ import { setExplRecordId, startExpl, finishExpl } from "~/server-only/expl"
 import { _insertRecord } from "~/server-only/mutate"
 import { ExplData, UserActor } from "~/components/expl/types"
 import { needsExpl, titleColumnName } from "~/utils/schema"
-import { isPersonal, tablesThatExtendByName } from "~/permissions"
+import { hasCreator, hasOwner, tablesThatExtendByName } from "~/permissions"
 import { _getRecordById } from "~/server-only/select"
 import { insertCrossRecords } from "~/server-only/insertCrossRecords"
 import { schema } from "~/schema/schema"
@@ -22,6 +22,15 @@ export const whoCanInsertRecord = (tableName: string) => {
   }
 }
 
+export const injectUserId = (record: DataRecord, userId: number, tableName: string) => {
+  if (hasOwner(tableName)) {
+    record.owner_id = userId
+  }
+  if (hasCreator(tableName)) {
+    record.creator_id = userId
+  }
+}
+
 export const insertRecord = async (
   tableName: string,
   record: DataRecord,
@@ -34,9 +43,7 @@ export const insertRecord = async (
   }
   const userId = await getUserId()
 
-  if (isPersonal(tableName)) {
-    record.owner_id = userId
-  }
+  injectUserId(record, userId, tableName)
   const explId = needsExpl(tableName)
     ? await startExpl(userId, 'insertRecord', 1, tableName, null)
     : null

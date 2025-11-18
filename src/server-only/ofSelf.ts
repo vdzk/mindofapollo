@@ -1,9 +1,9 @@
-import { isPersonal } from "~/permissions"
+import { hasOwner } from "~/permissions"
 import { getUserId } from "./session"
 import { onError, sql } from "./db"
 
 export const ofSelf = async (tableName: string, recordId: number) => {
-  if (!isPersonal(tableName)) return false
+  if (!hasOwner(tableName)) return false
   const userId = await getUserId()
   if (!userId) return false
   const result = await sql`

@@ -15,7 +15,7 @@ export const person: TableSchema = {
       },
       readOnly: true
     },
-    debate_credits: {
+    competition_credits: {
       type: 'integer',
       readOnly: true,
       defaultValue: 100

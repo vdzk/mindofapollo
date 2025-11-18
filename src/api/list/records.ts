@@ -1,4 +1,4 @@
-import { isPersonal } from "~/permissions";
+import { hasOwner } from "~/permissions";
 import { DataRecordWithId } from "~/schema/type";
 import { onError, sql } from "~/server-only/db"
 import { injectVirtualValues } from "~/server-only/select"
@@ -12,7 +12,7 @@ export const listRecords = async (
   "use server"
   let filterClause
   let selectClause = sql`t.*`
-  if (isPersonal(tableName) && (schema.tables[tableName].private ?? true)) {
+  if (hasOwner(tableName) && (schema.tables[tableName].private ?? true)) {
     const userId = await getUserId()
     if (!userId) return []
     filterClause = sql`WHERE owner_id = ${await getUserId()}`

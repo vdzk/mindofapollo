@@ -35,8 +35,8 @@ export default function ThingsToDoAndOther() {
           type="button"
           links={[
             {
-              label: 'Bet & Persuade',
-              route: 'create-record',
+              label: 'Compete to Convince',
+              route: 'list-records',
               params: { tableName: 'bet' }
             },
             {

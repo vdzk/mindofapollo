@@ -3,8 +3,10 @@ import { TableSchema } from "~/schema/type"
 export const bet: TableSchema = {
   system: true,
   expl: false,
+  plural: 'Compete to Convince',
   columns: {
     creator_id: {
+      label: 'creator',
       type: 'fk',
       fk: {
         table: 'person',
@@ -15,36 +17,49 @@ export const bet: TableSchema = {
       type: 'fk',
       fk: {
         table: 'statement',
-        labelColumn: 'text',
+        labelColumn: 'label',
         extensionColumn: 'statement_type_id',
         extensionTables: ['', 'bet_confidence', 'bet_confidence', 'bet_net_value']
-      }
+      },
+      instructions: 'Select a statement the will the subject of the competition.',
+      preview: true
     },
     creator_above: {
-      type: 'boolean'
+      label: "Your side",
+      type: 'boolean',
+      optionLabels: ['Below', 'Above'],
+      instructions: 'Decide which side of the bet you are going to take. Below or above the threshold.'
     },
     stake: {
-      type: 'integer'
+      label: 'stake (# competition credits)',
+      type: 'integer',
+      instructions: 'Decide how many of you competition credits would you like to risk on this bet. Your opponent will have to match your bet. Winner takes all.'
     },
     duration_days: {
-      type: 'integer'
+      label: 'bet duration (# days)',
+      type: 'integer',
+      instructions: "The competion starts when somebody takes your bet. Decide how long it will last. At the end of this period Apollo's opinion about the statement will determine the outcome of the bet."
     },
     taker_id: {
+      label: 'taker',
       type: 'fk',
       fk: {
         table: 'person',
         labelColumn: 'name',
         optional: true
       },
-      getVisibility: record => record.taker_id !== null
+      getVisibility: record => typeof record.taker_id === 'number',
+      defaultValue: null
     },
     start_date: {
       type: 'date',
-      getVisibility: record => record.start_date !== null
+      getVisibility: record => typeof record.start_date === 'string',
+      defaultValue: null
     },
     creator_won: {
       type: 'boolean',
-      getVisibility: record => record.creator_won !== null
+      getVisibility: record => typeof record.creator_won === 'boolean',
+      defaultValue: null
     }
   }
 }

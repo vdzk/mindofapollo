@@ -20,12 +20,14 @@ export const FkInput: Component<{
   value?: number
   isNew: boolean
   onChangeFormat: OnChangeFormat
+  setExtensionTableIndex?: (index: number) => void
   formDepth?: number
   disabled?: boolean
   onCreatedNew?: () => void
 }> = (props) => {
   const [searchParams] = useSearchParams()
   const records = createAsync(() => listRecordsCache(props.column.fk.table))
+  const recordsById = createMemo(() => Object.fromEntries((records() ?? []).map(record => [record.id, record])))
   const [isPreset, setIsPreset] = createSignal(false)
 
   const canCreateNew = () => useBelongsTo(whoCanInsertRecord(props.column.fk.table))
@@ -40,6 +42,11 @@ export const FkInput: Component<{
         name: props.colName
       }
     })
+    if (props.column.fk.extensionColumn && props.setExtensionTableIndex) {
+      const record = recordsById()[value]
+      const extensionTableIndex = record[props.column.fk.extensionColumn]
+      props.setExtensionTableIndex(extensionTableIndex as number)
+    }
   }
 
   onMount(() => {

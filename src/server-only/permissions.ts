@@ -1,6 +1,6 @@
 import { DataRecordWithId } from "~/schema/type"
 import { getSession } from "./session"
-import { isPersonal, isSystem } from "~/permissions"
+import { hasOwner, isSystem } from "~/permissions"
 import { onError, sql } from "./db"
 import { hasOwnFields } from "~/utils/schema"
 
@@ -46,7 +46,7 @@ const filterCanUpdateIds = async (tableName:string, ids: number[] ) => {
     } else if (tableName === 'person') {
       const self = ids.every(id => id === userId)
       return self ? ids : []
-    } else if (isPersonal(tableName)) {
+    } else if (hasOwner(tableName)) {
       return await filterPersonalIds(userId, tableName, ids)
     } else {
       return filterIdsRecentlyCreatedByUser(userId, tableName, ids)
@@ -65,7 +65,7 @@ const filterCanDeleteIds = async (tableName: string, ids: number[]) => {
   } else if (authRole === 'invited') {
     if (tableName === 'person' || isSystem(tableName)) {
       return []
-    } else if (isPersonal(tableName)) {
+    } else if (hasOwner(tableName)) {
       return await filterPersonalIds(userId, tableName, ids)
     } else {
       return await filterIdsRecentlyCreatedByUser(userId, tableName, ids)

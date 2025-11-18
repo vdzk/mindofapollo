@@ -29,6 +29,7 @@ export const FormField: Component<{
   formDepth?: number
   disabled?: boolean
   onCreatedNew?: () => void
+  setExtensionTableIndex?: (index: number) => void
 }> = (props) => {
   const table = () => schema.tables[props.tableName]
   const column = () => props.colName === 'id'
@@ -185,6 +186,7 @@ export const FormField: Component<{
             isNew={isNew()}
             formDepth={props.formDepth}
             {...{ onChangeFormat }}
+            setExtensionTableIndex={props.setExtensionTableIndex}
             disabled={props.disabled}
             onCreatedNew={props.onCreatedNew}
           />

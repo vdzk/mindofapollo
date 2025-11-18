@@ -3,18 +3,21 @@ import { schema } from "./schema/schema";
 import { ColumnSchema, ForeignKey } from "./schema/type";
 import { AuthRole } from "./types";
 
-export const isPersonal = (tableName: string) => !!schema.tables[tableName].columns.owner_id
+export const hasOwner = (tableName: string) => !!schema.tables[tableName].columns.owner_id
+export const hasCreator = (tableName: string) => !!schema.tables[tableName].columns.creator_id
 export const personalTableNames = memoizeOne(() => Object.keys(schema.tables)
-  .filter(tableName => isPersonal(tableName)))
+  .filter(tableName => hasOwner(tableName)))
 export const isPrivate = (tableName: string) => !!schema.tables[tableName].private
 export const isSystem = (tableName: string) => !!schema.tables[tableName].system
 
+// This function is used to avoid creating new records that should have a corresponding table with the same name
 export const tablesThatExtendByName = memoizeOne(() => Object.entries(schema.tables)
   .flatMap(([_, table]) => 
     Object.values(table.columns)
       .filter(column => 
         column.type === 'fk' && 
-        column.fk?.extensionTables
+        column.fk?.extensionTables &&
+        !column.fk?.extensionColumn
       )
       .map(column => (column as ForeignKey).fk.table)
   )
@@ -39,5 +42,5 @@ const getAccessibleColNames = (
 
 export const getWritableColNames = (tableName: string, authRole?: AuthRole) => getAccessibleColNames(
   tableName, authRole,
-  (column, colName) => !!(column.readOnly || colName === 'owner_id')
+  (column, colName) => !!(column.readOnly || colName === 'owner_id' || colName === 'creator_id')
 )

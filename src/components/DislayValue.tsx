@@ -8,7 +8,7 @@ import { ExplLink } from "./expl/ExplLink"
 import { ExternalLink, Link } from "./Link";
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listOriginTypes } from "~/api/list/originTypes"
-import { isPersonal } from "~/permissions"
+import { hasOwner } from "~/permissions"
 import { FkDetails } from "./FkDetails"
 
 const FkValue: Component<{
@@ -70,6 +70,9 @@ export const DisplayValue: Component<DisplayValue> = props => {
   return (
     <>
       <Switch>
+        <Match when={value() === null}>
+          n/a
+        </Match>
         <Match when={columnType() === 'fk'}>
           <Show when={value()} fallback={nbsp}>
             <FkValue
@@ -107,7 +110,7 @@ export const DisplayValue: Component<DisplayValue> = props => {
           </span>
         </Match>
       </Switch>
-      <Show when={explId() && !isPersonal(props.tableName) && props.showExplLink !== false}>
+      <Show when={explId() && !hasOwner(props.tableName) && props.showExplLink !== false}>
         {' '}
         <ExplLink explId={explId() as number} />
       </Show>

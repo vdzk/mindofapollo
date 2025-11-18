@@ -3,7 +3,7 @@ import { Component, ComponentProps, createEffect, createMemo, createSignal, For,
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
 import { DataLiteral, DataRecord, NToNSchema } from "~/schema/type"
-import { getExtTableName } from "~/utils/schema"
+import { getExtTableName, getExtTableSelectorColName } from "~/utils/schema"
 import { createStore, reconcile } from "solid-js/store"
 import { SessionContext } from "~/SessionContext"
 import { Link } from "~/components/Link"
@@ -34,6 +34,7 @@ export const Form: Component<{
   const [searchParams] = useSearchParams()
   const [diff, setDiff] = createStore<DataRecord>({})
   const [diffExt, setDiffExt] = createStore<DataRecord>({})
+  const [extensionTableIndex, setExtensionTableIndex] = createSignal<number>()
   const [showAdvanced, setShowAdvanced] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
   const [optionalExtEnabled, setOptionalExtEnabled] = createSignal(false)
@@ -85,7 +86,13 @@ export const Form: Component<{
     return tableSchema.advanced ? tableSchema.advanced.length > 0 : false
   }
   const currentRecord = () => ({ ...props.record, ...diff })
-  const extTableName = createMemo(() => getExtTableName(props.tableName, currentRecord(), optionalExtEnabled()))
+  const extTableSelectorColName = createMemo(() => getExtTableSelectorColName(props.tableName))
+  const extTableName = createMemo(() => getExtTableName(
+    props.tableName,
+    currentRecord(),
+    optionalExtEnabled(),
+    extensionTableIndex()
+  ))
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
 
@@ -122,7 +129,7 @@ export const Form: Component<{
       userExpl(), props.exitSettings, session!
     )
     setSaving(false)
-    if ('error' in result) {
+    if (result && ('error' in result)) {
       setSaveError(result.error)
     }
   }
@@ -166,19 +173,23 @@ export const Form: Component<{
         hidden, formDepth: depth,
         disabled: props.disableColumns && props.disableColumns.includes(colName),
         onCreatedNew: () => onCreatedNew(colName),
+        setExtensionTableIndex
       })
     }
     return groups
   })
 
-  const extFields = createMemo(() => extColNames().map(
-    colName => ({
-      tableName: extTableName() as string,
-      colName, record: props.record,
-      diff: diffExt, setDiff: setDiffExt,
-      formDepth: props.depth
-    })
-  ))
+  const extFields = createMemo(() => extColNames()
+    .filter(colName => schema.tables[extTableName()!].columns[colName]?.getVisibility?.({...currentRecord(), ...diffExt}) ?? true)
+    .map(
+      colName => ({
+        tableName: extTableName() as string,
+        colName, record: props.record,
+        diff: diffExt, setDiff: setDiffExt,
+        formDepth: props.depth
+      })
+    )
+  )
 
   const isVisible = (colName: string) => table().columns[colName]
     ?.getVisibility?.(currentRecord()) ?? true
@@ -201,9 +212,16 @@ export const Form: Component<{
   return (
     <div class="px-2 max-w-(--breakpoint-sm) pb-2">
       <For each={fieldGroups().normal}>{field =>
-        <FormField {...field} hidden={!visibleCols().includes(field.colName)} />
+        <>
+          <FormField {...field} hidden={!visibleCols().includes(field.colName)} />
+          <Show when={extTableSelectorColName() === field.colName}>
+            <For each={extFields()}>{FormField}</For>
+          </Show>
+        </>
       }</For>
-      <For each={extFields()}>{FormField}</For>
+      <Show when={!extTableSelectorColName()}>
+        <For each={extFields()}>{FormField}</For>
+      </Show>
       <Show when={!props.id && !props.depth}>
         <For each={crossRefs()}>
           {([aggregateName, aggregate]) => (
