@@ -68,15 +68,20 @@ export const getVirtualValuesByForeignKey = async (
   records: DataRecordWithId[]
 ) => {
   const { columns } = schema.tables[tableName]
-  const virtualValues: Record<string, Record<number, string>> = {}
+  const virtualValues: Record<string, Record<number, DataLiteral>> = {}
   // TODO: run queries for different columns in parallel 
   for (const colName of colNames) {
-    const { fkColName } = columns[colName] as VirtualColumnFromForeignKey
+    const { fkColName, fkTargetColName } = columns[colName] as VirtualColumnFromForeignKey
     const fkIds = records.map(record => record[fkColName]) as number[]
     const { fk } = columns[fkColName] as ForeignKey
-    const fkRecords = await _getRecordsByIds(fk.table, 'id', fkIds, [fk.labelColumn])
+    const targetColName = fkTargetColName ?? fk.labelColumn
+    const fkRecords = await _getRecordsByIds(fk.table, 'id', fkIds, [targetColName])
     const fkRecordsById = indexBy(fkRecords, 'id')
-    virtualValues[colName] = Object.fromEntries(records.map(record => [record.id, fkRecordsById[record[fkColName] as number][fk.labelColumn] as string]))
+    virtualValues[colName] = Object.fromEntries(records.map(record => {
+      const fkRecord = fkRecordsById[record[fkColName] as number]
+      const foreignValue = fkRecord?.[targetColName] ?? null
+      return [ record.id, foreignValue]
+    }))
   }
   return virtualValues
 }

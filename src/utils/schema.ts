@@ -41,7 +41,14 @@ export const getExtTableName = (
   const colName = getExtTableSelectorColName(tableName)
   if (!colName) return
   const column = tableSchema.columns[colName] as ForeignKey
-  const extTableIndex = extensionTableIndex ?? record[colName] as number
+  let extTableIndex
+  if (extensionTableIndex) {
+    extTableIndex = extensionTableIndex
+  } else if (column.fk.extensionColumn && record && column.fk.extensionColumn in record) {
+    extTableIndex = record[column.fk.extensionColumn] as number
+  } else {
+    extTableIndex = record[colName] as number
+  }
   return column.fk.extensionTables![extTableIndex]
 }
 

@@ -4,7 +4,6 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-// TODO: move config into .env file
 export const sql = postgres({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : undefined,
@@ -19,6 +18,12 @@ export const sql = postgres({
       from: [1700],
       serialize: (value: any) => value.toString(),
       parse: (value: string) => parseFloat(value)
+    },
+    date: {
+      to: 1082,          // Postgres DATE
+      from: [1082],
+      parse: (value: string) => value,  // return the raw string
+      serialize: (value: string) => value
     }
   }
 });

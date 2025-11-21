@@ -29,11 +29,18 @@ export const FkInput: Component<{
   const records = createAsync(() => listRecordsCache(props.column.fk.table))
   const recordsById = createMemo(() => Object.fromEntries((records() ?? []).map(record => [record.id, record])))
   const [isPreset, setIsPreset] = createSignal(false)
+  const [newRecordValue, setNewRecordValue] = createSignal('')
 
   const canCreateNew = () => useBelongsTo(whoCanInsertRecord(props.column.fk.table))
 
   const format = (value: string) => value ? parseInt(value) : null
   const onSelectChange = props.onChangeFormat(format)
+
+  const setExtTableIndexByValue = (value: string) => {
+    const record = recordsById()[value]
+    const extensionTableIndex = record[props.column.fk.extensionColumn!]
+    props.setExtensionTableIndex!(extensionTableIndex as number)
+  }
 
   const setValue = (value: string) => {
     onSelectChange({
@@ -43,11 +50,19 @@ export const FkInput: Component<{
       }
     })
     if (props.column.fk.extensionColumn && props.setExtensionTableIndex) {
-      const record = recordsById()[value]
-      const extensionTableIndex = record[props.column.fk.extensionColumn]
-      props.setExtensionTableIndex(extensionTableIndex as number)
+      if (!newRecordValue()) {
+        setExtTableIndexByValue(value)
+      }
     }
   }
+
+  // Workaround for revalidaton not happening in time
+  createEffect(() => {
+    if (newRecordValue() && (newRecordValue() in recordsById())) {
+      setExtTableIndexByValue(newRecordValue())
+      setNewRecordValue('')
+    }
+  })
 
   onMount(() => {
     const spValue = searchParams[props.colName]
@@ -76,8 +91,11 @@ export const FkInput: Component<{
 
   const onFormExit = async (savedId?: number) => {
     if (savedId) {
+      // TODO: figure out why this doesn't wait for recordsById() to update and / or report a bug
       await revalidate(listRecordsCache.keyFor(props.column.fk.table))
-      setValue('' + savedId)
+      const value = '' + savedId
+      setNewRecordValue(value)
+      setValue(value)
       props.onCreatedNew?.()
     }
   }

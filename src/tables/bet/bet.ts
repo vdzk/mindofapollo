@@ -27,6 +27,11 @@ export const bet: TableSchema = {
       },
       instructions: 'Select a statement the will the subject of the competition.'
     },
+    statement_type_id: {
+      type: 'virtual',
+      fkColName: 'statement_id',
+      fkTargetColName: 'statement_type_id'
+    },
     statement_label: {
       type: 'virtual',
       fkColName: 'statement_id',
@@ -58,6 +63,10 @@ export const bet: TableSchema = {
       },
       getVisibility: record => typeof record.taker_id === 'number',
       defaultValue: null
+    },
+    taker_name: {
+      type: 'virtual',
+      fkColName: 'taker_id',
     },
     start_date: {
       type: 'date',

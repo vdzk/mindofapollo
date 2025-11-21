@@ -13,6 +13,10 @@ export const bet_net_value: TableSchema = {
       },
       instructions: 'Different people value things differently. Decide which moral profile will be used for the purposes of this bet.'
     },
+    moral_weight_profile_name: {
+      type: 'virtual',
+      fkColName: 'moral_weight_profile_id'
+    },
     threshold_value: {
       type: 'integer',
       instructions: "Following the prescription in the satement will generate some (positive or negative) amount of value according to the moral profile. Whether this amount will fall below or above the threshold will determine the winner of the competition."

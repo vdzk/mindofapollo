@@ -80,6 +80,7 @@ export interface VirtualColumnLocal extends SharedColumnProps {
 export interface VirtualColumnFromForeignKey extends SharedColumnProps {
   type: 'virtual'
   fkColName: string
+  fkTargetColName?: string
 }
 
 export interface ForeignKey extends SharedColumnProps {
