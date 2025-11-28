@@ -1,12 +1,14 @@
 import { TableSchema } from "~/schema/type";
-import { firstCap } from "~/utils/string";
+import { firstCap, truncate } from "~/utils/string";
 
 export const definition: TableSchema = {
   plural: 'definitions',
   columns: {
     label: {
       type: 'virtual',
-      getLocal: record => `${firstCap(record.term as string)} - ${record.text}`
+      getLocal: record => truncate(
+        `${firstCap(record.term as string)} - ${record.text}`, 75
+      )
     },
     term: {
       type: 'varchar'

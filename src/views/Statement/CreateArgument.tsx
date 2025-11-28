@@ -99,7 +99,7 @@ export const CreateArgument: Component<{
         </Show>
       </div>
       <Show when={selectedArgumentTypeId()}>
-        <div class="border-l flex-1">
+        <div class="border-l flex-1 min-w-0">
           <Form
             tableName="argument"
             preset={{

@@ -10,7 +10,7 @@ export const NestPanel: ParentComponent<{
 }> = (props) => {
   return (
     <div
-      class="bg-orange-100 rounded-md w-fit"
+      class="bg-orange-100 rounded-md max-w-fit"
       classList={props.class ? {[props.class]: true} : {}}
     >
       <Show when={props.title}>

@@ -27,7 +27,7 @@ const filterIdsRecentlyCreatedByUser = async (
       AND action IN ('insertRecord', 'insertExtRecord')
       AND table_name = ${tableName}
       AND record_id IN ${sql(ids)}
-      AND timestamp > NOW() - INTERVAL '${recentPeriodHours} hours'; 
+      AND timestamp > NOW() - make_interval(hours := ${recentPeriodHours})
   `.catch(onError)
   return results.map(row => row.record_id as number)
 }

@@ -14,6 +14,7 @@ export const RecordSelect: Component<{
     <select
       value={props.selectedId}
       onChange={etv(props.setSelectedId)}
+      class="min-w-0 max-w-full"
     >
       <option value="">
         {props.canCreateNew ? '...or select existing' : 'Select...'}

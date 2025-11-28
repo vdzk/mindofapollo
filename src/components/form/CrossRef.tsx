@@ -65,18 +65,19 @@ export const CrossRef: Component<{
             formDepth={1}
           />
         </Show>
-        <RecordSelect
-          selectedId={selectedAddId()}
-          setSelectedId={setSelectedAddId}
-          records={unlinkedRecords()}
-          labelField={labelField()}
-          canCreateNew={canCreateNew()}
-        />
-        <span class="inline-block w-2" />
-        <Button
-          label="Add"
-          onClick={onAdd}
-        />
+        <div class="flex gap-2 max-w-full">
+          <RecordSelect
+            selectedId={selectedAddId()}
+            setSelectedId={setSelectedAddId}
+            records={unlinkedRecords()}
+            labelField={labelField()}
+            canCreateNew={canCreateNew()}
+          />
+          <Button
+            label="Add"
+            onClick={onAdd}
+          />
+        </div>
       </NestPanel>
     </>
   )

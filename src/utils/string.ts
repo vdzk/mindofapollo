@@ -23,6 +23,11 @@ export const getPercent = (x?: number) => typeof x === 'number'
   ? Math.round(x * 100) + '%'
   : '?'
 
+export const truncate = (str: string, maxLength: number) => 
+  str.length > maxLength
+    ? str.slice(0, maxLength - 1) + '…'
+    : str
+
 // Format date for display as "YYYY-MM-DD"
 export const formatDate = (date: Date) => {
   return date.toISOString().split('T')[0]
