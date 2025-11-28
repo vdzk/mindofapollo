@@ -6,6 +6,7 @@ import { calcProbSuccess } from "~/calc/statementConfidence"
 import { DataRecordWithId } from "~/schema/type"
 import { argumentSideLabels } from "~/tables/argument/argument"
 import { getPercent } from "~/utils/string"
+import { tableStyle } from "~/components/table"
 
 export const Arguments: Component<{
   id: number,
@@ -148,17 +149,44 @@ export const Arguments: Component<{
           <h2 class="text-xl font-bold pb-2">
             Used In
           </h2>
-          <For each={parentArguments()}>
-            {parentArgument => (
-              <Link
-                route="argument"
-                params={{ id: parentArgument.id }}
-                type="block"
-                class="mb-1"
-                label={parentArgument.title}
-              />
-            )}
-          </For>
+          <table>
+            <thead>
+              <tr class={tableStyle.tHeadTr}>
+                <th class={tableStyle.th}>Claim</th>
+                <th class={tableStyle.th}>Side</th>
+                <th class={tableStyle.th}>Argument</th>
+              </tr>
+            </thead>
+            <tbody>
+              <For each={parentArguments()}>
+                {parentArgument => (
+                  <tr>
+                    <td class={tableStyle.td}>
+                      <Link
+                        route="statement"
+                        params={{ id: parentArgument.statement_id }}
+                        type="block"
+                        class="mb-1"
+                        label={parentArgument.statement_label}
+                      />
+                    </td>
+                    <td class={tableStyle.td}>
+                      {argumentSideLabels[Number(parentArgument.pro)]}
+                    </td>
+                    <td class={tableStyle.td}>
+                      <Link
+                        route="argument"
+                        params={{ id: parentArgument.id }}
+                        type="block"
+                        class="mb-1"
+                        label={parentArgument.title}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </For>
+            </tbody>
+          </table>
         </div>
       </Show>
     </div >

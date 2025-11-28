@@ -15,6 +15,11 @@ export const person: TableSchema = {
       },
       readOnly: true
     },
+    permission_level: {
+      type: 'integer',
+      readOnly: true,
+      defaultValue: 100
+    },
     competition_credits: {
       type: 'integer',
       readOnly: true,
@@ -42,7 +47,7 @@ export const person: TableSchema = {
     details: {
       label: 'Details',
       fields: [
-        'name', 'auth_role_id', 'language',
+        'name', 'auth_role_id', 'permission_level', 'language',
         'person_categories', 'moral_weights'
       ]
     },
@@ -50,6 +55,15 @@ export const person: TableSchema = {
       label: 'Personal',
       private: true,
       component: 'PersonalDetails'
+    },
+    permissions: {
+      label: 'Permissions',
+      component: 'UserPermissions'
+    },
+    directives: {
+      label: 'Directives',
+      private: true,
+      component: 'UserDirectives'
     },
     activity: {
       label: 'Activity',

@@ -14,6 +14,7 @@ export interface UserSession {
   userName: string
   userId: number
   authRole: AuthRole
+  permissionLevel: number
   language: Language
 }
 export interface LinkData {

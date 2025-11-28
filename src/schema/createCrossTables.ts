@@ -8,9 +8,13 @@ export const createCrossTables = () => {
       for (const aggName in aggregates) {
         const aggregate = aggregates[aggName];
         if (aggregate.type === 'n-n' && aggregate.first) {
-          const a = tableName;
-          const b = aggregate.table;
-          const xTableName = `${a}_x_${b}`;
+          let a = tableName
+          let b = aggregate.table
+          if (a === b) {
+            a = `${a}_target`
+            b = `${b}_source`
+          }
+          const xTableName = `${a}_x_${b}`
 
           statements.push(
             `CREATE TABLE ${xTableName} (

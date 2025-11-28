@@ -34,6 +34,10 @@ export const ExplDetails: Component<ExplData> = (props) => {
           <div class="font-bold">User Role</div>
           <div>{humanCase((props.actor as UserActor).user.auth_role)}</div>
         </div>
+        <div class="mb-2">
+          <div class="font-bold">User Permission Level</div>
+          <div>{(props.actor as UserActor).user.permission_level ?? 'unknown'}</div>
+        </div>
       </Show>
       <div class="mb-2">
         <div class="font-bold">Action</div>

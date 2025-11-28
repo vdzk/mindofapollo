@@ -15,6 +15,10 @@ export const argument: TableSchema = {
         labelColumn: 'label'
       }
     },
+    statement_label: {
+      type: 'virtual',
+      fkColName: 'statement_id'
+    },
     pro: {
       type: 'boolean',
       label: 'side',
@@ -38,6 +42,11 @@ export const argument: TableSchema = {
   },
   extendedByTable: 'argument_judgement',
   aggregates: {
+    definitions: {
+      type: 'n-n',
+      table: 'definition',
+      first: true
+    },
     critical_statements: {
       type: '1-n',
       table: 'critical_statement',

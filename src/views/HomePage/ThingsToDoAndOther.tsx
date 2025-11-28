@@ -8,7 +8,6 @@ import { openRegistration } from "~/constant"
 export default function ThingsToDoAndOther() {
   const session = useContext(SessionContext)
   const authenticated = () => !!session?.userSession?.()?.authenticated
-  const invited = () => session?.userSession?.()?.authRole === 'invited'
   return (
     <div class="flex-2 border-l pt-2">
       <Subtitle>Learn</Subtitle>
@@ -58,18 +57,12 @@ export default function ThingsToDoAndOther() {
               label: "Issues",
               route: 'list-records',
               params: { tableName: 'issue' }
-            },
-            ...(authenticated() ? [
-              {
-                label: "Your directives",
-                route: "show-directive"
-              }
-            ] : [])
+            }
           ]}
         />
       </div>
       <Subtitle>Other</Subtitle>
-      <div class="px-2 pb-4">
+      <div class="px-2 pb-2">
         <Links
           type="button"
           links={[
@@ -85,6 +78,11 @@ export default function ThingsToDoAndOther() {
             {
               label: "Recent activity",
               route: "recent-activity"
+            },
+            {
+              label: "Definitions",
+              route: "list-records",
+              params: { tableName: 'definition' }
             }
           ]}
         />
@@ -100,13 +98,6 @@ export default function ThingsToDoAndOther() {
           <CurrentTaskBtn />
         </Show>
       </div>
-      <Show when={invited()}>
-        <Subtitle>Your Permissions</Subtitle>
-        <div class="px-2 pb-4 text-sm">
-          You can create new entries, as well as update or delete any entries you've created within the past 24 hours.
-          As the platform's permission system evolves, and as you continue to create high-quality entries, additional permissions will be granted.
-        </div>
-      </Show>
       <Subtitle>Source Code</Subtitle>
       <div class="px-2 pb-4">
         <ExternalLink

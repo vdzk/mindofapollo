@@ -1,6 +1,6 @@
 import { onError, sql } from "../../server-only/db"
 import { getDirConcsWithValues } from "../../server-only/getDirConcsWithValues"
-import { xName } from "~/utils/schema";
+import { getXTable } from "~/utils/schema";
 import { getUserId } from "~/server-only/session"
 import { DataRecordWithId } from "~/schema/type";
 import { injectTranslations } from "~/server-only/injectTranslations";
@@ -9,9 +9,10 @@ export const listUserDirectives = async () => {
   "use server"
   const userId = await getUserId()
   if (!userId) return
+  const xTable = getXTable('person', 'person_category', true)
   const directives = await sql<(DataRecordWithId)[]>`
     SELECT directive.id, directive.deed_id
-    FROM ${sql(xName('person', 'person_category', true))} pxpc
+    FROM ${sql(xTable.name)} pxpc
     JOIN directive_scope
       ON directive_scope.person_category_id = pxpc.person_category_id
     JOIN directive

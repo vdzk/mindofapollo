@@ -100,6 +100,12 @@ export const Argument: Component<{ id: number }> = props => {
                   class="self-center mx-2"
                 />
               </div>
+              <Show when={showHowToJudge()}>
+                <H2>Perspective</H2>
+                <div class="px-2">
+                  The strength of the argument has to be judged from the perspective of Apollo, not your own. This means that the judgement has to be made based on Apollo's confidences in the critical statements listed in the previous column, not your confidences. It also has to be made in accordance with the scoring criteria listed below. This has to be done regardless of what you personally think about the strength of this argument. Otherwise, someone else will point out the discrepancy and correct your score. The confidences in the critical statements (including premises) of this argument and the correctness of the scoring criteria should be disputed in other places in this platform rather than here.
+                </div>
+              </Show>
               <Show when={
                 showHowToJudge()
                 && statementType() === 'descriptive'

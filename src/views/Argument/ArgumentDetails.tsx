@@ -1,5 +1,7 @@
 import { Title } from "@solidjs/meta"
-import { Component, For, Show } from "solid-js"
+import { Component, createSignal, For, Show } from "solid-js"
+import { Aggregate } from "~/components/aggregate/Aggregate"
+import { Button } from "~/components/buttons"
 import { Detail } from "~/components/details"
 import { Link } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"
@@ -8,6 +10,7 @@ import { DataRecordWithId } from "~/schema/type"
 import { argumentSideLabels } from "~/tables/argument/argument"
 import { argumentTypes } from "~/tables/argument/type"
 import { getExtTableName } from "~/utils/schema"
+import { getToggleLabel } from "~/utils/string"
 
 export const ArgumentDetails: Component<{
   id: number
@@ -19,6 +22,7 @@ export const ArgumentDetails: Component<{
   const argTypeName = () => props.record
     ? argumentTypes[props.record.argument_type_id as number - 1]
     : ''
+  const [showDefinitions, setShowDefinitions] = createSignal(false)
 
   return (
     <>
@@ -51,6 +55,20 @@ export const ArgumentDetails: Component<{
           )}
         </For>
       </Show>
+      <div>
+        <Button
+          label={getToggleLabel(showDefinitions(), 'definitions')}
+          onClick={() => setShowDefinitions(x => !x)}
+          class="mx-2 mb-1"
+        />
+        <Show when={showDefinitions()}>
+          <Aggregate
+            tableName="argument"
+            id={props.id}
+            aggregateName="definitions"
+          />
+        </Show>
+      </div>
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { humanCase } from "~/utils/string"
 import { addExplIds } from "~/utils/expl"
-import { xName } from "~/utils/schema"
+import { getXTable } from "~/utils/schema"
 import { titleColumnName } from "~/utils/schema"
 import { getUserId, getUserActorUser, belongsTo } from "~/server-only/session"
 import { ExplData, UserActor } from "~/components/expl/types"
@@ -36,14 +36,14 @@ export const insertCrossRecord = async (params: CrossRecordMutateProps) => {
   ))) return
 
   const explId = await startExpl(userId, 'insertCrossRecord', 1, firstTableName, firstId)
-  const record = {
-    [`${params.a}_id`]: params.a_id,
-    [`${params.b}_id`]: params.b_id
-  }
 
-  const tableName = xName(params.a, params.b, params.first)
+  const xTable = getXTable(params.a, params.b, params.first)
+  const record = {
+    [xTable.aColName]: params.a_id,
+    [xTable.bColName]: params.b_id
+  }
   const result = await sql`
-    INSERT INTO ${sql(tableName)} ${sql(addExplIds(record, explId))}
+    INSERT INTO ${sql(xTable.name)} ${sql(addExplIds(record, explId))}
     RETURNING *
   `.catch(onError)
 

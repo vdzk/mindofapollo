@@ -24,7 +24,11 @@ export default function ShowRecordRoute() {
         <main>
           <Title>{titleText()}</Title>
           <RecordPageTitle tableName={sp().tableName} text={titleText()} />
-          <ShowRecord tableName={sp().tableName} id={recordId()} />
+          <ShowRecord
+            tableName={sp().tableName}
+            id={recordId()}
+            tabData={{ record: record()}}
+          />
         </main>
       </Show>
       <Show when={sp().tableName === 'critical_statement'}>

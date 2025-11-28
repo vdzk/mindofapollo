@@ -1,6 +1,5 @@
 import { createAsync } from "@solidjs/router"
 import { Component, createEffect, createMemo, createSignal, Match, Setter, Show, Switch } from "solid-js"
-import { hasUndecidedCriticalStatement } from "~/api/has/undecidedCriticalStatement"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { Button } from "~/components/buttons"
 import { JudgeArgument } from "./JudgeArgument"
@@ -34,27 +33,19 @@ export const ArgumentJudgement: Component<{
     : useBelongsTo(whoCanInsertRecord('argument_conditional'))
   const [wantsToJudge, setWantsToJudge] = createSignal(false)
   const [wantsToCondition, setWantsToCondition] = createSignal(false)
-  const [confirmedPreJudgementCheck, setConfirmedPreJudgementCheck] = createSignal(false)
-  const hasUndecided = createAsync(() => hasUndecidedCriticalStatement(props.argumentId))
   const onJudgeArgumentExit = () => {
     setWantsToJudge(false)
-    setConfirmedPreJudgementCheck(false)
   }
 
   createEffect(() => {
     props.argumentId
-    setConfirmedPreJudgementCheck(false)
     setWantsToJudge(false)
     setWantsToCondition(false)
   })
 
   const viewName = createMemo(() => {
     if (wantsToJudge()) {
-      if (confirmedPreJudgementCheck() || judgement()) {
-        return 'judge-argument'
-      } else {
-        return 'pre-judgement-check'
-      }
+      return 'judge-argument'
     } else if (wantsToCondition()) {
       return 'condition-argument'
     } else {
@@ -72,13 +63,7 @@ export const ArgumentJudgement: Component<{
         <Button
           label={judgement() ? "Re-judge" : "Judge"}
           onClick={() => setWantsToJudge(true)}
-          disabled={hasUndecided()}
         />
-        <Show when={hasUndecided()}>
-          <div class="text-sm pt-1">
-            Certainty in some of the critical statments has not yet been decided.
-          </div>
-        </Show>
       </div>
     </Show>
   )
@@ -90,26 +75,6 @@ export const ArgumentJudgement: Component<{
           The argument has not been judged yet.
         </div>
         {getJudgeButton()}
-      </Match>
-      <Match when={viewName() === 'pre-judgement-check'}>
-        <div class="px-2">
-          Please confirm the following before proceding:
-          <ul class="list-disc pl-4">
-            <li>I have applied each of the critical questions to the argument.</li>
-            <li>I have researched criticisms of this argument.</li>
-            <li>Each of the critical questions has all of the relevant and significant critical statements that I can think of listed under.</li>
-          </ul>
-        </div>
-        <div class="px-2 pt-2 flex gap-2">
-          <Button
-            label="I confirm"
-            onClick={() => setConfirmedPreJudgementCheck(true)}
-          />
-          <Button
-            label="Cancel"
-            onClick={() => setWantsToJudge(false)}
-          />
-        </div>
       </Match>
       <Match when={
         viewName() === 'judge-argument' && props.statementType === 'descriptive'

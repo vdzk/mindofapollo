@@ -93,6 +93,11 @@ export const statement: TableSchema = {
     }
   },
   aggregates: {
+    definitions: {
+      type: 'n-n',
+      table: 'definition',
+      first: true
+    },
     arguments: {
       type: '1-n',
       table: 'argument',
@@ -118,6 +123,10 @@ export const statement: TableSchema = {
     createArgument: {
       label: '➕ argument',
       component: 'CreateArgument'
+    },
+    definitions: {
+      label: 'definitions',
+      fields: ['definitions']
     },
     scope: {
       label: 'scope',

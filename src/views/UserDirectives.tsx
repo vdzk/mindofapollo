@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta"
 import { createAsync } from "@solidjs/router"
-import { For, Show, Suspense, useContext } from "solid-js"
+import { Component, For, Show, Suspense, useContext } from "solid-js"
 import { listUserDirectives } from "~/api/list/userDirectives"
 import { listOwnRecordsCache } from "~/client-only/query"
 import { DecisionIndicator } from "~/components/DecisionIndicator"
@@ -12,7 +12,7 @@ import { SessionContext } from "~/SessionContext"
 import { indexBy } from "~/utils/shape"
 import { calcMoralSum } from "~/calc/moralSum"
 
-export default function ShowDirective() {
+export const UserDirectives: Component = () => {
   const data = createAsync(listUserDirectives)
   const moralWeights = createAsync(() => listOwnRecordsCache('moral_weight_of_person'))
   const session = useContext(SessionContext)
@@ -57,63 +57,60 @@ export default function ShowDirective() {
   }
 
   return (
-    <main>
+    <Suspense fallback={<div class="px-2">...loading directives</div>}>
       <Title>Your Directives</Title>
-      <PageTitle>Your Directives</PageTitle>
-      <Suspense fallback="...loading directives">
-        <Show when={rows().length === 0}>
-          <div class="px-2">
-            There are no directives that match your person's categories.{' '}
-            <Link
-              type="button"
-              route="edit-cross-ref"
-              params={{
-                a: 'person',
-                b: 'person_category',
-                id: session?.userSession()?.userId,
-                first: true
-              }}
-              label="Add"
-            />
-          </div>
-        </Show>
-        <Show when={rows().length > 0}>
-          <table class="mx-2">
-            <tbody>
-              <tr class={tableStyle.tHeadTr}>
-                <For each={['Deed', 'Total', 'Verdict']}>
-                  {header => (
-                    <th class={tableStyle.th}>{header}</th>
-                  )}
-                </For>
-              </tr>
-              <For each={rows()}>
-                {(directive) => (
-                  <tr>
-                    <td class={tableStyle.td}>
-                      <Link
-                        label={directive.text}
-                        route="show-record"
-                        params={{ tableName: 'directive', id: directive.id }}
-                      />
-                    </td>
-                    <td class={tableStyle.td}>
-                      {directive.sum !== null ? (
-                        <span>{Math.round(directive.sum as number)}</span>
-                      ) : (
-                        <span class="text-gray-500">n/a</span>
-                      )}
-                    </td>
-                    <td class={tableStyle.td}>
-                      <DecisionIndicator score={directive.sum as number | null} />
-                    </td>
-                  </tr>
+      <Show when={rows().length === 0}>
+        <div class="px-2">
+          There are no directives that match your person's categories.{' '}
+          <Link
+            type="button"
+            route="edit-cross-ref"
+            params={{
+              a: 'person',
+              b: 'person_category',
+              id: session?.userSession()?.userId,
+              first: true
+            }}
+            label="Add"
+          />
+        </div>
+      </Show>
+      <Show when={rows().length > 0}>
+        <table class="mx-2 max-w-lg">
+          <tbody>
+            <tr class={tableStyle.tHeadTr}>
+              <For each={['Deed', 'Total', 'Verdict']}>
+                {header => (
+                  <th class={tableStyle.th}>{header}</th>
                 )}
               </For>
-            </tbody>
-          </table>
-        </Show>
-      </Suspense>
-    </main>
+            </tr>
+            <For each={rows()}>
+              {(directive) => (
+                <tr>
+                  <td class={tableStyle.td}>
+                    <Link
+                      label={directive.text}
+                      route="show-record"
+                      params={{ tableName: 'directive', id: directive.id }}
+                    />
+                  </td>
+                  <td class={tableStyle.td}>
+                    {directive.sum !== null ? (
+                      <span>{Math.round(directive.sum as number)}</span>
+                    ) : (
+                      <span class="text-gray-500">n/a</span>
+                    )}
+                  </td>
+                  <td class={tableStyle.td}>
+                    <DecisionIndicator score={directive.sum as number | null} />
+                  </td>
+                </tr>
+              )}
+            </For>
+          </tbody>
+        </table>
+      </Show>
+    </Suspense>
   )
 }

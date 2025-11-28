@@ -5,7 +5,7 @@ import { finishExpl, startExpl } from "~/server-only/expl"
 import { _getRecordById, _getRecordsByIds } from "~/server-only/select"
 import { getUserActorUser, getUserId } from "~/server-only/session"
 import { addExplIds } from "~/utils/expl"
-import { titleColumnName, xName } from "~/utils/schema"
+import { titleColumnName, getXTable } from "~/utils/schema"
 
 export const insertCrossRecords = async (
   tableName: string,
@@ -24,13 +24,13 @@ export const insertCrossRecords = async (
     const aggregate = schema.tables[tableName].aggregates?.[aggregateName]
     if (!aggregate) continue
     const linkedIds = linkedCrossRefs[aggregateName]
+    const xTable = getXTable(tableName, aggregate.table, true)
     const records = linkedIds.map(linkedId => addExplIds({
-      [tableName + '_id']: id,
-      [aggregate.table + '_id']: linkedId
+      [xTable.aColName]: id,
+      [xTable.bColName]: linkedId
     }, explId))
-    const xTableName = xName(tableName, aggregate.table, true)
     await sql`
-      INSERT into ${sql(xTableName)} ${sql(records)}
+      INSERT into ${sql(xTable.name)} ${sql(records)}
     `.catch(onError)
     const titleCol = titleColumnName(aggregate.table)
     const fkRecords = await _getRecordsByIds(aggregate.table, 'id', linkedIds, ['id', titleCol])

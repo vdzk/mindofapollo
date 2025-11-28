@@ -1,5 +1,5 @@
 import { onError, sql } from "~/server-only/db";
-import { xName } from "~/utils/schema";
+import { getXTable } from "~/utils/schema";
 import { belongsTo, getUserId, getUserActorUser } from "~/server-only/session";
 import { CrossRecordMutateProps, prepareCrossRecordData, createCrossRecordExplData, CrossRecordData } from "../insert/crossRecord";
 import { finishExpl, startExpl } from "~/server-only/expl";
@@ -25,11 +25,11 @@ export const deleteCrossRecord = async (params: CrossRecordMutateProps, userExpl
   ))) return
 
   const explId = await startExpl(userId, 'deleteCrossRecord', 1, firstTableName, firstId)
-  const tableName = xName(params.a, params.b, params.first)
+  const xTable = getXTable(params.a, params.b, params.first)
   const result = await sql`
-    DELETE FROM ${sql(tableName)}
-    WHERE ${sql(params.a + '_id')} = ${params.a_id}
-      AND ${sql(params.b + '_id')} = ${params.b_id}
+    DELETE FROM ${sql(xTable.name)}
+    WHERE ${sql(xTable.aColName)} = ${params.a_id}
+      AND ${sql(xTable.bColName)} = ${params.b_id}
     RETURNING *
   `.catch(onError)
 

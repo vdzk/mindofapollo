@@ -3,6 +3,7 @@ import { getSession } from "./session"
 import { hasOwner, isSystem } from "~/permissions"
 import { onError, sql } from "./db"
 import { hasOwnFields } from "~/utils/schema"
+import { recentPeriodHours } from "~/constant"
 
 const filterPersonalIds = async (
   userId: number, tableName: string, ids: number[]
@@ -26,14 +27,14 @@ const filterIdsRecentlyCreatedByUser = async (
       AND action IN ('insertRecord', 'insertExtRecord')
       AND table_name = ${tableName}
       AND record_id IN ${sql(ids)}
-      AND timestamp > NOW() - INTERVAL '24 hours'; 
+      AND timestamp > NOW() - INTERVAL '${recentPeriodHours} hours'; 
   `.catch(onError)
   return results.map(row => row.record_id as number)
 }
 
 const filterCanUpdateIds = async (tableName:string, ids: number[] ) => {
   const session = await getSession()
-  const { userId, authRole } = session.data
+  const { userId, authRole, permissionLevel } = session.data
   if (ids.length === 0) return ids
   if (authRole === 'admin') {
     return ids
@@ -48,6 +49,8 @@ const filterCanUpdateIds = async (tableName:string, ids: number[] ) => {
       return self ? ids : []
     } else if (hasOwner(tableName)) {
       return await filterPersonalIds(userId, tableName, ids)
+    } else if (permissionLevel >= 1000) {
+      return ids
     } else {
       return filterIdsRecentlyCreatedByUser(userId, tableName, ids)
     }

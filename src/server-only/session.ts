@@ -45,13 +45,14 @@ export const getUserActorUser = async (): Promise<UserActor['user']> => {
   return {
     id: session.data.userId,
     name: session.data.userName,
-    auth_role: session.data.authRole
+    auth_role: session.data.authRole,
+    permission_level: session.data.permissionLevel
   }
 }
 
 export const _updateUserSession = async (userId: number) => {
   const session = await getSession()
-  const person = await _getRecordById('person', userId, ['name', 'auth_role_id', 'language'], false)
+  const person = await _getRecordById('person', userId, ['name', 'auth_role_id', 'permission_level', 'language'], false)
   if (!person) return
   const authRole = await _getRecordById(
     'auth_role',
@@ -64,6 +65,7 @@ export const _updateUserSession = async (userId: number) => {
     userId,
     userName: person.name as string,
     authRole: authRole.name as AuthRole,
+    permissionLevel: person.permission_level as number,
     language: person.language as Language
   })
   return session.data

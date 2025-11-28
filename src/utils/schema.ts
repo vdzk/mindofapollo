@@ -94,7 +94,18 @@ export const getVirtualColNames = (tableName: string, colNames?: string[]) => {
   return { all, non, queries, serverFn, local, foreignKey }
 }
 
-export const xName = (a: string, b: string, first?: boolean) => (first ? [a, b] : [b, a]).join('_x_')
+export const getXTable = (a: string, b: string, first?: boolean) => {
+  let [target, source] = first ? [a, b] : [b, a]
+  if (target === source) {
+    target = `${target}_target`
+    source = `${source}_source`
+  }
+  const name = `${target}_x_${source}`
+  const [aColName, bColName] = (first ? [target, source] : [source, target])
+    .map(tableName => `${tableName}_id`)
+
+  return { name, target, source, aColName, bColName}
+}
 
 // Determines if a column's content should be picked from the translation table
 export const translatable = (tableName: string, columnName: string): boolean => {

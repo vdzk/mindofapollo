@@ -2,7 +2,7 @@ import { Component, For, Show, useContext } from "solid-js"
 import { Button } from "~/components/buttons";
 import { H2, Subtitle } from "~/components/PageTitle"
 import { DataRecordWithId } from "~/schema/type"
-import { SessionContext } from "~/SessionContext";
+import { SessionContext } from "~/SessionContext"
 
 const QuestionsSection: Component<{
   title: string;
@@ -35,17 +35,13 @@ export const CriticalQuestionSelector: Component<{
   setView: (view: 'list' | 'create' | 'examples') => void
   selectedQuestionId?: number
   setSelectedQuestionId: (id: number) => void
-  generalQuestions?: DataRecordWithId[]
-  typeQuestions?: DataRecordWithId[]
+  questionsSections: Record<string, DataRecordWithId[] | undefined>
 }> = (props) => {
   const session = useContext(SessionContext)
   return (
     <>
       <Subtitle>Select a critical question</Subtitle>
-      <For each={[
-        ['General', props.generalQuestions],
-        ['Argument type specific', props.typeQuestions]
-      ] as const}>
+      <For each={Object.entries(props.questionsSections)}>
         {([title, questions]) => (
           <QuestionsSection
             {...{ title, questions }}

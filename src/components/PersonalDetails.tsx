@@ -1,7 +1,7 @@
-import { Component, createSignal } from "solid-js";
-import { updatePersonalDetails } from "~/api/update/personalDetails";
-import { Button } from "./buttons";
-import { etv } from "~/client-only/util";
+import { Component, createSignal } from "solid-js"
+import { updatePersonalDetails } from "~/api/update/personalDetails"
+import { Button } from "./buttons"
+import { etv } from "~/client-only/util"
 
 export const PersonalDetails: Component = () => {
   const [email, setEmail] = createSignal('')
