@@ -106,6 +106,7 @@ export const CreateArgument: Component<{
               statement_id: props.id,
               argument_type_id: selectedArgumentTypeId()!
             }}
+            preserveDiffOnPresetChange
             exitSettings={{ onExit: onFormExit }}
             hideColumns={['statement_id', 'argument_type_id']}
           />

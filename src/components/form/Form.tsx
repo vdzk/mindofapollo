@@ -1,5 +1,5 @@
 import { useAction, useSearchParams } from "@solidjs/router"
-import { Component, ComponentProps, createEffect, createMemo, createSignal, For, Match, Show, Switch, useContext } from "solid-js"
+import { Component, ComponentProps, createEffect, createMemo, createSignal, For, Match, on, onMount, Show, Switch, useContext } from "solid-js"
 import { schema } from "~/schema/schema"
 import { FormField } from "./FormField"
 import { DataLiteral, DataRecord, NToNSchema } from "~/schema/type"
@@ -16,6 +16,8 @@ import { saveAction } from "~/components/form/saveAction"
 import { getToggleLabel } from "~/utils/string"
 import { CrossRef } from "./CrossRef"
 
+// TODO: try to get rid of `createEffect`s from this file. Nothing exits the system!
+
 export type FormExitHandler = (savedId?: number) => void
 export type ExitSettings = { getLinkData: (savedId?: number) => LinkData }
   | { onExit: FormExitHandler }
@@ -28,12 +30,14 @@ export const Form: Component<{
   hideColumns?: string[]
   disableColumns?: string[]
   preset?: DataRecord
+  preserveDiffOnPresetChange?: boolean
   depth?: number
 }> = (props) => {
   const session = useContext(SessionContext)
   const [searchParams] = useSearchParams()
   const [diff, setDiff] = createStore<DataRecord>({})
   const [diffExt, setDiffExt] = createStore<DataRecord>({})
+  const [diffExtAlt, setDiffExtAlt] = createStore<DataRecord>({})
   const [extensionTableIndex, setExtensionTableIndex] = createSignal<number>()
   const [showAdvanced, setShowAdvanced] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
@@ -47,13 +51,12 @@ export const Form: Component<{
 
   createEffect(() => {
     if (props.preset) {
-      setDiff(reconcile(props.preset))
+      if (props.preserveDiffOnPresetChange) {
+        setDiff(props.preset)
+      } else {
+        setDiff(reconcile(props.preset))
+      }
     }
-  })
-  // Clear extDiff when extTableName changes
-  createEffect(() => {
-    extTableName()
-    setDiffExt(reconcile({}))
   })
 
   createEffect(() => !props.id && !diff.id && !('depth' in props) && table().extendsTable && searchParams.id && setDiff('id', searchParams.id as string))
@@ -76,8 +79,6 @@ export const Form: Component<{
     }
   })
 
-
-
   const table = () => schema.tables[props.tableName]
   const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
 
@@ -95,6 +96,25 @@ export const Form: Component<{
   ))
   const extColumns = () => extTableName() ? schema.tables[extTableName() as string].columns : {}
   const extColNames = () => Object.keys(extColumns())
+
+  // Clear or preserve extDiff when extColNames change
+  createEffect(on(
+    extColNames,
+    newColNames => {
+      if (props.preserveDiffOnPresetChange) {
+        const newDiffExtAlt = { ...diffExtAlt, ...diffExt }
+        setDiffExtAlt(newDiffExtAlt)
+        const newDiffExt = Object.fromEntries(
+          Object.entries(newDiffExtAlt)
+            .filter(([key]) => newColNames.includes(key))
+        )
+        setDiffExt(reconcile(newDiffExt))
+      } else {
+        setDiffExt(reconcile({}))
+      }
+    },
+    { defer: true }
+  ))
 
   // Set optional ext default values
   createEffect(() => {
