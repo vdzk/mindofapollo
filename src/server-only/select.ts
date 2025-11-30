@@ -110,6 +110,25 @@ export const injectVirtualValues = async (
   }
 }
 
+// add VirtualColumnLocal.sourceColNames columns that are not in colNames
+export const injectSourceColNames = (
+  tableName: string,
+  colNames?: string[]
+) => {
+  if (!colNames) return
+  const { columns } = schema.tables[tableName]
+  for (const colName of colNames) {
+    const column = columns[colName]
+    if (column && column.type === 'virtual' && 'getLocal' in column) {
+      for (const sourceColName of column.sourceColNames) {
+        if (!colNames.includes(sourceColName)) {
+          colNames.push(sourceColName)
+        }
+      }
+    }
+  }
+} 
+
 export const getSelectColNames = (
   tableName: string,
   colNames?: string[],
@@ -134,6 +153,7 @@ export const _getRecordsByIds = async (
   withExplIds = true,
 ) => {
   if (ids.length === 0) return [] as DataRecordWithId[]
+  injectSourceColNames(tableName, colNames)
   const records = await sql<DataRecordWithId[]>`
     SELECT ${sql(getSelectColNames(
       tableName, colNames, withExplIds && needsExpl(tableName)

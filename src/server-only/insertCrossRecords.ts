@@ -24,6 +24,7 @@ export const insertCrossRecords = async (
     const aggregate = schema.tables[tableName].aggregates?.[aggregateName]
     if (!aggregate) continue
     const linkedIds = linkedCrossRefs[aggregateName]
+    if (linkedIds.length === 0) continue
     const xTable = getXTable(tableName, aggregate.table, true)
     const records = linkedIds.map(linkedId => addExplIds({
       [xTable.aColName]: id,

@@ -4,6 +4,8 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
+// TODO: rename console.log in this file so that it doesn't come up in searches when removing debug code?
+
 export const sql = postgres({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : undefined,

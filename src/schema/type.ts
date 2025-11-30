@@ -74,6 +74,7 @@ export interface VirtualColumnServerFn extends SharedColumnProps {
 
 export interface VirtualColumnLocal extends SharedColumnProps {
   type: 'virtual'
+  sourceColNames: string[]
   getLocal: (record: DataRecord) => string
 }
 

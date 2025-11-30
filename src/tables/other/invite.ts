@@ -11,6 +11,7 @@ export const invite: TableSchema = {
     },
     link: {
       type: 'virtual',
+      sourceColNames: ['code'],
       getLocal: record => `/join?code=${record.code}`,
       isPathLink: true
     },

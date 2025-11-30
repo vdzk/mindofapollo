@@ -6,6 +6,7 @@ export const definition: TableSchema = {
   columns: {
     label: {
       type: 'virtual',
+      sourceColNames: ['term', 'text'],
       getLocal: record => truncate(
         `${firstCap(record.term as string)} - ${record.text}`, 75
       )
