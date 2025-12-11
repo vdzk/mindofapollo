@@ -4,7 +4,7 @@ import { createAsync } from "@solidjs/router"
 import { getPercent } from "~/utils/string"
 import { nbsp } from "~/utils/string"
 import { schema } from "~/schema/schema"
-import { ExplLink } from "./expl/ExplLink"
+import { HistoryLink } from "./expl/HistoryLink"
 import { ExternalLink, Link } from "./Link";
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { listOriginTypes } from "~/api/list/originTypes"
@@ -112,7 +112,7 @@ export const DisplayValue: Component<DisplayValue> = props => {
       </Switch>
       <Show when={explId() && !hasOwner(props.tableName) && props.showExplLink !== false}>
         {' '}
-        <ExplLink explId={explId() as number} />
+        <HistoryLink explId={explId() as number} />
       </Show>
       <Show when={columnType() === 'fk' && value()}>
         <span class="inline-block w-2" />

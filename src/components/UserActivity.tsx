@@ -4,7 +4,7 @@ import { listUserActivity } from "~/api/list/userActivity"
 import { ExplRecord } from "~/server-only/expl"
 import { Link } from "~/components/Link"
 import { getActionStr, getExplData } from "~/components/expl/Expl"
-import { ExplLink } from "~/components/expl/ExplLink"
+import { HistoryLink } from "~/components/expl/HistoryLink"
 import { formatDate } from "~/utils/string"
 
 // Group activity by date only
@@ -57,7 +57,7 @@ export const UserActivity: Component<{id: number}> = props => {
                               />
                             </Show>
                           </div>
-                          <ExplLink explId={explRecord.id} />
+                          <HistoryLink explId={explRecord.id} />
                         </div>
                       </Show>
                     </div>

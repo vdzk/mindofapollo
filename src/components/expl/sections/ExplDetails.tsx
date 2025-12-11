@@ -1,7 +1,7 @@
 import { Show, Component } from "solid-js"
 import { ExplData, UserActor } from "../types"
 import { Link } from "~/components/Link"
-import { ExplLink } from "../ExplLink"
+import { HistoryLink } from "../HistoryLink"
 import { humanCase } from "~/utils/string"
 
 export const ExplDetails: Component<ExplData> = (props) => {
@@ -11,7 +11,7 @@ export const ExplDetails: Component<ExplData> = (props) => {
         <div class="mb-2">
           <div class="font-bold">Trigger</div>
           <div>{props.trigger!.label}{' '}
-            <ExplLink explId={props.trigger!.explId} />
+            <HistoryLink explId={props.trigger!.explId} />
           </div>
         </div>
       </Show>

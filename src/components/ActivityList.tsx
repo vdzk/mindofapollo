@@ -2,7 +2,7 @@ import { For, Match, Show, Switch } from "solid-js"
 import { Link } from "~/components/Link"
 import { getActionStr, getActorStr, getExplData } from "~/components/expl/Expl"
 import { ExplRecord } from "~/server-only/expl"
-import { ExplLink } from "~/components/expl/ExplLink"
+import { HistoryLink } from "~/components/expl/HistoryLink"
 import { schema } from "~/schema/schema"
 
 // Format date for display as "YYYY-MM-DD"
@@ -126,7 +126,7 @@ export function ActivityList(props: {
                                                   />
                                                 </Show>
                                               </Show></div>
-                                            <ExplLink explId={explRecord.id} />
+                                            <HistoryLink explId={explRecord.id} />
                                           </Match>
                                           <Match when>
                                             <Link

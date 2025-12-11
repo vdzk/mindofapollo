@@ -1,6 +1,6 @@
 import { For, Show, Component } from "solid-js"
 import { firstCap, humanCase } from "~/utils/string"
-import { ExplLink } from "./ExplLink"
+import { HistoryLink } from "./HistoryLink"
 import { Subtitle } from "../PageTitle"
 import { Link } from "../Link"
 import { CrossRecordData } from "~/api/insert/crossRecord"
@@ -34,7 +34,7 @@ export const ExplCrossRecord: Component<{
                   }}
                 />{' '}
                 <Show when={props.showExplLink && explId}>
-                  <ExplLink explId={explId} />
+                  <HistoryLink explId={explId} />
                 </Show>
               </div>
             </>

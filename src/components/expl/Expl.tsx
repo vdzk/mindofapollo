@@ -80,7 +80,7 @@ export const Expl: Component<{ explRecord: ExplRecord<any> }> = (props) => {
   return (
     <main>
       <Title>{title()}</Title>
-      <AbovePageTitle label="Explanation:" />
+      <AbovePageTitle label="History:" />
       <PageTitle>{title()}</PageTitle>
       <div class="px-2 relative -top-4">Time: {timeStr()}</div>
       <MasterDetail

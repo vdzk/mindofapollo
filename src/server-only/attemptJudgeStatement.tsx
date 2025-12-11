@@ -9,7 +9,7 @@ import { _getRecordById } from "./select";
 import { DataRecordWithId } from "~/schema/type"
 import { Link } from "~/components/Link"
 import { Component, For } from "solid-js"
-import { ExplLink } from "~/components/expl/ExplLink"
+import { HistoryLink } from "~/components/expl/HistoryLink"
 import { Subtitle } from "~/components/PageTitle"
 
 
@@ -155,7 +155,7 @@ const Derivation: Component<ExplJudgeStatementData> = data => {
                               value !== null && (
                                 <span class="inline-block pr-2">
                                   {type}: {getPercent(value)}{' '}
-                                  <ExplLink {...{ explId }} />
+                                  <HistoryLink {...{ explId }} />
                                 </span>
                               )
                             )
