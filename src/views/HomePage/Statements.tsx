@@ -3,7 +3,7 @@ import { createSignal, For, Show, useContext } from "solid-js"
 import { getHomePageStatementsCache, listRecordsCache } from "~/client-only/query"
 import { Link, Links } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
-import { Subtitle } from "~/components/PageTitle"
+import { H2, Subtitle } from "~/components/PageTitle"
 import { setSubscriptionAction } from "~/client-only/action"
 import { Button } from "~/components/buttons"
 import { withDialogueStatementId } from "~/constant"
@@ -14,17 +14,21 @@ export default function Statements() {
   const authenticated = () => !!session?.userSession()?.authenticated
   const tags = createAsync(() => listRecordsCache('tag'))
 
-  const featuredOption = { id: -1, label: 'featured', groupId: 'distinct' }
+  const featuredOption = {
+    id: -1, label: 'featured',
+    // groupId: 'distinct'
+  }
   const tagOptions = () => tags()?.map(
     tag => ({
       id: tag.id,
       label: tag.name as string,
-      groupId: tag.name === 'examples' ? 'distinct' : 'common'
+      // groupId: tag.name === 'examples' ? 'distinct' : 'common'
     })
   ) ?? []
   const options = () => [featuredOption, ...tagOptions()]
 
   const [selectedId, setSelectedId] = createSignal(featuredOption.id)
+  const selectedTag = () => options().find(option => option.id === selectedId())
 
   const featured = () => selectedId() === featuredOption.id
   const tagId = () => featured() ? undefined : selectedId()
@@ -33,16 +37,30 @@ export default function Statements() {
   const setSubscription = useAction(setSubscriptionAction)
 
   return (
-    <div class="flex-4 pt-2">
-      <Subtitle>Statements</Subtitle>
-      <div class="px-2">
+    <div class="flex-4 flex flex-col">
+      <Show when={authenticated()}>
+        <div class="px-2 py-10 text-center border-b">
+          <Link
+            type="heroButton"
+            label="Make a new claim"
+            route="create-record"
+            params={{tableName: 'statement'}}
+          />
+        </div>
+      </Show>
+      <Subtitle>Tags</Subtitle>
+      <div class="flex-1">
         <MasterDetail
           options={options()}
-          groups={[{id: 'distinct', label: ''}, {id: 'common', label: ''}]}
+          optionsClass="pl-1"
+          // groups={[{id: 'distinct', label: ''}, {id: 'common', label: ''}]}
           selectedId={selectedId()}
           onChange={setSelectedId}
+          horizontal
+          pills
         >
-          <div class="pt-1 pl-2">
+          <Subtitle>Claims ({selectedTag()?.label})</Subtitle>
+          <div class="pl-2">
             <For each={statements()}>
               {statement => {
                 const { id, directive, subscribed, label } = statement
@@ -59,6 +77,8 @@ export default function Statements() {
                       params={linkParams}
                       class="flex-1"
                     />
+                    {/* //TODO
+                    This button was hidden because new users were clicking it instead of the statemetns 
                     {authenticated() && !directive && (
                       <Button
                         label={subscribed ? 'unsub' : 'sub'}
@@ -66,7 +86,7 @@ export default function Statements() {
                         leading={5}
                         class="text-sm"
                       />
-                    )}
+                    )} */}
                   </div>
                 )
               }}
@@ -74,25 +94,14 @@ export default function Statements() {
           </div>
         </MasterDetail>
       </div>
-      <Show when={authenticated()}>
-        <div class="px-2 mt-3 pb-6">
-          <Links
-            type="button"
-            links={[
-              {
-                label: "Show all",
-                route: "list-records",
-                params: { tableName: 'statement' }
-              },
-              {
-                label: "Add new",
-                route: "create-record",
-                params: { tableName: 'statement' }
-              }
-            ]}
-          />
-        </div>
-      </Show>
+      <div class="px-2 py-2 border-t">
+        <Link
+          type="button"
+          label="Show all statements"
+          route="list-records"
+          params={{ tableName: 'statement' }}
+        />
+      </div>
     </div>
   )
 }

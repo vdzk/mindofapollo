@@ -10,7 +10,8 @@ export const linkStyles = {
   fragment: 'hover:bg-yellow-200 h-full py-1',
   button: btnStyle(),
   logo: 'font-bold',
-  faded: 'text-gray-500'
+  faded: 'text-gray-500',
+  heroButton: btnStyle() + ' ' + 'text-2xl px-3 py-1'
 }
 
 export const Link: Component<{
