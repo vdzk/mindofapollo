@@ -35,6 +35,7 @@ psql "postgres://postgres:your_db_password@localhost:5432/mindofapollo" -f seed.
 npm run debug
 ```
 
+[Live database dumps](https://static.mindofapollo.org/backups/)
 ### Default Login
 email: admin  
 password: admin  
