@@ -92,6 +92,7 @@ export const statement: TableSchema = {
       readOnly: true
     }
   },
+  advanced: ['chat_text'],
   aggregates: {
     definitions: {
       type: 'n-n',

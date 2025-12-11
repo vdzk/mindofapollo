@@ -104,6 +104,11 @@ export default function ThingsToDoAndOther() {
           href="https://github.com/vdzk/mindofapollo"
           label="GitHub Repository"
         />
+        <br/>
+        <ExternalLink
+          href="https://static.mindofapollo.org/backups/"
+          label="Database dumps"
+        />
       </div>
     </div>
   )

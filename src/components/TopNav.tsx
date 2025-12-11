@@ -1,6 +1,6 @@
 import { createAsync, useNavigate } from "@solidjs/router"
 import { Component, Match, Show, Switch, useContext } from "solid-js"
-import { Link } from "./Link"
+import { ExternalLink, Link } from "./Link"
 import { doLogout } from "~/api/execute/logout"
 import { getOneRecordById } from "~/api/getOne/recordById"
 import { SessionContext } from "~/SessionContext"
@@ -50,6 +50,10 @@ export const TopNav: Component = () => {
           </Match>
           <Match when={!authenticated()}>
             <span class="flex gap-2">
+              <ExternalLink
+                href="https://discord.gg/3hhhD4tK9h"
+                label={smallScreen() ? '💬' : "Discord 💬"}
+              />
               <Link
                 route="donate"
                   label={smallScreen() ? '🎁' : "Donate"}

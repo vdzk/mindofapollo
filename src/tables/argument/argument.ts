@@ -40,6 +40,7 @@ export const argument: TableSchema = {
       }
     }
   },
+  advanced: ['chat_text'],
   extendedByTable: 'argument_judgement',
   aggregates: {
     definitions: {

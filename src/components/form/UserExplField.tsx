@@ -10,8 +10,8 @@ export const UserExplField: Component<{
   return (
     <div class="pb-2">
       <div class="font-bold">Why are you making this change?</div>
-      <input
-        type="text"
+      <textarea
+        rows={3}
         class="border rounded-sm pl-1 w-full"
         autocomplete="off"
         value={props.value}
