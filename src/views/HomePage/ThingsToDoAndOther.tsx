@@ -18,11 +18,6 @@ export default function ThingsToDoAndOther() {
           class="block"
         />
         <ExternalLink
-          label="▶️ Introducing Mind of Apollo (27 min)"
-          href="https://www.youtube.com/watch?v=LU36JGwA6HQ"
-          class="block"
-        />
-        <ExternalLink
           label="▶️ Quick Start Guide for Editors (9 min)"
           href="https://www.youtube.com/watch?v=OEx4yj1nsPk"
           class="block"
@@ -37,27 +32,13 @@ export default function ThingsToDoAndOther() {
               label: 'Compete to convince',
               route: 'compete-to-convince'
             },
-            {
-              label: "Forum",
-              route: 'list-records',
-              params: { tableName: 'forum_thread' }
-            },
             ...(openRegistration ? [] : [
               {
                 label: "Invites",
                 route: "list-records",
                 params: { tableName: 'invite' }
               }
-            ]),
-            {
-              label: "Chat",
-              route: "chat"
-            },
-            {
-              label: "Issues",
-              route: 'list-records',
-              params: { tableName: 'issue' }
-            }
+            ])
           ]}
         />
       </div>
@@ -67,15 +48,6 @@ export default function ThingsToDoAndOther() {
           type="button"
           links={[
             {
-              label: "Tables",
-              route: "list-tables"
-            },
-            {
-              label: "Sandboxes",
-              route: "list-sandboxes",
-              params: { tableName: 'directive' }
-            },
-            {
               label: "Recent activity",
               route: "recent-activity"
             },
@@ -83,22 +55,20 @@ export default function ThingsToDoAndOther() {
               label: "Definitions",
               route: "list-records",
               params: { tableName: 'definition' }
+            },
+            {
+              label: "Tables",
+              route: "list-tables"
+            },
+            {
+              label: "Sandboxes",
+              route: "list-sandboxes",
+              params: { tableName: 'directive' }
             }
           ]}
         />
-        <Show when={authenticated()}>
-          <span class="w-2 inline-block" />
-          <Link
-            type="button"
-            label="Tasks"
-            route="list-records"
-            params={{ tableName: 'task' }}
-          />
-          <span class="w-2 inline-block" />
-          <CurrentTaskBtn />
-        </Show>
       </div>
-      <Subtitle>Source Code</Subtitle>
+      <Subtitle>Links</Subtitle>
       <div class="px-2 pb-4">
         <ExternalLink
           href="https://github.com/vdzk/mindofapollo"
@@ -107,7 +77,12 @@ export default function ThingsToDoAndOther() {
         <br/>
         <ExternalLink
           href="https://static.mindofapollo.org/backups/"
-          label="Database dumps"
+          label="Database Dumps"
+        />
+        <br/>
+        <ExternalLink
+          href="https://suave-cornet-3f8.notion.site/Realise-Apollo-s-Grand-Vision-2c3b9c901c198097a33cd0f9ea3ae1d0"
+          label="Project Tasks"
         />
       </div>
     </div>

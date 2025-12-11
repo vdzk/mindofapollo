@@ -8,6 +8,8 @@ import { btnStyle, Button } from "./buttons"
 import { joinWebsiteUrl, openRegistration } from "~/constant"
 import { createMediaQuery } from "@solid-primitives/media"
 
+
+
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
   const authenticated = () => session?.userSession()?.authenticated ?? false
@@ -17,6 +19,12 @@ export const TopNav: Component = () => {
     : undefined
   )
   const smallScreen = createMediaQuery('(max-width: 480px)')
+
+  const discordLink = <ExternalLink
+    href="https://discord.gg/3hhhD4tK9h"
+    label={smallScreen() ? '💬' : "Discord 💬"}
+    class="pr-2"
+  />
 
   const onLogout = async () => {
     await doLogout()
@@ -37,6 +45,7 @@ export const TopNav: Component = () => {
       <div class="px-2 py-0.5">
         <Switch>
           <Match when={authenticated()}>
+            {discordLink}
             <Link
               route="show-record"
               params={{ tableName: 'person', id: session!.userSession()!.userId }}
@@ -50,13 +59,10 @@ export const TopNav: Component = () => {
           </Match>
           <Match when={!authenticated()}>
             <span class="flex gap-2">
-              <ExternalLink
-                href="https://discord.gg/3hhhD4tK9h"
-                label={smallScreen() ? '💬' : "Discord 💬"}
-              />
+              {discordLink}
               <Link
                 route="donate"
-                  label={smallScreen() ? '🎁' : "Donate"}
+                label={smallScreen() ? '🎁' : "Donate"}
                 type="button"
               />
               <Show when={openRegistration}>
