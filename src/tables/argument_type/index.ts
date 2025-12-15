@@ -3,7 +3,7 @@ import { defaultTextLines } from '../argument/argument'
 import { argument_authority } from './authority'
 import { argument_obvious } from './obvious'
 
-const defaultTypes = ['analogy', 'causal', 'contradiction', 'deduction', 'definition', 'epistemic', 'example', 'explanation', 'feasibility', 'induction', 'statistical', 'extrapolation', 'normative', 'pragmatic', 'other'] as const
+const defaultTypes = ['analogy', 'causal', 'contradiction', 'deduction', 'definition', 'epistemic', 'example', 'explanation', 'feasibility', 'induction', 'statistical', 'extrapolation', 'normative', 'pragmatic', 'other', 'unknown'] as const
 
 const defaultArgumentTypeSchema: TableSchema = {
   extendsTable: 'argument',

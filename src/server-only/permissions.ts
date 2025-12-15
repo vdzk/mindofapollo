@@ -2,8 +2,9 @@ import { DataRecordWithId } from "~/schema/type"
 import { getSession } from "./session"
 import { hasOwner, isSystem } from "~/permissions"
 import { onError, sql } from "./db"
-import { hasOwnFields } from "~/utils/schema"
+import { getRootTableName, hasOwnFields } from "~/utils/schema"
 import { recentPeriodHours } from "~/constant"
+import { schema } from "~/schema/schema"
 
 const filterPersonalIds = async (
   userId: number, tableName: string, ids: number[]
@@ -60,6 +61,11 @@ const filterCanUpdateIds = async (tableName:string, ids: number[] ) => {
 }
 
 const filterCanDeleteIds = async (tableName: string, ids: number[]) => {
+  // Deleting a table extension is permitted iff can edit the root table
+  if (schema.tables[tableName].extendsTable) {
+    return filterCanUpdateIds(getRootTableName(tableName), ids)
+  }
+
   const session = await getSession()
   const { userId, authRole } = session.data
   if (ids.length === 0) return ids

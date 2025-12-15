@@ -27,7 +27,15 @@ export const ArgumentDetails: Component<{
   return (
     <>
       <Title>{props.record?.title}</Title>
-      <Subtitle>Argument ({argTypeName()})</Subtitle>
+      <Subtitle>
+        Argument 
+        <span
+          class="cursor-default"
+          title={`argument of type "${argTypeName()}"`}
+        >
+          ({argTypeName()})
+        </span>
+      </Subtitle>
       <div class="border-t h-3" />
       <div class="font-bold px-2">Claim</div>
       <div class="px-2 pb-2">

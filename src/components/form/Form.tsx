@@ -18,9 +18,9 @@ import { CrossRef } from "./CrossRef"
 
 // TODO: try to get rid of `createEffect`s from this file. Nothing exits the system!
 
-export type FormExitHandler = (savedId?: number) => void
+export type FormExitHandler = (savedId?: number, userExpl?: string) => void
 export type ExitSettings = { getLinkData: (savedId?: number) => LinkData }
-  | { onExit: FormExitHandler }
+  | { onExit: FormExitHandler, passUserExpl?: boolean }
 
 export const Form: Component<{
   tableName: string
@@ -230,7 +230,7 @@ export const Form: Component<{
     )
 
   return (
-    <div class="px-2 max-w-(--breakpoint-sm) pb-2">
+    <div class="px-2 max-w-(--breakpoint-sm) min-w-0 pb-2">
       <For each={fieldGroups().normal}>{field =>
         <>
           <FormField {...field} hidden={!visibleCols().includes(field.colName)} />
@@ -275,7 +275,7 @@ export const Form: Component<{
       <For each={fieldGroups().advanced}>{field =>
         <FormField {...field} hidden={!visibleCols().includes(field.colName) || !showAdvanced()} />
       }</For>
-      <Show when={props.id}>
+      <Show when={props.id || ('passUserExpl' in props.exitSettings)}>
         <UserExplField value={userExpl()} onChange={setUserExpl} />
       </Show>
       <Show when={saveError()}>

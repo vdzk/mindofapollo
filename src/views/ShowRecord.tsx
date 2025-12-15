@@ -107,6 +107,7 @@ export const ShowRecord: Component<{
             component={getCurrentComponent()}
             id={props.id}
             tabData={props.tabData}
+            setSectionId={setSectionId}
           />
         </Match>
         <Match when>

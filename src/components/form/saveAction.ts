@@ -12,7 +12,7 @@ import { isEmpty } from "~/utils/shape"
 import { updateUserSession } from "~/api/update/userSession"
 import { buildUrl } from "~/utils/schema"
 
-type ExitSettings = { getLinkData: (savedId?: number) => LinkData } | { onExit: FormExitHandler }
+type ExitSettings = { getLinkData: (savedId?: number) => LinkData } | { onExit: FormExitHandler, passUserExpl?: boolean }
 
 const hasExitHandler = (exit: ExitSettings): exit is { onExit: FormExitHandler } => {
   return 'onExit' in exit
@@ -113,7 +113,7 @@ export const saveAction = action(async (
     }
 
     if (hasExitHandler(exitSettings)) {
-      exitSettings.onExit(savedRecord?.id)
+      exitSettings.onExit(savedRecord?.id, userExpl)
       return json({ ok: true }, {
         revalidate: [listRecordsCache.keyFor(tableName)]
       })

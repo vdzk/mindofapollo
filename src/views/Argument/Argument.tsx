@@ -16,6 +16,7 @@ import { ConfidenceCriteria } from "./ConfidenceCriteria"
 import { MasterDetail } from "~/components/MasterDetail"
 import { RecordHistory } from "~/components/RecordHistory"
 import { DeleteRecord } from "~/components/form/DeleteRecord"
+import { ArgumentTypeSelector } from "../Statement/ArgumentTypeSelector"
 
 export const Argument: Component<{ id: number }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id, true))
@@ -38,6 +39,7 @@ export const Argument: Component<{ id: number }> = props => {
     ]
     if (record()?.canUpdate) {
       options.push({ id: 'edit', label: 'Edit' })
+      options.push({ id: 'argumentTypeSelector', label: 'Type' })
     }
     if (record()?.canDelete) {
       options.push({ id: 'delete', label: 'Delete' })
@@ -70,6 +72,14 @@ export const Argument: Component<{ id: number }> = props => {
                 exitSettings={{ onExit: onFormExit }}
                 id={props.id}
                 record={record()!}
+              />
+            </div>
+          </Match>
+          <Match when={searchParams.tab === 'argumentTypeSelector' && record()}>
+            <div class="flex-5 border-l">
+              <ArgumentTypeSelector
+                record={record()!}
+                onFormExit={onFormExit}
               />
             </div>
           </Match>

@@ -7,6 +7,9 @@ import { DataRecordWithId } from "~/schema/type"
 import { argumentSideLabels } from "~/tables/argument/argument"
 import { getPercent } from "~/utils/string"
 import { tableStyle } from "~/components/table"
+import { useBelongsTo } from "~/client-only/useBelongsTo"
+import { whoCanInsertRecord } from "~/api/insert/record"
+import { Button, importantButtonStyle } from "~/components/buttons"
 
 export const Arguments: Component<{
   id: number,
@@ -16,7 +19,8 @@ export const Arguments: Component<{
       consequences: DataRecordWithId[],
       weightedValues: Record<number, number>,
     }
-  }
+  },
+  setSectionId: (sectionId?: string) => void
 }> = props => {
   const argsData = createAsync(async () => listArgumentsCache(props.id))
   const parentArguments = createAsync(async () => listForeignCrossRecordsCache(
@@ -91,8 +95,17 @@ export const Arguments: Component<{
     return result
   })
 
+  const canCreateNew = () => useBelongsTo(whoCanInsertRecord('argument'))
+
   return (
     <div class="flex-1 max-w-2xl">
+      <Show when={canCreateNew}>
+        <Button
+          label="➕ Add argument"
+          onClick={() => props.setSectionId('createArgument')}
+          class={"mx-2 mb-4 " + importantButtonStyle}
+        />
+      </Show>
       <For each={[true, false]}>
         {pro => (
           <div class="px-2 pb-4">

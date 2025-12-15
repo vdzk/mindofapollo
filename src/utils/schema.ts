@@ -37,17 +37,22 @@ export const getExtTableName = (
 ) => {
   const tableSchema = schema.tables[tableName]
   if (optionalExtEnabled) return tableSchema.optionallyExtendedByTable
-  if (!record) return
   const colName = getExtTableSelectorColName(tableName)
   if (!colName) return
   const column = tableSchema.columns[colName] as ForeignKey
   let extTableIndex
   if (extensionTableIndex) {
     extTableIndex = extensionTableIndex
-  } else if (column.fk.extensionColumn && record && column.fk.extensionColumn in record) {
-    extTableIndex = record[column.fk.extensionColumn] as number
   } else {
-    extTableIndex = record[colName] as number
+    if (record) {
+      if (column.fk.extensionColumn && record && column.fk.extensionColumn in record) {
+        extTableIndex = record[column.fk.extensionColumn] as number
+      } else {
+        extTableIndex = record[colName] as number
+      }
+    } else {
+      return
+    }
   }
   return column.fk.extensionTables![extTableIndex]
 }
