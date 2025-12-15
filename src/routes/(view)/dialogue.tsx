@@ -30,7 +30,7 @@ export default function Dialogue() {
             let value = null
             if (fragment.table_name === 'statement') {
               const satement = statementDict[fragment.record_id]
-              if (satement?.decided) {
+              if (satement) {
                 value = satement.confidence as number
               }
             } else if (fragment.table_name === 'argument') {

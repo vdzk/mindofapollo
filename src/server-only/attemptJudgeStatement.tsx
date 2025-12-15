@@ -52,10 +52,7 @@ export const attemptJudgeStatement = async (
   if (canJudge) {
     const explId = await startExpl(
       null, 'attemptJudgeStatement', 1, 'statement', statementId)
-    const newFragment = {
-      confidence: calcStatementConfidence(confidences),
-      decided: true
-    }
+    const newFragment = { confidence: calcStatementConfidence(confidences) }
     const diff = await _updateRecord(
       'statement', statementId, explId, newFragment
     )

@@ -36,10 +36,7 @@ export const attemptAggregateArguments = async (
   const statement = await _getRecordById('statement', statementId, ['id', 'text'])
   if (!statement) return
   
-  const diff = await _updateRecord('statement', statementId, explId, {
-    confidence,
-    decided: true
-  })
+  const diff = await _updateRecord('statement', statementId, explId, { confidence })
   
   const data: ExplAggregateArgumentsData = {
     statement,

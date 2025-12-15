@@ -21,7 +21,7 @@ export const getOneDialoguePage = async () => {
   // Get satement confidences
   const statementIds = records.statement.map(r => r.id)
   const statementConfidences = await sql`
-    SELECT id, decided, confidence
+    SELECT id, confidence
     FROM statement
     WHERE id IN ${sql(statementIds)}
   `.catch(onError)

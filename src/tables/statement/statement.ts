@@ -32,7 +32,6 @@ export const statement: TableSchema = {
         ...(directive.columns.label as VirtualColumnQueries).queries,
         statements: [
           ['id'],
-          ['decided'],
           ['confidence'],
           ['text'],
           ['statement_type_id', [
@@ -45,7 +44,7 @@ export const statement: TableSchema = {
         const labels = Object.fromEntries(results.statements.map(
           s => [s.id, s.statement_type_name === 'prescriptive'
             ? directivesLabels[s.id as number]
-            : `(${s.decided ? getPercent(s.confidence as number) : '?'}) ${s.text}`
+            : `(${getPercent(s.confidence as number)}) ${s.text}`
           ]
         ))
         return labels
@@ -73,16 +72,8 @@ export const statement: TableSchema = {
         result => [result.id, result.name]
       ))
     },
-    decided: {
-      type: 'boolean',
-      defaultValue: false,
-      label: 'status',
-      optionLabels: ['Undecided', 'Decided'],
-      readOnly: true
-    },
     confidence: {
       type: 'proportion',
-      getVisibility: record => record.decided as boolean,
       defaultValue: 0.5,
       readOnly: true
     },
@@ -133,10 +124,6 @@ export const statement: TableSchema = {
       label: 'scope',
       component: 'DirectiveScope',
       getVisibility: (record) => record.statement_type_name === 'prescriptive'
-    },
-    evaluation: {
-      label: 'evaluation',
-      fields: ['statement_approvals', 'decided', 'confidence'],
     },
     other: {
       label: 'other details'

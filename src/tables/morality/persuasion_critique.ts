@@ -18,9 +18,7 @@ export const persuasion_critique: TableSchema = {
       fk: {
         table: 'statement',
         labelColumn: 'text',
-        getLabel: (record: DataRecord) => record.decided
-          ? `(${getPercent(record.confidence as number)}) ${record.text}`
-          : record.text as string
+        getLabel: (record: DataRecord) => `(${getPercent(record.confidence as number)}) ${record.text}`
       }
     }
   }
