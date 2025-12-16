@@ -19,7 +19,9 @@ export const updateExtRecord = async (
   "use server"
 
   const {userId, authRole} = await getUserSession()
-  if (!(await authorisedUpdate(tableName, id, record, authRole))) return
+  const originalRecord = await _getRecordById(tableName, id)
+  if (!originalRecord) return
+  if (!(await authorisedUpdate(tableName, originalRecord, record, authRole))) return
   if (! await allowedTableContent(tableName, record)) {
     throw new Error('You content didn\'t pass the filter.')
   }
@@ -34,8 +36,6 @@ export const updateExtRecord = async (
   ])
 
   const user = await getUserActorUser()
-  const originalRecord = await _getRecordById(tableName, id)
-  if (!originalRecord) return
   const data: UpdateExtRecordData = {
     tableName,
     extTableName,

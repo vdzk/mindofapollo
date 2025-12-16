@@ -15,6 +15,7 @@ interface SharedColumnProps {
   defaultValue?: DataLiteral,
   instructions?: string
   isPathLink?: boolean
+  displayType?: ColumnType
 }
 
 export interface SimpleColumn extends SharedColumnProps {
@@ -104,6 +105,10 @@ export interface ExtendsIdColumn extends SharedColumnProps {
 
 export type ColumnSchema = (SimpleColumn | BooleanColumn | TextColumn | ForeignKey | ExtendsIdColumn | OptionColumn | JsonbColumn | ValueTypeIdColumn | VirtualColumnQueries | VirtualColumnServerFn | VirtualColumnLocal | VirtualColumnFromForeignKey) & {
   readOnly?: true // ordinarily, this field should not be edited directly
+  canEditCondition?: {  // dynamically, check another column for permission to edit
+    colName: string,
+    value: DataLiteral
+  },
   unique?: true
 }
 

@@ -1,6 +1,6 @@
 import memoizeOne from "memoize-one";
 import { schema } from "./schema/schema";
-import { ColumnSchema, ForeignKey } from "./schema/type";
+import { ColumnSchema, DataRecord, ForeignKey } from "./schema/type";
 import { AuthRole } from "./types";
 
 export const hasOwner = (tableName: string) => !!schema.tables[tableName].columns.owner_id
@@ -24,23 +24,26 @@ export const tablesThatExtendByName = memoizeOne(() => Object.entries(schema.tab
   .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
 )
 
-const getAccessibleColNames = (
+export const getWritableColNames = (
   tableName: string,
-  authRole: AuthRole | undefined,
-  onlyAdmin: (column: ColumnSchema, colName: string) => boolean
-) => Object.entries(schema.tables[tableName].columns)
-  .filter(([colName, column]) => {
-    if (column.type === 'virtual') {
-      return false
-    } else if (onlyAdmin(column, colName)) {
-      return authRole === 'admin'
-    } else {
-      return true
+  recordData: { newRecord: true } | { record: DataRecord },
+  authRole?: AuthRole,
+) => {
+  const writableColNames: string[] = []
+  const columns = schema.tables[tableName].columns
+  for (const colName in columns) {
+    const column = columns[colName]
+    if (column.type === 'virtual') continue
+    if (authRole !== 'admin') {
+      if (['owner_id', 'creator_id'].includes(colName)) continue
+      if (column.readOnly) continue
+      if (column.canEditCondition && !('newRecord' in recordData)) {
+        const c = column.canEditCondition
+        if (recordData.record[c.colName] !== c.value) continue
+      }
     }
-  })
-  .map(([colName]) => colName)
+    writableColNames.push(colName)
+  }
 
-export const getWritableColNames = (tableName: string, authRole?: AuthRole) => getAccessibleColNames(
-  tableName, authRole,
-  (column, colName) => !!(column.readOnly || colName === 'owner_id' || colName === 'creator_id')
-)
+  return writableColNames
+}

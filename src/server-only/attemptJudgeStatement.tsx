@@ -32,12 +32,10 @@ export const attemptJudgeStatement = async (
     LEFT JOIN argument_conditional ac ON ac.id = a.id
     WHERE a.statement_id = ${statementId}
   `.catch(onError) as any[]
-  let canJudge = true
   const confidences: [number[], number[]] = [[], []]
+  let canJudge = false
   for (const argument of argumentConfidences) {
-    if (argument.isolated_confidence === null) {
-      canJudge = false
-    }
+    if (argument.isolated_confidence === null) continue
 
     const side = Number(argument.pro)
     if (argument.conditional_confidence === null) {
@@ -45,9 +43,7 @@ export const attemptJudgeStatement = async (
     } else {
       confidences[side].push(argument.conditional_confidence)
     }
-    if (!canJudge) {
-      break
-    }
+    canJudge = true
   }
   if (canJudge) {
     const explId = await startExpl(

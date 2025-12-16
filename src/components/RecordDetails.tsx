@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, For, Show } from "solid-js"
+import { Component, createEffect, For, Show } from "solid-js"
 import { schema } from "~/schema/schema"
 import { ColumnSchema } from "~/schema/type"
 import { getAllKeys } from "~/utils/shape"

@@ -80,7 +80,11 @@ export const Form: Component<{
   })
 
   const table = () => schema.tables[props.tableName]
-  const colNames = () => getWritableColNames(props.tableName, session?.userSession?.()?.authRole)
+  const colNames = () => getWritableColNames(
+    props.tableName,
+    props.id ? { record: props.record ?? {} } : { newRecord: true },
+    session?.userSession?.()?.authRole
+  )
 
   const hasAdvancedFields = () => {
     const tableSchema = table()
@@ -272,7 +276,7 @@ export const Form: Component<{
           />
         </div>
       </Show>
-      <For each={fieldGroups().advanced}>{field =>
+      <For each={fieldGroups()?.advanced}>{field =>
         <FormField {...field} hidden={!visibleCols().includes(field.colName) || !showAdvanced()} />
       }</For>
       <Show when={props.id || ('passUserExpl' in props.exitSettings)}>

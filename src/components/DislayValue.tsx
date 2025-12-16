@@ -60,6 +60,8 @@ export const DisplayValue: Component<DisplayValue> = props => {
       if (originTypes() && typeOriginId) {
         return originTypes()![typeOriginId as number]
       }
+    } if (col.displayType) {
+      return col.displayType
     } else {
       return col.type
     }
