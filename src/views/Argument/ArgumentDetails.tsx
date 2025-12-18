@@ -11,11 +11,14 @@ import { argumentSideLabels } from "~/tables/argument/argument"
 import { argumentTypes } from "~/tables/argument/type"
 import { getExtTableName } from "~/utils/schema"
 import { getToggleLabel } from "~/utils/string"
+import { Score } from "./Score"
+import { StatementType } from "~/tables/statement/statement_type"
 
 export const ArgumentDetails: Component<{
   id: number
   record?: DataRecordWithId
   statement?: DataRecordWithId
+  statementType?: StatementType
 }> = props => {
   const extTableName = () => props.record
     ? getExtTableName('argument', props.record) : undefined
@@ -27,17 +30,23 @@ export const ArgumentDetails: Component<{
   return (
     <>
       <Title>{props.record?.title}</Title>
-      <Subtitle>
-        Argument 
-        <span
-          class="cursor-default"
-          title={`argument of type "${argTypeName()}"`}
-        >
-          ({argTypeName()})
-        </span>
-      </Subtitle>
-      <div class="border-t h-3" />
-      <div class="font-bold px-2">Claim</div>
+      <div class="flex justify-between border-b">
+        <Subtitle>
+          Argument 
+          <span
+            class="cursor-default"
+            title={`argument of type "${argTypeName()}"`}
+          >
+            ({argTypeName()})
+          </span>
+        </Subtitle>
+        <Score
+          id={props.id}
+          statementType={props.statementType}
+          record={props.record}
+        />
+      </div>
+      <div class="font-bold px-2 pt-3">Claim</div>
       <div class="px-2 pb-2">
         <Link
           route="statement"

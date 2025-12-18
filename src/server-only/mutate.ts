@@ -10,6 +10,8 @@ import { _getRecordById, _getRecordsByIds } from "./select"
 import { attemptJudgeStatement } from "./attemptJudgeStatement"
 import { humanCase } from "~/utils/string"
 import { attemptAggregateArguments } from "./attemptAggregateArguments"
+import { cascadeUpdateScores } from "./cascadeUpdateScores"
+import { indexBy } from "~/utils/shape"
 
 // TODO: implement efficient bulk version
 export const insertValueType = async (
@@ -117,7 +119,7 @@ export const _updateRecord = async <T extends DataRecord>(
   if (translationRequired) {
     await createTranslations(tableName, originalText, id, true)
   }
-  await trigger('update', tableName, id, explId)
+  await trigger('update', tableName, id, explId, diff)
   return diff
 }
 
@@ -149,7 +151,7 @@ export const deleteByIdsCascade = async (
     }
   }
 
-  await _deleteByIds(tableName, recordIds, explId)
+  await _deleteByIds(tableName, recordIds, explId, records)
   
   return result
 }
@@ -157,7 +159,8 @@ export const deleteByIdsCascade = async (
 export const _deleteByIds = async (
   tableName: string,
   ids: number[],
-  explId: number
+  explId: number,
+  oldRecords: DataRecordWithId[]
 ) => {
   if (ids.length === 0) return
   await sql`
@@ -169,14 +172,19 @@ export const _deleteByIds = async (
     WHERE table_name = ${tableName}
       AND record_id IN ${sql(ids)}
   `.catch(onError)
-  await Promise.all(ids.map(id => trigger('delete', tableName, id, explId)))
+  const oldRecordsById = indexBy(oldRecords, 'id')
+  await Promise.all(ids.map(id => trigger(
+    'delete', tableName, id, explId, undefined, oldRecordsById[id]
+  )))
 }
 
 const trigger = async (
   op: 'insert' | 'update' | 'delete',
   tableName: string,
   id: number,
-  explId: number | null
+  explId: number | null,
+  diff?: { before: DataRecord, after: DataRecord},
+  oldRecord?: DataRecord
 ) => {
   if (['argument_judgement', 'argument_conditional', 'argument_weight'].includes(tableName)) {
     const argument = await _getRecordById('argument', id, ['statement_id'])
@@ -189,6 +197,41 @@ const trigger = async (
         explId,
         `${op} of ${humanCase(tableName)}`
       )
+    }
+  }
+  if (tableName === 'premise') {
+    let argumentId
+    if (op === 'delete') {
+      argumentId = oldRecord?.argument_id
+    } else {
+      const premise = await _getRecordById('premise', id, ['argument_id'])
+      argumentId = premise.argument_id
+    }
+    if (argumentId) {
+      await cascadeUpdateScores(
+        [argumentId] as number[],
+        explId,
+        `user updated a premise (ID:${id})`
+      )
+    }
+  }
+  if (tableName === 'statement') {
+    const sameConfidence = op === 'update' && diff
+      && diff.before.confidence === diff.after.confidence
+    if (!sameConfidence) {
+      const premises = await sql`
+        SELECT argument_id
+        FROM premise
+        WHERE premise.statement_id = ${id}
+      `.catch(onError)
+      if (premises.length > 0) {
+        const argumentIds: number[] = premises.map(premise => premise.argument_id)
+        await cascadeUpdateScores(
+          argumentIds,
+          explId,
+          `user updated a statement (ID:${id})`
+        )
+      }
     }
   }
 }

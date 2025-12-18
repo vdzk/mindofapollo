@@ -8,10 +8,10 @@ import { Subtitle } from "~/components/PageTitle"
 export const Updated: Component<ExplData> = (props) => {
   return (
     <>
-      <Show when={props.diff}>
+      <Show when={props.diff && props.target}>
         <For each={Object.keys(props.diff!.after)}>
           {colName => <DetailDiff
-            tableName={props.target.tableName}
+            tableName={props.target!.tableName}
             colName={colName}
             diff={props.diff!}
           />}

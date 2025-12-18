@@ -5,7 +5,7 @@ import { PageTitle, RecordPageTitle } from "../../components/PageTitle"
 import { useSafeParams } from "~/client-only/util"
 import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { ShowRecord } from "~/views/ShowRecord"
-import { Show } from "solid-js"
+import { Match, Show, Switch } from "solid-js"
 import { Link } from "~/components/Link"
 
 export default function ShowRecordRoute() {
@@ -19,19 +19,8 @@ export default function ShowRecordRoute() {
   const titleText = () => (record()?.[titleColName()] ?? '') as string
 
   return (
-    <>
-      <Show when={sp().tableName !== 'critical_statement'}>
-        <main>
-          <Title>{titleText()}</Title>
-          <RecordPageTitle tableName={sp().tableName} text={titleText()} />
-          <ShowRecord
-            tableName={sp().tableName}
-            id={recordId()}
-            tabData={{ record: record()}}
-          />
-        </main>
-      </Show>
-      <Show when={sp().tableName === 'critical_statement'}>
+    <Switch>
+      <Match when={sp().tableName === 'critical_statement'}>
         <main>
           <Title>Critical statement redirect</Title>
           <PageTitle>Critical statement redirect</PageTitle>
@@ -49,7 +38,37 @@ export default function ShowRecordRoute() {
             />
           </div>
         </main>
-      </Show>
-    </>
+      </Match>
+      <Match when={sp().tableName === 'premise'}>
+        <main>
+          <Title>Premise redirect</Title>
+          <PageTitle>Premise redirect</PageTitle>
+          <div class="px-2">
+            <div class="pb-2">
+              Please open the argument page to see the premise.
+            </div>
+            <Link
+              type="button"
+              label="View the argument"
+              route="argument"
+              params={{
+                id: record()?.argument_id
+              }}
+            />
+          </div>
+        </main>
+      </Match>
+      <Match when>
+        <main>
+          <Title>{titleText()}</Title>
+          <RecordPageTitle tableName={sp().tableName} text={titleText()} />
+          <ShowRecord
+            tableName={sp().tableName}
+            id={recordId()}
+            tabData={{ record: record()}}
+          />
+        </main>
+      </Match>
+    </Switch>
   )
 }

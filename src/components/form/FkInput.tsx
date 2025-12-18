@@ -37,9 +37,10 @@ export const FkInput: Component<{
   const onSelectChange = props.onChangeFormat(format)
 
   const setExtTableIndexByValue = (value: string) => {
+    if (!props.setExtensionTableIndex) return
     const record = recordsById()[value]
     const extensionTableIndex = record[props.column.fk.extensionColumn!]
-    props.setExtensionTableIndex!(extensionTableIndex as number)
+    props.setExtensionTableIndex(extensionTableIndex as number)
   }
 
   const setValue = (value: string) => {
@@ -49,7 +50,7 @@ export const FkInput: Component<{
         name: props.colName
       }
     })
-    if (props.column.fk.extensionColumn && props.setExtensionTableIndex) {
+    if (props.column.fk.extensionColumn) {
       if (!newRecordValue()) {
         setExtTableIndexByValue(value)
       }

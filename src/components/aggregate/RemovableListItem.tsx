@@ -1,5 +1,5 @@
 import { action, json, useAction } from "@solidjs/router"
-import { Component, ComponentProps, createSignal, Show } from "solid-js"
+import { Component, ComponentProps, createSignal, JSXElement, Show } from "solid-js"
 import { DataRecordWithId } from "~/schema/type"
 import { Button } from "../buttons"
 import { Link } from "../Link"
@@ -29,11 +29,12 @@ export const RemovableListItem: Component<{
   recordId: number
   aggregateName: string
   itemTable: string
-  item: DataRecordWithId
-  text: string
+  itemId: number
+  itemLabel: string | JSXElement
   linkProps: ComponentProps<typeof Link>
   canDelete: boolean
   hideControls?: boolean
+  onDelete?: (itemId: number, userExpl: string) => void
 }> = (props) => {
   const [showDelete, setShowDelete] = createSignal(false)
   const [userExpl, setUserExpl] = createSignal('')
@@ -44,7 +45,7 @@ export const RemovableListItem: Component<{
     props.recordId,
     props.aggregateName,
     props.itemTable,
-    props.item.id,
+    props.itemId,
     userExpl()
   )
 
@@ -52,7 +53,7 @@ export const RemovableListItem: Component<{
     <>
       <Show when={showDelete()}>
         <NestPanel title="Remove">
-          {props.text}
+          {props.itemLabel}
           <div class="h-2" />
           <UserExplField value={userExpl()} onChange={setUserExpl} />
           <div class="flex gap-2">
@@ -62,15 +63,17 @@ export const RemovableListItem: Component<{
             />
             <Button
               label="Remove"
-              onClick={onDelete}
+              onClick={props.onDelete
+                ? () => props.onDelete!(props.itemId, userExpl())
+                : onDelete}
             />
           </div>
         </NestPanel>
       </Show>
       <Show when={!showDelete()}>
-        <div class="flex my-1">
+        <div class="flex mb-1">
           <Link
-            label={props.text}
+            label={props.itemLabel}
             class="flex-1"
             {...props.linkProps}
           />

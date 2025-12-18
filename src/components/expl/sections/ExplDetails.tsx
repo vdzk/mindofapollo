@@ -11,7 +11,9 @@ export const ExplDetails: Component<ExplData> = (props) => {
         <div class="mb-2">
           <div class="font-bold">Trigger</div>
           <div>{props.trigger!.label}{' '}
-            <HistoryLink explId={props.trigger!.explId} />
+            <Show when={props.trigger!.explId}>
+              <HistoryLink explId={props.trigger!.explId!} />
+            </Show>
           </div>
         </div>
       </Show>
@@ -43,16 +45,18 @@ export const ExplDetails: Component<ExplData> = (props) => {
         <div class="font-bold">Action</div>
         <div>{props.action}</div>
       </div>
-      <div class="mb-2">
-        <div class="font-bold">Target</div>
-        <div>
-          <Link
-            label={`${humanCase(props.target.tableName)} "${props.target.label}"`}
-            route="show-record"
-            params={{ tableName: props.target.tableName, id: props.target.id }}
-          />
+      <Show when={props.target}>
+        <div class="mb-2">
+          <div class="font-bold">Target</div>
+          <div>
+            <Link
+              label={`${humanCase(props.target!.tableName)} "${props.target!.label}"`}
+              route="show-record"
+              params={{ tableName: props.target!.tableName, id: props.target!.id }}
+            />
+          </div>
         </div>
-      </div>
+      </Show>
       <Show when={props.userExpl}>
         <div class="mb-2">
           <div class="font-bold">User Explanation</div>

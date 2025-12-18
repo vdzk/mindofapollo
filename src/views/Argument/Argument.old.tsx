@@ -2,16 +2,21 @@ import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
 import { Component, createSignal, Match, Show, Switch } from "solid-js"
 import { ArgumentDetails } from "./ArgumentDetails"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
+import { ArgumentJudgement } from "./ArgumentJudgement"
+import { H2, Subtitle } from "~/components/PageTitle"
+import { Aggregate } from "~/components/aggregate/Aggregate"
 import { StatementType } from "~/tables/statement/statement_type"
+import { CriticalQuestions } from "./CriticalQuestions"
+import { JudgeExamples } from "./JudgementExamples"
 import { Form } from "~/components/form/Form"
 import { getOneRecordByChildId } from "~/api/getOne/recordByChildId"
+import { Button } from "~/components/buttons"
+import { getToggleLabel } from "~/utils/string"
+import { ConfidenceCriteria } from "./ConfidenceCriteria"
 import { MasterDetail } from "~/components/MasterDetail"
 import { RecordHistory } from "~/components/RecordHistory"
 import { DeleteRecord } from "~/components/form/DeleteRecord"
 import { ArgumentTypeSelector } from "../Statement/ArgumentTypeSelector"
-import { Premises } from "./Premises"
-import { HowTo } from "./HowTo"
-import { Aggregate } from "~/components/aggregate/Aggregate"
 
 export const Argument: Component<{ id: number }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id, true))
@@ -49,7 +54,6 @@ export const Argument: Component<{ id: number }> = props => {
             id={props.id}
             record={record()}
             statement={statement()}
-            statementType={statementType()}
           />
           <MasterDetail
             horizontal
@@ -93,27 +97,72 @@ export const Argument: Component<{ id: number }> = props => {
             (!searchParams.tab || searchParams.tab === 'analysis')
             && argumentTypeId()
           }>
-            <div class="flex-3 border-l">
-              <Show when={statementType() === 'prescriptive'}>
-                <div class="h-full flex flex-col">
-                  <Premises id={props.id} />
-                  <div class="flex-1 border-t pt-2">
-                    <Aggregate
-                      tableName="argument"
-                      id={props.id}
-                      aggregateName="directive_consequences"
-                    />
-                  </div>
+            <CriticalQuestions
+              argumentTypeId={argumentTypeId()!}
+              argumentId={props.id}
+            />
+            <div class="border-l flex-3 min-w-0">
+              <div class="flex justify-between border-b">
+                <Subtitle>Judgement</Subtitle>
+                <Button
+                  label={getToggleLabel(showHowToJudge(), 'instructions')}
+                  onClick={() => setShowHowToJudge(x => !x)}
+                  class="self-center mx-2"
+                />
+              </div>
+              <Show when={showHowToJudge()}>
+                <H2>Perspective</H2>
+                <div class="px-2">
+                  The strength of the argument has to be judged from the perspective of Apollo, not your own. This means that the judgement has to be made based on Apollo's confidences in the critical statements listed in the previous column, not your confidences. It also has to be made in accordance with the scoring criteria listed below. This has to be done regardless of what you personally think about the strength of this argument. Otherwise, someone else will point out the discrepancy and correct your score. The confidences in the critical statements (including premises) of this argument and the correctness of the scoring criteria should be disputed in other places in this platform rather than here.
                 </div>
               </Show>
-              <Show when={statementType() !== 'prescriptive'}>
-                <Premises id={props.id} />
+              <Show when={
+                showHowToJudge()
+                && statementType() === 'descriptive'
+              }>
+                <H2>Confidence crieria</H2>
+                <div class="p-2 pt-0 border-b">
+                  0% = this argument doesn't change confidence in the claim
+                  <br />
+                  100% = this argument gives me absolute confidence in the claim
+                </div>
+                <ConfidenceCriteria argumentTypeId={argumentTypeId()!} />
+                <JudgeExamples argumentTypeId={argumentTypeId()!} />
+              </Show>
+              <Show when={
+                showHowToJudge()
+                && statementType() !== 'descriptive'
+              }>
+                <div class="p-2">
+                  There are no instructions for this type of argument yet.
+                </div>
+              </Show>
+              <Show when={
+                !showHowToJudge()
+                && statementType() === 'prescriptive'
+              }>
+                <div class="h-2" />
+                <Aggregate
+                  tableName="argument"
+                  id={props.id}
+                  aggregateName="directive_consequences"
+                />
+              </Show>
+              <Show when={
+                !showHowToJudge() && statementType()
+                && (statementType() !== 'prescriptive')
+              }>
+                <ArgumentJudgement
+                  argumentId={props.id}
+                  argumentTypeId={argumentTypeId()!}
+                  statementType={
+                    statementType() as Exclude<
+                      StatementType, 'prescriptive'
+                    >
+                  }
+                />
               </Show>
             </div>
-            <HowTo
-              id={props.id}
-              statementType={statementType()}
-            />
           </Match>
         </Switch>
       </section >

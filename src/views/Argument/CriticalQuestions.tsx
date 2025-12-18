@@ -56,19 +56,19 @@ export const CriticalQuestions: Component<{
             />
           </div>
           <div class="h-3" />
-            <Aggregate
-              tableName="argument"
-              id={props.argumentId}
-              aggregateName="critical_statements"
-            />
-            <Button
-              label="Add"
-              onClick={() => {
-                setLoadQuestions(true)
-                setView('select')
-              }}
-              class="ml-2"
-            />
+          <Aggregate
+            tableName="argument"
+            id={props.argumentId}
+            aggregateName="critical_statements"
+          />
+          <Button
+            label="Add"
+            onClick={() => {
+              setLoadQuestions(true)
+              setView('select')
+            }}
+            class="ml-2"
+          />
         </Match>
         <Match when={view() === 'instructions'}>
           <div class="flex justify-between border-b">

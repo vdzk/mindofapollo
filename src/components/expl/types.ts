@@ -20,10 +20,10 @@ export type FkEntries = Record<string, {
 }>
 
 export interface ExplData {
-  trigger?: { explId: number, label: string }
+  trigger?: { explId: number | null, label: string }
   actor: UserActor | SystemActor
   action: string
-  target: { tableName: string, id: number, label: string }
+  target?: { tableName: string, id: number, label: string }
   userExpl?: string,
   customSections?: Record<string, {label: string, component: Component<any>}>,
   checks?: (string | JSXElement)[]

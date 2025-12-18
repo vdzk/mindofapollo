@@ -47,7 +47,8 @@ export const createTable = (tableName: string) => {
       }
       colDefs.push(
         colName + ' ' + pgType
-        + (column.getVisibility ? '' : ' NOT NULL')
+        + (column.getVisibility || (column.defaultValue === null)
+            ? '' : ' NOT NULL')
         + (column.unique ? ' UNIQUE' : '')
         + (defaultValue !== undefined ? ' DEFAULT ' + defaultValue : '')
       )

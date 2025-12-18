@@ -30,6 +30,11 @@ export const argument: TableSchema = {
       preview: true,
       lines: 2
     },
+    strength: {
+      type: 'proportion',
+      readOnly: true,
+      defaultValue: null
+    },
     chat_text,
     argument_type_id: {
       type: 'fk',
@@ -47,6 +52,12 @@ export const argument: TableSchema = {
       type: 'n-n',
       table: 'definition',
       first: true
+    },
+    premises: {
+      type: '1-n',
+      table: 'premise',
+      column: 'argument_id',
+      linkType: 'block'
     },
     critical_statements: {
       type: '1-n',

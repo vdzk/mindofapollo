@@ -17,11 +17,6 @@ export default function ThingsToDoAndOther() {
           href="/about.html"
           class="block"
         />
-        <ExternalLink
-          label="▶️ Quick Start Guide for Editors (9 min)"
-          href="https://www.youtube.com/watch?v=OEx4yj1nsPk"
-          class="block"
-        />
       </div>
       <Subtitle>Things to do</Subtitle>
       <div class="px-2">

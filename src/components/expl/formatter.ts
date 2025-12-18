@@ -13,6 +13,7 @@ import { humanCase } from "~/utils/string"
 import { explDeleteById } from "~/api/delete/byId"
 import { explDeleteByIds } from "~/api/delete/byIds"
 import { explInsertCrossRecords } from "~/server-only/insertCrossRecords"
+import { explCascadeUpdateScores } from "~/server-only/cascadeUpdateScores"
 
 export const formatters: Record<string, ((data: any) => ExplData) | undefined > = {
   explDeleteById,
@@ -26,7 +27,8 @@ export const formatters: Record<string, ((data: any) => ExplData) | undefined > 
   explUpdateExtRecord,
   explUpdateRecord,
   explAttemptAggregateArguments,
-  explAttemptJudgeStatement
+  explAttemptJudgeStatement,
+  explCascadeUpdateScores
 }
 
 export const fallbackFormatter = (explRecord: ExplRecord<any>): ExplData => {

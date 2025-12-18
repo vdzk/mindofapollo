@@ -1,6 +1,7 @@
 import { TableSchema, TextColumn, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
 import { directive } from "../morality/directive"
+import { prescriptiveStatementTypeId } from "./statement_type"
 
 // Indexes corresponts to IDs in statement_type table
 const statementExtensonTables = ['', '', '', 'directive']
@@ -55,7 +56,7 @@ export const statement: TableSchema = {
       lines: 4,
       getVisibility: record => record.statement_type_id !== statementExtensonTables.indexOf('directive'),
       defaultValue: '',
-      instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not capialise the first word. Do not use a full stop at the end.",
+      instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not use a full stop at the end.",
     },
     chat_text,
     statement_type_name: {
@@ -79,7 +80,8 @@ export const statement: TableSchema = {
       canEditCondition: {
         colName: 'has_judged_argument',
         value: false
-      }
+      },
+      getVisibility: (record) => record.statement_type_id !== prescriptiveStatementTypeId
     },
     has_judged_argument: {
       label: 'has a judged argument',

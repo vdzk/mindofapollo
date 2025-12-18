@@ -2,9 +2,10 @@ import { DataRecordWithId } from "~/schema/type"
 import { getSession } from "./session"
 import { hasOwner, isSystem } from "~/permissions"
 import { onError, sql } from "./db"
-import { getRootTableName, hasOwnFields } from "~/utils/schema"
+import { canDeleteIfCanEditParent, getRootTableName, hasOwnFields } from "~/utils/schema"
 import { recentPeriodHours } from "~/constant"
 import { schema } from "~/schema/schema"
+import { _getRecordById } from "./select"
 
 const filterPersonalIds = async (
   userId: number, tableName: string, ids: number[]
@@ -77,7 +78,20 @@ const filterCanDeleteIds = async (tableName: string, ids: number[]) => {
     } else if (hasOwner(tableName)) {
       return await filterPersonalIds(userId, tableName, ids)
     } else {
-      return await filterIdsRecentlyCreatedByUser(userId, tableName, ids)
+      let canDeleteIds = await filterIdsRecentlyCreatedByUser(userId, tableName, ids)
+      if (canDeleteIds.length < ids.length) {
+        const parent = canDeleteIfCanEditParent(tableName)
+        if (parent) {
+          // TODO: don't assume that all parents are the same
+          const firstRecord = await _getRecordById(tableName, ids[0], [parent.fkColName])
+          const parentId = firstRecord[parent.fkColName]
+          const canEditParent = (await filterCanUpdateIds(parent.fkTableName, [parentId as number])).length > 0
+          if (canEditParent) {
+            return ids
+          }
+        }
+      }
+      return canDeleteIds
     }
   } else {
     return []

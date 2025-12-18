@@ -8,7 +8,7 @@ export interface RootStatement {
   featured: boolean;
 }
 
-export const hierarchyTableNames = ['statement', 'argument', 'critical_statement', 'argument_judgement'] as const
+export const hierarchyTableNames = ['statement', 'argument', 'critical_statement', 'argument_judgement', 'premise'] as const
 
 export type HierarchyTableName = typeof hierarchyTableNames[number];
 
@@ -23,26 +23,26 @@ export const getRootStatements = async (
         CASE
           WHEN $1 = 'statement' THEN s.id
           WHEN $1 = 'argument' THEN a.statement_id
-          WHEN $1 = 'critical_statement' THEN cs.statement_id
+          WHEN $1 = 'premise' THEN p.statement_id
         END AS statement_id,
         ARRAY[]::integer[] AS path
       FROM statement s
       LEFT JOIN argument a ON $1 = 'argument' AND a.id = $2
-      LEFT JOIN critical_statement cs ON $1 = 'critical_statement' AND cs.id = $2
+      LEFT JOIN premise p ON $1 = 'premise' AND p.id = $2
       WHERE 
         ($1 = 'statement' AND s.id = $2) OR
         ($1 = 'argument' AND a.id = $2) OR
-        ($1 = 'critical_statement' AND cs.id = $2)
+        ($1 = 'premise' AND p.id = $2)
       
       UNION ALL
       
-      -- Single path up: statement -> critical_statement -> argument -> statement -> ...
+      -- Single path up: statement -> premise -> argument -> statement -> ...
       SELECT 
         arg.statement_id,  -- This is the parent statement we're traversing to
         h.path || h.statement_id  -- Appends id here
       FROM hierarchy h
-      JOIN critical_statement cs ON h.statement_id = cs.statement_id  -- Current statement is referenced in critical_statement
-      JOIN argument arg ON cs.argument_id = arg.id  -- Get argument that contains the critical_statement
+      JOIN premise p ON h.statement_id = p.statement_id  -- Current statement is referenced in premise
+      JOIN argument arg ON p.argument_id = arg.id  -- Get argument that contains the premise
       WHERE NOT (arg.statement_id = ANY(h.path || h.statement_id))  -- Avoid circular references
     )
     

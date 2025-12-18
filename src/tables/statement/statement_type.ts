@@ -6,6 +6,9 @@ const statementTypes = [
   'prescriptive'
 ] as const
 
+export const descriptiveStatementTypeId = statementTypes.indexOf('descriptive') + 1
+export const prescriptiveStatementTypeId = statementTypes.indexOf('prescriptive') + 1
+
 export type StatementType = typeof statementTypes[number];
 
 export const statement_type: TableSchema = {

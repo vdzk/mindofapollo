@@ -8,6 +8,7 @@ import { argument_certainty_criterion } from './argument_certainty_criterion'
 import { argument_grading_example } from './argument_grading_example'
 import { argument_type_example } from './argument_type_example'
 import { critical_statement_example } from './critical_statement_example'
+import { premise } from './premise'
 
 export const argumentTables = {
   argument,
@@ -19,5 +20,6 @@ export const argumentTables = {
   argument_certainty_criterion,
   argument_grading_example,
   argument_type_example,
-  critical_statement_example
+  critical_statement_example,
+  premise
 }

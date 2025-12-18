@@ -95,6 +95,7 @@ export interface ForeignKey extends SharedColumnProps {
     getLabel?: (record: DataRecord) => string // Generate label from the foreign record,
     defaultName?: string // the FK value should be set to id corresponding to this name by default
     optional?: boolean  // Foreign key can be NULL
+    canDeleteIfCanEditParent?: boolean
   }
 }
 

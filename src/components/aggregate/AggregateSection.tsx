@@ -124,8 +124,8 @@ export const AggregateSection: Component<{
               recordId={props.id}
               aggregateName={props.aggregateName}
               itemTable={props.aggregate.table}
-              item={record}
-              text={getItemText(record)}
+              itemId={record.id}
+              itemLabel={getItemText(record)}
               linkProps={getLinkProps(record)}
               hideControls={!!props.section.controls}
               canDelete={record.canDelete as boolean}

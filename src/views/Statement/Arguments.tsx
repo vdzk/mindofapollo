@@ -24,7 +24,7 @@ export const Arguments: Component<{
 }> = props => {
   const argsData = createAsync(async () => listArgumentsCache(props.id))
   const parentArguments = createAsync(async () => listForeignCrossRecordsCache(
-    'critical_statement',
+    'premise',
     'statement_id',
     'argument_id',
     props.id
@@ -44,9 +44,8 @@ export const Arguments: Component<{
     for (const arg of args()) {
       const i = Number(arg.pro) // side index
       if (sideUnknown[i]) continue
-      const strength = arg.conditional_confidence ?? arg.isolated_confidence
-      if (typeof strength === 'number') {
-        sideStrengths[i].push(strength)
+      if (typeof arg.strength === 'number') {
+        sideStrengths[i].push(arg.strength)
       } else {
         sideUnknown[i] = true
       }
@@ -59,14 +58,18 @@ export const Arguments: Component<{
 
   const getStrengthStr = (argument: DataRecordWithId) => {
     if (isThreshold()) {
-      return [
-        argument.weight_lower_limit,
-        argument.weight_mode,
-        argument.weight_upper_limit
-      ].map(x => String(x).padStart(2)).join('/')
+      if (argument.weight_mode === null) {
+        return '?'
+      } else {
+        return [
+          argument.weight_lower_limit,
+          argument.weight_mode,
+          argument.weight_upper_limit
+        ].map(x => String(x).padStart(2)).join('/')
+      }
     } else {
       return getPercent((
-        argument.conditional_confidence ?? argument.isolated_confidence
+        argument.strength
       ) as number | undefined)
     }
   }

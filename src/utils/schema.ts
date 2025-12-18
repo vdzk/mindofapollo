@@ -70,6 +70,16 @@ export const hasOwnFields = (tableName: string) => Object.values(
   schema.tables[tableName].columns
 ).some(column => !['fk', 'virtual'].includes(column.type))
 
+export const canDeleteIfCanEditParent = (tableName: string) => {
+  const { columns } = schema.tables[tableName]
+  for (const colName in columns) {
+    const column = columns[colName]
+    if (column.type === 'fk' && column.fk.canDeleteIfCanEditParent ) {
+      return { fkColName: colName, fkTableName: column.fk.table }
+    }
+  }
+}
+
 export const getVirtualColNames = (tableName: string, colNames?: string[]) => {
   const all = []
   const queries = []

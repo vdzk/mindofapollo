@@ -1,4 +1,4 @@
-import { TableSchema } from "../../schema/type";
+import { TableSchema } from "../../schema/type"
 
 export const critical_question: TableSchema = {
   plural: 'critical questions',

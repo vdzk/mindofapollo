@@ -18,7 +18,8 @@ export const listArguments = async (statementId: number) => {
     `.catch(onError)
   } else {
     _arguments = await sql<DataRecordWithId[]>`
-      SELECT a.id, pro, isolated_confidence, conditional_confidence,
+      SELECT a.id, pro, strength,
+            isolated_confidence, conditional_confidence,
             COALESCE(cs_count.count, 0)::integer as critical_statements_count
       FROM argument a
       LEFT JOIN argument_judgement aj ON aj.id = a.id
