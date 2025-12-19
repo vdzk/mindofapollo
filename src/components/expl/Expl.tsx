@@ -10,7 +10,9 @@ import { Dynamic } from "solid-js/web"
 import { sections } from "./sections/sections"
 import { useSearchParams } from "@solidjs/router"
 
-export const getActionStr = (expl: ExplData) => `${expl.action} the ${humanCase(expl.target.tableName)} "${expl.target.label}"`
+export const getActionStr = (expl: ExplData) => expl.target
+  ? `${expl.action} the ${humanCase(expl.target.tableName)} "${expl.target.label}"`
+  : expl.action
 
 export const getActorStr = (expl: ExplData) => {
   if (expl.actor.type === 'user') {

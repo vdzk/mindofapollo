@@ -88,7 +88,19 @@ export const Form: Component<{
 
   const hasAdvancedFields = () => {
     const tableSchema = table()
-    return tableSchema.advanced ? tableSchema.advanced.length > 0 : false
+    const { advanced, columns } = tableSchema
+    if (!advanced) return false
+    for (const colName of advanced) {
+      const column = columns[colName]
+      if (column.getVisibility) {
+        if (props.record && column.getVisibility(props.record)) {
+          return true
+        }
+      } else {
+        return true
+      }
+    }
+    return false
   }
   const currentRecord = () => ({ ...props.record, ...diff })
   const extTableSelectorColName = createMemo(() => getExtTableSelectorColName(props.tableName))

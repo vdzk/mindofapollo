@@ -8,6 +8,7 @@ export const listRecentActivity = async () => {
     SELECT *
     FROM expl 
     WHERE table_name NOT IN ${sql(personalTableNames())}
+      OR table_name IS NULL
     ORDER BY id DESC
     LIMIT 100
   `.catch(onError)

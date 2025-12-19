@@ -1,4 +1,4 @@
-import { For, Match, Show, Switch } from "solid-js"
+import { createEffect, For, Match, Show, Switch } from "solid-js"
 import { Link } from "~/components/Link"
 import { getActionStr, getActorStr, getExplData } from "~/components/expl/Expl"
 import { ExplRecord } from "~/server-only/expl"
@@ -63,7 +63,7 @@ export function ActivityList(props: {
   activity: ExplRecordWithOptionalIsNew<any>[] | undefined
   goToRecord?: boolean
 }) {
-  const groupedActivity = () => groupActivity(props.activity || []);
+  const groupedActivity = () => groupActivity(props.activity || [])
 
   return (
     <div class="px-2">

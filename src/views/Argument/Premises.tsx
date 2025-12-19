@@ -1,7 +1,7 @@
 import { createAsync, revalidate } from "@solidjs/router"
 import { Component, createSignal, For, Show } from "solid-js"
 import { deleteById } from "~/api/delete/byId"
-import { listForeignRecordsCache } from "~/client-only/query"
+import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
 import { RemovableListItem } from "~/components/aggregate/RemovableListItem"
 import { Button, importantButtonStyle } from "~/components/buttons"
 import { Form } from "~/components/form/Form"
@@ -14,7 +14,10 @@ export const Premises: Component<{ id: number }> = props => {
   ))
 
   const [showForm, setShowForm] = createSignal(false)
-  const revalidatePremises = () => revalidate(listForeignRecordsCache.keyFor('premise', 'argument_id', props.id, true))
+  const revalidatePremises = () => {
+    revalidate(listForeignRecordsCache.keyFor('premise', 'argument_id', props.id, true))
+    revalidate(getOneExtRecordByIdCache.keyFor('argument', props.id, true))
+  }
   const onFormExit = (savedId?: number) => {
     if (savedId) {
       revalidatePremises()

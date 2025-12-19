@@ -10,6 +10,7 @@ import { Link } from "~/components/Link"
 import { HistoryLink } from "~/components/expl/HistoryLink"
 import { tableStyle } from "~/components/table"
 import { injectTranslations } from "./injectTranslations"
+import { getPercent } from "~/utils/string"
 
 // TODO: get and update the whole hierarchy in one go for improved performance?
 // TODO: debounce cascades?
@@ -92,7 +93,7 @@ const cascadeUpdateScoresRec = async (argumentId: number, explId: number) => {
     WHERE statement.id = ${originalArgument.statement_id}
   `.catch(onError)
   if (conclusionRecords.length === 0) return
-  await injectTranslations('statement', conclusionRecords, ['title'])
+  await injectTranslations('statement', conclusionRecords, ['text'])
   const originalConclusion = conclusionRecords[0]
 
   const _arguments = await sql`
@@ -175,8 +176,7 @@ export const explCascadeUpdateScores = (data: ExplCascadeUpdateScoresData): Expl
 
 const ScoreChanges: Component<ExplCascadeUpdateScoresData> = data => {
   return (
-    <main>
-      <Subtitle>Score changes</Subtitle>
+    <main class="px-2">
       <table>
         <thead class={tableStyle.tHeadTr}>
           <tr>
@@ -203,13 +203,13 @@ const ScoreChanges: Component<ExplCascadeUpdateScoresData> = data => {
                   />
                 </td>
                 <td class={tableStyle.td}>
-                  {scoreChange.oldValue}
+                  {getPercent(scoreChange.oldValue ?? undefined)}
                   <Show when={scoreChange.oldExplId}>
                     {' '}
                     <HistoryLink explId={scoreChange.oldExplId!} /> 
                   </Show>
                   {' → '}
-                  {scoreChange.newValue}
+                  {getPercent(scoreChange.newValue ?? undefined)}
                 </td>
               </tr>
             )}

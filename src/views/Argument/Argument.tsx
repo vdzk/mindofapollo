@@ -113,6 +113,7 @@ export const Argument: Component<{ id: number }> = props => {
             <HowTo
               id={props.id}
               statementType={statementType()}
+              record={record()}
             />
           </Match>
         </Switch>
