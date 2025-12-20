@@ -78,11 +78,11 @@ export const HowTo: Component<{
             <div class="h-1" />
             2) Are the confidences in premises that the platform specifies too high? If so, open those premises and try adding arguments against them or attacking the arguments in their favour.
             <div class="h-1" />
-            3) Does the argument use any ambiguous or vague terms that might change its meaning? If so, please edit the text of the argument and / or add definitions to remove the ambiuity.
+            3) Does the argument use any ambiguous or vague terms that might change its meaning? If so, please edit the text of the argument and / or add definitions to remove the ambiguity.
             <div class="h-1" />
             4) Does the argument address the right statement? If it's not, please either change the text of the argument so that it does. Alternatively, recreate this argument under the appropriate statement.
             <div class="h-1" />
-            5) Does the text of the argument actualy contain multiple arguments? If so, please sparate the different arguments by creating new arguments and splitting the text between them.
+            5) Does the text of the argument actually contain multiple arguments? If so, please separate the different arguments by creating new arguments and splitting the text between them.
             <div class="h-1" />
             <Show when={props.record?.argument_type_id === defaultArgumentTypeId}>
             6) What type of argument is this? Please click on the "Type" tab in the first column to specify the type. Once this is done, critical questions that are specific to this type of argument will be added to this list.
@@ -113,7 +113,7 @@ export const HowTo: Component<{
             <div class="h-1" />
             1) Increase the platform's confidence in the premises of this argument. You can do that by opening a premise and adding argumens in its favour or attacking arguments against the premise.
             <div class="h-1" />
-            2) If the argument doen't actually rely on one of the premises that are listed, then your should remove that premise and explain why.
+            2) If the argument doesn't actually rely on one of the premises that are listed, then your should remove that premise and explain why.
             <div class="h-1" />
             3) Examine the weak sides of this argument by reading the instructions on how to attack it. Edit the text of the argument to create a stronger version that would stand better against the attacks.
           </Instructions>
@@ -126,19 +126,19 @@ export const HowTo: Component<{
                 <div class="h-2" />
                 If you disagree with the score please think of the reason the score is wrong.
                 <div class="h-1" />
-                1) If you think that the certainties in one or more of the premises are wrong, please open that premise to see why the certainity was calculated that way and what you can do about it.
+                1) If you think that the certainties in one or more of the premises are wrong, please open that premise to see why the certainty was calculated that way and what you can do about it.
                 <div class="h-1" />
                 2) If you think that some of the premises are missing please add them to the list and score their certainties as you see fit.
                 <div class="h-1" />
                 3) If you think that the argument doesn't actually rely on one of the premises that are listed, please remove it and explain your reason for doing so. If you don't have permission to do that, please ask in our Discord server for someone who does.
                 <div class="h-1" />
-                4) If you think that the method of multiplying certeinties of premises together to get the strength of the argument results in the incorrect score in for this argument please raise this issue in our Discord server.
+                4) If you think that the method of multiplying certainties of premises together to get the strength of the argument results in the incorrect score in for this argument please raise this issue in our Discord server.
               </Instructions>
             </Match>
             <Match when={props.statementType === 'threshold'}>
               <Show when={props.record?.canUpdate}>
                 <Instructions {...{setSelectedAction}} collapsible>
-                  The claim of this argument is about whether the positive factors will outweight the negative factors. This argument describes one or more of such factors. Please score the weight of this factor by specifying a range of weights and the most likely weight. If premises specify information about the weights, the weight should reflect that nformation. All arguments have to use the same unit of weight. The unit might have a well established meaning or an improvised one. The important thing is that the ratio of the weights between the differnt argments reflect their relative influence on the claim.
+                  The claim of this argument is about whether the positive factors will outweigh the negative factors. This argument describes one or more of such factors. Please score the weight of this factor by specifying a range of weights and the most likely weight. If premises specify information about the weights, the weight should reflect that nformation. All arguments have to use the same unit of weight. The unit might have a well established meaning or an improvised one. The important thing is that the ratio of the weights between the different arguments reflect their relative influence on the claim.
                 </Instructions>
                 <div class="h-2" />
                 <Form
