@@ -111,7 +111,9 @@ export const HowTo: Component<{
           <Instructions {...{setSelectedAction}}>
             You can defend the argument in several ways.
             <div class="h-1" />
-            1) Increase the platform's confidence in the premises of this argument. You can do that by opening a premise and adding argumens in its favour or attacking arguments against the premise.
+            1) Increase the platform's confidence in the premises of this argument. You can do that by opening a premise and adding arguments in its favour or attacking arguments against the premise.
+            <div class="h-1" />
+            Please note that you don't have to justify things all the way down, just far enough that others would agree, or if they disagree it's their responsibility to break it down further.
             <div class="h-1" />
             2) If the argument doesn't actually rely on one of the premises that are listed, then your should remove that premise and explain why.
             <div class="h-1" />
@@ -138,7 +140,7 @@ export const HowTo: Component<{
             <Match when={props.statementType === 'threshold'}>
               <Show when={props.record?.canUpdate}>
                 <Instructions {...{setSelectedAction}} collapsible>
-                  The claim of this argument is about whether the positive factors will outweigh the negative factors. This argument describes one or more of such factors. Please score the weight of this factor by specifying a range of weights and the most likely weight. If premises specify information about the weights, the weight should reflect that nformation. All arguments have to use the same unit of weight. The unit might have a well established meaning or an improvised one. The important thing is that the ratio of the weights between the different arguments reflect their relative influence on the claim.
+                  The claim of this argument is about whether the positive factors will outweigh the negative factors. This argument describes one or more of such factors. Please score the weight of this factor by specifying a range of weights and the most likely weight. If premises specify information about the weights, the weight should reflect that information. All arguments have to use the same unit of weight. The unit might have a well established meaning or an improvised one. The important thing is that the ratio of the weights between the different arguments reflect their relative influence on the claim.
                 </Instructions>
                 <div class="h-2" />
                 <Form
