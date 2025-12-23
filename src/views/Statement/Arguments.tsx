@@ -125,6 +125,11 @@ export const Arguments: Component<{
                   params={{ id: argument.id }}
                   class="min-w-10 mb-1"
                   type="block"
+                  relation={{
+                    type: 'argument',
+                    positive: pro,
+                    forward: true
+                  }}
                   label={
                     <Switch>
                       <Match when={isPrescriptive()}>
@@ -195,6 +200,11 @@ export const Arguments: Component<{
                         params={{ id: parentArgument.id }}
                         type="block"
                         class="mb-1"
+                        relation={{
+                          type: 'premise',
+                          positive: !!parentArgument.invert,
+                          forward: false
+                        }}
                         label={parentArgument.title}
                       />
                     </td>

@@ -1,8 +1,9 @@
-import { Component, JSXElement } from "solid-js"
+import { Component, JSXElement, useContext } from "solid-js"
 import { DataLiteral } from "~/schema/type"
 import { btnStyle } from "./buttons"
 import { buildUrl } from "~/utils/schema"
 import { LinkType } from "~/types"
+import { Embedded } from "~/views/TreeNavigator/Panel"
 
 export const linkStyles = {
   default: 'hover:underline',
@@ -14,6 +15,12 @@ export const linkStyles = {
   heroButton: btnStyle() + ' ' + 'text-2xl px-3 py-1'
 }
 
+export interface Relation {
+  type: 'argument' | 'premise',
+  positive: boolean // false if con argument or inverted statement
+  forward: boolean // false if the link goes to source rather than to target
+}
+
 export const Link: Component<{
   params?: Record<string, any>
   label?: DataLiteral | JSXElement
@@ -21,14 +28,33 @@ export const Link: Component<{
   type?: LinkType,
   tooltip?: string
   class?: string
+  relation?: Relation
 }> = props => {
+  const embedded = useContext(Embedded)
 
   const href = () => buildUrl(props)
   
   let className = linkStyles[props.type ?? 'default']
   if (props.class) className += ' ' + props.class
   
-  return <a href={href()} title={props.tooltip} class={className}>{props.label}</a>
+  return (
+    <a
+      href={href()}
+      title={props.tooltip}
+      class={className}
+      onClick={event => {
+        if (embedded) {
+          const done = embedded.onLinkClick(props)
+          if (done) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+        }
+      }}
+    >
+      {props.label}
+    </a>
+  )
 }
 
 export const ExternalLink: Component<{

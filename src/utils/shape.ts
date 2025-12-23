@@ -18,3 +18,24 @@ export const pick = <T extends Record<string, any>, K extends keyof T>(
   if (key in obj) acc[key] = obj[key]
   return acc
 }, {} as Pick<T, K>)
+
+export const getByPath = <T = unknown>(
+  obj: unknown,
+  path: readonly string[]
+): T | undefined => {
+  let current: unknown = obj
+
+  for (const key of path) {
+    if (
+      typeof current !== 'object' ||
+      current === null ||
+      !(key in current)
+    ) {
+      return undefined
+    }
+
+    current = (current as Record<string, unknown>)[key]
+  }
+
+  return current as T
+}

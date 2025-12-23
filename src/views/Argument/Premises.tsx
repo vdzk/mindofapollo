@@ -80,7 +80,12 @@ export const Premises: Component<{ id: number }> = props => {
                   params: {
                     id: premise.statement_id
                   },
-                  type: 'block'
+                  type: 'block',
+                  relation: {
+                    type: 'premise',
+                    positive: !premise.invert,
+                    forward: true
+                  }
                 }}
                 canDelete={premise.canDelete as boolean}
                 onDelete={onDelete}

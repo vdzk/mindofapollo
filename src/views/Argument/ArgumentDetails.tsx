@@ -53,6 +53,11 @@ export const ArgumentDetails: Component<{
           params={{ id: props.statement?.id }}
           label={props.statement?.text || props.statement?.label}
           type="block"
+          relation={{
+            type: 'argument',
+            positive: !!props.record?.pro,
+            forward: false
+          }}
         />
       </div>
       <div class="font-bold px-2">

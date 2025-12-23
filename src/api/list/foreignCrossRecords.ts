@@ -13,7 +13,7 @@ export const listForeignCrossRecords = async (
   "use server"
   const targetTableName = (schema.tables[crossTableName].columns[targetFkName] as ForeignKey).fk!.table
   const records = await sql<DataRecordWithId[]>`
-    SELECT t.*
+    SELECT c.*, t.*
     FROM ${sql(crossTableName)} c
     JOIN ${sql(targetTableName)} t
       ON t.id = c.${sql(targetFkName)}

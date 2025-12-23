@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import { Component, JSXElement } from "solid-js";
 
 export const btnStyle = (params?: { disabled?: boolean, leading?: number }) => `
   ${!params?.disabled ? 'cursor-pointer' : ''} 
@@ -21,7 +21,7 @@ export const btnStyle = (params?: { disabled?: boolean, leading?: number }) => `
 export const importantButtonStyle = 'text-xl py-1 px-2'
 
 export const Button: Component<{
-  label: string
+  label: string | JSXElement
   onClick: () => void
   tooltip?: string
   disabled?: boolean

@@ -3,8 +3,8 @@ import { getPercent } from "~/utils/string"
 import { directive } from "../morality/directive"
 import { prescriptiveStatementTypeId } from "./statement_type"
 
-// Indexes corresponts to IDs in statement_type table
-const statementExtensonTables = ['', '', '', 'directive']
+// Indexes corresponds to IDs in statement_type table
+const statementExtensionTables = ['', '', '', 'directive']
 
 export const chat_text: TextColumn = {
   type: 'text',
@@ -23,7 +23,7 @@ export const statement: TableSchema = {
         table: 'statement_type',
         labelColumn: 'name',
         defaultName: 'descriptive',
-        extensionTables: statementExtensonTables
+        extensionTables: statementExtensionTables
       }
     },
     label: {
@@ -54,9 +54,9 @@ export const statement: TableSchema = {
     text: {
       type: 'text',
       lines: 4,
-      getVisibility: record => record.statement_type_id !== statementExtensonTables.indexOf('directive'),
+      getVisibility: record => record.statement_type_id !== statementExtensionTables.indexOf('directive'),
       defaultValue: '',
-      instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not use a full stop at the end.",
+      instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\").",
     },
     chat_text,
     statement_type_name: {
