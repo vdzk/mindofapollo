@@ -1,5 +1,5 @@
 import { createAsync } from "@solidjs/router"
-import { Component, createMemo, For, Match, Show, Switch } from "solid-js"
+import { Component, createEffect, createMemo, For, Match, Show, Switch, useContext } from "solid-js"
 import { listArgumentsCache, listForeignCrossRecordsCache } from "~/client-only/query"
 import { Link } from "~/components/Link"
 import { calcProbSuccess } from "~/calc/statementConfidence"
@@ -10,6 +10,7 @@ import { tableStyle } from "~/components/table"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { whoCanInsertRecord } from "~/api/insert/record"
 import { Button, importantButtonStyle } from "~/components/buttons"
+import { PathTracker } from "~/components/UpDown"
 
 export const Arguments: Component<{
   id: number,
@@ -29,6 +30,20 @@ export const Arguments: Component<{
     'argument_id',
     props.id
   ))
+
+  const pathTracker = useContext(PathTracker)
+  createEffect(() => {
+    let parentLink
+    const _parentArguments = parentArguments()
+    if (_parentArguments && _parentArguments.length > 0) {
+      parentLink = {
+        route: 'argument',
+        // TODO: if there are multiple parents, the up button should indicate this?
+        id: _parentArguments[0].id
+      }
+    }
+    pathTracker?.setParentLink(parentLink)
+  })
 
   const args = () => argsData()?.arguments ?? []
   const isThreshold = () => argsData()?.statement_type_name === 'threshold'
@@ -125,6 +140,7 @@ export const Arguments: Component<{
                   params={{ id: argument.id }}
                   class="min-w-10 mb-1"
                   type="block"
+                  up={false}
                   label={
                     <Switch>
                       <Match when={isPrescriptive()}>
@@ -183,6 +199,7 @@ export const Arguments: Component<{
                         params={{ id: parentArgument.statement_id }}
                         type="block"
                         class="mb-1"
+                        up
                         label={parentArgument.statement_label}
                       />
                     </td>
@@ -195,6 +212,7 @@ export const Arguments: Component<{
                         params={{ id: parentArgument.id }}
                         type="block"
                         class="mb-1"
+                        up
                         label={parentArgument.title}
                       />
                     </td>

@@ -1,8 +1,9 @@
-import { Component, JSXElement } from "solid-js"
+import { Component, JSXElement, useContext } from "solid-js"
 import { DataLiteral } from "~/schema/type"
 import { btnStyle } from "./buttons"
 import { buildUrl } from "~/utils/schema"
 import { LinkType } from "~/types"
+import { PathTracker } from "./UpDown"
 
 export const linkStyles = {
   default: 'hover:underline',
@@ -11,7 +12,8 @@ export const linkStyles = {
   button: btnStyle(),
   logo: 'font-bold',
   faded: 'text-gray-500',
-  heroButton: btnStyle() + ' ' + 'text-2xl px-3 py-1'
+  heroButton: btnStyle() + ' ' + 'text-2xl px-3 py-1',
+  line: 'hover:bg-orange-200'
 }
 
 export const Link: Component<{
@@ -21,14 +23,28 @@ export const Link: Component<{
   type?: LinkType,
   tooltip?: string
   class?: string
+  up?: boolean  //does this link move the user up or down the argument tree?
+  disabled?: boolean
 }> = props => {
-
+  const pathTracker = useContext(PathTracker)
   const href = () => buildUrl(props)
   
   let className = linkStyles[props.type ?? 'default']
   if (props.class) className += ' ' + props.class
   
-  return <a href={href()} title={props.tooltip} class={className}>{props.label}</a>
+  return (
+    <a
+      href={href()}
+      title={props.tooltip}
+      class={className}
+      classList={{
+        'opacity-50 pointer-events-none grayscale': props.disabled
+      }}
+      onClick={() => pathTracker?.onLinkClick(props)}
+    >
+      {props.label}
+    </a>
+  )
 }
 
 export const ExternalLink: Component<{

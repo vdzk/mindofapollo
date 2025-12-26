@@ -4,6 +4,7 @@ import { FileRoutes } from "@solidjs/start/router"
 import "./index.css"
 import { TopNav } from "./components/TopNav"
 import { SessionContextProvider } from "./SessionContext"
+import { PathTrackerProvider } from "./components/UpDown"
 
 
 export default function App() {
@@ -11,8 +12,10 @@ export default function App() {
     <Router root={props => (
       <MetaProvider>
         <SessionContextProvider>
-          <TopNav />
-          {props.children}
+          <PathTrackerProvider>
+            <TopNav />
+            {props.children}
+          </PathTrackerProvider>
         </SessionContextProvider>
       </MetaProvider>
     )}>

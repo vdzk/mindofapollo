@@ -1,5 +1,5 @@
 import { createAsync, revalidate, useSearchParams } from "@solidjs/router"
-import { Component, createSignal, Match, Show, Switch } from "solid-js"
+import { Component, createEffect, Match, Show, Switch, useContext } from "solid-js"
 import { ArgumentDetails } from "./ArgumentDetails"
 import { getOneExtRecordByIdCache, listForeignRecordsCache } from "~/client-only/query"
 import { StatementType } from "~/tables/statement/statement_type"
@@ -12,14 +12,27 @@ import { ArgumentTypeSelector } from "../Statement/ArgumentTypeSelector"
 import { Premises } from "./Premises"
 import { HowTo } from "./HowTo"
 import { Aggregate } from "~/components/aggregate/Aggregate"
+import { PathTracker } from "~/components/UpDown"
 
 export const Argument: Component<{ id: number }> = props => {
   const record = createAsync(() => getOneExtRecordByIdCache('argument', props.id, true))
   const statement = createAsync(async () => getOneRecordByChildId('statement', 'argument', props.id))
   const statementType = () => statement()?.statement_type_name as StatementType | undefined
 
+  const pathTracker = useContext(PathTracker)
+  createEffect(() => {
+    let parentLink
+    const _record = record()
+    if (_record) {
+      parentLink = {
+        route: 'statement',
+        id: _record.statement_id as number
+      }
+    }
+    pathTracker?.setParentLink(parentLink)
+  })
+
   const [searchParams, setSearchParams] = useSearchParams()
-  const [showHowToJudge, setShowHowToJudge] = createSignal(false)
   const argumentTypeId = () => record()?.argument_type_id as number | undefined
   const onFormExit = () => {
     setSearchParams({ tab: null })

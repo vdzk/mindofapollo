@@ -1,11 +1,10 @@
-import { descriptiveStatementTypeId } from "~/tables/statement/statement_type"
+import { statementTypeIds } from "~/tables/statement/statement_type"
 import { onError, sql } from "./db"
 import { calcStatementConfidence } from "~/calc/statementConfidence"
 import { calcArgumentStrength, Premise } from "~/calc/argumentStrength"
 import { finishExpl, startExpl } from "./expl"
 import { ExplData } from "~/components/expl/types"
 import { Component, For, Show } from "solid-js"
-import { Subtitle } from "~/components/PageTitle"
 import { Link } from "~/components/Link"
 import { HistoryLink } from "~/components/expl/HistoryLink"
 import { tableStyle } from "~/components/table"
@@ -51,7 +50,7 @@ const cascadeUpdateScoresRec = async (argumentId: number, explId: number) => {
     FROM argument
     JOIN statement ON statement.id = argument.statement_id
     WHERE argument.id = ${argumentId}
-      AND statement.statement_type_id = ${descriptiveStatementTypeId}
+      AND statement.statement_type_id = ${statementTypeIds.descriptive}
   `.catch(onError)
   if (argumentRecords.length === 0) return
   await injectTranslations('argument', argumentRecords, ['title'])

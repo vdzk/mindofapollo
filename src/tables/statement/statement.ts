@@ -1,10 +1,7 @@
 import { TableSchema, TextColumn, VirtualColumnQueries } from "~/schema/type"
 import { getPercent } from "~/utils/string"
 import { directive } from "../morality/directive"
-import { prescriptiveStatementTypeId } from "./statement_type"
-
-// Indexes corresponts to IDs in statement_type table
-const statementExtensonTables = ['', '', '', 'directive']
+import { statementTypeIds } from "./statement_type"
 
 export const chat_text: TextColumn = {
   type: 'text',
@@ -23,7 +20,7 @@ export const statement: TableSchema = {
         table: 'statement_type',
         labelColumn: 'name',
         defaultName: 'descriptive',
-        extensionTables: statementExtensonTables
+        extensionTables: ['', '', '', 'directive']
       }
     },
     label: {
@@ -54,9 +51,9 @@ export const statement: TableSchema = {
     text: {
       type: 'text',
       lines: 4,
-      getVisibility: record => record.statement_type_id !== statementExtensonTables.indexOf('directive'),
+      getVisibility: record => record.statement_type_id !== statementTypeIds.prescriptive,
       defaultValue: '',
-      instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\"). Do not use a full stop at the end.",
+      instructions: "Please use the non-negative version of the statement (e.g. don't use the word \"not\").",
     },
     chat_text,
     statement_type_name: {
@@ -81,7 +78,7 @@ export const statement: TableSchema = {
         colName: 'has_judged_argument',
         value: false
       },
-      getVisibility: (record) => record.statement_type_id !== prescriptiveStatementTypeId
+      getVisibility: (record) => record.statement_type_id !== statementTypeIds.prescriptive
     },
     has_judged_argument: {
       label: 'has a judged argument',

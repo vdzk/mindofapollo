@@ -8,6 +8,16 @@ import { Form } from "~/components/form/Form"
 import { Subtitle } from "~/components/PageTitle"
 import { nbsp } from "~/utils/string"
 
+export const notOpEl = (
+  <span
+    title="the argument relies on the statement not being true"
+    class="font-bold opacity-50 self-center"
+  >
+    NOT
+    {nbsp}
+  </span>
+)
+
 export const Premises: Component<{ id: number }> = props => {
   const premises = createAsync(() => listForeignRecordsCache(
     'premise', 'argument_id', props.id, true
@@ -64,13 +74,7 @@ export const Premises: Component<{ id: number }> = props => {
                 itemLabel={(
                   <>
                     <Show when={premise.invert}>
-                      <span
-                        title="the argument relies on the statement not being true"
-                        class="font-bold opacity-50 self-center"
-                      >
-                        NOT
-                        {nbsp}
-                      </span>
+                      {notOpEl}
                     </Show>
                     {premise.statement_label}
                   </>
@@ -80,7 +84,8 @@ export const Premises: Component<{ id: number }> = props => {
                   params: {
                     id: premise.statement_id
                   },
-                  type: 'block'
+                  type: 'block',
+                  up: false
                 }}
                 canDelete={premise.canDelete as boolean}
                 onDelete={onDelete}

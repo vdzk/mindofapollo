@@ -53,6 +53,7 @@ export const ArgumentDetails: Component<{
           params={{ id: props.statement?.id }}
           label={props.statement?.text || props.statement?.label}
           type="block"
+          up
         />
       </div>
       <div class="font-bold px-2">
