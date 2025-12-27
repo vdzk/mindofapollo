@@ -13,7 +13,7 @@ export const linkStyles = {
   logo: 'font-bold',
   faded: 'text-gray-500',
   heroButton: btnStyle() + ' ' + 'text-2xl px-3 py-1',
-  line: 'hover:bg-orange-200'
+  unstyled: ''
 }
 
 export const Link: Component<{

@@ -1,5 +1,6 @@
 import { For, ParentComponent } from "solid-js";
 import { GraphNode } from "./buildGraph";
+import { createMediaQuery } from "@solid-primitives/media";
 
 export interface Marker {
   short: string;
@@ -36,7 +37,7 @@ export const getMarker = (node: GraphNode): Marker => {
 }
 
 export const stubMarker = {
-  short: '⇧',
+  short: '⇳',
   tooltip: 'jump',
   classStr: 'text-blue-700'
 }
@@ -47,9 +48,10 @@ export const Line: ParentComponent<{
   path: number[]
   ping?: boolean
 }> = props => {
+  const smallIndent = createMediaQuery('(max-width: 640px)')
   return (
     <div
-      class="flex"
+      class="flex hover:bg-orange-200"
       classList={{ 'bg-blue-200': props.ping }}
     >
       <div
@@ -60,8 +62,10 @@ export const Line: ParentComponent<{
       />
       <For each={props.path} >
         {(_, index) => <div
-          class="w-4  border-l shrink-0"
+          class="border-l shrink-0"
           classList={{
+            'w-2': smallIndent(),
+            'w-4': !smallIndent(),
             'border-gray-500': !props.selected,
             'border-gray-300 bg-gray-600': props.selected,
             '[clip-path:polygon(0_0,0_100%,80%_50%)]': index() === props.path.length - 1

@@ -7,7 +7,9 @@ export const chat_text: TextColumn = {
   type: 'text',
   lines: 4,
   instructions: "Used together with other chat texts to generate a chat conversation log between two opposing sides.",
-  getVisibility: (record) => !!record.id,
+  // TODO: remove chat view from the system
+  // getVisibility: (record) => !!record.id,
+  getVisibility: () => false,
   defaultValue: ''
 } as const
 

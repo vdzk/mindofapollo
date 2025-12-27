@@ -74,7 +74,7 @@ export const Graph: Component<{
             if ('tableName' in node) {
               return (
                 <Link
-                  type="line"
+                  type="unstyled"
                   route={node.tableName}
                   params={{ id: node.id }}
                   label={(
@@ -97,14 +97,14 @@ export const Graph: Component<{
             } else {
               return (
                 <button
-                  class={'block w-full cursor-pointer bg-transparent ' + linkStyles.line}
+                  class="block w-full cursor-pointer bg-transparent"
                   onClick={() => jumpToOriginal(node.id)}
                 >
                   <Line
                     marker={stubMarker}
                     path={node.path}
                   >
-                    Go up to arguments
+                    Show arguments
                   </Line>
                 </button>
               )

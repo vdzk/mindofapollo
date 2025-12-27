@@ -64,7 +64,9 @@ export default function Statements() {
             <For each={statements()}>
               {statement => {
                 const { id, directive, subscribed, label } = statement
-                const hasDialogue = id === withDialogueStatementId
+                // TODO: remove dialogue system
+                // const hasDialogue = id === withDialogueStatementId
+                const hasDialogue = false
                 const linkParams: Record<string, any> = { id }
                 if (!hasDialogue) {
                   linkParams.tableName = directive ? 'directive' : 'statement'

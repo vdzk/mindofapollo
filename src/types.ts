@@ -24,4 +24,4 @@ export interface LinkData {
 
 export type GenericInputEvent = { target: { value: string; name: string } }
 
-export type LinkType = 'button' | 'fragment' | 'block' | 'logo' | 'faded' | 'heroButton' | 'line';
+export type LinkType = 'button' | 'fragment' | 'block' | 'logo' | 'faded' | 'heroButton' | 'unstyled';
