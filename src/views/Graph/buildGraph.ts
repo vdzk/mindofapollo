@@ -58,7 +58,6 @@ export const buildGraph = (rows: WalkRow[], rootStatementIds: number[]) => {
     stackArguments: Set<number>,
     invert?: boolean
   ): GraphNode | null => {
-    // console.log('S', id, '<-A', path[path.length - 1], path.slice(0, path.length - 1))
     const label = statementLabel.get(id)
     if (!label) return null
 
@@ -106,7 +105,6 @@ export const buildGraph = (rows: WalkRow[], rootStatementIds: number[]) => {
     stackStatements: Set<number>,
     stackArguments: Set<number>
   ): GraphNode | null => {
-    // console.log('A', id, '<-S', path[path.length - 1], path.slice(0, path.length - 1))
     const label = argumentLabel.get(id)
     if (!label) return null
 

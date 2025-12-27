@@ -151,11 +151,15 @@ export const listGraphWalkSteps = async (
 
   // Add missing labels in statements
   const emptyLabelRows = rows.filter(row => row.node_type === 'statement' && !row.label) as unknown as  DataRecordWithId[]
-  await injectVirtualValues(tableName, emptyLabelRows, ['label'])
+  await injectVirtualValues('statement', emptyLabelRows, ['label'])
   // Remove the score placeholder from the label
   emptyLabelRows.forEach(row => {
-    let label = row.label as string
-    row.label = label.slice(label.indexOf(')') + 2)
+    let label = row.label
+    if (typeof label === 'string' && !!label) {
+      row.label = label.slice(label.indexOf(')') + 2)
+    } else {
+      row.label = '<missing label>'
+    }
   })
 
   return { rows, rootStatementIds }
