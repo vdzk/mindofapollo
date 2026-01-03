@@ -72,17 +72,15 @@ export const HowTo: Component<{
           <Instructions {...{setSelectedAction}}>
             Please ask yourself the following questions:
             <div class="h-1" />
-            1) Are the premises that this arguments relies on true? If there is a reason to doubt any one of them, please add them to the list of premises and specify your confidence in them.
+            1) Is there any unlisted premise that, if false, would weaken the argument? If so then add it to the list of premises. If it's a hidden premise, edit the argument to make the premise more obvious.
             <div class="h-1" />
-            2) Are there any hidden premises, that, if false, would weaken the argument? If so, edit the argument to make them explicit and add them to the list of premises.
+            2) Is the confidence value for a premise too high? If so, open the premise and try adding or supporting a con argument, or attacking a pro argument.
             <div class="h-1" />
-            2) Are the confidences in premises that the platform specifies too high? If so, open those premises and try adding arguments against them or attacking the arguments in their favour.
+            3) Does the argument use an ambiguous term that might change its meaning? If so, please edit the text of the argument and / or add a definition for the term to remove the ambiguity.
             <div class="h-1" />
-            3) Does the argument use any ambiguous or vague terms that might change its meaning? If so, please edit the text of the argument and / or add definitions to remove the ambiguity.
+            4) Does the argument address the right statement? If not, please either change the text of the argument or recreate the argument under the appropriate statement.
             <div class="h-1" />
-            4) Does the argument address the right statement? If it's not, please either change the text of the argument so that it does. Alternatively, recreate this argument under the appropriate statement.
-            <div class="h-1" />
-            5) Does the text of the argument actually contain multiple arguments? If so, please separate the different arguments by creating new arguments and splitting the text between them.
+            5) Would the argument be more clear if divided into multiple arguments? If so, please create new arguments and split the original argument's text between them.
             <div class="h-1" />
             <Show when={props.record?.argument_type_id === defaultArgumentTypeId}>
             6) What type of argument is this? Please click on the "Type" tab in the first column to specify the type. Once this is done, critical questions that are specific to this type of argument will be added to this list.
@@ -103,7 +101,7 @@ export const HowTo: Component<{
             Please research criticisms of this argument.
 
             <div class="h-2" />
-            You might lack permissions to perform some of the actions suggested above. If that's the case, please ask someone of our Discord to help you with that.
+            You might lack permissions to perform some of the actions suggested above. If that's the case, please ask someone on our Discord to help you with that.
 
           </Instructions>
         </Match>
