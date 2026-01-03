@@ -2,6 +2,7 @@ import { AppDataSchema } from "./type"
 import { argumentTables } from "~/tables/argument"
 import { argumentTypeTables } from "~/tables/argument_type"
 import { betTables } from "~/tables/bet"
+import { debateTables } from "~/tables/debate"
 import { moralityTables } from "~/tables/morality"
 import { otherTables } from "~/tables/other"
 import { statementTables } from "~/tables/statement"
@@ -17,6 +18,8 @@ export const schema: AppDataSchema = {
     ...argumentTypeTables,
     ...moralityTables,
     ...otherTables,
-    ...betTables
+    ...betTables,
+    ...debateTables
+
   }
 }

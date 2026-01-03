@@ -38,7 +38,11 @@ export const ColumnLabel: Component<{
         </div>
         <Show when={props.ofInput && instructions()}>
           <Button
-            label={getToggleLabel(showInstructions(), 'instructions')}
+            label={showInstructions()
+              ? <img class="w-4 h-4" src="/icons/minus.svg" />
+              : <img class="w-4 h-4" src="/icons/info.svg" />
+            }
+            tooltip="instructions"
             class="relative bottom-1 ml-2"
             onClick={() => setShowInstructions(x => !x)}
           />

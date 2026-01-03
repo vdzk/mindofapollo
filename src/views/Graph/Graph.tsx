@@ -6,7 +6,7 @@ import { Title } from "@solidjs/meta"
 import { createAsync } from "@solidjs/router"
 import { GraphTableName, listGraphWalkSteps } from "~/api/list/graphWalkSteps"
 import { buildGraph, listNodesRec } from "./buildGraph"
-import { Link, linkStyles } from "~/components/Link"
+import { Link } from "~/components/Link"
 import { notOpEl } from "../Argument/Premises"
 import { getMarker, Line, stubMarker } from "./Line"
 

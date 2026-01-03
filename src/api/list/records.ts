@@ -36,6 +36,7 @@ export const listRecords = async (
     const extTableIds: Record<string, number[]> = {}
     for (const record of records) {
       const extTableName = getExtTableName(tableName, record, !!table.optionallyExtendedByTable)
+      console.log('extTableName', extTableName)
       if (!extTableName) continue
       if (!extTableIds[extTableName]) {
         extTableIds[extTableName] = []

@@ -19,6 +19,7 @@ export const linkStyles = {
 export const Link: Component<{
   params?: Record<string, any>
   label?: DataLiteral | JSXElement
+  children?: JSXElement,
   route: string,
   type?: LinkType,
   tooltip?: string
@@ -42,7 +43,7 @@ export const Link: Component<{
       }}
       onClick={() => pathTracker?.onLinkClick(props)}
     >
-      {props.label}
+      {props.children ?? props.label}
     </a>
   )
 }

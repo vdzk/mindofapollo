@@ -1,4 +1,4 @@
-import { Component } from "solid-js"
+import { Component, ParentComponent } from "solid-js"
 import { DataRecord } from "~/schema/type"
 import { ColumnLabel } from "./ColumnLabel"
 import { DisplayValue } from "./DislayValue"
@@ -17,6 +17,17 @@ export const Detail: Component<DetailProps> = props => {
     <div class="px-2 pb-2">
       <ColumnLabel {...props} />
       <DisplayValue {...props} />
+    </div>
+  )
+}
+
+export const StaticDetail: ParentComponent<{
+  label: string
+}> = props => {
+  return (
+    <div class="px-2 pb-2">
+      <div class="font-bold">{props.label}</div>
+      {props.children}
     </div>
   )
 }

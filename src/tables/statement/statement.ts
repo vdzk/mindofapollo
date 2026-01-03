@@ -3,6 +3,13 @@ import { getPercent } from "~/utils/string"
 import { directive } from "../morality/directive"
 import { statementTypeIds } from "./statement_type"
 
+export const getTextFromLabel = (label: string) => label.slice(
+  label.indexOf(') ') + 1
+)
+export const getConfidenceFromLabel = (label: string) => label.slice(
+  1, label.indexOf(') ')
+)
+
 export const chat_text: TextColumn = {
   type: 'text',
   lines: 4,
