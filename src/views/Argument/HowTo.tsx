@@ -72,7 +72,7 @@ export const HowTo: Component<{
           <Instructions {...{setSelectedAction}}>
             Please ask yourself the following questions:
             <div class="h-1" />
-            1) Is there any unlisted premise that, if false, would weaken the argument? If so then add it to the list of premises. If it's a hidden premise, edit the argument to make the premise more obvious.
+            1) Is there any unadded premise that, if false, would weaken the argument? If so then add it to the list of premises. If it's a hidden premise, edit the argument to make the premise more obvious.
             <div class="h-1" />
             2) Is the confidence value for a premise too high? If so, open the premise and try adding or supporting a con argument, or attacking a pro argument.
             <div class="h-1" />
