@@ -3,7 +3,10 @@ import { onError, sql } from "./db"
 import { injectTranslations } from "./injectTranslations"
 import { ColumnType, DataRecordWithId } from "~/schema/type"
 
-export const getDirConcsWithValues = async (ids: number[]) => {
+export const getDirConcsWithValues = async (
+  ids: number[],
+  withLabels = true
+) => {
   const records = await sql<DataRecordWithId[]>`
     SELECT dc.id, dc.value_id, unit.column_type,
       dc.moral_good_id, moral_good.unit_id
@@ -15,20 +18,22 @@ export const getDirConcsWithValues = async (ids: number[]) => {
     WHERE dc.id IN ${sql(ids)}
   `.catch(onError)
   
-  await injectTranslations('directive_consequence', records, null, [
-    {
-      tableName: 'moral_good',
-      recordIdColName: 'moral_good_id',
-      columnName: 'name',
-      resultColName: 'moral_good'
-    },
-    {
-      tableName: 'unit',
-      recordIdColName: 'unit_id',
-      columnName: 'name',
-      resultColName: 'unit'
-    }
-  ])
+  if (withLabels) {
+    await injectTranslations('directive_consequence', records, null, [
+      {
+        tableName: 'moral_good',
+        recordIdColName: 'moral_good_id',
+        columnName: 'name',
+        resultColName: 'moral_good'
+      },
+      {
+        tableName: 'unit',
+        recordIdColName: 'unit_id',
+        columnName: 'name',
+        resultColName: 'unit'
+      }
+    ])
+  }
 
   const colRecordIds: Record<string, number[]> = {}
   for (const record of records) {

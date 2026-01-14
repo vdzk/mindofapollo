@@ -7,7 +7,7 @@ export const bet_confidence: TableSchema = {
   columns: {
     threshold_value: {
       type: 'proportion',
-      instructions: "Whether Apollo's confidence in the statement will fall below or above the threshold will determine the winner of the competition."
+      instructions: "Whether statement confidence score will fall below or above the threshold will determine the winner of the competition."
     },
     outcome_value: {
       type: 'proportion',

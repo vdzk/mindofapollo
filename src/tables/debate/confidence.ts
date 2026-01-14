@@ -7,7 +7,7 @@ export const debate_confidence: TableSchema = {
   columns: {
     threshold_value: {
       type: 'proportion',
-      instructions: "Whether Apollo's confidence in the statement will fall below or above the threshold will determine who is winning the debate."
+      instructions: "Whether confidence score will fall below or above the threshold will determine who is winning the debate."
     }
   }
 }

@@ -1,6 +1,7 @@
 import { DataRecordWithId } from "~/schema/type"
 import { indexBy } from "~/utils/shape"
 
+// TODO: give specific types to arguments
 export function calcMoralSum(
   consequences: DataRecordWithId[],
   weights: DataRecordWithId[]

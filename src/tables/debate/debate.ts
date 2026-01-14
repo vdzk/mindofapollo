@@ -25,7 +25,7 @@ export const debate: TableSchema = {
         extensionColumn: 'statement_type_id',
         extensionTables: ['', 'debate_confidence', 'debate_confidence', 'debate_net_value']
       },
-      instructions: 'Select a statement the will the subject of the debate.'
+      instructions: 'Select the subject of the debate.'
     },
     statement_type_id: {
       type: 'virtual',
@@ -36,6 +36,10 @@ export const debate: TableSchema = {
       type: 'virtual',
       fkColName: 'statement_id',
       preview: true
+    },
+    current_value: {
+      type: 'virtual',
+      serverFn: true
     },
     creator_above: {
       label: "Your side",

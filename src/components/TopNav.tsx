@@ -22,6 +22,7 @@ export const TopNav: Component = () => {
   const showLogo = createMediaQuery('(min-width: 860px)')
   const location = useLocation()
   const atGraphPage = () => graphPageRoutes.includes(location.pathname.slice(1))
+  const atDebatePage = () => location.pathname.slice(1) === 'debate'
   const sp = useSafeParams<{ id: number }>(['id'])
 
   const discordLink = <ExternalLink
@@ -61,6 +62,14 @@ export const TopNav: Component = () => {
             label={<img class="w-6 h-6" src="/icons/map.svg" />}
             type="button"
             tooltip="argument map"
+          />
+        </Show>
+        <Show when={atDebatePage()}>
+          <Link
+            route="debates"
+            label={<img class="w-5 h-6" src="/icons/swords.svg" />}
+            type="button"
+            tooltip="all debates"
           />
         </Show>
       </div>
