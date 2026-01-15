@@ -61,11 +61,15 @@ export default function ShowRecordRoute() {
       <Match when>
         <main>
           <Title>{titleText()}</Title>
-          <RecordPageTitle tableName={sp().tableName} text={titleText()} />
           <ShowRecord
             tableName={sp().tableName}
             id={recordId()}
             tabData={{ record: record()}}
+            subBar={(
+              <div class='border-b mb-2'>
+                <PageTitle>{titleText()}</PageTitle>
+              </div>
+            )}
           />
         </main>
       </Match>

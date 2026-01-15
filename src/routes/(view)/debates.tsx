@@ -7,9 +7,7 @@ import { Form } from "~/components/form/Form"
 import { Link } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
 import { H2, Subtitle } from "~/components/PageTitle"
-import { DataRecord } from "~/schema/type"
 import { SessionContext } from "~/SessionContext"
-import { getPercent } from "~/utils/string"
 import { ColumnCtx, columns } from "~/views/Debate/columns"
 import { getDebateStatus } from "~/views/Debate/Debate"
 
@@ -67,7 +65,6 @@ export default function Debates() {
   return (
     <main>
       <Title>Debates</Title>
-
       <div class="border-b flex flex-wrap items-center justify-between">
         <Subtitle>⚔️ Debates</Subtitle>
         <MasterDetail
@@ -95,7 +92,7 @@ export default function Debates() {
         <Match when={['invite', 'ongoing', 'closed'].includes(tabId()!)}>
           <Show when={showColumns()}>
             <div class={`grid ${gridColsClass()} w-full`}>
-              <div class="grid grid-cols-subgrid col-span-full border-b px-2 py-2 font-semibold">
+              <div class="grid gap-x-4 grid-cols-subgrid col-span-full border-b px-2 py-2 font-semibold">
                 <For each={visibleColumns()}>
                   {col => <div title={col.description}>{col.label}</div>}
                 </For>

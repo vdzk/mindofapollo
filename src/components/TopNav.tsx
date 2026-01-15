@@ -10,6 +10,14 @@ import { createMediaQuery } from "@solid-primitives/media"
 import { UpDown } from "./UpDown"
 import { useSafeParams } from "~/client-only/util"
 
+export const DiscordLink: Component<{ small: boolean }> = props => (
+  <ExternalLink
+    href="https://discord.gg/3hhhD4tK9h"
+    label={props.small ? '💬' : "Discord 💬"}
+    class="pr-2"
+  />
+)
+
 export const TopNav: Component = () => {
   const session = useContext(SessionContext)
   const authenticated = () => session?.userSession()?.authenticated ?? false
@@ -24,12 +32,6 @@ export const TopNav: Component = () => {
   const atGraphPage = () => graphPageRoutes.includes(location.pathname.slice(1))
   const atDebatePage = () => location.pathname.slice(1) === 'debate'
   const sp = useSafeParams<{ id: number }>(['id'])
-
-  const discordLink = <ExternalLink
-    href="https://discord.gg/3hhhD4tK9h"
-    label={smallScreen() ? '💬' : "Discord 💬"}
-    class="pr-2"
-  />
 
   const onLogout = async () => {
     await doLogout()
@@ -84,7 +86,7 @@ export const TopNav: Component = () => {
       <div class="px-2 py-0.5">
         <Switch>
           <Match when={authenticated()}>
-            {discordLink}
+            <DiscordLink small={smallScreen()} />
             <Link
               route="show-record"
               params={{ tableName: 'person', id: session!.userSession()!.userId }}
@@ -98,7 +100,7 @@ export const TopNav: Component = () => {
           </Match>
           <Match when={!authenticated()}>
             <span class="flex gap-2">
-              {discordLink}
+              <DiscordLink small={smallScreen()} />
               <Link
                 route="donate"
                 label={smallScreen() ? '🎁' : "Donate"}

@@ -9,8 +9,8 @@ import { getPercent } from "~/utils/string"
 import { tableStyle } from "~/components/table"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { whoCanInsertRecord } from "~/api/insert/record"
-import { Button, importantButtonStyle } from "~/components/buttons"
 import { PathTracker } from "~/components/UpDown"
+import { createMediaQuery } from "@solid-primitives/media"
 
 export const Arguments: Component<{
   id: number,
@@ -114,77 +114,86 @@ export const Arguments: Component<{
   })
 
   const canCreateNew = () => useBelongsTo(whoCanInsertRecord('argument'))
+  const stackView = createMediaQuery('(max-width: 640px)')
 
   return (
-    <div class="flex-1 max-w-2xl">
-      <Show when={canCreateNew}>
-        <Button
-          label="➕ Add argument"
-          onClick={() => props.setSectionId('createArgument')}
-          class={"mx-2 mb-4 " + importantButtonStyle}
-        />
-      </Show>
-      <For each={[true, false]}>
-        {pro => (
-          <div class="px-2 pb-4">
-            <h2 class="text-xl font-bold pb-2">
-              <Show when={!isThreshold()}>
-                [{sideScores()[Number(pro)]}]{' '}
-              </Show>
-              {argumentSideLabels[Number(pro)]}
-            </h2>
-            <For each={args().filter(arg => arg.pro === pro)}>
-              {argument => (
-                <Link
-                  route="argument"
-                  params={{ id: argument.id }}
-                  class="min-w-10 mb-1"
-                  type="block"
-                  up={false}
-                  label={
-                    <Switch>
-                      <Match when={isPrescriptive()}>
-                        <div class="pl-12">{argument.title}</div>
-                        <For each={concsByArgumentId()[argument.id]}>
-                          {consequence => (
+    <>
+      <div
+        class="flex-1 flex border-b -mt-2"
+        classList={{
+          'flex-col': stackView()
+        }}
+      >
+        <For each={[true, false]}>
+          {(pro, index) => (
+            <div
+              class="flex-1 pb-4"
+              classList={{
+                'border-l': index() > 0 && !stackView(),
+                'border-t': index() > 0 && stackView(),
+              }}
+            >
+              <h2 class="text-xl font-bold px-2 py-2 border-b">
+                <Show when={!isThreshold()}>
+                  [{sideScores()[Number(pro)]}]{' '}
+                </Show>
+                {argumentSideLabels[Number(pro)]}
+              </h2>
+              <div class="px-2 py-2">
+                <For each={args().filter(arg => arg.pro === pro)}>
+                  {argument => (
+                    <Link
+                      route="argument"
+                      params={{ id: argument.id }}
+                      class="min-w-10 mb-1"
+                      type="block"
+                      up={false}
+                      label={
+                        <Switch>
+                          <Match when={isPrescriptive()}>
+                            <div class="pl-12">{argument.title}</div>
+                            <For each={concsByArgumentId()[argument.id]}>
+                              {consequence => (
+                                <div class="flex gap-2">
+                                  <div class="min-w-10">[{Math.round(consequence.weightedValue)}]</div>
+                                  <div class="flex-1">
+                                    <span class="font-bold">
+                                      {consequence.moral_good}:
+                                    </span>
+                                    {' '}{consequence.value + ''}
+                                    {' '}{consequence.unit}
+                                  </div>
+                                </div>
+                              )}
+                            </For>
+                          </Match>
+                          <Match when={!isPrescriptive()}>
                             <div class="flex gap-2">
-                              <div class="min-w-10">[{Math.round(consequence.weightedValue)}]</div>
-                              <div class="flex-1">
-                                <span class="font-bold">
-                                  {consequence.moral_good}:
-                                </span>
-                                {' '}{consequence.value + ''}
-                                {' '}{consequence.unit}
+                              <div class={isThreshold() ? 'font-mono' : ''}>
+                                [{getStrengthStr(argument)}]
                               </div>
+                              <div class="flex-1">{argument.title}</div>
                             </div>
-                          )}
-                        </For>
-                      </Match>
-                      <Match when={!isPrescriptive()}>
-                        <div class="flex gap-2">
-                          <div class={isThreshold() ? 'font-mono' : ''}>
-                            [{getStrengthStr(argument)}]
-                          </div>
-                          <div class="flex-1">{argument.title}</div>
-                        </div>
-                      </Match>
-                    </Switch>
-                  }
-                />
-              )}
-            </For>
-          </div>
-        )}
-      </For >
+                          </Match>
+                        </Switch>
+                      }
+                    />
+                  )}
+                </For>
+              </div>
+            </div>
+          )}
+        </For >
+      </div >
       <Show when={(parentArguments()?.length ?? 0) > 0}>
-        <div class="px-2 pb-4">
-          <h2 class="text-xl font-bold pb-2">
-            Used In
+        <div class="pb-4">
+          <h2 class="text-xl font-bold py-2 border-b px-2 text-center">
+            Used in
           </h2>
-          <table>
+          <table class="w-full mt-2">
             <thead>
               <tr class={tableStyle.tHeadTr}>
-                <th class={tableStyle.th}>Claim</th>
+                <th class={tableStyle.th + ' pl-2'}>Claim</th>
                 <th class={tableStyle.th}>Side</th>
                 <th class={tableStyle.th}>Argument</th>
               </tr>
@@ -193,7 +202,7 @@ export const Arguments: Component<{
               <For each={parentArguments()}>
                 {parentArgument => (
                   <tr>
-                    <td class={tableStyle.td}>
+                    <td class={tableStyle.td + ' pl-2'}>
                       <Link
                         route="statement"
                         params={{ id: parentArgument.statement_id }}
@@ -223,6 +232,6 @@ export const Arguments: Component<{
           </table>
         </div>
       </Show>
-    </div >
+    </>
   )
 }

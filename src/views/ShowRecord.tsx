@@ -1,5 +1,5 @@
 import { createAsync, useSearchParams } from "@solidjs/router"
-import { Component, Match, Show, Switch, useContext } from "solid-js"
+import { Component, JSX, Match, Show, Switch, useContext } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import { RecordDetails } from "~/components/RecordDetails"
 import { schema } from "~/schema/schema"
@@ -9,10 +9,12 @@ import { getOneExtRecordById } from "~/api/getOne/extRecordById"
 import { SessionContext } from "~/SessionContext"
 import { RecordHistory } from "~/components/RecordHistory"
 import { personalTableNames } from "~/permissions"
-import { firstCap } from "~/utils/string"
+import { firstCap, humanCase } from "~/utils/string"
 import { Form } from "~/components/form/Form"
 import { DeleteRecord } from "~/components/form/DeleteRecord"
 import { Discussion } from "./Discussion"
+import { Subtitle } from "~/components/PageTitle"
+import { createMediaQuery } from "@solid-primitives/media"
 
 export const ShowRecord: Component<{
   tableName: string
@@ -20,6 +22,7 @@ export const ShowRecord: Component<{
   hideSections?: string[]
   horizontalSections?: boolean
   tabData?: Record<string, any>
+  subBar?: JSX.Element
 }> = props => {
   const [searchParams, setSearchParams] = useSearchParams()
   const record = createAsync(() => getOneExtRecordById(props.tableName, props.id, true))
@@ -69,18 +72,29 @@ export const ShowRecord: Component<{
     const section = schema.tables[props.tableName].sections?.[selectedSection()]
     return section?.component ? componentsByName[section.component] : undefined
   }
+  
+  const stackView = createMediaQuery('(max-width: 640px)')
 
   return (
-    <MasterDetail
-      options={sectionOptions()}
-      selectedId={selectedSection()}
-      onChange={setSectionId}
-      class={props.horizontalSections ? '' : 'px-2'}
-      horizontal={props.horizontalSections}
-    >
-      <Show when={props.horizontalSections}>
-        <div class="h-2" />
-      </Show>
+    <div>
+      <div
+        class="border-b flex flex-wrap justify-between"
+        classList={{
+          'flex-col': stackView(),
+          'items-center': !stackView()
+        }}
+      >
+        <Subtitle>{humanCase(props.tableName)}</Subtitle>
+        <MasterDetail
+          options={sectionOptions()}
+          selectedId={selectedSection()}
+          onChange={setSectionId}
+          optionsClass={"px-1 justify-end " + (stackView() ? 'border-t' : '')}
+          horizontal
+          pills
+        />
+      </div>
+      {props.subBar}
       <Switch>
         <Match when={selectedSection() === 'edit'}>
           <Form
@@ -99,7 +113,7 @@ export const ShowRecord: Component<{
         <Match when={selectedSection() === 'discussion'}>
           <Discussion
             id={props.id}
-            tabData={{discussion: discussion!}}
+            tabData={{ discussion: discussion! }}
           />
         </Match>
         <Match when={getCurrentComponent()}>
@@ -118,6 +132,7 @@ export const ShowRecord: Component<{
           />
         </Match>
       </Switch>
-    </MasterDetail>
+
+    </div>
   )
 }

@@ -12,7 +12,7 @@ export const linkStyles = {
   button: btnStyle(),
   logo: 'font-bold',
   faded: 'text-gray-500',
-  heroButton: btnStyle() + ' ' + 'text-2xl px-3 py-1',
+  heroButton: btnStyle() + ' ' + 'text-xl px-3 py-1',
   unstyled: ''
 }
 
@@ -29,10 +29,10 @@ export const Link: Component<{
 }> = props => {
   const pathTracker = useContext(PathTracker)
   const href = () => buildUrl(props)
-  
+
   let className = linkStyles[props.type ?? 'default']
   if (props.class) className += ' ' + props.class
-  
+
   return (
     <a
       href={href()}
@@ -52,17 +52,21 @@ export const ExternalLink: Component<{
   href: string
   label?: string
   class?: string
+  button?: boolean
 }> = props => {
-  const displayText = props.label || props.href?.replace(/^(https?:\/\/)?(www\.)?/, '')
-  
+  const displayText = () => props.label || props.href?.replace(/^(https?:\/\/)?(www\.)?/, '')
+
   return (
     <a
       href={props.href}
       target="_blank"
       rel="noreferrer"
-      class={"text-sky-800 break-all " + props.class}
+      class={(props.button
+        ? linkStyles.button
+        : "text-sky-800 break-all "
+      ) + ' ' + props.class}
     >
-      {displayText}
+      {displayText()}
     </a>
   )
 }
@@ -77,14 +81,13 @@ export const Links: Component<{
   type?: 'button'
 }> = props => {
   return (
-    <>
+    <div class="flex flex-col gap-2">
       {props.links.map((link, index) => (
-        <>
-          {index > 0 && <span class="w-2 inline-block" />}
-          <Link {...link} type={props.type} class="mb-2" />
-        </>
+        <div>
+          <Link {...link} type={props.type} />
+        </div>
       ))}
-    </>
+    </div>
   )
 }
 

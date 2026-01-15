@@ -8,14 +8,14 @@ export default function UserSubscriptions() {
   const subscriptions = createAsync(() => getUserSubscriptionsCache())
 
   return (
-    <section class="flex-3 border-l pb-2  pt-2">
+    <section class="flex-3 border-l pb-2">
       <Subtitle>Subscriptions</Subtitle>
       <Show when={subscriptions()}>
         <Show
           when={subscriptions()?.length}
           fallback={<div class="px-2 text-gray-500">Nothing yet...</div>}
         >
-          <div class="px-2">
+          <div class="px-2 border-t pt-2">
             <For each={subscriptions() || []}>
               {(subscription) => (
                 <div class="flex items-center gap-2">

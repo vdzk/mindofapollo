@@ -12,6 +12,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
   groups?: Option<TGroupId>[]
   horizontal?: boolean
   pills?: boolean
+  small?: boolean
   extraPanel?: JSXElement
 }) => {
   const hasGroups = () => !!props.groups && props.groups.length > 0
@@ -41,11 +42,13 @@ export const MasterDetail = <TId, TGroupId>(props: {
     return {
       'cursor-default bg-yellow-600 hover:bg-yellow-600 text-white': isSelected,
       'bg-yellow-400 hover:bg-yellow-500 text-gray-900': !isSelected,
-      'rounded-l-md': isPills() || hz && first,
-      'rounded-r-md': isPills() || hz && last,
-      'rounded-t-md': isPills() || !hz && first,
-      'rounded-b-md': isPills() || !hz && last,
-      'm-1': isPills()
+      'rounded-l-md': (isPills() || hz && first) && !props.small,
+      'rounded-r-md': (isPills() || hz && last) && !props.small,
+      'rounded-t-md': (isPills() || !hz && first) && !props.small,
+      'rounded-b-md': (isPills() || !hz && last) && !props.small,
+      'm-1': isPills(),
+      'py-1': !props.small,
+      'rounded-full px-2.5': props.small
     }
   }
 
@@ -66,13 +69,13 @@ export const MasterDetail = <TId, TGroupId>(props: {
       }}
     >
       <div class={props.optionsClass} classList={{
-        "w-full flex flex-col lg:flex-row mb-2": horizontal(),
+        "w-full flex flex-col lg:flex-row": horizontal(),
         "shrink-0": !horizontal() && !isPills(),
       }}>
         <For each={Object.entries(groupedOptions())}>
           {([groupId, options]) => (
             <div classList={{
-              "flex flex-wrap mb-1": horizontal(),
+              "flex flex-wrap": horizontal(),
               "mb-0": !horizontal()
             }}>
               <Show when={hasGroups() && groupsById()[groupId].label}>
@@ -90,7 +93,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
                 <For each={options}>
                   {(option, index) => (
                     <div
-                      class="px-2 py-1 cursor-pointer"
+                      class="px-2 cursor-pointer"
                       classList={optionClassList(option.id, index(), options.length)}
                       onClick={() => onOptionClick(option.id)}
                     >

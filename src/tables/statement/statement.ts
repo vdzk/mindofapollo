@@ -131,7 +131,7 @@ export const statement: TableSchema = {
       component: 'Arguments'
     },
     createArgument: {
-      label: 'New argument',
+      label: '➕ Add argument',
       component: 'CreateArgument'
     },
     definitions: {

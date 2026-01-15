@@ -1,13 +1,11 @@
-import { createAsync, useAction } from "@solidjs/router"
+import { createAsync } from "@solidjs/router"
 import { createSignal, For, Show, useContext } from "solid-js"
 import { getHomePageStatementsCache, listRecordsCache } from "~/client-only/query"
-import { Link, Links } from "~/components/Link"
+import { ExternalLink, Link } from "~/components/Link"
 import { MasterDetail } from "~/components/MasterDetail"
 import { H2, Subtitle } from "~/components/PageTitle"
-import { setSubscriptionAction } from "~/client-only/action"
-import { Button } from "~/components/buttons"
-import { withDialogueStatementId } from "~/constant"
 import { SessionContext } from "~/SessionContext"
+import { createMediaQuery } from "@solid-primitives/media"
 
 export default function Statements() {
   const session = useContext(SessionContext)
@@ -33,54 +31,55 @@ export default function Statements() {
   const featured = () => selectedId() === featuredOption.id
   const tagId = () => featured() ? undefined : selectedId()
   const statements = createAsync(() => getHomePageStatementsCache(featured(), tagId()))
-
-  const setSubscription = useAction(setSubscriptionAction)
+  const stackHeroLinks = createMediaQuery('(max-width: 640px)')
 
   return (
     <div class="flex-4 flex flex-col">
-      <Show when={authenticated()}>
-        <div class="px-2 py-10 text-center border-b">
-          <Link
-            type="heroButton"
-            label="Make a new claim"
-            route="create-record"
-            params={{tableName: 'statement'}}
-          />
-        </div>
-      </Show>
-      <Subtitle>Tags</Subtitle>
-      <div class="flex-1">
+      <div class="flex border-b items-center">
+        <Subtitle>Tags</Subtitle>
         <MasterDetail
           options={options()}
-          optionsClass="pl-1"
+          optionsClass="px-1 justify-end"
           // groups={[{id: 'distinct', label: ''}, {id: 'common', label: ''}]}
           selectedId={selectedId()}
           onChange={setSelectedId}
           horizontal
           pills
-        >
-          <Subtitle>Claims ({selectedTag()?.label})</Subtitle>
-          <div class="pl-2">
-            <For each={statements()}>
-              {statement => {
-                const { id, directive, subscribed, label } = statement
-                // TODO: remove dialogue system
-                // const hasDialogue = id === withDialogueStatementId
-                const hasDialogue = false
-                const linkParams: Record<string, any> = { id }
-                if (!hasDialogue) {
-                  linkParams.tableName = directive ? 'directive' : 'statement'
-                }
-                return (
-                  <div class="flex items-center gap-2">
-                    <Link
-                      label={label}
-                      route={hasDialogue ? 'dialogue' : 'show-record'}
-                      params={linkParams}
-                      class="flex-1"
-                    />
-                    {/* //TODO
-                    This button was hidden because new users were clicking it instead of the statemetns 
+          small
+        />
+      </div>
+        <div class="flex justify-between items-center">
+          <Subtitle>Claims</Subtitle>
+          <Link
+            type="button"
+            label="➕ Add"
+            class="mr-2 py-1"
+            route="create-record"
+            params={{ tableName: 'statement' }}
+          />
+        </div>
+        <div class="pl-2 border-t pt-2">
+          <For each={statements()}>
+            {statement => {
+              const { id, directive, subscribed, label } = statement
+              // TODO: remove dialogue system
+              // const hasDialogue = id === withDialogueStatementId
+              const hasDialogue = false
+              const linkParams: Record<string, any> = { id }
+              if (!hasDialogue) {
+                linkParams.tableName = directive ? 'directive' : 'statement'
+              }
+              return (
+                <div class="flex items-center gap-2">
+                  <Link
+                    label={label}
+                    route={hasDialogue ? 'dialogue' : 'show-record'}
+                    params={linkParams}
+                    class="flex-1"
+                  />
+                  {/* //TODO
+                    This button was hidden because new users were clicking it instead of the statements
+                    const setSubscription = useAction(setSubscriptionAction)
                     {authenticated() && !directive && (
                       <Button
                         label={subscribed ? 'unsub' : 'sub'}
@@ -89,21 +88,11 @@ export default function Statements() {
                         class="text-sm"
                       />
                     )} */}
-                  </div>
-                )
-              }}
-            </For>
-          </div>
-        </MasterDetail>
-      </div>
-      <div class="px-2 py-2 border-t">
-        <Link
-          type="button"
-          label="Show all statements"
-          route="list-records"
-          params={{ tableName: 'statement' }}
-        />
-      </div>
+                </div>
+              )
+            }}
+          </For>
+        </div>
     </div>
   )
 }
