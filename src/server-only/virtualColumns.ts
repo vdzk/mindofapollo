@@ -22,8 +22,8 @@ const virtualColumns: Record<string, Record<string,
       const results = await sql`
         SELECT DISTINCT statement_id
         FROM argument
-        JOIN argument_judgement aj ON aj.id = argument.id
-        WHERE statement_id IN ${sql(ids)}
+        WHERE argument.strength IS NOT NULL
+          AND statement_id IN ${sql(ids)}
       `.catch(onError)
       const values: Record<number, boolean> = {}
       for (const row of results) {

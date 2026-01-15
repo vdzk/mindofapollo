@@ -31,15 +31,22 @@ export default function Statements() {
   const featured = () => selectedId() === featuredOption.id
   const tagId = () => featured() ? undefined : selectedId()
   const statements = createAsync(() => getHomePageStatementsCache(featured(), tagId()))
-  const stackHeroLinks = createMediaQuery('(max-width: 640px)')
+  const stackView = createMediaQuery('(max-width: 480px)')
 
   return (
     <div class="flex-4 flex flex-col">
+      <Show when={stackView()}>
+        <div class="border-b">
+          <Subtitle>Tags</Subtitle>
+        </div>
+      </Show>
       <div class="flex border-b items-center">
-        <Subtitle>Tags</Subtitle>
+        <Show when={!stackView()}>
+          <Subtitle>Tags</Subtitle>
+        </Show>
         <MasterDetail
           options={options()}
-          optionsClass="px-1 justify-end"
+          optionsClass="px-1 justify-end py-1"
           // groups={[{id: 'distinct', label: ''}, {id: 'common', label: ''}]}
           selectedId={selectedId()}
           onChange={setSelectedId}

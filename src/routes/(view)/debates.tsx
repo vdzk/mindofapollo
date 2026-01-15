@@ -91,7 +91,7 @@ export default function Debates() {
 
         <Match when={['invite', 'ongoing', 'closed'].includes(tabId()!)}>
           <Show when={showColumns()}>
-            <div class={`grid ${gridColsClass()} w-full`}>
+            <div class={`grid grid-cols-[minmax(0,1fr)_repeat(3,minmax(min-content,max-content))] w-full`}>
               <div class="grid gap-x-4 grid-cols-subgrid col-span-full border-b px-2 py-2 font-semibold">
                 <For each={visibleColumns()}>
                   {col => <div title={col.description}>{col.label}</div>}
@@ -102,7 +102,7 @@ export default function Debates() {
                 {debate => (
                   <Link
                     type="unstyled"
-                    class="grid grid-flow-col grid-cols-subgrid col-span-full
+                    class="grid grid-cols-subgrid col-span-full
                       gap-x-4
                     hover:bg-orange-200 px-2 py-2 border-b"
                     route="debate"

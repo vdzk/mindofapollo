@@ -82,7 +82,7 @@ export const statement: TableSchema = {
     confidence: {
       type: 'proportion',
       defaultValue: 0.5,
-      instructions: 'Confindences of statements without any judged arguments can be set manually. Otherwise they are calculated automatically.',
+      instructions: 'Confidences of statements without any judged arguments can be set manually. Otherwise they are calculated automatically.',
       canEditCondition: {
         colName: 'has_judged_argument',
         value: false

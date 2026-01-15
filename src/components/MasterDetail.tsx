@@ -69,7 +69,7 @@ export const MasterDetail = <TId, TGroupId>(props: {
       }}
     >
       <div class={props.optionsClass} classList={{
-        "w-full flex flex-col lg:flex-row": horizontal(),
+        "w-full flex": horizontal(),
         "shrink-0": !horizontal() && !isPills(),
       }}>
         <For each={Object.entries(groupedOptions())}>
