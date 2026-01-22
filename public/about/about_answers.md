@@ -21,6 +21,45 @@ As with the code, the live database dumps are also freely available and can be u
 
 
 
+# Who controls the editing guidelines?
+The process of discussing changes to the rules/criteria will be open to everyone. My current tentative plan is to create a section of Apollo for deciding the guidelines, in which everyone can add entries, but only council members can score them.
+
+For the time being I would be the only member of that council. After a userbase starts to establish itself, interested and trusted users may be selected for this.
+
+Eventually the hope is to have professional philosophers, statisticians, cognitive scientists, etc. that can help make the final judgement, but we're a long way off from that.
++ What are the editing guidelines?
++ How will the guidelines be evaluated?
++ Will the power to edit guidelines be abused?
+
+
+
+# How will this be funded?
+It will be funded from donations, similar to Wikipedia.
+
+
+
+# Who is leading this?
+Hi! My name is Dante. I am a software dev with a Maths & Computer Science degree, living in the UK. I am a philosophy enthusiast who spent a year full time exploring these concepts as well as several years iterating on them in my spare time.
++ What are their motivations?
+
+
+
+# What are their motivations?
+I want the horrible things that are going on in the world to stop.
+
+I want to be able to work full time on a meaningful, innovative and creative project like this.
+
+I'm excited to use my programming, philosophical and critical thinking skills.
+
+
+
+# Will the power to edit guidelines be abused?
+The guidelines tend to be very low-level and applicable to many arguments. So it would typically be very difficult to predict how a change in a guideline would affect all the important conclusions in Apollo.
+
+The process (and guidelines) will heavily encourage and guide the council members towards good reasoning, making it much more difficult for biases to slip in or for purposeful abuse to go unnoticed, especially if/when the depth and breadth of the reasoning becomes so significant that the only scores left to assign are pretty unambiguous and obvious.
++ Who controls the editing guidelines?
+
+
 # What makes it different?
 The arguments are scored, but not by a popular vote, judges or AI. How then? First, I need to explain how the arguments are organized.
 + How are the arguments organized?
@@ -34,14 +73,15 @@ The arguments are scored, but not by a popular vote, judges or AI. How then? Fir
 # How are the arguments organized?
 <!-- Image: "Argument structure" https://docs.google.com/drawings/d/14DLTloX6NnbL3AkZ6NM_7BNMt1XoOCgL2E7SlpXkWeo/edit?usp=sharing -->
 Statement (S1) at the top is the main claim. It has a pro (A2) and a con (A1) arguments attached to it. These arguments rely on premises recorded as independent statements (S2, S3, S4). In turn, these statements have deeper arguments attached to them, and so on.
-+ How does scoring work?
++ How does roll-up scoring work?
 + Define "statement"
 
 
 
-# How does scoring work?
+# How does roll-up scoring work?
 The website calculates the likelihood that the claim is true based on the strengths of arguments that are attached to it. The strength of an argument is calculated based on the likelihoods of the premises that it relies on. So the scores are calculated automatically all the way up from the very bottom layer of premises. If there is a significant disagreement between the editors about the likelihood of a bottom-level premise, more arguments and premises are added below it until an agreement is reached.
 + What value does this project add?
++ How are the arguments organized?
 + How are the scores calculated?
 + Which axioms lie at the bottom?
 + Define "likelihood"
@@ -63,12 +103,155 @@ For more details you can join [the discord](https://discord.gg/x23ycnckHN) or ch
 # What value does this project add?
 The cognitive resources unlocked by productive mass collaboration on this platform can be used to conduct conclusive investigations on questions that require pulling a lot of research and evidence together while avoiding mistakes in reasoning.
 + What is the goal of the project?
++ Will the combined reasoning be good?
 
 
 
 # What is the goal of the project?
-If Apollo becomes capable of consistently rational, open and well-informed judgment, then it will gain public trust as it consistently makes good predictions. Many disagreements could be resolved by deferring to Apollo, ultimately resulting in much better-decision making on a large scale.
+If Apollo becomes capable of consistently rational, open and well-informed judgement, then it will gain public trust as it consistently makes good predictions. Many disagreements could be resolved by deferring to Apollo, ultimately resulting in much better-decision making on a large scale.
 + What should I explore next?
++ Will the combined reasoning be good?
+
+
+
+# Why not leave this to science and other authorities?
+Current scientific (and other) institutions have a hard time properly aggregating the results of their many conjectures, theories, experiments and proofs, particularly for many important and controversial issues.
+
+Mind of Apollo could become a great, often-used format for general, complex reasoning. I'm not aware of better alternatives that could become commonly used. If you have any suggestions for this, please [join the discord](https://discord.gg/x23ycnckHN) and share.
+
+
+
+# Wouldn't controversial conclusions be ignored by most people who disagree?
+If successful, Apollo would be able to consistently make great predictions in many very different testable areas, making it more difficult for people to deny its general reasoning prowess.
+
+If Apollo is successful and the topic is known to be important, those who disagree for bad reasons would often attempt to counterargue Apollo, and in doing so have all their arguments addressed very clearly and thoroughly.
+
+In cases where only 50-80% of people wouldn't change their minds, 20-50% of people still means a very large amount of changed minds for many topics, and would still help a lot.
+
+For topics where 80-100% of people wouldn't change their minds, future generations still could, especially if Apollo convinces enough people to promote things like educational reforms establishing in-depth curriculums for general reasoning.
++ Why do you think a group of random people on the internet will be particularly smart?
++ How would people recognize its ability to make consistent predictions?
++ Will the arguments be effective?
+
+
+
+# How would people recognize its ability to make consistent predictions?
+There's a huge incentive for all kinds of news organizations, journalists, media outlets, etc. to tell the world about this mysterious oracle capable of predicting what traditional institutions cannot. Likewise there is a huge incentive for passionate users (and developers) to spread the word about this to such groups.
+
+As such, if the predictions really are numerous, impressive and news-worthy, it should be a safe bet that many people will be made aware. And as more people join, it will be able to make more such predictions, plausibly leading to greater and greater growth and awareness.
+
+
+
+# Will the arguments be effective?
+Why would people change their mind when Apollo counterargues very well?
+
+In typical argumentation, when a close-minded person is out of their previously learned arguments, they often begin subtly repeating already-addressed arguments or throwing whatever new arguments they can think of to defend their position. But unlike in a typical setting, Apollo would save the arguments they already gave and the counters they already received, so they wouldn't be able to repeat them. And Apollo could address all the new arguments they give, and many of these arguments would follow common flawed reasoning patterns, allowing many counterarguments to be efficiently reused in such cases.
+
+In other words, Apollo could trounce such arguments so much more thoroughly and clearly than is otherwise possible, that for some, biases would not be enough to save their mind from changing.
+
+If Apollo's reasoning is open, easy to follow and navigate, persuasive and covers the person's initial and subsequent objections, they will typically be much more likely to change their mind.
++ Can biases be really overcome?
+
+
+
+# Can biases be really overcome?
+Biases don't typically shut down the ability to comprehend opposing arguments completely. They compel people latch on to flaws and dismiss lines of thinking earlier than they should and give a pass to the flaws on their own side. But far less flaws in justifications (both in presentation and reasoning) means far less escape hatches for the biases to exploit.
+
+If you take an honest biased person, they are not going to say to themselves "I dismiss this because I'm biased". They are compelled to find a rationalisation for it.
+
+If the justification pre-empts and counters this rationalisation and it's done in a non-threatening way, then the person will often start changing their mind.
+
+That's quite a high bar for a justification given the complexity of the issues and having to deal with uncertainty. I believe that is a big reason why we don't see people getting convinced by each other much.
+
+I think it's a lot less threatening to read a justification for a view that you oppose in your own time. And do this while knowing that it resulted from a collaborative workflow that is open, involves people on all sides and has an explicit goal of being rational and self-correcting at the forefront.
+
+So after a few encounters with Apollo addressing all one's objections, it seems plausible that they would recognize Apollo's epistemic authority and trust more of its future conclusions by default.
+
+
+
+# Will the descriptive axioms be accepted?
+People who understand the descriptive axioms shouldn't normally disagree with most of them. Even so, there will likely be a descriptive axiom selection system at some point so that different sets of descriptive axioms and their different conclusions can be accounted for.
+
+Descriptive claims that are heavily dependent on particular axioms would likely not make up the majority of controversial claims.
++ Define "descriptive"
+
+
+
+# Will the prescriptive axioms be accepted?
+The current prescriptive axiom system allows individual users to select different prescriptive axioms and see different results that can be derived from them. So such disagreements would occur but would often be accounted for and understood to be based on differing axioms.
+
+In many cases differences in prescriptive axioms will not change the ultimate conclusion. This could be because the differences are no big enough or because the proposed policy caters to multiple sets of preferences.
++ Define "prescriptive"
+
+
+
+# What about dishonesty due to peer pressure?
+What about dishonest people who just act like they disagree with Apollo to fit in?
+
+If/when Apollo has not convinced many people around them, there's likely not much that can be done in such cases. But if/when Apollo convinces the people around them, it seems likely that they would act like they agree with Apollo even if they disagree, if they are dishonest for the sake of fitting in.
+
+
+
+# What about dishonesty due to uncommon values?
+There's likely little that can directly be done about such people. If people have uncommon values (e.g. private interests), then they may act like Apollo is untrustworthy despite believing otherwise, because good reasoning on other peoples' values would lead to less value for them.
+
+For example an employee or share-owner of a business that damages the environment could be dishonest about their opinion on the damage, in order to reduce the risk to their personal finances and reputation.
+
+
+
+# Conflict is natural, why fight it?
+This project is not an attempt to eliminate conflict. Its goal is to change how it is conducted.
+
+My hope is just to make tactics such as emotional manipulation ineffective, make an environment where disagreement between its editors can more frequently be a productive activity, generate knowledge and a deeper understanding of the issues, help to reveal which solutions are truly best, clarify what is at stake for all parties, etc.
+
+There is a chance that such an environment can even serve as a fair and satisfying arena for settling disputes with reason before they escalate into violence.
+
+
+
+# Doesn't everyone have their own truth?
+In the context of this project, the word "truth" refers to objective truth. It corresponds to the way things actually are in the world. Objective truth is independent of anyone's beliefs, opinions or feelings.
+
+But does objective truth exist?
+
+**Argument from objective reality** - If you believe that there is an external world that we all inhabit and share, then there are necessarily facts about the world which are also objective, therefore at least those objective truths exist.
+
+**Argument from site axioms** - If you accept that platform's descriptive axioms objectively apply in all cases regardless of anything else, then (assuming that involves identity, contradiction, modus ponens and the semi-reliability of your own mental faculties) you must surely accept that at least those objective truths exist.
++ Which descriptive axioms are supported?
+
+
+
+
+# Will the combined reasoning be good?
+Mind of Apollo platform as a whole would plausibly greatly help with reasonable decision-making on many important topics. It will plausibly become consistently rational, open and well-informed.
+
+Irrationality can almost always be boiled down to an inconsistent application of a manageable set of reasoning principles. This site will guide and enforce the consistent application of those reasoning principles.
++ What are the editing guidelines?
++ Will there be learning materials?
++ Why do you think a group of random people on the internet will be particularly smart?
++ How accurate are the platform's conclusions?
+
+
+
+# Why do you think a group of random people on the internet will be particularly smart?
+I don't. However when guided and forced to follow good reasoning principles with scores of parent entries being derived automatically, a common set of descriptive axioms and a good definition system, I believe irrationality will (once everything is refined) likely have a much harder time finding sufficient gaps to heavily corrupt Apollo's reasoning.
+
+And as for pure depth/breadth of reasoning, I believe Apollo's collaboratively edited system and clear, relatively simple criteria will make for well-defined tasks that (again once sufficiently refined) allow many people (even when relatively uncritical or ignorant) to contribute in such a way that the aggregated process can produce a very good result.
++ How does roll-up scoring work?
++ Will the combined reasoning be good?
+
+
+
+# How will the editing guidelines be enforced?
+If the amount of very obviously unreasonable contributions doesn't put much of a strain on the more reasonable contributors, then we will likely avoid enforcing the criteria much to ensure we don't mistakenly silence useful voices.
+
+But if there is a heavy strain and the platform cannot properly function without such enforcement, users who consistently add obviously unreasonable entries without contributing much else would likely have some permissions revoked (probably temporarily).
+
+"Obviously unreasonable" here refers to things like arguments with clear, unambiguous logical contradictions with no good excuse, which the majority of users on the platform could easily point out. It typically does NOT refer to things like very unintuitive and against-common-sense arguments, such as many flat earth arguments. There has to be a very solid, immediate and obvious problem with enough contributions to revoke permissions. "Unreasonable" contributions which we can only call such because of our intuition must not be used as sufficient evidence to revoke permissions.
+
+
+
+# Will there be learning materials?
+There will likely be learning materials to teach people the basics of reasoning, particularly as it relates to Apollo's systems and how to use them.
 
 
 
@@ -226,8 +409,16 @@ This continuous refinement of arguments will improve their persuasiveness and th
 
 
 # What are the editing guidelines?
-Please open any of the arguments on the [platform](https://mindofapollo.org/) and explore its "How To" section. Depending on the argument type, you may get a combination of the general instructions and the argument type's specific instructions.
+Please open any of the arguments on the [platform](https://mindofapollo.org/) and explore its "How To" section as it describes proper ways to attack or defend an argument and influence its score. Depending on the argument type, you may get a combination of the general instructions and the argument type's specific instructions.
 
+
+
+# How will the guidelines be evaluated?
+I would imagine that good guidelines would be grounded in logic, probability theory, epistemology and informal logic.
+
+Experimental psychology could shed light on how to minimise the effect of cognitive biases when an editor applies a guideline. 
+
+We can observe which guidelines tend to result in more accurate predictions than others, collect examples where a guideline went wrong, etc. This could be a constant process of peer-reviewed research. Researchers could run experiments comparing how different guidelines lead to different problems.
 
 
 # How is this different from a typical debate (platform/society)?
@@ -283,3 +474,155 @@ There is generally insufficient time to thoroughly investigate sources during a 
 Typical debates are 1v1 or sometimes small group vs small group, meaning there are often important nuances that are missed as a result of the limited knowledge/calculation of the participants (even if they are experts in the relevant subject(s)).
 
 Mind of Apollo is open to almost everyone, meaning that the amount of available knowledge and human cognition the platform can potentially draw on for more important topics is much greater.
+
+
+
+# Isn't it dangerous to create such an authority?
+Like with any innovation, there is a potential for it to go wrong. Too many people may start trusting the Apollo too much.
+
+Before it becomes quite popular/effective, it would most likely not be particularly dangerous, since most people would remain sceptical that it's really so reliable. But once it becomes quite popular/effective, it could become very dangerous.
+
+If it's still quite reasonable despite many people's overzealous devotion, the overestimation would likely not be very costly in most cases.
+
+Otherwise, this could be a big problem. We are of course attempting to design it such that this doesn't become a big issue, but there's always a chance that we will fail.
++ How prevent overconfidence in conclusions?
++ Who controls the tech?
++ Who controls the scoring?
+
+
+
+# How prevent overconfidence in conclusions?
+Blemishes in Apollo's track record may greatly reduce the number of people who trust it blindly. To that end, we intend to create a system to keep account of the failed predictions and keep them visible.
+
+If Apollo becomes successful, perhaps in the future there should be an independent monitoring organisation overlooking it and similar platforms and raising the alarm if any start showing signs of corruption and/or making bad predictions.
+
+
+
+# What will be done to prevent abuse?
+Solid, unambiguous criteria so that bad but rule-following contributions can usually be easily and swiftly resolved.
+
+A solid dispute resolution process so that when things cannot be easily or swiftly resolved, the system doesn't just continue operating based on the new scores but shows its internal conflict not being resolved normally.
+
+Frequent/systematic backups and a history system to make it easy to fix things and see what caused them to break.
+
+
+
+# What content is allowed?
+Compliance with the law. The platform must not host illegal content, or it cannot reliably stay up. This includes messages that “incite a violation of the law that is both imminent and likely.”
+
+Respectful communication. Criticism and commentary on others' contributions are absolutely allowed (and often encouraged), but should be expressed politely if possible. Rude or hostile behaviour tends to discourage participation by undermining the collaborative spirit the project aims to foster, which makes it difficult to have a larger positive impact.
+
+Maintaining a positive public face. Like any public platform, Apollo has a public face that shapes first impressions. Since its growth depends heavily on public perception, it should present itself thoughtfully. Statements that most people would consider highly offensive should not be placed in prominent, public-facing areas (for example, on the homepage) unless there is a strong reason to do so. Such content should (assuming it is legal and not something like a personal attack with no plausible value) still remain accessible to those specifically seeking it, but it shouldn't confront people who didn't ask for it.
++ Does this platform have censorship?
+
+
+
+# Does this platform have censorship?
+Technically, but not strict censorship. For example the following would typically be allowed (though not necessarily endorsed):
+
+NSFW topics - So long as details are kept vague. Keep in mind that children and adolescents may use this site, and there are not yet mechanisms in place for flagging/filtering sensitive content.
+
+Conspiracy theories - Though users who consistently fail to follow the criteria may be subject to having scoring permissions revoked.
++ What content is allowed?
+
+
+
+# How can we prevent moderator abuse?
+Editors can report moderators on our [Discord](https://discord.gg/3hhhD4tK9h), citing the specific transgressions. For the time being, I will read reports and decide if those actions need to be undone and if those moderators need to be reprimanded. This system will improve as we encounter problems with it.
+
+
+
+# How to report problems and make suggestions?
+Please direct them to our [Discord](https://discord.gg/3hhhD4tK9h).
+
+
+
+# Deep and meaningful interactions
+The experience of seeing thoughtful, rational responses to what you write, and feel heard and understood.
+
+The experience of engaging with reasonable people who value truth, critical thinking, and intellectual honesty.
+
+Freedom of speech (mostly)
++ What content is allowed?
+
+
+
+# Getting closer to truth
+If Apollo functions as intended, it can help by allowing users to more systematically and collaboratively think through practically anything.
++ Will the combined reasoning be good?
+
+
+
+# Debating as a sport
+Users can engage in the challenge of trying to convince Apollo of their reasoning better than others can.
+
+In the near future there will likely be a rating system (like chess elo) to measure skill at convincing Apollo of claims.
+
+
+
+# Convincing others
+The Mind of Apollo can be used for persuasion. Coming up with strong arguments and dismantling weak ones will affect the platform's conclusions. This shift together with the arguments themselves will affect other people's opinions.
++ How does roll-up scoring work?
++ Will the combined reasoning be good?
++ Wouldn't controversial conclusions be ignored by most people who disagree?
++ Will the arguments be effective?
+
+
+
+# Becoming more reasonable
+The Mind of Apollo is a place to test and refine your reasoning and ideas.
++ Will there be learning materials?
++ What are the editing guidelines?
+
+
+
+# Part of a collective brain
+The Mind of Apollo together with its editors maintain a single coherent, growing and self-correcting belief system. Together they can be thought of as one collective reasoner. By becoming one of its first contributors, you can watch and guide its growth into something the could gain superhuman reach and insight.
++ Define "belief system"
+
+
+
+# Define "belief system"
+Belief - a statement or assumption that an individual accepts as true. It can describe facts about the world, interpretations of evidence, or general principles about how things work.
+
+Belief system - the organized set of such beliefs that together form a person's understanding of reality. It includes not only what they believe but also how those beliefs support and relate to one another, creating a structured and coherent picture of the world.
+
+
+
+# How accurate are the platform's conclusions?
+At this early stage, all of Apollo's conclusions are tentative. As the project matures, Apollo's reasoning process will become more robust and its knowledge of certain topics more comprehensive.
+
+In the future, Apollo's scores will likely account for missing information (eg. unrepresented prior probabilities) in a better way, allowing the scores to better reflect how tentative/uncertain many entries are. For now, the scores of statements (and thus also, indirectly, arguments) are likely to be very overconfident (in both directions, towards 0% and 100%).
++ Will the combined reasoning be good?
+
+
+
+# Why the name "Apollo"?
+The name was inspired by its philosophical meaning as a symbol of reason, clarity, harmony and self-knowledge. In philosophy, Apollo represents the rational and ordered aspect of human nature, and the pursuit of understanding through structure and truth.
+
+
+
+# How are other languages handled?
+All content on the platform is automatically translated into all the popular languages. This is to avoid some language-/culture-based biases and increase the amount of people who can participate.
+
+This feature could also result in misleading or just plain wrong translations in many cases. Translated text may be marked as such and corrected manually. Though, we would have to be careful about this to prevent lots of user work being invested into translating content that may undergo significant edits which would render much of the translated text as unusable. 
+
+Automatic translation could be limited or not used for content somehow marked (perhaps with tags or similar) as academic and/or containing sophisticated terminology (or perhaps just "shouldn't be auto-translated").
+
+I think it's fair to say that English is the dominant language for academia, so the default may be blocking auto-translations from other languages into English in those cases. I would likely keep translating from English to other languages.
+
+
+
+# Won't rationality do more harm than good?
+(TODO) enlightenment & modernism VS postmodernism
+
+
+
+# Who controls the scoring?
+The scoring is determined by the argument structure below a claim, manually assigned scores for the very bottom level of premises and the roll-up algorithm that computes derived scores bottom-up.  
++ How does roll-up scoring work?
++ Will the combined reasoning be good?
++ Who controls the tech?
++ Who controls the content?
++ Who controls the editing guidelines?
+
