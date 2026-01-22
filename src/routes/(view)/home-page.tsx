@@ -20,10 +20,10 @@ const mainLinks = (
       route="debates"
       class="py-1"
     />
-    <ExternalLink
+    <Link
+      type='button'
       label="📖 About"
-      href="/about.html"
-      button
+      route="about"
       class="py-1"
     />
   </>
@@ -41,7 +41,7 @@ export default function HomePage() {
       <div class="border-b flex flex-wrap items-center justify-between">
         <Subtitle>Home</Subtitle>
         <Show when={centerMainLinks()}>
-          <div class="w-30" />
+          <div class="w-17" />
         </Show>
         <Show when={!stackView()}>
           <div class="flex gap-3">

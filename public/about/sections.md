@@ -1,4 +1,4 @@
-# What is the mind of Apollo?
+# What is the Mind of Apollo?
 Mind of Apollo is an open-source, collaboratively edited website hosting a network of arguments.
 + What makes it different?
 + Who controls the tech?

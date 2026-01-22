@@ -1,5 +1,4 @@
 import { Component, JSXElement, ParentComponent } from "solid-js"
-import { firstCap, humanCase } from "~/utils/string"
 
 export const HeroText: Component<{ children: JSXElement }> = props => (
   <div class="border-b text-center text-2xl font-bold py-6 text-gray-800 uppercase [word-spacing:6px] px-2">
