@@ -5,18 +5,21 @@ import { useSearchParams } from "@solidjs/router"
 export interface QuestionGroup {
   name: string
   questions: string[]
+  startsOpen?: boolean
 }
 
 export const QuestionGroup: Component<{
   group: QuestionGroup
-  startsOpen: boolean
 }> = props => {
   const [searchParams] = useSearchParams()
-  const [isOpen, setIsOpen] = createSignal(props.startsOpen)
+  const [isOpen, setIsOpen] = createSignal(!!props.group.startsOpen)
   return (
-    <>
+    <div class="mx-2 my-2 border-2 border-gray-600 rounded overflow-hidden">
       <div
-        class="hover:bg-orange-200 text-lg px-2 py-0.5 cursor-pointer flex justify-between"
+        class="px-2 py-0.5 cursor-pointer flex justify-between  hover:bg-orange-200"
+        classList={{
+          'border-b-2 border-b-gray-600': isOpen()
+        }}
         onClick={() => setIsOpen(!isOpen())}
       >
         <div>
@@ -27,16 +30,18 @@ export const QuestionGroup: Component<{
         </div>
       </div>
       <Show when={isOpen()}>
-        <div class="ml-2 border-l border-gray-500">
-          <For each={props.group.questions}>
-            {question => <AboutLink
-              label={question}
-              question={question}
-              selected={question === searchParams.q}
-            />}
-          </For>
+        <div class="flex">
+          <div class="flex-1">
+            <For each={props.group.questions}>
+              {question => <AboutLink
+                label={question}
+                question={question}
+                selected={question === searchParams.q}
+              />}
+            </For>
+          </div>
         </div>
       </Show>
-    </>
+    </div>
   )
 }

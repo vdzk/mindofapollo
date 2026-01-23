@@ -1,8 +1,9 @@
 import { useSearchParams } from "@solidjs/router"
 import { Component, createResource, For, Show } from "solid-js"
-import { Link } from "~/components/Link"
 import { Subtitle } from "~/components/PageTitle"
 import { AboutLink } from "./AboutLink"
+import { Markdown } from "~/components/Markdown"
+import { Link } from "~/components/Link"
 
 interface AboutSection {
   question: string
@@ -61,17 +62,33 @@ export const AboutSection: Component<{
   }
 
   return (
-    <div class="min-h-0 overflow-y-auto max-w-2xl border-l border-r">
-      <Show when={section()}>
+    <Show when={section()}>
+      <div class="min-h-0 overflow-y-auto max-w-2xl border-l">
         <div class="border-b">
           <Subtitle>Q: {section()!.question}</Subtitle>
         </div>
-        <div class="px-2 text-lg py-2 pb-10">
-          {section()!.answer}
+        <div class="px-2 py-2 pb-10">
+          <Markdown
+            mdText={section()!.answer}
+            class="prose-lg"
+          />
+          <Show when={section()!.questions.length > 0}>
+            <div class="flex justify-end">
+              <Link
+                class="mt-6"
+                label="Next ➤"
+                type="heroButton"
+                route="about"
+                params={{q: section()!.questions[0]}}
+              />
+            </div>
+          </Show>
         </div>
+      </div>
+      <div class="min-h-0 overflow-y-auto flex-1 border-l">
         <Show when={section()!.questions.length > 0}>
           <div class="border-b border-t">
-            <Subtitle>Next questions</Subtitle>
+            <Subtitle>Questions</Subtitle>
           </div>
 
           <For each={section()!.questions}>
@@ -79,11 +96,12 @@ export const AboutSection: Component<{
               label={question}
               question={question}
               selected={false}
+              large
             />}
           </For>
         </Show>
-        <div class="border-b" />
-      </Show>
-    </div>
+
+      </div>
+    </Show>
   )
 }

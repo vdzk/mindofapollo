@@ -22,3 +22,5 @@
     background-color: white;
   }
 }
+
+@plugin "@tailwindcss/typography";

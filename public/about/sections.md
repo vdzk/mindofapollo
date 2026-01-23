@@ -1,9 +1,14 @@
 # What is the Mind of Apollo?
 Mind of Apollo is an open-source, collaboratively edited website hosting a network of arguments.
-+ What makes it different?
+
+The arguments are scored, but not by a popular vote, judges or AI. How then? First, I need to explain how the arguments are organized.
++ How are the arguments organized?
 + Who controls the tech?
 + Define "argument"
-
++ How is this different from Wikipedia?
++ How is this different from Kialo?
++ How is this different from a typical debate (platform/society)?
++ Define "score"
 
 
 # Who controls the tech?
@@ -60,18 +65,11 @@ The process (and guidelines) will heavily encourage and guide the council member
 + Who controls the editing guidelines?
 
 
-# What makes it different?
-The arguments are scored, but not by a popular vote, judges or AI. How then? First, I need to explain how the arguments are organized.
-+ How are the arguments organized?
-+ How is this different from Wikipedia?
-+ How is this different from Kialo?
-+ How is this different from a typical debate (platform/society)?
-+ Define "score"
-
-
 
 # How are the arguments organized?
 <!-- Image: "Argument structure" https://docs.google.com/drawings/d/14DLTloX6NnbL3AkZ6NM_7BNMt1XoOCgL2E7SlpXkWeo/edit?usp=sharing -->
+![Argument structure](/about/images/argument_structure.png)
+
 Statement (S1) at the top is the main claim. It has a pro (A2) and a con (A1) arguments attached to it. These arguments rely on premises recorded as independent statements (S2, S3, S4). In turn, these statements have deeper arguments attached to them, and so on.
 + How does roll-up scoring work?
 + Define "statement"
@@ -79,6 +77,8 @@ Statement (S1) at the top is the main claim. It has a pro (A2) and a con (A1) ar
 
 
 # How does roll-up scoring work?
+![Argument structure](/about/images/argument_structure.png)
+
 The website calculates the likelihood that the claim is true based on the strengths of arguments that are attached to it. The strength of an argument is calculated based on the likelihoods of the premises that it relies on. So the scores are calculated automatically all the way up from the very bottom layer of premises. If there is a significant disagreement between the editors about the likelihood of a bottom-level premise, more arguments and premises are added below it until an agreement is reached.
 + What value does this project add?
 + How are the arguments organized?

@@ -1,6 +1,5 @@
 # Intro
 What is the Mind of Apollo?
-What makes it different?
 How are the arguments organized?
 How does roll-up scoring work?
 What value does this project add?

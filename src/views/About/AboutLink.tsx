@@ -5,14 +5,17 @@ export const AboutLink: Component<{
   label: string
   question?: string
   selected: boolean
+  large?: boolean
 }> = props => {
   return (
     <Link
       label={(
         <div
-          class="block px-2 py-0.5 hover:bg-orange-200 text-lg"
+          class="block px-2 py-0.5"
           classList={{
-            'bg-yellow-600 text-white hover:bg-yellow-600': props.selected
+            'bg-green-300': props.selected,
+            'hover:bg-orange-200': !props.selected,
+            'text-lg py-1': props.large
           }}
         >
           {props.label}

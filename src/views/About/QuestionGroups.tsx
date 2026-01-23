@@ -18,6 +18,7 @@ export const QuestionGroups: Component<{
     const byName: Record<string, QuestionGroup> = {}
     const byQuestion: Record<string, QuestionGroup> = {}
     let currentGroup: QuestionGroup | null = null
+    let firstQuestion = null
     for (const rawLine of lines) {
       const line = rawLine.trim()
       if (line.startsWith(headerPrefix)) {
@@ -30,30 +31,32 @@ export const QuestionGroups: Component<{
       } else if (line && currentGroup) {
         currentGroup.questions.push(line)
         byQuestion[line] = currentGroup
+        firstQuestion = firstQuestion ?? line
       }
     }
-    const firstGroup = byName[0]
-    if (!searchParams.q && firstGroup) {
-      const firstQuestion = firstGroup.questions[0]
-      if (firstQuestion) {
-        setSearchParams({ q: firstQuestion }, { replace: true })
-      }
+    if (!searchParams.q && firstQuestion) {
+      setSearchParams({ q: firstQuestion }, { replace: true })
+    }
+    const openQuestion = searchParams.q ?? firstQuestion
+    if (typeof openQuestion === 'string') {
+      byQuestion[openQuestion].startsOpen = true
     }
     return { byName, byQuestion }
   })
 
   return (
-    <div class="min-h-0 overflow-y-auto w-sm">
+    <div class="flex flex-col h-full w-sm">
       <Title>{searchParams.q ?? 'About'}</Title>
-      <div class="border-b">
-        <Subtitle>Questions</Subtitle>
+      <div class="border-b shrink-0">
+        <Subtitle>About</Subtitle>
       </div>
-      <For each={Object.keys(questionGroups()?.byName ?? {})}>
-        {groupName => <QuestionGroup
-          group={questionGroups()?.byName[groupName]!}
-          startsOpen={false}
-        />}
-      </For>
+      <div class="flex-1 min-h-0 overflow-y-auto [scrollbar-gutter:stable]">
+        <For each={Object.keys(questionGroups()?.byName ?? {})}>
+          {groupName => <QuestionGroup
+            group={questionGroups()?.byName[groupName]!}
+          />}
+        </For>
+      </div>
     </div>
   )
 }
