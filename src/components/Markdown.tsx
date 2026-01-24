@@ -10,6 +10,7 @@ marked.setOptions({
 export const Markdown: Component<{
   mdText: string
   class?: string
+  classList?: Record<string, boolean>
 }> = props => {
   const html = createMemo(() => {
     const raw = marked.parse(props.mdText) as string
@@ -23,6 +24,7 @@ export const Markdown: Component<{
         [&_img]:rounded [&_img]:my-0
         ${props.class ?? ""}
       `}
+      classList={props.classList}
       innerHTML={html()}
     />
   )

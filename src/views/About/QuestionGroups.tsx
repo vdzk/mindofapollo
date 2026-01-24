@@ -8,7 +8,8 @@ import { QuestionGroup } from "./QuestionGroup"
 const headerPrefix = '# '
 
 export const QuestionGroups: Component<{
-  visitedSections: string[]
+  onGroupDataLoad: (questions: string[]) => void
+  stackView?: boolean
 }> = props => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [questionGroups] = createResource(async () => {
@@ -19,6 +20,7 @@ export const QuestionGroups: Component<{
     const byQuestion: Record<string, QuestionGroup> = {}
     let currentGroup: QuestionGroup | null = null
     let firstQuestion = null
+    let questions: string[] = []
     for (const rawLine of lines) {
       const line = rawLine.trim()
       if (line.startsWith(headerPrefix)) {
@@ -29,9 +31,11 @@ export const QuestionGroups: Component<{
         }
         byName[name] = currentGroup
       } else if (line && currentGroup) {
-        currentGroup.questions.push(line)
-        byQuestion[line] = currentGroup
-        firstQuestion = firstQuestion ?? line
+        const question = line
+        currentGroup.questions.push(question)
+        byQuestion[question] = currentGroup
+        questions.push(question)
+        firstQuestion = firstQuestion ?? question
       }
     }
     if (!searchParams.q && firstQuestion) {
@@ -41,16 +45,25 @@ export const QuestionGroups: Component<{
     if (typeof openQuestion === 'string') {
       byQuestion[openQuestion].startsOpen = true
     }
+    props.onGroupDataLoad(questions)
     return { byName, byQuestion }
   })
 
   return (
-    <div class="flex flex-col h-full w-sm">
+    <div
+      class="flex flex-col flex-3"
+      classList={{
+        'border-t': props.stackView,
+        'max-w-sm': !props.stackView
+      }}
+    >
       <Title>{searchParams.q ?? 'About'}</Title>
       <div class="border-b shrink-0">
-        <Subtitle>About</Subtitle>
+        <Subtitle>{props.stackView ? 'All questions' : 'About'}</Subtitle>
       </div>
-      <div class="flex-1 min-h-0 overflow-y-auto [scrollbar-gutter:stable]">
+      <div classList={{
+        "flex-1 min-h-0 overflow-y-auto [scrollbar-gutter:stable] pb-4": !props.stackView
+      }}>
         <For each={Object.keys(questionGroups()?.byName ?? {})}>
           {groupName => <QuestionGroup
             group={questionGroups()?.byName[groupName]!}

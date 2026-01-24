@@ -24,3 +24,23 @@
 }
 
 @plugin "@tailwindcss/typography";
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.35);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.55);
+}
+
+/* ❌ arrows (buttons) */
+::-webkit-scrollbar-button {
+  display: none;
+}

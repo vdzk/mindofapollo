@@ -12,7 +12,7 @@ The arguments are scored, but not by a popular vote, judges or AI. How then? Fir
 
 
 # Who controls the tech?
-The code is open-source and freely available on (GitHub)[https://github.com/vdzk/mindofapollo] together with instructions on starting your own server. So, if there will be a group of people who are dissatisfied with the current leadership they can branch off easily.
+The code is open-source and freely available on [GitHub](https://github.com/vdzk/mindofapollo) together with instructions on starting your own server. So, if there will be a group of people who are dissatisfied with the current leadership they can branch off easily.
 + Who controls the content?
 
 
@@ -21,7 +21,7 @@ The code is open-source and freely available on (GitHub)[https://github.com/vdzk
 Entries are not owned by anyone, similar to how no one owns a Wikipedia article. Generally every editor can edit any entry. Practically anyone is free to be an editor, so long as they make an account and follow the rules. Some additional restrictions apply to recently created accounts.
 
 As with the code, the live database dumps are also freely available and can be used to kick-start a separate branch.
-+ Who determines the scoring rules?
++ Who controls the scoring?
 + Define "entry"
 
 
@@ -82,7 +82,7 @@ Statement (S1) at the top is the main claim. It has a pro (A2) and a con (A1) ar
 The website calculates the likelihood that the claim is true based on the strengths of arguments that are attached to it. The strength of an argument is calculated based on the likelihoods of the premises that it relies on. So the scores are calculated automatically all the way up from the very bottom layer of premises. If there is a significant disagreement between the editors about the likelihood of a bottom-level premise, more arguments and premises are added below it until an agreement is reached.
 + What value does this project add?
 + How are the arguments organized?
-+ How are the scores calculated?
++ Can I trust these calculations?
 + Which axioms lie at the bottom?
 + Define "likelihood"
 + Define "strength"
@@ -256,7 +256,9 @@ There will likely be learning materials to teach people the basics of reasoning,
 
 
 # What should I explore next?
-Thank you for reading this introduction. Please find further details, clarifications and answers further down. If you find it interesting check out the platform at [mindofapollo.org](https://mindofapollo.org/) and join our [Discord](https://discord.gg/3hhhD4tK9h).
+Thank you for reading the introduction. Please continue exploring the about page to find further details, clarifications and answers.
+
+If you find these ideas interesting start [exploring](/) and [editing](/join) the Mind of Apollo platform and join the conversation on our [Discord](https://discord.gg/3hhhD4tK9h).
 
 
 

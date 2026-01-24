@@ -39,6 +39,7 @@ Won't rationality do more harm than good?
 
 # Quality of combined reasoning
 How does roll-up scoring work?
+Can I trust these calculations?
 Will the combined reasoning be good?
 Why do you think a group of random people on the internet will be particularly smart?
 Why having a single score per claim / argument is important?
@@ -60,7 +61,7 @@ How would people recognize its ability to make consistent predictions?
 
 # Abuse & moderation
 What will be done to prevent abuse?
-What content is not allowed?
+What content is allowed?
 Does this platform have censorship?
 How can we prevent moderator abuse?
 Will the power to edit guidelines be abused?
@@ -86,6 +87,19 @@ The semi-reliability of the site's reasoning.
 Which prescriptive axioms are supported?
 
 # Definitions
+Define "argument"
+Define "axiom"
+Define "belief system"
+Define "confidence"
+Define "descriptive"
+Define "entry"
+Define "likelihood"
+Define "premise"
+Define "prescriptive"
+Define "score"
+Define "statement"
+Define "strength"
+
 
 # Miscellaneous
 Why the name "Apollo"?
