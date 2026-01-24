@@ -1,89 +1,148 @@
 import { createMediaQuery } from "@solid-primitives/media"
+import { Title } from "@solidjs/meta"
 import { useSearchParams } from "@solidjs/router"
-import { Match, Switch } from "solid-js"
-import { createStore } from "solid-js/store"
+import { createResource, Match, Show, Switch } from "solid-js"
 import { Link } from "~/components/Link"
 import { AboutSection } from "~/views/About/AboutSection"
+import { QuestionGroup } from "~/views/About/QuestionGroup"
 import { QuestionGroups } from "~/views/About/QuestionGroups"
 
+const groupPrefix = '# '
+const questionPrefix = '## '
+const relatedPrefix = '+ '
 
 export default function About() {
-  const [questions, setQuestions] = createStore<Partial<Record<'group' | 'section' | 'related', string[]>>>({})
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const onGroupDataLoad = (groupQuestions: string[]) => {
-    setQuestions({ group: groupQuestions })
-    validateData()
-  }
+  const [doc] = createResource(async () => {
+    const response = await fetch('/about.md')
+    const raw = await response.text()
+    const lines = raw.split('\n')
 
-  const onSectionDataLoad = (
-    sectionQuestions: string[],
-    relatedQuestions: string[]
-  ) => {
-    setQuestions({
-      section: sectionQuestions,
-      related: relatedQuestions
-    })
-    validateData()
-  }
+    const groups: QuestionGroup[] = []
+    let group: QuestionGroup | null = null
+    let foundOpenQuestion = false
+    const sections: Record<string, AboutSection> = {}
+    let section: AboutSection | null = null
+    let firstSection = true
+    let inAnswer = false
 
-  const validateData = () => {
-    if (questions.group && questions.section && questions.related) {
-      const flawedQuestions = {
-        unrelated: new Set(questions.section),
-        ungrouped: new Set(questions.section),
-        voidRelation: new Set(questions.related),
-        voidGrouping: new Set(questions.group)
-      }
-      for (const groupQuestion of questions.group) {
-        if (questions.section.includes(groupQuestion)) {
-          flawedQuestions.ungrouped.delete(groupQuestion)
-          flawedQuestions.voidGrouping.delete(groupQuestion)
+    for (const rawLine of lines) {
+      const line = rawLine.trimEnd()
+      if (line.startsWith(groupPrefix)) {
+        const name = line.slice(groupPrefix.length)
+        group = {
+          name,
+          questions: []
         }
-      }
-      for (const relatedQuestion of questions.related) {
-        if (questions.section.includes(relatedQuestion)) {
-          flawedQuestions.unrelated.delete(relatedQuestion)
-          flawedQuestions.voidRelation.delete(relatedQuestion)
+        groups.push(group)
+      } else if (!group) {
+        continue
+      } else if (line.startsWith(questionPrefix)) {
+        const question = line.slice(questionPrefix.length)
+        if (!foundOpenQuestion) {
+          if (!searchParams.q) {
+            setSearchParams({ q: question }, { replace: true })
+          }
+          if (!searchParams.q || (question === searchParams.q)) {
+            group.startsOpen = true
+            foundOpenQuestion = true
+          }
         }
+        group.questions.push(question)
+        if (sections[question]) {
+          // This section was added earlier. This is just a group link.
+          section = null
+        } else {
+          section = {
+            question,
+            answer: '',
+            questions: []
+          }
+          if (firstSection) {
+            section.first = true
+            firstSection = false
+          }
+          sections[question] = section
+          inAnswer = true
+        }
+      } else if (!section) {
+        continue
+      } else if (line.startsWith(relatedPrefix)) {
+        const relatedQuestion = line.slice(relatedPrefix.length)
+        section.questions.push(relatedQuestion)
+        if (inAnswer) {
+          inAnswer = false
+        }
+      } else if (inAnswer) {
+        if (section.answer) {
+          section.answer += '\n'
+        }
+        section.answer += line
       }
-      for (const [flaw, questions] of Object.entries(flawedQuestions)) {
-        if (questions.size > 0) {
-          console.log(flaw, questions)
+    }
+
+    // validate relations
+    const allQuestions = Object.keys(sections)
+    const unrelatedQuestions = new Set(allQuestions)
+    const brokenRelations: string[] = []
+    for (const section of Object.values(sections)) {
+      for (const relatedQuestion of section.questions) {
+        if (allQuestions.includes(relatedQuestion)) {
+          unrelatedQuestions.delete(relatedQuestion)
+        } else {
+          brokenRelations.push(relatedQuestion)
         }
       }
     }
-  }
+    if (brokenRelations.length > 0) {
+      console.log('Broken relations:', brokenRelations)
+    }
+    if (unrelatedQuestions.size > 0) {
+      console.log('Unrelated questions:', unrelatedQuestions)
+    }
+
+    return { groups, sections }
+  })
 
   const stackView = createMediaQuery('(max-width: 859px)')
-  const [searchParams] = useSearchParams()
+
+  const section = () => {
+    if (doc() && typeof searchParams.q === 'string') {
+      return doc()!.sections[searchParams.q]
+    }
+  }
 
   return (
-    <Switch>
-      <Match when={stackView() && searchParams.all}>
-        <main class="flex-1 min-h-0 flex overflow-hidden flex-col overflow-y-auto">
-          <QuestionGroups onGroupDataLoad={onGroupDataLoad} stackView />
-        </main>
-      </Match>
-      <Match when={stackView() && !searchParams.all}>
-        <AboutSection onSectionDataLoad={onSectionDataLoad} stackView />
-        <div class="px-2 py-2 border-t">
-          <Link
-            label="All questions"
-            route="about"
-            params={{
-              all: true,
-              q: searchParams.q
-            }}
-            type="heroButton"
-          />
-        </div>
-      </Match>
-      <Match when>
-        <main class="flex-1 min-h-0 flex">
-          <QuestionGroups onGroupDataLoad={onGroupDataLoad} />
-          <AboutSection onSectionDataLoad={onSectionDataLoad} />
-        </main>
-      </Match>
-    </Switch>
+    <Show when={doc()}>
+      <Title>{searchParams.q ?? 'About'}</Title>
+      <Switch>
+        <Match when={stackView() && searchParams.all}>
+          <main class="flex-1 min-h-0 flex overflow-hidden flex-col overflow-y-auto">
+            <QuestionGroups groups={doc()!.groups} stackView />
+          </main>
+        </Match>
+        <Match when={stackView() && !searchParams.all}>
+          <AboutSection section={section()} stackView />
+          <div class="px-2 py-2 border-t">
+            <Link
+              label="All questions"
+              route="about"
+              params={{
+                all: true,
+                q: searchParams.q
+              }}
+              type="heroButton"
+            />
+          </div>
+        </Match>
+        <Match when>
+          <main class="flex-1 min-h-0 flex">
+            <QuestionGroups groups={doc()!.groups} />
+            <AboutSection section={section()} />
+          </main>
+        </Match>
+      </Switch>
+    </Show>
   )
 }
