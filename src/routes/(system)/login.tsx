@@ -25,10 +25,9 @@ export default function Login() {
       <Title>Login</Title>
       <div>
         <div>
-          <label>Email:</label>
+          <label>Email (or username):</label>
           <br/>
           <input
-            type="email"
             onChange={etv(setEmail)}
             value={email()}
             class="border rounded-sm pl-1 w-full"

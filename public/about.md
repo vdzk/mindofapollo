@@ -20,6 +20,7 @@ The arguments are scored, but not by a popular vote, judges or AI. How then? Fir
 Statement (S1) at the top is the main claim. It has a pro (A2) and a con (A1) arguments attached to it. These arguments rely on premises recorded as independent statements (S2, S3, S4). In turn, these statements have deeper arguments attached to them, and so on.
 + How does roll-up scoring work?
 + Define "statement"
++ Define "argument"
 
 
 ## How does roll-up scoring work?
@@ -52,6 +53,10 @@ If Apollo becomes capable of consistently rational, open and well-informed judge
 Thank you for reading the introduction. Please continue exploring the about page to find further details, clarifications and answers.
 
 If you find these ideas interesting start [exploring](/) and [editing](/join) the Mind of Apollo platform and join the conversation on our [Discord](https://discord.gg/3hhhD4tK9h).
++ How is this different from Wikipedia?
++ Deep and meaningful interactions
++ Why do you think a group of random people on the internet will be particularly smart?
++ Can biases be really overcome?
 
 
 
@@ -72,6 +77,7 @@ The primary function of Kialo is collecting arguments and letting readers form t
 
 In contrast, in the Mind of Apollo, the scores are derived automatically based on the whole argument structure below each claim. These scores are deeply justified, platform-wide conclusions rather than opinions of individual users that have questionable depth.
 + Why having a single score per claim / argument is important?
++ Advantage of roll-up scores
 
 
 ## How is this different from a typical debate (platform/society)?
@@ -84,17 +90,20 @@ Typical debate(r)s often struggle to keep track of all the important information
 
 
 ## Advantage of roll-up scores
-In typical debates, unreliable intuitions must be relied on to calculate and combine confidences, giving our cognitive biases a huge opportunity to influence our thinking.
+With an unsystematic approach to calculating and combining scores, unreliable intuitions must be relied on, giving our cognitive biases a huge opportunity to influence our reasoning.
 
-In Apollo, confidences are mathematically combined, leaving little room for such biases in score combination.
+But with a more systematic approach like Apollo offers, the calculations can be done largely automatically and mathematically (with only leaf nodes being scored by people), saving people time and leading to more accurate results.
++ Define "confidence"
++ How does roll-up scoring work?
++ Can I trust these calculations?
 
 
 ## Advantage of canonically
-In typical debates and debate societies/platforms, past work is not often systematically saved and reused in future works, leading to lots of pointless repetition.
+In typical debates and debate societies/platforms, past work is often not systematically saved and reused in future works, leading to lots of pointless repetition and missed opportunities for collaboration/citation.
 
-Apollo's statements are canonical, meaning it's intended that only one in-platform statement should exist for each concept trying to be described by that statement.
+Apollo's statements are canonical, meaning that there should not be two statements on the platform that are essentially the same. This minimizes the amount of pointless repetition and makes it much easier for everyone's work to be reused wherever relevant.
 
-As such, if you (or anyone else) searches for a statement that you/they intend to make and it has already been made, it can be found and linked (along with indirectly all of its descendent entries) without any necessary repetition.
+Right now there are only basic features for canonicality like search and statement linking, but in the future more features will be developed to better accommodate this. For example when users are creating statements, a semantic search will automatically be performed (checking for similar statements and bringing them up for the user's attention if any are found).
 
 
 ## Advantage in memory
@@ -106,19 +115,22 @@ An added bonus of Apollo is that the statements/arguments tend to be somewhat or
 
 
 ## Advantage in time available
-In Apollo, anyone with the free time can take as long as they want (and as many days as they want) to iron out all the important details they can think of.
+In ordinary discourse (particularly regarding controversial topics), there is typically an expectation that you'll respond quickly, without spending much time thinking. And the topic is typically laid to rest after the discussion has concluded, or at least after a few discussions about it have concluded.
 
-Typical debates, whether between an informal group of people, or formally presented and moderated, are usually too short and rarely properly revisited. As such, there is typically far less than the required amount of work done to cover all the relevant and important points, to the final important level of detail.
+Due to this time pressure, there's also fewer socially acceptable opportunities to dive deeply into a single point (even if it is a very relevant and important point). This often means that many important details are left inadequately explored.
 
-It's typically harder to dive deep into a single point without seeming to change the subject in a counterproductive way, since there is so little time to cover everything.
+There is also generally insufficient time to thoroughly investigate sources during a vocal debate. Thus important sources are often left unused or unscrutinised.
 
-There is generally insufficient time to thoroughly investigate sources during a vocal debate. Thus important sources are often left unused or unscrutinised.
+In Apollo, anyone (assuming they have the time) can take as long as they want (and as many days as they want) to iron out all the important details they can think of. Collaboration typically occurs asynchronously, so no one is required to wait on anyone else and no one is forced to respond before they've had adequate time to think.
 
 
 ## Advantage in numbers
-Typical debates are 1v1 or sometimes small group vs small group, meaning there are often important nuances that are missed as a result of the limited knowledge/calculation of the participants (even if they are experts in the relevant subject(s)).
+Typical discourse involves only a small group of people, often only two, leading to important nuances being missed as a result of the limited knowledge/calculation of the participants (even if they are experts in the relevant subject(s)).
 
-Mind of Apollo is open to almost everyone, meaning that the amount of available knowledge and human cognition the platform can potentially draw on for more important topics is much greater.
+This includes decision-making about extremely important topics that millions of people would be interested in thinking about, for example in politics and religion. There has simply been no efficient, well-known mechanism for combining the reasoning of so many people in an accessible way.
+
+Apollo offers this mechanism. It is open to everyone who follows the rules, and the criteria are not incredibly complex, meaning that it is much more accessible than eg. writing a professional paper about the topic.
++ Will the combined reasoning be good?
 
 
 
@@ -177,11 +189,12 @@ There is a chance that such an environment can even serve as a fair and satisfyi
 # Is it satisfying?
 
 ## Deep and meaningful interactions
-The experience of seeing thoughtful, rational responses to what you write, and feel heard and understood.
+1. The experience of seeing thoughtful, rational responses to what you write, and feel heard and understood.
 
-The experience of engaging with reasonable people who value truth, critical thinking, and intellectual honesty.
+1. The experience of engaging with reasonable people who value truth, critical thinking, and intellectual honesty.
 
-Freedom of speech (mostly)
+1. Freedom of speech (mostly)
++ Getting closer to truth
 + What content is allowed?
 
 
@@ -228,19 +241,25 @@ Before it becomes quite popular/effective, it would most likely not be particula
 If it's still quite reasonable despite many people's overzealous devotion, the overestimation would likely not be very costly in most cases.
 
 Otherwise, this could be a big problem. We are of course attempting to design it such that this doesn't become a big issue, but there's always a chance that we will fail.
-+ How prevent overconfidence in conclusions?
++ How to prevent overconfidence in conclusions?
 + Who controls the tech?
 + Who controls the scoring?
 
 
-## How prevent overconfidence in conclusions?
+## How to prevent overconfidence in conclusions?
 Blemishes in Apollo's track record may greatly reduce the number of people who trust it blindly. To that end, we intend to create a system to keep account of the failed predictions and keep them visible.
 
 If Apollo becomes successful, perhaps in the future there should be an independent monitoring organisation overlooking it and similar platforms and raising the alarm if any start showing signs of corruption and/or making bad predictions.
 
 
 ## Won't rationality do more harm than good?
-(TODO) enlightenment & modernism VS postmodernism
+Human reason can, in principle, solve all problems. That is one of the core Enlightenment ideas. Unfortunately it has lead to overconfidence in reason. Some dark chapters of our history such as the Reign of Terror, slavery, colonial domination, racism, artificial famines and brutal working conditions were all to some extent enabled by this hubris.
+
+We should always keep these lessons in mind when our rational conclusions go against established traditions, customs, feelings and common sense.
+
+Like David Hume said “reason is, and ought only to be the slave of the passions.” The Mind of Apollo doesn't mandate a set of morals (prescriptive axioms). Users can individually set them up as they see fit.
++ How to prevent overconfidence in conclusions?
++ Which prescriptive axioms are supported?
 
 
 
@@ -600,7 +619,6 @@ Statements about what someone should or should not do.
 
 ## Define "score"
 The likelihood that a statement is true or the strength of an argument.
-(likelihoods and strengths)
 + Define "likelihood"
 + Define "strength"
 

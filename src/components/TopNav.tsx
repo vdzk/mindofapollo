@@ -109,7 +109,7 @@ export const TopNav: Component = () => {
               <Show when={openRegistration}>
                 <Link
                   route="join"
-                  label={smallScreen() ? '👤➕' : "Join"}
+                  label={smallScreen() ? '👤➕' : "Sign Up"}
                   type="button"
                 />
               </Show>

@@ -20,7 +20,7 @@ export default function Debates() {
   const allDebates = createAsync(() => listRecordsCache('debate', true))
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const tabId = () => (searchParams.tabId as DebateTabId | undefined) ?? 'ongoing'
+  const tabId = () => (searchParams.tabId as DebateTabId | undefined) ?? 'invite'
 
   const debates = () => {
     const _tabId = tabId()

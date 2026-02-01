@@ -12,6 +12,7 @@ import { defaultLanguage, Language } from "~/translation"
 import { etv } from "~/client-only/util"
 import { isValidInvite } from "~/api/is/validInvite"
 import { openRegistration } from "~/constant"
+import { linkStyles } from "~/components/Link"
 
 interface Join {
   code: string
@@ -24,41 +25,37 @@ export default function Join() {
   const [diff, setDiff] = createStore({ name: '', language: defaultLanguage })
   const [email, setEmail] = createSignal('')
   const [password, setPassword] = createSignal('')
+  const [creating, setCreating] = createSignal(false)
   const _isValidInvite = openRegistration
     ? () => true
     : createAsync(() => isValidInvite(sp.code))
 
   const onSubmit = async () => {
+    setCreating(true)
     const userId = await join(diff.name, email().trim(), password(), diff.language as Language, sp.code)
     if (!userId) {
       console.error('join failed')
-      return
+    } else {
+      await login(email().trim(), password())
+      session?.refetch()
+      navigate('/home-page')
     }
-    await login(email().trim(), password())
-    session?.refetch()
-    navigate('/home-page')
+    setCreating(false)
   }
 
   return (
     <main>
       <Title>Join</Title>
-      <PageTitle>Join</PageTitle>
-      <div class="px-2 max-w-(--breakpoint-md)">
+      <div class="px-2 max-w-xs mx-auto pt-16">
         <Show when={_isValidInvite()} fallback={<div>Invalid invite</div>}>
           <FormField
             tableName="person"
             colName="name"
             {...{ diff, setDiff }}
           />
-          <FormField
-            tableName="person"
-            colName="language"
-            {...{ diff, setDiff }}
-          />
-          <div class="font-bold">Email</div>
+          <div class="font-bold">Email (or username)</div>
           <div>
             <input
-              type="email"
               value={email()}
               onInput={etv(setEmail)}
               onChange={etv(setEmail)}
@@ -75,11 +72,14 @@ export default function Join() {
               class="border rounded-md pl-1 w-full mb-2"
             />
           </div>
-          <Button
-            label="Submit"
-            onClick={onSubmit}
-            disabled={!diff.name || !email().trim() || !password()}
-          />
+          <div class="pt-6 text-center">
+            <Button
+              label={creating() ? 'Creating...' : "Create Account"}
+              class={linkStyles.heroButton}
+              onClick={onSubmit}
+              disabled={!diff.name || !email().trim() || !password() || creating()}
+            />
+          </div>
         </Show>
       </div>
     </main>
