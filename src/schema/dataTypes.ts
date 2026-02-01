@@ -6,7 +6,7 @@ import { proportionDecimals, proportionPrecision } from "~/util-no-circle";
 export const customDataTypes: Record<CustomDataType | 'fk', string> = {
   fk: 'integer',
   proportion: `numeric(${proportionPrecision}, ${proportionDecimals})`,
-  weight: 'numeric(9, 2)',
+  weight: 'double precision',
   link_url: 'varchar',
   link_title: 'varchar',
   option: 'varchar',

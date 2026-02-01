@@ -23,6 +23,21 @@ export const getPercent = (x?: number) => typeof x === 'number'
   ? Math.round(x * 100) + '%'
   : '?'
 
+export const getShortNumber = (value: number): string => {
+  const abs = Math.abs(value)
+
+  const format = (num: number, suffix: string) =>
+    `${parseFloat(num.toFixed(1))}${suffix}`
+
+  if (abs < 1_000) return value.toString()
+  if (abs < 1_000_000) return format(value / 1_000, 'k')
+  if (abs < 1_000_000_000) return format(value / 1_000_000, 'M')
+  if (abs < 1_000_000_000_000) return format(value / 1_000_000_000, 'B')
+
+  return format(value / 1_000_000_000_000, 'T')
+}
+
+
 export const truncate = (str: string, maxLength: number) => 
   str.length > maxLength
     ? str.slice(0, maxLength - 1) + '…'

@@ -5,7 +5,7 @@ import { Link } from "~/components/Link"
 import { calcProbSuccess } from "~/calc/statementConfidence"
 import { DataRecordWithId } from "~/schema/type"
 import { argumentSideLabels } from "~/tables/argument/argument"
-import { getPercent } from "~/utils/string"
+import { getPercent, getShortNumber } from "~/utils/string"
 import { tableStyle } from "~/components/table"
 import { useBelongsTo } from "~/client-only/useBelongsTo"
 import { whoCanInsertRecord } from "~/api/insert/record"
@@ -52,7 +52,7 @@ export const Arguments: Component<{
   const sideScores = createMemo(() => {
     if (isPrescriptive()) {
       const sideSums = props.tabData?.moralData?.sideSums ?? [0, 0]
-      return [-sideSums[0], sideSums[1]].map(Math.round)
+      return [-sideSums[0], sideSums[1]].map(Math.round).map(getShortNumber)
     }
     const sideUnknown = [false, false]
     const sideStrengths: [number[], number[]] = [[], []]
@@ -155,12 +155,16 @@ export const Arguments: Component<{
                             <For each={concsByArgumentId()[argument.id]}>
                               {consequence => (
                                 <div class="flex gap-2">
-                                  <div class="min-w-10">[{Math.round(consequence.weightedValue)}]</div>
+                                  <div class="min-w-10">[{
+                                    getShortNumber(Math.round(
+                                      consequence.weightedValue
+                                    ))
+                                  }]</div>
                                   <div class="flex-1">
                                     <span class="font-bold">
                                       {consequence.moral_good}:
                                     </span>
-                                    {' '}{consequence.value + ''}
+                                    {' '}{getShortNumber(consequence.value)}
                                     {' '}{consequence.unit}
                                   </div>
                                 </div>
