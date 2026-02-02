@@ -42,6 +42,18 @@ export const TopNav: Component = () => {
     <nav class="border-b flex justify-between items-center flex-wrap relative">
       <div class="px-2 py-0.5 flex items-center gap-0.5">
         <Link
+          route="republican-vs-democrat"
+          label={(
+            <div class="flex items-center -mx-0.5">
+              <img class="h-6 py-1" src="/icons/republican.svg" />
+              <div class="text-sm font-bold mx-0.5">vs</div>
+              <img class="h-6 py-1 -scale-x-100" src="/icons/democrat.svg" />
+            </div>
+          )}
+          tooltip="Republican VS Democrat"
+          type="button"
+        />
+        <Link
           route="home-page"
           label={<img class="w-4 h-6" src="/icons/home.svg" />}
           tooltip="Home page"
