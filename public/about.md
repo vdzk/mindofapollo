@@ -73,7 +73,7 @@ The Mind of Apollo provides a mechanism for systematically reasoning about more 
 
 
 ## How is this different from Kialo?
-The primary function of Kialo is collecting arguments and letting readers form their independent opinions. It has a popular vote feature, but the voters are not even required to read any of the arguments to cast their vote, so it's of little significance.
+The primary function of Kialo is collecting arguments and letting readers form their independent opinions. It has a popular vote feature, but the voters are not even required to read any of the arguments to cast their vote. These votes can't be challenged and will effect the scores forever. Hence Kialo scores tell us very little about how confident we should be about the claims discussed.
 
 In contrast, in the Mind of Apollo, the scores are derived automatically based on the whole argument structure below each claim. These scores are deeply justified, platform-wide conclusions rather than opinions of individual users that have questionable depth.
 + Why having a single score per claim / argument is important?
@@ -101,7 +101,7 @@ But with a more systematic approach like Apollo offers, the calculations can be 
 ## Advantage of canonically
 In typical debates and debate societies/platforms, past work is often not systematically saved and reused in future works, leading to lots of pointless repetition and missed opportunities for collaboration/citation.
 
-Apollo's statements are canonical, meaning that there should not be two statements on the platform that are essentially the same. This minimizes the amount of pointless repetition and makes it much easier for everyone's work to be reused wherever relevant.
+Apollo's statements are canonical, meaning that there should never be multiple statements on the platform that mean the same thing. This minimizes the amount of pointless repetition and makes it much easier for everyone's work to be reused wherever relevant.
 
 Right now there are only basic features for canonicality like search and statement linking, but in the future more features will be developed to better accommodate this. For example when users are creating statements, a semantic search will automatically be performed (checking for similar statements and bringing them up for the user's attention if any are found).
 
@@ -253,11 +253,17 @@ If Apollo becomes successful, perhaps in the future there should be an independe
 
 
 ## Won't rationality do more harm than good?
+There are at least a couple of reasons why some people have partially negative attitudes towards rationality.
+
+#### Overconfidence
 Human reason can, in principle, solve all problems. That is one of the core Enlightenment ideas. Unfortunately it has lead to overconfidence in reason. Some dark chapters of our history such as the Reign of Terror, slavery, colonial domination, racism, artificial famines and brutal working conditions were all to some extent enabled by this hubris.
 
-We should always keep these lessons in mind when our rational conclusions go against established traditions, customs, feelings and common sense.
+We should always keep these lessons in mind when our rational conclusions, including the ones argued for by this platform, go against established traditions, customs, feelings and common sense. Particularly when these conclusions are used to justify disturbing other people's way of life. 
 
-Like David Hume said “reason is, and ought only to be the slave of the passions.” The Mind of Apollo doesn't mandate a set of morals (prescriptive axioms). Users can individually set them up as they see fit.
+#### Coldheartedness
+People sometimes say things like "It was rational for me not to help this person out but I did it anyway" and by that, they mean that it is rational to be selfish but they went against it as a result of their moral virtue.
+
+This project uses a stricter sense of the word "rationality". Rationality doesn't carry a specific set of morals like selfishness or efficiency in pursuing some narrow goal. This project takes a view that moral reasoning comes from fundamental values that are accepted without reason, and which should thus always ultimately guide reason without (directly) being questioned. The Mind of Apollo doesn't mandate a particular configuration of fundamental values (prescriptive axioms). Users can individually set them up as they see fit.
 + How to prevent overconfidence in conclusions?
 + Which prescriptive axioms are supported?
 
@@ -271,11 +277,16 @@ Like David Hume said “reason is, and ought only to be the slave of the passion
 
 
 ## Can I trust these calculations?
-The algorithm that derives scores is currently not very sophisticated and likely to result in issues like double-counting. In the future this will likely be refined, or if not, I will likely switch to a user-based scoring system that guides users to largely follow the algorithm in most cases.
+The algorithm that derives scores is currently not very sophisticated and likely to result in issues like double-counting. In the future this will likely be refined, or if not, I will likely switch to a user-based scoring system that guides users to largely follow the algorithm in most cases. 
 
-At the moment the strength of an argument is determined simply by multiplying the likelihoods of its premises. You can get some intuition for how the argument scores are rolled up into statement scores by using [confidence calculator](https://mindofapollo.org/confidence-calculator).
+As was explained in the previous section, arguments and statements are the two core types of entries and they are scored differently. The strength of an argument is determined simply by multiplying the likelihoods of its premises. The confidence in a statement is determined by combining the strengths of its pro/con arguments using a slightly more complicated formula. You can get some intuition for it by using the [confidence calculator](https://mindofapollo.org/confidence-calculator).
 
-For more details you can join [the discord](https://discord.gg/x23ycnckHN) or check out the [formulas in the source code](https://github.com/vdzk/mindofapollo/tree/main/src/calc).
+For more details you can join [our discord](https://discord.gg/x23ycnckHN) or check out the [formulas in the source code](https://github.com/vdzk/mindofapollo/tree/main/src/calc).
++ How does roll-up scoring work?
++ Define "argument"
++ Define "statement"
++ Define "strength"
++ Define "score"
 
 
 ## Will the combined reasoning be good?
