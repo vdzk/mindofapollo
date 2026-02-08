@@ -20,7 +20,7 @@ export const PersonalDetails: Component = () => {
     <div class="px-2">
       <div class="mb-4 max-w-md">
         <label class="block mb-2">
-          Email:
+          Email (or username):
           <input
             type="email"
             value={email()}

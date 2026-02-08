@@ -4,6 +4,8 @@ import { createSignal, useContext } from "solid-js"
 import { SessionContext } from "~/SessionContext"
 import { login } from "~/api/execute/login"
 import { etv } from "~/client-only/util"
+import { Link, linkStyles } from "~/components/Link"
+import { H2, Subtitle } from "~/components/PageTitle"
 import { Button } from "~/components/buttons"
 
 export default function Login() {
@@ -23,31 +25,37 @@ export default function Login() {
   return (
     <main class="flex-1 flex items-center justify-center">
       <Title>Login</Title>
-      <div>
-        <div>
-          <label>Email (or username):</label>
-          <br/>
+      <div class="border-2 rounded border-gray-600">
+        <div class="border-b-2 border-gray-600 px-1">
+          <Subtitle>
+            Login
+          </Subtitle>
+        </div>
+        <div class="pt-3 px-3">
+          <label class="font-bold">Email (or username)</label>
+          <br />
           <input
             onChange={etv(setEmail)}
             value={email()}
-            class="border rounded-sm pl-1 w-full"
+            class="border rounded-sm pl-1 w-full mb-2"
           />
-          <br/>
-          <label>Password:</label>
-          <br/>
+          <br />
+          <label class="font-bold">Password</label>
+          <br />
           <input
             type="password"
             onChange={etv(setPassword)}
             value={password()}
             class="border rounded-sm pl-1 w-full"
           />
-          <div class="mt-6 text-center">
-            <Button
-              label="Login"
-              onClick={submit}
-              disabled={email().trim() === '' || password() === ''}
-            />
-          </div>
+        </div>
+        <div class="py-4 mt-4 text-center border-t-2 border-gray-600">
+          <Button
+            label="Login"
+            class={linkStyles.heroButton}
+            onClick={submit}
+            disabled={email().trim() === '' || password() === ''}
+          />
         </div>
       </div>
     </main>

@@ -12,12 +12,14 @@ import { moralityTables } from '~/tables/morality'
 import { otherTables } from '~/tables/other'
 import { statementTables } from '~/tables/statement'
 import { betTables } from "~/tables/bet";
+import { workflowTables } from "~/tables/workflow";
 
 const tableCategories = {
   statement: Object.keys(statementTables),
   argument: Object.keys(argumentTables),
   argument_type: Object.keys(argumentTypeTables),
   morality: Object.keys(moralityTables),
+  workflow: Object.keys(workflowTables),
   other: Object.keys(otherTables)
 } as const
 

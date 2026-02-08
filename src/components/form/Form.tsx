@@ -79,6 +79,7 @@ export const Form: Component<{
     }
   })
 
+  const authenticated = () => session?.userSession?.()?.authenticated
   const table = () => schema.tables[props.tableName]
   const colNames = () => getWritableColNames(
     props.tableName,
@@ -216,7 +217,7 @@ export const Form: Component<{
   })
 
   const extFields = createMemo(() => extColNames()
-    .filter(colName => schema.tables[extTableName()!].columns[colName]?.getVisibility?.({...currentRecord(), ...diffExt}) ?? true)
+    .filter(colName => schema.tables[extTableName()!].columns[colName]?.getVisibility?.({ ...currentRecord(), ...diffExt }) ?? true)
     .map(
       colName => ({
         tableName: extTableName() as string,
@@ -247,83 +248,101 @@ export const Form: Component<{
 
   return (
     <div class="px-2 max-w-(--breakpoint-sm) min-w-0 pb-2">
-      <For each={fieldGroups().normal}>{field =>
-        <>
-          <FormField {...field} hidden={!visibleCols().includes(field.colName)} />
-          <Show when={extTableSelectorColName() === field.colName}>
-            <For each={extFields()}>{FormField}</For>
-          </Show>
-        </>
-      }</For>
-      <Show when={!extTableSelectorColName()}>
-        <For each={extFields()}>{FormField}</For>
-      </Show>
-      <Show when={!props.id && !props.depth}>
-        <For each={crossRefs()}>
-          {([aggregateName, aggregate]) => (
-            <CrossRef
-              tableName={props.tableName}
-              aggregateName={aggregateName}
-              aggregate={aggregate as NToNSchema}
-              linkedRecordIds={linkedCrossRefs[aggregateName]}
-              setLinkedRecordIds={
-                (setIds: (curIds: number[]) => number[]) =>
-                  setLinkedCrossRefs(aggregateName, setIds)
-              }
-            />
-          )}
-        </For>
-      </Show>
-      <Show when={table().optionallyExtendedByTable}>
-        <Button
-          label={getToggleLabel(optionalExtEnabled(), table().optionallyExtendedByTable!)}
-          onClick={() => setOptionalExtEnabled(x => !x)}
-        />
-      </Show>
-      <Show when={hasAdvancedFields()}>
-        <div class="py-2">
+      <Show when={authenticated()}>
+        <For each={fieldGroups().normal}>{field =>
+          <>
+            <FormField {...field} hidden={!visibleCols().includes(field.colName)} />
+            <Show when={extTableSelectorColName() === field.colName}>
+              <For each={extFields()}>{FormField}</For>
+            </Show>
+          </>
+        }</For>
+        <Show when={!extTableSelectorColName()}>
+          <For each={extFields()}>{FormField}</For>
+        </Show>
+        <Show when={!props.id && !props.depth}>
+          <For each={crossRefs()}>
+            {([aggregateName, aggregate]) => (
+              <CrossRef
+                tableName={props.tableName}
+                aggregateName={aggregateName}
+                aggregate={aggregate as NToNSchema}
+                linkedRecordIds={linkedCrossRefs[aggregateName]}
+                setLinkedRecordIds={
+                  (setIds: (curIds: number[]) => number[]) =>
+                    setLinkedCrossRefs(aggregateName, setIds)
+                }
+              />
+            )}
+          </For>
+        </Show>
+        <Show when={table().optionallyExtendedByTable}>
           <Button
-            label={getToggleLabel(showAdvanced(), 'advanced')}
-            onClick={() => setShowAdvanced(!showAdvanced())}
+            label={getToggleLabel(optionalExtEnabled(), table().optionallyExtendedByTable!)}
+            onClick={() => setOptionalExtEnabled(x => !x)}
           />
-        </div>
-      </Show>
-      <For each={fieldGroups()?.advanced}>{field =>
-        <FormField {...field} hidden={!visibleCols().includes(field.colName) || !showAdvanced()} />
-      }</For>
-      <Show when={props.id || ('passUserExpl' in props.exitSettings)}>
-        <UserExplField value={userExpl()} onChange={setUserExpl} />
-      </Show>
-      <Show when={saveError()}>
-        <div class="pt-2 text-yellow-600">
-          {saveError()}
-        </div>
-      </Show>
-      <div class="pt-2">
-        <Show when={session?.userSession?.()?.authenticated}>
+        </Show>
+        <Show when={hasAdvancedFields()}>
+          <div class="py-2">
+            <Button
+              label={getToggleLabel(showAdvanced(), 'advanced')}
+              onClick={() => setShowAdvanced(!showAdvanced())}
+            />
+          </div>
+        </Show>
+        <For each={fieldGroups()?.advanced}>{field =>
+          <FormField {...field} hidden={!visibleCols().includes(field.colName) || !showAdvanced()} />
+        }</For>
+        <Show when={props.id || ('passUserExpl' in props.exitSettings)}>
+          <UserExplField value={userExpl()} onChange={setUserExpl} />
+        </Show>
+        <Show when={saveError()}>
+          <div class="pt-2 text-yellow-600">
+            {saveError()}
+          </div>
+        </Show>
+        <div class="pt-2">
           <Button
             label={saving() ? "Saving…" : "Save"}
             onClick={onSubmit}
             disabled={pristine() || !complete() || saving()}
           />
-        </Show>
-        <span class="inline-block w-2" />
-        <Switch>
-          <Match when={hasExitHandler(props.exitSettings)}>
-            <Button
-              label="Cancel"
-              onClick={handleCancel}
-            />
-          </Match>
-          <Match when={!hasExitHandler(props.exitSettings)}>
-            <Link
-              {...(props.exitSettings as { getLinkData: () => LinkData }).getLinkData()}
-              type="button"
-              label="Cancel"
-            />
-          </Match>
-        </Switch>
-      </div>
+          <span class="inline-block w-2" />
+          <Switch>
+            <Match when={hasExitHandler(props.exitSettings)}>
+              <Button
+                label="Cancel"
+                onClick={handleCancel}
+              />
+            </Match>
+            <Match when={!hasExitHandler(props.exitSettings)}>
+              <Link
+                {...(props.exitSettings as { getLinkData: () => LinkData }).getLinkData()}
+                type="button"
+                label="Cancel"
+              />
+            </Match>
+          </Switch>
+        </div>
+      </Show>
+      <Show when={!authenticated()}>
+        <div class="py-2">
+          <Link
+            route="join"
+            type="button"
+          >
+            Register
+          </Link>{' '}
+          or 
+          <Link
+            route="login"
+            type="button"
+          >
+            Login
+          </Link>{' '}
+          to make changes
+        </div>
+      </Show>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { debateTables } from "~/tables/debate"
 import { moralityTables } from "~/tables/morality"
 import { otherTables } from "~/tables/other"
 import { statementTables } from "~/tables/statement"
+import { workflowTables } from "~/tables/workflow"
 
 // NOTE: table name 'person' and column names
 // id, name, owner_id, creator_id, canDelete, canUpdate
@@ -19,7 +20,7 @@ export const schema: AppDataSchema = {
     ...moralityTables,
     ...otherTables,
     ...betTables,
-    ...debateTables
-
+    ...debateTables,
+    ...workflowTables
   }
 }

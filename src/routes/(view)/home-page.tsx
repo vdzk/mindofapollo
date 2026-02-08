@@ -16,6 +16,12 @@ const mainLinks = (
   <>
     <Link
       type='button'
+      label="🔀 Workflow"
+      route="workflow"
+      class="py-1"
+    />
+    <Link
+      type='button'
       label="⚔️ Debate"
       route="debates"
       class="py-1"
